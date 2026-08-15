@@ -206,7 +206,7 @@ public class AboutScene extends PixelScene {
 		addLine(infinitePD.top() - 4, content);
 
 		CreditsBlock eternityPR = new CreditsBlock(false, 0xFFD700,
-		"Eternity Pixel Rogue:",
+		"Eternity Pixel Dungeon:",
 		null,
 		"Developed by: tonymanpro\nBased on Infinite & ExpPD",
 		"GitHub", "https://github.com/tonymanpro/Infinite-Pixel-Dungeon");

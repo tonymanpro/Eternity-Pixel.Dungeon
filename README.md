@@ -1,6 +1,6 @@
-# Eternity Pixel Rogue
+# Eternity Pixel Dungeon
 
-**Eternity Pixel Rogue** es una versión personalizada y extendida basada en *Infinite Pixel Dungeon* y *Experienced Pixel Dungeon (Redone)* con soporte completo de localización al español e inglés.
+**Eternity Pixel Dungeon** es una versión personalizada y extendida basada en *Infinite Pixel Dungeon* y *Experienced Pixel Dungeon (Redone)* con soporte completo de localización al español e inglés.
 
 ## Características y Mejoras:
 - **Soporte Completo de Español e Inglés**: Localización al 100% de la interfaz, menús, objetos, enemigos y documentos.

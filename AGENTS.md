@@ -1,4 +1,4 @@
-# Eternity Pixel Rogue - Reglas de Desarrollo del Proyecto
+# Eternity Pixel Dungeon - Reglas de Desarrollo del Proyecto
 
 ## 1. Regla Obligatoria de Localización e Internacionalización (i18n)
 

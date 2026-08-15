@@ -18,7 +18,7 @@ buildscript {
 allprojects {
 
     ext {
-        appName = 'Eternity Pixel Rogue'
+        appName = 'Eternity Pixel Dungeon'
         appPackageName = 'com.eternity.pixeldungeon.com'
 
         appVersionCode = 700
