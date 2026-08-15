@@ -28,6 +28,7 @@ import java.util.Locale;
 
 public enum Languages {
 	ENGLISH("english",      "",   Status.O_COMPLETE,   null, null),
+	SPANISH("español",      "es", Status.O_COMPLETE,   new String[]{"Aurelio", "Patryck", "Zanarok"}, new String[]{"Aarón", "Aether", "Akron", "Aleksandr", "Alguien", "Anthony", "Arturo", "Aurelio", "Carlos", "Dalt", "Diego", "Dio", "Eduardo", "Ezequiel", "Gabriel", "Gaston", "Ignacio", "Iván", "Jesús", "José", "Juan", "Lauty", "Luis", "Manuel", "Mario", "Matías", "Maximiliano", "Miguel", "Nicolás", "Pablo", "Patryck", "Pedro", "Rafael", "Rodrigo", "Santiago", "Sebastián", "Sergio", "Tomás", "Valentín", "Vicente", "Víctor", "Zanarok"}),
 	CHINESE("中文",         "zh", Status.O_COMPLETE, new String[]{"Chronie_Lynn_Iwa", "Jinkeloid(zdx00793)", "endlesssolitude", "catand"}, new String[]{"931451545", "Budding", "Fatir", "Fishbone", "Hcat", "HoofBumpBlurryface", "Horr_lski", "Lery", "Lyn_0401", "Lyx0527", "Ooooscar", "RainSlide", "ShatteredFlameBlast", "SpaceAnchor", "Teller", "hmdzl001", "leo", "tempest102", "户方狸奴", "catand"});
 	public enum Status{
 		//below 80% translated languages are not added or removed
