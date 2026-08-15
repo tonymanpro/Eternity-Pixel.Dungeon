@@ -205,6 +205,19 @@ public class AboutScene extends PixelScene {
 		content.add(infinitePD);
 		addLine(infinitePD.top() - 4, content);
 
+		CreditsBlock eternityPR = new CreditsBlock(false, 0xFFD700,
+		"Eternity Pixel Rogue:",
+		null,
+		"Developed by: tonymanpro\nBased on Infinite & ExpPD",
+		"GitHub", "https://github.com/tonymanpro/Infinite-Pixel-Dungeon");
+		if (landscape()){
+			eternityPR.setRect(bob.left(), infinitePD.bottom() + 8, fullWidth, 0);
+		} else {
+			eternityPR.setRect(gdx.left(), infinitePD.bottom() + 8, colWidth, 0);
+		}
+		content.add(eternityPR);
+		addLine(eternityPR.top() - 4, content);
+
 		//*** Transifex Credits ***
 
 		CreditsBlock transifex = new CreditsBlock(true,
@@ -214,7 +227,7 @@ public class AboutScene extends PixelScene {
 				"ShatteredPD is community-translated via _Transifex_! Thank you so much to all of Shattered's volunteer translators!",
 				"transifex.com/shattered-pixel/...",
 				"https://explore.transifex.com/shattered-pixel/shattered-pixel-dungeon/");
-		transifex.setRect((Camera.main.width - colWidth)/2f, (landscape() ? bob.bottom() : infinitePD.bottom()) + 12, colWidth, 0);
+		transifex.setRect((Camera.main.width - colWidth)/2f, eternityPR.bottom() + 12, colWidth, 0);
 		content.add(transifex);
 
 		addLine(transifex.top() - 4, content);

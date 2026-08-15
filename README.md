@@ -1,14 +1,13 @@
-# Infinite Pixel Dungeon
+# Eternity Pixel Rogue
 
-This is a fork of the unfortunately not continued [Experienced Pixel Dungeon](https://github.com/TrashboxBobylev/Experienced-Pixel-Dungeon-Redone)
-Thanks to [TrashboxBobylev](https://github.com/TrashboxBobylev) for the great work on the original
+**Eternity Pixel Rogue** es una versión personalizada y extendida basada en *Infinite Pixel Dungeon* y *Experienced Pixel Dungeon (Redone)* con soporte completo de localización al español e inglés.
 
-# This fork is being developed by me and jjbali. It currently adds:
-
-- Removal of the cycle limit
-- Rarities
-- Bigger dungeons
-- Another row of quickslots
+## Características y Mejoras:
+- **Soporte Completo de Español e Inglés**: Localización al 100% de la interfaz, menús, objetos, enemigos y documentos.
+- **Sin límite de ciclos de mazmorra**: Progresión infinita y escalado de dificultad.
+- **Sistema de Rarezas y Emblemas**: Modificadores de objetos, armas y equipo legendario.
+- **Mazmorras y Arenas Expandidas**: Arenas por oleadas, farmeo intensivo y áreas secretas.
+- **Fila adicional de accesos rápidos**: Hasta 10 casillas de acción directa.
 
 # Experienced Pixel Dungeon
 

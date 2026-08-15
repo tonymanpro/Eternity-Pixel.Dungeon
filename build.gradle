@@ -18,11 +18,11 @@ buildscript {
 allprojects {
 
     ext {
-        appName = 'Infinite Pixel Dungeon'
-        appPackageName = 'com.dragonmaster14545.infinitepixeldungeon.com'
+        appName = 'Eternity Pixel Rogue'
+        appPackageName = 'com.eternity.pixeldungeon.com'
 
-        appVersionCode = 698
-        appVersionName = 'InfPD-0.2.0'
+        appVersionCode = 700
+        appVersionName = 'v0.2.1'
 
         appJavaCompatibility = JavaVersion.VERSION_11
 
