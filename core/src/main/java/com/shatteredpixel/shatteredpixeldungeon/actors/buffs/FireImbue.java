@@ -46,6 +46,10 @@ public class FireImbue extends Buff {
 
 	protected float left;
 
+	public void extend( float duration ) {
+		left += duration;
+	}
+
 	private static final String LEFT	= "left";
 
 	@Override

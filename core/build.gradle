@@ -1,6 +1,10 @@
 apply plugin: 'java-library'
 
-[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.incremental = false
+}
+
 java.sourceCompatibility = java.targetCompatibility = appJavaCompatibility
 
 dependencies {

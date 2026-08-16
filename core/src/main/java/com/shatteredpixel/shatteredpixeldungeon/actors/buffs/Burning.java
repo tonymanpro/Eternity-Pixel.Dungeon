@@ -220,6 +220,10 @@ public class Burning extends Buff implements Hero.Doom {
 		left = duration;
 		acted = false;
 	}
+
+	public void extend( float duration ){
+		left += duration;
+	}
 	
 	@Override
 	public int icon() {

@@ -75,6 +75,10 @@ public class ScrollOfChallenge extends ExoticScroll {
 		private static final float DURATION = 100;
 		int left = 0;
 
+		public void extend( float duration ){
+			left += Math.round(duration);
+		}
+
 		{
 			type = buffType.POSITIVE;
 		}

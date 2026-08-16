@@ -29,6 +29,9 @@ import com.watabou.utils.Bundle;
 
 public abstract class ShieldBuff extends Buff {
 	
+	protected int shieldUsePriority = 0;
+	protected boolean detachesAtZero = true;
+
 	private long shielding;
 	
 	@Override
@@ -54,6 +57,10 @@ public abstract class ShieldBuff extends Buff {
 	public void setShield( long shield ) {
 		if (this.shielding <= shield) this.shielding = shield;
 		if (target != null) target.needsShieldUpdate = true;
+	}
+
+	public void delay( float value ){
+		postpone(value);
 	}
 	
 	public void incShield(){
@@ -83,7 +90,7 @@ public abstract class ShieldBuff extends Buff {
 			dmg -= shielding;
 			shielding = 0;
 		}
-		if (shielding == 0){
+		if (shielding == 0 && detachesAtZero){
 			detach();
 		}
 		if (target != null) target.needsShieldUpdate = true;

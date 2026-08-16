@@ -50,6 +50,8 @@ public class Buff extends Actor {
 
 	//whether a buff should persist through revive effects for the hero
 	public boolean revivePersists = false;
+
+	public boolean mnemonicExtended = false;
 	
 	protected HashSet<Class> resistances = new HashSet<>();
 	
@@ -84,6 +86,22 @@ public class Buff extends Actor {
 		if (target.remove( this ) && target.sprite != null) fx( false );
 	}
 	
+	private static final String MNEMONIC_EXTENDED = "mnemonic_extended";
+
+	@Override
+	public void storeInBundle( com.watabou.utils.Bundle bundle ) {
+		super.storeInBundle( bundle );
+		if (mnemonicExtended) bundle.put(MNEMONIC_EXTENDED, mnemonicExtended);
+	}
+
+	@Override
+	public void restoreFromBundle( com.watabou.utils.Bundle bundle ) {
+		super.restoreFromBundle( bundle );
+		if (bundle.contains(MNEMONIC_EXTENDED)) {
+			mnemonicExtended = bundle.getBoolean(MNEMONIC_EXTENDED);
+		}
+	}
+
 	@Override
 	public boolean act() {
 		diactivate();

@@ -34,6 +34,10 @@ public class Dread extends Buff {
 	protected int left = (int)DURATION;
 	public int object = 0;
 
+	public void extend( float duration ){
+		left += Math.round(duration);
+	}
+
 	public static final float DURATION = 20f;
 
 	{

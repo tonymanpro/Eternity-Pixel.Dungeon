@@ -81,6 +81,14 @@ public class Bleeding extends Buff {
 			this.source = source;
 		}
 	}
+
+	public void extend( float amount ) {
+		this.level += amount;
+	}
+
+	public void extend( double amount ) {
+		this.level += amount;
+	}
 	
 	@Override
 	public int icon() {

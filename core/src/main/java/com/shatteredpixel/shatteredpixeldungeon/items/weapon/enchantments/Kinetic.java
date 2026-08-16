@@ -105,6 +105,10 @@ public class Kinetic extends Weapon.Enchantment {
 		public void setBonus(long bonus){
 			preservedDamage = bonus;
 		}
+
+		public void delay( float value ){
+			postpone(value);
+		}
 		
 		public long damageBonus(){
 			return (long) Math.ceil(preservedDamage);

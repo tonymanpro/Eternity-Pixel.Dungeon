@@ -313,7 +313,7 @@ public class SandalsOfNature extends Artifact {
 		}
 	};
 
-	protected CellSelector.Listener cellSelector = new CellSelector.Listener(){
+	public CellSelector.Listener cellSelector = new CellSelector.Listener(){
 
 		@Override
 		public void onSelect(Integer cell) {

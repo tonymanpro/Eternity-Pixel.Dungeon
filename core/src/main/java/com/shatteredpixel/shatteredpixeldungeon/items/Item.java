@@ -339,6 +339,12 @@ public class Item implements Bundlable {
 	public void doAim( Hero hero ) {
 		GameScene.selectCell(aimer);
 	}
+	public Item setCurrent(Hero hero) {
+		curUser = hero;
+		curItem = this;
+		return this;
+	}
+
 	public void execute( Hero hero, String action ) {
 
 		GameScene.cancel();
@@ -804,7 +810,7 @@ public class Item implements Bundlable {
 			}
 			if (note != null){
 				//we swap underscore(0x5F) with low macron(0x2CD) here to avoid highlighting in the item window
-				joint += Messages.get(this, "custom_note", note.title().replace('_', 'ˍ')) + "\n\n";
+				joint += Messages.get(this, "custom_note", note.title().replace('_', '\u02CD')) + "\n\n";
 			}
 
             if (emblemUse > 0) {

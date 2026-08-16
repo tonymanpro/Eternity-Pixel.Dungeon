@@ -425,6 +425,7 @@ public class ItemSpriteSheet {
 	public static final int ARMOR_HUNTRESS  = ARMOR+8;
 	public static final int ARMOR_RAT_KING	= ARMOR+9;
 	public static final int ARMOR_DUELIST   = ARMOR+10;
+	public static final int ARMOR_CLERIC    = ARMOR+11;
 	static{
 		assignItemRect(ARMOR_CLOTH,     15, 12);
 		assignItemRect(ARMOR_LEATHER,   14, 13);
@@ -437,6 +438,7 @@ public class ItemSpriteSheet {
 		assignItemRect(ARMOR_HUNTRESS,  13, 15);
 		assignItemRect(ARMOR_RAT_KING,	12, 6);
 		assignItemRect(ARMOR_DUELIST,   12, 13);
+		assignItemRect(ARMOR_CLERIC,    13, 14);
 	}
 
 
@@ -514,6 +516,7 @@ public class ItemSpriteSheet {
 	public static final int ARTIFACT_ROSE2      = ARTIFACTS+21;
 	public static final int ARTIFACT_ROSE3      = ARTIFACTS+22;
     public static final int ARTIFACT_KEY      = ARTIFACTS+23;
+	public static final int ARTIFACT_TOME       = ARTIFACTS+24;
 	static{
 		assignItemRect(ARTIFACT_CLOAK,      9,  15);
 		assignItemRect(ARTIFACT_ARMBAND,    16, 13);
@@ -539,6 +542,7 @@ public class ItemSpriteSheet {
 		assignItemRect(ARTIFACT_ROSE2,      14, 14);
 		assignItemRect(ARTIFACT_ROSE3,      14, 14);
         assignItemRect(ARTIFACT_KEY,      8, 16);
+		assignItemRect(ARTIFACT_TOME,       14, 16);
 	}
 
 	private static final int TRINKETS        =                               xy(9, 17);  //24 slots

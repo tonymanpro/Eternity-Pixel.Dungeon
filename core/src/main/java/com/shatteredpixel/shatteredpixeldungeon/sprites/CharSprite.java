@@ -78,7 +78,7 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	protected float shadowOffset    = 0.25f;
 
 	public enum State {
-		BURNING, LEVITATING, INVISIBLE, PARALYSED, FROZEN, ILLUMINATED, CHILLED, DARKENED, MARKED, HEALING, SHIELDED, RAGESHIELDED, HEARTS, LONGSWORD
+		BURNING, LEVITATING, INVISIBLE, PARALYSED, FROZEN, ILLUMINATED, CHILLED, DARKENED, MARKED, HEALING, SHIELDED, RAGESHIELDED, HEARTS, LONGSWORD, GLOWING, AURA
 	}
 	private int stunStates = 0;
 
@@ -411,6 +411,7 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 			case FROZEN:
 				iceBlock = IceBlock.freeze( this );
 				break;
+			case GLOWING:
 			case ILLUMINATED:
 				GameScene.effect( light = new TorchHalo( this ) );
 				break;
@@ -481,6 +482,7 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 					iceBlock = null;
 				}
 				break;
+			case GLOWING:
 			case ILLUMINATED:
 				if (light != null) {
 					light.putOut();

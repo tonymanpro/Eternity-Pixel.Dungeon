@@ -56,10 +56,41 @@ public class Artifact extends KindofMisc {
 	//better to keep charge as an int and use a separate float than casting.
 	protected double partialCharge = 0;
 	//the maximum charge, varies per artifact, not all artifacts use this.
-	private long chargeCap = 0;
+	public long chargeCap = 0;
 
 	//used by some artifacts to keep track of duration of effects or cooldowns to use.
 	protected int cooldown = 0;
+
+	public void resetForTrinity(int visibleLevel){
+		level(Math.round((visibleLevel*levelCap)/10f));
+		exp = Integer.MIN_VALUE; //ensures no levelling
+		charge = chargeCap;
+		cooldown = 0;
+	}
+
+	public static void artifactProc(Char target, int artifLevel, int chargesUsed){
+		if (Dungeon.hero.subClass == com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass.PRIEST
+				&& target.buff(com.shatteredpixel.shatteredpixeldungeon.actors.hero.spells.GuidingLight.Illuminated.class) != null) {
+			target.buff(com.shatteredpixel.shatteredpixeldungeon.actors.hero.spells.GuidingLight.Illuminated.class).detach();
+			target.damage((long)(5+Dungeon.hero.lvl), com.shatteredpixel.shatteredpixeldungeon.actors.hero.spells.GuidingLight.INSTANCE);
+		}
+
+		if (target.alignment != Char.Alignment.ALLY
+				&& Dungeon.hero.heroClass != com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass.CLERIC
+				&& Dungeon.hero.hasTalent(com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent.SEARING_LIGHT)
+				&& Dungeon.hero.buff(com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent.SearingLightCooldown.class) == null){
+			Buff.affect(target, com.shatteredpixel.shatteredpixeldungeon.actors.hero.spells.GuidingLight.Illuminated.class);
+			Buff.affect(Dungeon.hero, com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent.SearingLightCooldown.class, 20f);
+		}
+
+		if (target.alignment != Char.Alignment.ALLY
+				&& Dungeon.hero.heroClass != com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass.CLERIC
+				&& Dungeon.hero.hasTalent(com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent.SUNRAY)){
+			if (Random.Int(100) < (Dungeon.hero.pointsInTalent(com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent.SUNRAY) == 1 ? 15 : 25)){
+				com.shatteredpixel.shatteredpixeldungeon.actors.hero.spells.Sunray.castBlind(target);
+			}
+		}
+	}
 
 
 

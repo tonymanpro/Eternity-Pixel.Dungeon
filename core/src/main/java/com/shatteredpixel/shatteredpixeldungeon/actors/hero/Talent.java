@@ -30,20 +30,31 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.*;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.ArmorAbility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.Ratmogrify;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.cleric.Trinity;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.spells.Cleanse;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.spells.DivineSense;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.spells.RecallInscription;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
+import com.shatteredpixel.shatteredpixeldungeon.effects.Flare;
 import com.shatteredpixel.shatteredpixeldungeon.effects.FloatingText;
 import com.shatteredpixel.shatteredpixeldungeon.effects.SpellSprite;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.LeafParticle;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.items.BrokenSeal;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.KindofMisc;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClothArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.Artifact;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.HolyTome;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.HornOfPlenty;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
+import com.shatteredpixel.shatteredpixeldungeon.items.stones.Runestone;
+import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfIntuition;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.ShardOfOblivion;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
@@ -63,6 +74,7 @@ import com.watabou.utils.Bundle;
 import com.watabou.utils.GameMath;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
+import com.watabou.utils.Reflection;
 
 import java.util.*;
 
@@ -153,11 +165,33 @@ public enum Talent {
 	//Duelist A3 T4
 	FEIGNED_RETREAT(151, 4), EXPOSE_WEAKNESS(152, 4), COUNTER_ABILITY(153, 4),
 
+	//Cleric T1
+	SATIATED_SPELLS(160), HOLY_INTUITION(161), SEARING_LIGHT(162), SHIELD_OF_LIGHT(163),
+	//Cleric T2
+	ENLIGHTENING_MEAL(164), RECALL_INSCRIPTION(165), SUNRAY(166), DIVINE_SENSE(167), BLESS(168),
+	//Cleric T3
+	CLEANSE(169, 3), LIGHT_READING(170, 3),
+	//Priest T3
+	HOLY_LANCE(171, 3), HALLOWED_GROUND(172, 3), MNEMONIC_PRAYER(173, 3),
+	//Paladin T3
+	LAY_ON_HANDS(174, 3), AURA_OF_PROTECTION(175, 3), WALL_OF_LIGHT(176, 3),
+	//Ascended Form T4
+	DIVINE_INTERVENTION(177, 4), JUDGEMENT(178, 4), FLASH(179, 4),
+	//Trinity T4
+	BODY_FORM(180, 4), MIND_FORM(181, 4), SPIRIT_FORM(182, 4),
+	//Power of Many T4
+	BEAMING_RAY(183, 4), LIFE_LINK(184, 4), STASIS(185, 4),
+
 	//universal T4
 	HEROIC_ENERGY(26, 4), //See icon() and title() for special logic for this one
 	//Ratmogrify T4
 	RATSISTANCE(215, 4), RATLOMACY(216, 4), RATFORCEMENTS(217, 4);
 
+	public static class SearingLightCooldown extends FlavourBuff{
+		public int icon() { return BuffIndicator.TIME; }
+		public void tintIcon(Image icon) { icon.hardlight(1f, 0.8f, 0.4f); }
+		public float iconFadePercent() { return Math.max(0, visualcooldown() / 20); }
+	};
 	public static class ImprovisedProjectileCooldown extends FlavourBuff{
 		public int icon() { return BuffIndicator.TIME; }
 		public void tintIcon(Image icon) { icon.hardlight(0.15f, 0.2f, 0.5f); }
@@ -397,6 +431,8 @@ public enum Talent {
 					return 122;
 				case DUELIST:
 					return 154;
+				case CLERIC:
+					return 186;
 			}
 		} else {
 			return icon;
@@ -472,8 +508,21 @@ public enum Talent {
 //			}
 //		}
 
-		if (talent == HEIGHTENED_SENSES || talent == FARSIGHT){
+		if (talent == HEIGHTENED_SENSES || talent == FARSIGHT || talent == DIVINE_SENSE){
 			Dungeon.observe();
+		}
+
+		if (talent == LIGHT_READING && hero.heroClass == HeroClass.CLERIC){
+			HolyTome tome = hero.belongings.getItem(HolyTome.class);
+			if (tome != null) tome.updateQuickslot();
+		}
+
+		if (talent == SPIRIT_FORM){
+			for (Item item : hero.belongings.backpack){
+				if (item instanceof Artifact){
+					((Artifact) item).resetForTrinity(com.shatteredpixel.shatteredpixeldungeon.actors.hero.spells.SpiritForm.artifactLevel());
+				}
+			}
 		}
 
 		if (talent == TWIN_UPGRADES || talent == DESPERATE_POWER || talent == STRONGMAN){
@@ -536,6 +585,25 @@ public enum Talent {
 			} else {
 				// lvl/3 / lvl/2 bonus dmg on next hit for other classes
 				Buff.affect( hero, PhysicalEmpower.class).set(Math.round(hero.lvl / (4f - hero.pointsInTalent(FOCUSED_MEAL))), 1);
+			}
+		}
+
+		if (hero.hasTalent(SATIATED_SPELLS)){
+			if (hero.heroClass == HeroClass.CLERIC) {
+				HolyTome tome = hero.belongings.getItem(HolyTome.class);
+				if (tome != null) {
+					int amount = 1 + 2*hero.pointsInTalent(SATIATED_SPELLS);
+					tome.directCharge(amount * (foodVal / 100f));
+				}
+			}
+		}
+		if (hero.hasTalent(ENLIGHTENING_MEAL)){
+			if (hero.heroClass == HeroClass.CLERIC) {
+				HolyTome tome = hero.belongings.getItem(HolyTome.class);
+				if (tome != null) {
+					tome.directCharge( (1+hero.pointsInTalent(ENLIGHTENING_MEAL))/3f );
+					ScrollOfRecharging.charge( hero );
+				}
 			}
 		}
 
@@ -627,6 +695,10 @@ public enum Talent {
 	}
 
 	public static void onScrollUsed( Hero hero, int pos, float factor ){
+		onScrollUsed(hero, pos, null, factor);
+	}
+
+	public static void onScrollUsed( Hero hero, int pos, Class<?extends Item> cls, float factor ){
 		if (hero.hasTalent(INSCRIBED_POWER)){
 			// 2/3 empowered wand zaps
 			Buff.affect(hero, ScrollEmpower.class).reset((int) (factor * (1 + hero.pointsInTalent(INSCRIBED_POWER))));
@@ -635,6 +707,32 @@ public enum Talent {
 			// 3/5 turns of stealth
 			Buff.affect(hero, Invisibility.class, factor * (1 + 2*hero.pointsInTalent(INSCRIBED_STEALTH)));
 			Sample.INSTANCE.play( Assets.Sounds.MELD );
+		}
+		if (cls != null && hero.hasTalent(RECALL_INSCRIPTION) && Scroll.class.isAssignableFrom(cls) && cls != ScrollOfUpgrade.class){
+			if (hero.heroClass == HeroClass.CLERIC){
+				Buff.prolong(hero, RecallInscription.UsedItemTracker.class, hero.pointsInTalent(RECALL_INSCRIPTION) == 2 ? 300 : 10).item = cls;
+			} else {
+				if (Random.Int(20) < 1 + hero.pointsInTalent(RECALL_INSCRIPTION)){
+					Reflection.newInstance(cls).collect();
+					GLog.p(Messages.get(Talent.class, RECALL_INSCRIPTION.name() + ".refunded"));
+				}
+			}
+		}
+	}
+
+	public static void onRunestoneUsed( Hero hero, int pos, Class<?extends Item> cls ){
+		if (hero.hasTalent(RECALL_INSCRIPTION) && Runestone.class.isAssignableFrom(cls)){
+			if (hero.heroClass == HeroClass.CLERIC){
+				Buff.prolong(hero, RecallInscription.UsedItemTracker.class, hero.pointsInTalent(RECALL_INSCRIPTION) == 2 ? 300 : 10).item = cls;
+			} else {
+				if (cls.equals(StoneOfIntuition.class) && hero.buff(StoneOfIntuition.IntuitionUseTracker.class) != null){
+					return;
+				}
+				if (Random.Int(20) < 1 + hero.pointsInTalent(RECALL_INSCRIPTION)){
+					Reflection.newInstance(cls).collect();
+					GLog.p(Messages.get(Talent.class, RECALL_INSCRIPTION.name() + ".refunded"));
+				}
+			}
 		}
 	}
 
@@ -659,6 +757,27 @@ public enum Talent {
 		if (hero.hasTalent(ENHANCED_RINGS)){
 			Buff.prolong(hero, EnhancedRings.class, 3f*hero.pointsInTalent(ENHANCED_RINGS));
 		}
+
+		if (Dungeon.hero.heroClass != HeroClass.CLERIC
+				&& Dungeon.hero.hasTalent(Talent.DIVINE_SENSE)){
+			Buff.prolong(Dungeon.hero, DivineSense.DivineSenseTracker.class, Dungeon.hero.cooldown()+1);
+		}
+
+		if (Dungeon.hero.heroClass != HeroClass.CLERIC
+				&& Dungeon.hero.hasTalent(Talent.CLEANSE)
+				&& Random.Int(10) < Dungeon.hero.pointsInTalent(Talent.CLEANSE)){
+			boolean removed = false;
+			for (Buff b : Dungeon.hero.buffs()) {
+				if (b.type == Buff.buffType.NEGATIVE
+						&& !(b instanceof LostInventory)) {
+					b.detach();
+					removed = true;
+				}
+			}
+			if (removed && Dungeon.hero.sprite != null) {
+				new Flare( 6, 32 ).color(0xFF4CD2, true).show( Dungeon.hero.sprite, 2f );
+			}
+		}
 	}
 
 	public static void onItemEquipped( Hero hero, Item item ){
@@ -675,6 +794,9 @@ public enum Talent {
 		if (hero.pointsInTalent(ADVENTURERS_INTUITION) == 2 && item instanceof Weapon){
 			identify = true;
 		}
+		if (hero.pointsInTalent(HOLY_INTUITION) == 2 && item instanceof Wand){
+			identify = true;
+		}
 
 		if (identify && !ShardOfOblivion.passiveIDDisabled()){
 			item.identify();
@@ -687,6 +809,9 @@ public enum Talent {
 		}
 		if (hero.heroClass == HeroClass.MAGE && item instanceof Wand){
 			item.identify();
+		}
+		if (hero.pointsInTalent(HOLY_INTUITION) == 2 && item instanceof Wand){
+			if (!ShardOfOblivion.passiveIDDisabled()) item.identify();
 		}
 	}
 
@@ -752,6 +877,13 @@ public enum Talent {
 		}
 
 		return dmg;
+	}
+
+	public static class SatiatedSpellsTracker extends Buff{
+		@Override
+		public int icon() {
+			return BuffIndicator.SPELL_FOOD;
+		}
 	}
 
 	public static class ProvokedAngerTracker extends FlavourBuff{
@@ -820,6 +952,9 @@ public enum Talent {
 			case DUELIST:
 				Collections.addAll(tierTalents, STRENGTHENING_MEAL, ADVENTURERS_INTUITION, PATIENT_STRIKE, AGGRESSIVE_BARRIER);
 				break;
+			case CLERIC:
+				Collections.addAll(tierTalents, SATIATED_SPELLS, HOLY_INTUITION, SEARING_LIGHT, SHIELD_OF_LIGHT);
+				break;
 		}
 		for (Talent talent : tierTalents){
 			if (replacements.containsKey(talent)){
@@ -846,6 +981,9 @@ public enum Talent {
 			case DUELIST:
 				Collections.addAll(tierTalents, FOCUSED_MEAL, LIQUID_AGILITY, WEAPON_RECHARGING, LETHAL_HASTE, SWIFT_EQUIP);
 				break;
+			case CLERIC:
+				Collections.addAll(tierTalents, ENLIGHTENING_MEAL, RECALL_INSCRIPTION, SUNRAY, DIVINE_SENSE, BLESS);
+				break;
 		}
 		for (Talent talent : tierTalents){
 			if (replacements.containsKey(talent)){
@@ -871,6 +1009,9 @@ public enum Talent {
 				break;
 			case DUELIST:
 				Collections.addAll(tierTalents, PRECISE_ASSAULT, DEADLY_FOLLOWUP);
+				break;
+			case CLERIC:
+				Collections.addAll(tierTalents, CLEANSE, LIGHT_READING);
 				break;
 		}
 		for (Talent talent : tierTalents){
@@ -929,6 +1070,12 @@ public enum Talent {
 				break;
 			case MONK:
 				Collections.addAll(tierTalents, UNENCUMBERED_SPIRIT, MONASTIC_VIGOR, COMBINED_ENERGY);
+				break;
+			case PRIEST:
+				Collections.addAll(tierTalents, HOLY_LANCE, HALLOWED_GROUND, MNEMONIC_PRAYER);
+				break;
+			case PALADIN:
+				Collections.addAll(tierTalents, LAY_ON_HANDS, AURA_OF_PROTECTION, WALL_OF_LIGHT);
 				break;
 		}
 		for (Talent talent : tierTalents){

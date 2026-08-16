@@ -80,7 +80,7 @@ public abstract class Wand extends Item {
 
 	private static final float TIME_TO_ZAP	= 1f;
 	
-	private long maxCharges = initialCharges();
+	public long maxCharges = initialCharges();
 	public long curCharges = getMaxCharges();
 	public double partialCharge = 0f;
 	

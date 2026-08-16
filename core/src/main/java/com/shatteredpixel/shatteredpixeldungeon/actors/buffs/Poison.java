@@ -39,6 +39,10 @@ import com.watabou.utils.Bundle;
 public class Poison extends Buff implements Hero.Doom {
 	
 	protected double left;
+
+	public void extend( float duration ){
+		left += duration;
+	}
 	
 	private static final String LEFT	= "left";
 

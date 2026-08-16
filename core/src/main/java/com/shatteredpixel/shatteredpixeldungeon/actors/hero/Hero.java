@@ -886,6 +886,14 @@ if (buff(RoundShield.GuardTracker.class) != null){
 		}
 	}
 	
+	public static int heroDamageIntRange(int min, int max ){
+		return Random.NormalIntRange(min, max);
+	}
+
+	public static long heroDamageLongRange(long min, long max ){
+		return Random.NormalLongRange(min, max);
+	}
+
 	public float attackDelay() {
 		if (buff(Talent.LethalMomentumTracker.class) != null){
 			buff(Talent.LethalMomentumTracker.class).detach();

@@ -257,6 +257,21 @@ public class WandOfLivingEarth extends DamageWand {
 		private long wandLevel;
 		private long armor;
 
+		private float powerOfManyTurns = 0;
+
+		@Override
+		public boolean act() {
+			if (powerOfManyTurns > 0){
+				powerOfManyTurns--;
+				if (powerOfManyTurns <= 0){
+					powerOfManyTurns = 0;
+					BuffIndicator.refreshHero();
+				}
+			}
+			spend(TICK);
+			return true;
+		}
+
 		private void addArmor( long wandLevel, long toAdd ){
 			this.wandLevel = Math.max(this.wandLevel, wandLevel);
 			armor += toAdd;
@@ -278,6 +293,10 @@ public class WandOfLivingEarth extends DamageWand {
 			}
 		}
 
+		public boolean isEmpowered(){
+			return powerOfManyTurns > 0;
+		}
+
 		@Override
 		public int icon() {
 			return BuffIndicator.ARMOR;
@@ -285,7 +304,11 @@ public class WandOfLivingEarth extends DamageWand {
 
 		@Override
 		public void tintIcon(Image icon) {
-			icon.brightness(0.6f);
+			if (isEmpowered()){
+				icon.hardlight(1.8f, 1.8f, 0.6f);
+			} else {
+				icon.brightness(0.6f);
+			}
 		}
 
 		@Override
@@ -305,12 +328,14 @@ public class WandOfLivingEarth extends DamageWand {
 
 		private static final String WAND_LEVEL = "wand_level";
 		private static final String ARMOR = "armor";
+		private static final String POWER_TURNS = "power_turns";
 
 		@Override
 		public void storeInBundle(Bundle bundle) {
 			super.storeInBundle(bundle);
 			bundle.put(WAND_LEVEL, wandLevel);
 			bundle.put(ARMOR, armor);
+			bundle.put(POWER_TURNS, powerOfManyTurns);
 		}
 
 		@Override
@@ -318,6 +343,7 @@ public class WandOfLivingEarth extends DamageWand {
 			super.restoreFromBundle(bundle);
 			wandLevel = bundle.getInt(WAND_LEVEL);
 			armor = bundle.getInt(ARMOR);
+			powerOfManyTurns = bundle.getFloat(POWER_TURNS);
 		}
 	}
 

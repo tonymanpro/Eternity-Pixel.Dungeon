@@ -65,8 +65,9 @@ public class Badges {
 		MASTERY_MAGE,
 		MASTERY_ROGUE,
 		MASTERY_HUNTRESS,
-		MASTERY_RAT_KING,
 		MASTERY_DUELIST,
+		MASTERY_CLERIC,
+		MASTERY_RAT_KING,
 		FOUND_RATMOGRIFY,
 
 		//bronze
@@ -74,7 +75,7 @@ public class Badges {
 		UNLOCK_ROGUE                ( 2 ),
 		UNLOCK_HUNTRESS             ( 3 ),
 		UNLOCK_DUELIST              ( 4 ),
-		//UNLOCK_CLERIC             ( 5 ),
+		UNLOCK_CLERIC               ( 5 ),
 		MONSTERS_SLAIN_1            ( 6 ),
 		MONSTERS_SLAIN_2            ( 7 ),
 		GOLD_COLLECTED_1            ( 8 ),
@@ -1007,6 +1008,9 @@ public class Badges {
 			case DUELIST:
 				badge = Badge.MASTERY_DUELIST;
 				break;
+		case CLERIC:
+			badge = Badge.MASTERY_CLERIC;
+			break;
 		case RAT_KING:
 			badge = Badge.MASTERY_RAT_KING;
 			break;

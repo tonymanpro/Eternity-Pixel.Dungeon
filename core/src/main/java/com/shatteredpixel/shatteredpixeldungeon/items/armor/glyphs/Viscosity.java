@@ -133,6 +133,14 @@ public class Viscosity extends Glyph {
 			}
 			this.damage += damage;
 		}
+
+		public void extend( float damage ) {
+			prolong((long)damage);
+		}
+
+		public void extend( long damage ) {
+			prolong(damage);
+		}
 		
 		@Override
 		public int icon() {

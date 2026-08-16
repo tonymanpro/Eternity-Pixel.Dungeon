@@ -42,6 +42,10 @@ public class WellFed extends Buff {
 	}
 	
 	int left;
+
+	public void extend( float duration ) {
+		left += Math.round(duration);
+	}
 	
 	@Override
 	public boolean act() {

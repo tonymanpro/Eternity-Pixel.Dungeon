@@ -27,6 +27,9 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.hero;
 import com.shatteredpixel.shatteredpixeldungeon.*;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.ArmorAbility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.Ratmogrify;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.cleric.AscendedForm;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.cleric.PowerOfMany;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.cleric.Trinity;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.duelist.Challenge;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.duelist.ElementalStrike;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.duelist.Feint;
@@ -52,6 +55,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Waterskin;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClothArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.ChaliceOfBlood;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CloakOfShadows;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.HolyTome;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.*;
 import com.shatteredpixel.shatteredpixeldungeon.items.emblem.CommonEmblem;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Cheese;
@@ -78,6 +82,7 @@ public enum HeroClass {
 	ROGUE( HeroSubClass.ASSASSIN, HeroSubClass.FREERUNNER ),
 	HUNTRESS( HeroSubClass.SNIPER, HeroSubClass.WARDEN ),
 	DUELIST( HeroSubClass.CHAMPION, HeroSubClass.MONK ),
+	CLERIC( HeroSubClass.PALADIN, HeroSubClass.PRIEST ),
 	RAT_KING(HeroSubClass.KING);
 
 	private HeroSubClass[] subClasses;
@@ -146,12 +151,16 @@ public enum HeroClass {
 				initHuntress( hero );
 				break;
 
-			case RAT_KING:
-				initRK(hero);
-				break;
-
 			case DUELIST:
 				initDuelist( hero );
+				break;
+
+			case CLERIC:
+				initCleric( hero );
+				break;
+
+			case RAT_KING:
+				initRK(hero);
 				break;
 		}
 
@@ -180,6 +189,8 @@ public enum HeroClass {
 				return Badges.Badge.MASTERY_HUNTRESS;
 			case DUELIST:
 				return Badges.Badge.MASTERY_DUELIST;
+			case CLERIC:
+				return Badges.Badge.MASTERY_CLERIC;
 			case RAT_KING:
 				return Badges.Badge.MASTERY_RAT_KING;
 		}
@@ -261,6 +272,22 @@ public enum HeroClass {
 		new ScrollOfMirrorImage().identify();
 	}
 
+	private static void initCleric( Hero hero ) {
+
+		(hero.belongings.weapon = new Cudgel()).identify();
+		hero.belongings.weapon.activate(hero);
+
+		HolyTome tome = new HolyTome();
+		hero.belongings.artifacts.add(tome);
+		tome.identify();
+		hero.belongings.artifacts.forEach(artifact -> artifact.activate(hero));
+
+		Dungeon.quickslot.setSlot(0, tome);
+
+		new PotionOfPurity().identify();
+		new ScrollOfRemoveCurse().identify();
+	}
+
 	private static void initRK( Hero hero ) {
 		MagesStaff staff;
 
@@ -330,6 +357,8 @@ public enum HeroClass {
 				return new ArmorAbility[]{new SpectralBlades(), new NaturesPower(), new SpiritHawk()};
 			case DUELIST:
 				return new ArmorAbility[]{new Challenge(), new ElementalStrike(), new Feint()};
+			case CLERIC:
+				return new ArmorAbility[]{new AscendedForm(), new Trinity(), new PowerOfMany()};
 			case RAT_KING:
 				return new ArmorAbility[]{new Ratmogrify(), new LegacyWrath()};
 		}
@@ -347,6 +376,8 @@ public enum HeroClass {
 				return Assets.Sprites.HUNTRESS;
 			case DUELIST:
 				return Assets.Sprites.DUELIST;
+			case CLERIC:
+				return Assets.Sprites.CLERIC;
 			case RAT_KING:
 				return Assets.Sprites.RAT_KING_HERO;
 		}
@@ -364,6 +395,8 @@ public enum HeroClass {
 				return Assets.Splashes.HUNTRESS;
 			case DUELIST:
 				return Assets.Splashes.DUELIST;
+			case CLERIC:
+				return Assets.Splashes.CLERIC;
 			case RAT_KING:
 				return Assets.Splashes.RATKING;
 		}

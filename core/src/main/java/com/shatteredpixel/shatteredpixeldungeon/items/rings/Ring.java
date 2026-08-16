@@ -198,7 +198,7 @@ public class Ring extends KindofMisc {
 			Notes.CustomRecord note = Notes.findCustomRecord(getClass());
 			if (note != null){
 				//we swap underscore(0x5F) with low macron(0x2CD) here to avoid highlighting in the item window
-				desc = Messages.get(this, "custom_note", note.title().replace('_', 'ˍ')) + "\n\n" + super.info();
+				desc = Messages.get(this, "custom_note", note.title().replace('_', '\u02CD')) + "\n\n" + super.info();
 			} else {
 				desc = super.info();
 			}

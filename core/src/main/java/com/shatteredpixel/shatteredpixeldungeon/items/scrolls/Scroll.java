@@ -87,9 +87,9 @@ public abstract class Scroll extends Item {
 	public String rune;
 
 	//affects how strongly on-scroll talents trigger from this scroll
-	protected float talentFactor = 1;
-//the chance (0-1) of whether on-scroll talents trigger from this potion
-	protected float talentChance = 1;
+	public float talentFactor = 1;
+	//the chance (0-1) of whether on-scroll talents trigger from this potion
+	public float talentChance = 1;
 
 	{
 		stackable = true;
@@ -203,7 +203,7 @@ public abstract class Scroll extends Item {
 		if (!anonymous) {
 			Catalog.countUse(getClass());
 			if (Random.Float() < talentChance) {
-				Talent.onScrollUsed(curUser, curUser.pos, talentFactor);
+				Talent.onScrollUsed(curUser, curUser.pos, getClass(), talentFactor);
 			}
 		}
 

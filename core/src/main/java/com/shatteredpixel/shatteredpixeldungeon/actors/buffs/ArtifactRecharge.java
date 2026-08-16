@@ -42,6 +42,10 @@ public class ArtifactRecharge extends Buff {
 
 	private float left;
 	public boolean ignoreHornOfPlenty;
+
+	public void extend( float value ){
+		left += value;
+	}
 	
 	@Override
 	public boolean act() {

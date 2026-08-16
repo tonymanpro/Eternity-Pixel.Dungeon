@@ -39,6 +39,10 @@ public class ArcaneArmor extends Buff {
 	
 	private long level = 0;
 	private int interval = 1;
+
+	public void delay( float value ){
+		postpone(value);
+	}
 	
 	@Override
 	public boolean act() {

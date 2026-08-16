@@ -100,7 +100,11 @@ public class Swiftthistle extends Plant {
 		}
 
 		public void reset(){
-			left = 7f;
+			reset(6);
+		}
+
+		public void reset(int turns){
+			left = turns + 1; //add 1 as we're spending it on our action
 		}
 
 		@Override
