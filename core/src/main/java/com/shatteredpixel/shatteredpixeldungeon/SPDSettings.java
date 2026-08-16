@@ -654,4 +654,33 @@ public static void playMusicInBackground( boolean value ){
     public static void customName( String value ){
         put( KEY_CUSTOM_HERO_NAME, value );
     }
+
+	// Loot Filter settings
+	public static final String KEY_LOOT_FILTER_MIN_RARITY = "loot_filter_min_rarity";
+	public static final String KEY_LOOT_FILTER_IGNORE_COMMON = "loot_filter_ignore_common";
+	public static final String KEY_LOOT_FILTER_AUTO_SCRAP = "loot_filter_auto_scrap";
+
+	public static void lootFilterMinRarity( int value ) {
+		put( KEY_LOOT_FILTER_MIN_RARITY, value );
+	}
+
+	public static int lootFilterMinRarity() {
+		return getInt( KEY_LOOT_FILTER_MIN_RARITY, 0 );
+	}
+
+	public static void lootFilterIgnoreCommon( boolean value ) {
+		put( KEY_LOOT_FILTER_IGNORE_COMMON, value );
+	}
+
+	public static boolean lootFilterIgnoreCommon() {
+		return getBoolean( KEY_LOOT_FILTER_IGNORE_COMMON, false );
+	}
+
+	public static void lootFilterAutoScrap( boolean value ) {
+		put( KEY_LOOT_FILTER_AUTO_SCRAP, value );
+	}
+
+	public static boolean lootFilterAutoScrap() {
+		return getBoolean( KEY_LOOT_FILTER_AUTO_SCRAP, false );
+	}
 }

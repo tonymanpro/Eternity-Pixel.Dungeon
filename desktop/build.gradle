@@ -53,8 +53,11 @@ jpackageImage.dependsOn release
 runtime {
     modules = ['java.base',
                'java.desktop',
+               'java.prefs',
+               'java.xml',
                'jdk.unsupported',
                'jdk.crypto.cryptoki',
+               'jdk.crypto.ec',
                'jdk.management']
     options = ['--strip-debug',
                '--compress', '2',

@@ -238,6 +238,21 @@ public class WndBag extends WndTabbed {
 			titleWidth = Math.min(titleWidth, amt.x);
 		}
 
+		IconButton btnFilter = new IconButton(Icons.get(Icons.TARGET)) {
+			@Override
+			public void onClick() {
+				GameScene.show(new WndLootFilter());
+			}
+			@Override
+			protected String hoverText() {
+				return Messages.get(WndLootFilter.class, "title");
+			}
+		};
+		btnFilter.setRect(titleWidth - 14, (TITLE_HEIGHT - 12) / 2f, 12, 12);
+		PixelScene.align(btnFilter);
+		add(btnFilter);
+		titleWidth -= 16;
+
 		String title = selector != null ? selector.textPrompt() : null;
 		RenderedTextBlock txtTitle = PixelScene.renderTextBlock(
 				title != null ? Messages.titleCase(title) : Messages.titleCase( bag.name() ), 8 );
@@ -530,6 +545,8 @@ public class WndBag extends WndTabbed {
 	private Image icon( Bag bag ) {
 		if (bag instanceof EquipmentBag) {
 			return Icons.get( Icons.TALENT);
+		} else if (bag instanceof JewelryBox) {
+			return Icons.get( Icons.CHAL_COUNT );
 		} else if (bag instanceof VelvetPouch) {
 			return Icons.get( Icons.SEED_POUCH );
 		} else if (bag instanceof ScrollHolder) {

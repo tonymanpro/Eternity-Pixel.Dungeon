@@ -32,3 +32,17 @@
   - Compilar JAR ejecutable: `.\gradlew.bat desktop:release`
   - Empaquetar ejecutable `.exe` nativo: `.\gradlew.bat desktop:jpackageImage`
   - Ejecutar en modo desarrollo: `.\gradlew.bat desktop:debug`
+
+---
+
+## 3. Reglas Obligatorias de Commits, Releases y Empaquetado
+
+> **REGLA 1 (Control de Commits)**: **Solo se realiza commit y push cuando el usuario lo solicite explícitamente.** No realizar commits anticipados o intermedios sin autorización directa.
+>
+> **REGLA 2 (Empaquetado y Release Obligatorio)**: Siempre que se solicite subir un commit al repositorio remoto:
+> 1. Compilar el JAR ejecutable (`.\gradlew.bat desktop:release`).
+> 2. Empaquetar el ejecutable nativo de Windows (`.\gradlew.bat desktop:jpackageImage`).
+> 3. Crear el paquete `.zip` de distribución para Windows (`desktop/build/Eternity-Pixel-Dungeon-v<VERSION>-Windows.zip`).
+> 4. Crear y subir el Git Tag correspondiente a la versión (`git tag -fa v<VERSION> -m "..."` y `git push origin v<VERSION>`).
+> 5. Generar y documentar las notas de Release / Package con la lista completa y detallada de todas las mejoras, nuevos héroes, mecánicas, ítems y cambios aplicados.
+

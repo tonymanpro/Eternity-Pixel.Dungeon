@@ -480,7 +480,11 @@ public class InventoryPane extends Component {
 	}
 
 	private Image bagIcon(Bag bag ) {
-		if (bag instanceof VelvetPouch) {
+		if (bag instanceof EquipmentBag) {
+			return Icons.get( Icons.TALENT );
+		} else if (bag instanceof JewelryBox) {
+			return Icons.get( Icons.CHAL_COUNT );
+		} else if (bag instanceof VelvetPouch) {
 			return Icons.get( Icons.SEED_POUCH );
 		} else if (bag instanceof ScrollHolder) {
 			return Icons.get( Icons.SCROLL_HOLDER );

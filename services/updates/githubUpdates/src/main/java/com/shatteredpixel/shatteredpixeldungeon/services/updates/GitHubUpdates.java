@@ -69,41 +69,44 @@ public class GitHubUpdates extends UpdateService {
 			@Override
 			public void handleHttpResponse(Net.HttpResponse httpResponse) {
 				try {
-					Bundle latestRelease = null;
+					com.badlogic.gdx.utils.JsonValue latestRelease = null;
 					int latestVersionCode = Game.versionCode;
 
-					for (Bundle b : Bundle.read( httpResponse.getResultAsStream() ).getBundleArray()){
-						Matcher m = versionCodePattern.matcher(b.getString("body"));
+					String rawJson = httpResponse.getResultAsString();
+					if (rawJson != null && rawJson.trim().startsWith("[")) {
+						com.badlogic.gdx.utils.JsonValue array = new com.badlogic.gdx.utils.JsonReader().parse(rawJson);
+						for (com.badlogic.gdx.utils.JsonValue b = array.child; b != null; b = b.next) {
+							String body = b.getString("body", "");
+							Matcher m = versionCodePattern.matcher(body);
 
-						if (m.find()){
-							int releaseVersion = Integer.parseInt(m.group(1));
+							if (m.find()){
+								int releaseVersion = Integer.parseInt(m.group(1));
 
-
-							//skip release that aren't the latest update (or an update at all)
-							if (releaseVersion <= latestVersionCode) {
-								continue;
-
-							// or that are betas when we haven't opted in
-							} else if (!includeBetas && !b.getBoolean("prerelease")){
-								continue;
-
-							// or that aren't compatible
-							} else if (DeviceCompat.isDesktop()){
-								Matcher minAndroid = minAndroidPattern.matcher(b.getString("body"));
-								if (minAndroid.find() && DeviceCompat.getPlatformVersion() < Integer.parseInt(minAndroid.group(1))){
+								//skip release that aren't the latest update (or an update at all)
+								if (releaseVersion <= latestVersionCode) {
 									continue;
-								}
-							} else if (DeviceCompat.isiOS()){
-								Matcher minIOS = minIOSPattern.matcher(b.getString("body"));
-								if (minIOS.find() && DeviceCompat.getPlatformVersion() < Integer.parseInt(minIOS.group(1))){
+
+								// or that are betas when we haven't opted in
+								} else if (!includeBetas && !b.getBoolean("prerelease", false)){
 									continue;
+
+								// or that aren't compatible
+								} else if (DeviceCompat.isDesktop()){
+									Matcher minAndroid = minAndroidPattern.matcher(body);
+									if (minAndroid.find() && DeviceCompat.getPlatformVersion() < Integer.parseInt(minAndroid.group(1))){
+										continue;
+									}
+								} else if (DeviceCompat.isiOS()){
+									Matcher minIOS = minIOSPattern.matcher(body);
+									if (minIOS.find() && DeviceCompat.getPlatformVersion() < Integer.parseInt(minIOS.group(1))){
+										continue;
+									}
 								}
+
+								latestRelease = b;
+								latestVersionCode = releaseVersion;
 							}
-
-							latestRelease = b;
-							latestVersionCode = releaseVersion;
 						}
-
 					}
 
 					if (latestRelease == null){
@@ -112,12 +115,16 @@ public class GitHubUpdates extends UpdateService {
 
 						AvailableUpdateData update = new AvailableUpdateData();
 
-						update.versionName = latestRelease.getString("name");
+						update.versionName = latestRelease.getString("name", "");
 						update.versionCode = latestVersionCode;
-						Matcher m = descPattern.matcher(latestRelease.getString("body"));
-						m.find();
-						update.desc = m.group(1);
-						update.URL = latestRelease.getString("html_url");
+						String body = latestRelease.getString("body", "");
+						Matcher m = descPattern.matcher(body);
+						if (m.find()) {
+							update.desc = m.group(1);
+						} else {
+							update.desc = "";
+						}
+						update.URL = latestRelease.getString("html_url", "");
 
 						callback.onUpdateAvailable(update);
 					}

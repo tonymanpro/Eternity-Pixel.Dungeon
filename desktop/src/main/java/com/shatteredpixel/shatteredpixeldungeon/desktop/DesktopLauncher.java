@@ -62,12 +62,14 @@ public class DesktopLauncher {
 			SharedLibraryLoader.is64Bit = System.getProperty("os.arch").contains("64") || System.getProperty("os.arch").startsWith("armv8");
 		}
 
-		final String title;
-		if (DesktopLauncher.class.getPackage().getSpecificationTitle() == null){
-			title = System.getProperty("Specification-Title");
-		} else {
-			title = DesktopLauncher.class.getPackage().getSpecificationTitle();
+		String titleStr = DesktopLauncher.class.getPackage().getSpecificationTitle();
+		if (titleStr == null){
+			titleStr = System.getProperty("Specification-Title");
 		}
+		if (titleStr == null || titleStr.trim().isEmpty()) {
+			titleStr = "Eternity Pixel Dungeon";
+		}
+		final String title = titleStr;
 		
 		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 			@Override
@@ -98,14 +100,14 @@ public class DesktopLauncher {
 					TinyFileDialogs.tinyfd_messageBox(title + " Has Crashed!",
 							title + " was not able to initialize its graphics display, sorry about that!\n\n" +
 									"This usually happens when your graphics card has misconfigured drivers or does not support openGL 2.0+.\n\n" +
-									"If you are certain the game should work on your computer, please message the developer (Evan@ShatteredPixel.com)\n\n" +
+									"If you are certain the game should work on your computer, please message the developer\n\n" +
 									"version: " + Game.version + "\n" +
 									exceptionMsg,
 							"ok", "error", false);
 				} else {
 					TinyFileDialogs.tinyfd_messageBox(title + " Has Crashed!",
 							title + " has run into an error it cannot recover from and has crashed, sorry about that!\n\n" +
-									"If you could, please email this error message to the developer (Evan@ShatteredPixel.com):\n\n" +
+									"If you could, please report this error message to the developer:\n\n" +
 									"version: " + Game.version + "\n" +
 									exceptionMsg,
 							"ok", "error", false);
@@ -118,11 +120,22 @@ public class DesktopLauncher {
 		if (Game.version == null) {
 			Game.version = System.getProperty("Specification-Version");
 		}
+		if (Game.version == null || Game.version.trim().isEmpty()) {
+			Game.version = "v0.2.2";
+		}
 		
-		try {
-			Game.versionCode = Integer.parseInt(DesktopLauncher.class.getPackage().getImplementationVersion());
-		} catch (NumberFormatException e) {
-			Game.versionCode = Integer.parseInt(System.getProperty("Implementation-Version"));
+		String vCodeStr = DesktopLauncher.class.getPackage().getImplementationVersion();
+		if (vCodeStr == null) {
+			vCodeStr = System.getProperty("Implementation-Version");
+		}
+		if (vCodeStr != null && !vCodeStr.trim().isEmpty()) {
+			try {
+				Game.versionCode = Integer.parseInt(vCodeStr.trim());
+			} catch (NumberFormatException e) {
+				Game.versionCode = 701;
+			}
+		} else {
+			Game.versionCode = 701;
 		}
 
 		if (UpdateImpl.supportsUpdates()){
@@ -143,7 +156,13 @@ public class DesktopLauncher {
 		if (vendor == null) {
 			vendor = System.getProperty("Implementation-Title");
 		}
-		vendor = vendor.split("\\.")[1];
+		if (vendor == null || vendor.trim().isEmpty()) {
+			vendor = "com.eternity.pixeldungeon";
+		}
+		if (vendor.contains(".")) {
+			String[] parts = vendor.split("\\.");
+			vendor = parts.length > 1 ? parts[1] : parts[0];
+		}
 
 		String basePath = "";
 		Files.FileType baseFileType = null;

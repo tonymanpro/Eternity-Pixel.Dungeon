@@ -169,7 +169,9 @@ public class Dungeon {
 		LORE_HALLS,
 		LORE_INFINITY,
 		CHEESY_CHEEST,
-        UTILITY_BAG;
+        UTILITY_BAG,
+		EQUIPMENT_BAG,
+		JEWELRY_BOX;
 
 		public int count = 0;
 

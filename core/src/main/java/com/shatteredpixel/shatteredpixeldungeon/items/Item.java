@@ -27,6 +27,7 @@ package com.shatteredpixel.shatteredpixeldungeon.items;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.SeasonalTasks;
 import com.shatteredpixel.shatteredpixeldungeon.Tasks;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
@@ -37,6 +38,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Degrade;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
+import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.effects.TargetedCell;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
@@ -303,6 +305,38 @@ public class Item implements Bundlable {
 	}
 
 	public boolean doPickUp(Hero hero, int pos, float time) {
+		if (!unique && !(this instanceof Gold)) {
+			boolean filtered = false;
+			if (SPDSettings.lootFilterIgnoreCommon() && (this instanceof com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon || this instanceof com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor) && level() <= 0 && (rarity == Rarity.NONE || rarity == Rarity.COMMON)) {
+				filtered = true;
+			}
+			int minRarityIdx = SPDSettings.lootFilterMinRarity();
+			if (minRarityIdx > 0) {
+				Rarity[] steps = { Rarity.NONE, Rarity.COMMON, Rarity.UNCOMMON, Rarity.RARE, Rarity.EPIC, Rarity.LEGENDARY, Rarity.MYTHICAL };
+				if (minRarityIdx < steps.length) {
+					Rarity req = steps[minRarityIdx];
+					if (rarity.ordinal() > req.ordinal()) { // Rarity.NONE has highest ordinal (174), FIERY has lowest (111)
+						filtered = true;
+					}
+				}
+			}
+
+			if (filtered) {
+				if (SPDSettings.lootFilterAutoScrap()) {
+					long goldVal = Math.max(1, value());
+					Gold g = new Gold(goldVal);
+					g.collect(hero.belongings.backpack);
+					GameScene.pickUp(this, pos);
+					Sample.INSTANCE.play(Assets.Sounds.GOLD);
+					CellEmitter.get(pos).burst(Speck.factory(Speck.COIN), 6);
+					if (time > 0f) hero.spendAndNext(time);
+					return true;
+				} else {
+					return false;
+				}
+			}
+		}
+
 		if (collect( hero.belongings.backpack )) {
 			
 			GameScene.pickUp( this, pos );

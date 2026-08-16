@@ -3,10 +3,10 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2023 Evan Debenham
+ * Copyright (C) 2014-2024 Evan Debenham
  *
- * Experienced Pixel Dungeon
- * Copyright (C) 2019-2024 Trashbox Bobylev
+ * Eternity Pixel Dungeon
+ * Copyright (C) 2024-2026
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,29 +26,34 @@ package com.shatteredpixel.shatteredpixeldungeon.items.bags;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
-import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.Artifact;
+import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
+import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.Trinket;
+import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.TrinketCatalyst;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 
-public class EquipmentBag extends Bag {
+public class JewelryBox extends Bag {
+
 	{
-		image = ItemSpriteSheet.BACKPACK;
-	}
-	public int capacity(){
-		return 60;
+		image = ItemSpriteSheet.CHEST;
 	}
 
 	@Override
-	public boolean canHold(Item item) {
-		if (item instanceof Weapon || item instanceof Armor) {
+	public boolean canHold( Item item ) {
+		if (item instanceof Ring || item instanceof Artifact || item instanceof Trinket || item instanceof TrinketCatalyst) {
 			return super.canHold(item);
 		} else {
 			return false;
 		}
 	}
 
+	public int capacity(){
+		return 40;
+	}
+
 	@Override
 	public long value() {
-		return 80;
+		return 60;
 	}
+
 }
