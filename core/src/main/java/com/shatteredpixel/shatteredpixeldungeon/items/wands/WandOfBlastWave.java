@@ -291,5 +291,13 @@ public class WandOfBlastWave extends DamageWand {
 			b.reset(pos, radius);
 		}
 
+		public static void blast(int pos, float radius, int color) {
+			Group parent = Dungeon.hero.sprite.parent;
+			BlastWave b = (BlastWave) parent.recycle(BlastWave.class);
+			parent.bringToFront(b);
+			b.reset(pos, radius);
+			b.hardlight(color);
+		}
+
 	}
 }

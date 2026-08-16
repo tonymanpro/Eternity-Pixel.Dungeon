@@ -61,7 +61,10 @@ import com.shatteredpixel.shatteredpixeldungeon.items.bombs.Noisemaker;
 import com.shatteredpixel.shatteredpixeldungeon.items.bombs.RegrowthBomb;
 import com.shatteredpixel.shatteredpixeldungeon.items.bombs.ShockBomb;
 import com.shatteredpixel.shatteredpixeldungeon.items.bombs.ShrapnelBomb;
+import com.shatteredpixel.shatteredpixeldungeon.items.bombs.SmokeBomb;
 import com.shatteredpixel.shatteredpixeldungeon.items.bombs.WoollyBomb;
+import com.shatteredpixel.shatteredpixeldungeon.items.quest.EscapeCrystal;
+import com.shatteredpixel.shatteredpixeldungeon.items.remains.TornPage;
 import com.shatteredpixel.shatteredpixeldungeon.items.emblem.CommonEmblem;
 import com.shatteredpixel.shatteredpixeldungeon.items.emblem.EpicEmblem;
 import com.shatteredpixel.shatteredpixeldungeon.items.emblem.LaserisedEmblem;
@@ -324,7 +327,7 @@ public enum Catalog {
 
 		BOMBS.addItems( Bomb.class, FrostBomb.class, Firebomb.class, Flashbang.class, RegrowthBomb.class,
 				WoollyBomb.class, Noisemaker.class, ShockBomb.class, HolyBomb.class, ArcaneBomb.class, ShrapnelBomb.class, IdentificationBomb.class,
-                ExperienceBomb.class);
+                ExperienceBomb.class, SmokeBomb.class);
 
 		TIPPED_DARTS.addItems(TippedDart.types.values().toArray(new Class[0]));
 
@@ -355,7 +358,7 @@ public enum Catalog {
 				GooBlob.class, TengusMask.class, MetalShard.class, KingsCrown.class,
 				LiquidMetal.class, ArcaneResin.class, TicketToArena.class,
 				SealShard.class, BrokenStaff.class, CloakScrap.class, BowFragment.class, BrokenHilt.class,
-				CreativeGloves.class, Clayball.class, KeyToTruth.class);
+				CreativeGloves.class, Clayball.class, KeyToTruth.class, EscapeCrystal.class, TornPage.class);
 
         EMBLEMS.addItems(
                 CommonEmblem.class, UncommonEmblem.class, RareEmblem.class, EpicEmblem.class,

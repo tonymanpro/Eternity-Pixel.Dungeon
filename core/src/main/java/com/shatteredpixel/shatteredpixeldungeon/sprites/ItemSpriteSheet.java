@@ -209,6 +209,7 @@ public class ItemSpriteSheet {
 	public static final int NEW_TENGU_BOMB  = BOMBS+12;
 	public static final int IDENTIFY_BOMB   = BOMBS+13;
     public static final int EXP_BOMB      = BOMBS+14;
+	public static final int SMOKE_BOMB      = BOMBS+15;
 
 	static{
 		assignItemRect(BOMB,            10, 13);
@@ -226,6 +227,7 @@ public class ItemSpriteSheet {
 		assignItemRect(NEW_TENGU_BOMB,  9,  15);
 		assignItemRect(IDENTIFY_BOMB,   14, 16);
         assignItemRect(EXP_BOMB,      13, 12);
+		assignItemRect(SMOKE_BOMB,    13, 12);
 	}
 
 	private static final int FISHING_HOOKS = xy(16, 5);
@@ -563,6 +565,7 @@ public class ItemSpriteSheet {
 	public static final int CHAOTIC_CENSER  = TRINKETS+14;
     public static final int FERRET_TUFT     = TRINKETS+15;
     public static final int STAIRCASE_TOTEM  = TRINKETS+16;
+	public static final int SPYGLASS        = TRINKETS+17;
 	static{
 		assignItemRect(RAT_SKULL,       16, 11);
 		assignItemRect(PARCHMENT_SCRAP, 10, 14);
@@ -580,7 +583,8 @@ public class ItemSpriteSheet {
 		assignItemRect(OBLIVION_SHARD,  7,  14);
 		assignItemRect(CHAOTIC_CENSER,  13, 15);
         assignItemRect(FERRET_TUFT,     16, 15);
-        assignItemRect(STAIRCASE_TOTEM,     16, 16);
+        assignItemRect(STAIRCASE_TOTEM, 16, 16);
+		assignItemRect(SPYGLASS,        15, 15);
 	}
 
 	private static final int SCROLLS        =                               xy(1, 19);  //16 slots
@@ -639,6 +643,7 @@ public class ItemSpriteSheet {
 	public static final int STONE_INTUITION     = STONES+10;
 	public static final int STONE_SHOCK         = STONES+11;
     public static final int STONE_EMPOWER         = STONES+12;
+	public static final int STONE_DETECT_MAGIC  = STONES+13;
 	static {
 		for (int i = STONES; i < STONES+16; i++)
 			assignItemRect(i, 14, 12);
@@ -845,6 +850,7 @@ public class ItemSpriteSheet {
 	public static final int ENDERIUM = QUEST+11;
 	public static final int ENERGITE = QUEST+12;
 	public static final int BLUEPRINT = QUEST+13;
+	public static final int ESCAPE   = QUEST+14;
 	public static final int SKULL = QUEST+0;
 	static{
 		assignItemRect(DUST,    12, 11);
@@ -861,6 +867,7 @@ public class ItemSpriteSheet {
 		assignItemRect(ENERGITE,    12, 14);
 		assignItemRect(SKULL, 16, 11);
 		assignItemRect(BLUEPRINT,    10, 11);
+		assignItemRect(ESCAPE,        8, 16);
 	}
 
 	private static final int BAGS       =                                   xy(1, 31);  //16 slots
@@ -922,7 +929,8 @@ public class ItemSpriteSheet {
 	public static final int CAVES_PAGE  = DOCUMENTS+4;
 	public static final int CITY_PAGE   = DOCUMENTS+5;
 	public static final int HALLS_PAGE  = DOCUMENTS+6;
-    public static final int INFO_PAGE  = DOCUMENTS+7;
+    public static final int INFO_PAGE   = DOCUMENTS+7;
+	public static final int TORN_PAGE   = DOCUMENTS+8;
 	static{
 		assignItemRect(GUIDE_PAGE,  10, 11);
 		assignItemRect(ALCH_PAGE,   10, 11);
@@ -931,7 +939,8 @@ public class ItemSpriteSheet {
 		assignItemRect(CAVES_PAGE,  10, 11);
 		assignItemRect(CITY_PAGE,   10, 11);
 		assignItemRect(HALLS_PAGE,  10, 11);
-        assignItemRect(INFO_PAGE,  10, 11);
+        assignItemRect(INFO_PAGE,   10, 11);
+		assignItemRect(TORN_PAGE,   11, 13);
 	}
 
 	private static final int SPELLS_NEW_ROW =								xy(1, 33);

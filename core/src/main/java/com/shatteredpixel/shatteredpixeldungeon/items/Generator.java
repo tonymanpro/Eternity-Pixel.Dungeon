@@ -118,6 +118,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfBlast;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfBlink;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfClairvoyance;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfDeepSleep;
+import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfDetectMagic;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfDisarming;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfEmpowerment;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfEnchantment;
@@ -134,6 +135,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.test_tubes.TubeOfTranscend
 import com.shatteredpixel.shatteredpixeldungeon.items.test_tubes.TubeOfUltimatePower;
 import com.shatteredpixel.shatteredpixeldungeon.items.test_tubes.Tubes;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.ChaoticCenser;
+import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.CrackedSpyglass;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.DimensionalSundial;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.ExoticCrystals;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.EyeOfNewt;
@@ -421,9 +423,10 @@ public class Generator {
 					StoneOfBlast.class,
 					StoneOfFear.class,
 					StoneOfAugmentation.class, //1 is sold in each shop
-                    StoneOfEmpowerment.class   //too op if common
+                    StoneOfEmpowerment.class,  //too op if common
+					StoneOfDetectMagic.class
 			};
-			STONE.defaultProbs = new float[]{ 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 1 };
+			STONE.defaultProbs = new float[]{ 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 1, 2 };
 			STONE.probs = STONE.defaultProbs.clone();
 
             TUBES.classes = new Class<?>[] {
@@ -644,9 +647,10 @@ public class Generator {
 					ShardOfOblivion.class,
                     ChaoticCenser.class,
                     FerretTuft.class,
-                    StaircaseTotem.class
+                    StaircaseTotem.class,
+					CrackedSpyglass.class
 			};
-			TRINKET.defaultProbs = new float[]{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+			TRINKET.defaultProbs = new float[]{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
 			TRINKET.probs = TRINKET.defaultProbs.clone();
 
 			MODULE.classes = new Class<?>[]{

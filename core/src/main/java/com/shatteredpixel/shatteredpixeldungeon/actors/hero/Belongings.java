@@ -104,6 +104,15 @@ public class Belongings implements Iterable<Item> {
 	//used by the champion subclass
 	public KindOfWeapon secondWep = null;
 
+	public void clear(){
+		backpack.clear();
+		weapon = secondWep = null;
+		armor = null;
+		artifacts.clear();
+		miscs.clear();
+		rings.clear();
+	}
+
 	//*** these accessor methods are so that worn items can be affected by various effects/debuffs
 	// we still want to access the raw equipped items in cases where effects should be ignored though,
 	// such as when equipping something, showing an interface, or dealing with items from a dead hero
