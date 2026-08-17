@@ -120,7 +120,14 @@
           <div class="form-row">
             <div class="form-group">
               <label class="form-label" data-i18n="admin.image_url">Cover Image URL</label>
-              <input type="url" id="f-image" class="form-input" placeholder="https://...">
+              <div style="display:flex; gap:8px;">
+                <input type="url" id="f-image" class="form-input" placeholder="https://..." style="flex:1;">
+                <label class="btn btn-outline" style="cursor:pointer; white-space:nowrap; font-size:11px; display:inline-flex; align-items:center;">
+                  📁 Upload
+                  <input type="file" id="f-image-file" accept="image/*" style="display:none;">
+                </label>
+              </div>
+              <span id="image-upload-status" style="font-family:var(--font-mono); font-size:11px; color:var(--accent-gold); display:block; margin-top:4px;"></span>
             </div>
             <div class="form-group">
               <label class="form-label" data-i18n="admin.tags">Tags (comma-separated)</label>
@@ -255,6 +262,23 @@
     hide($('cancel-edit-btn'));
     i18n.applyAll($('section-new-post'));
     document.querySelector('[data-section="posts"]').click();
+  });
+
+  // ── Cover Image Upload to Firebase Storage ──────────────────────────
+  $('f-image-file').addEventListener('change', async e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const status = $('image-upload-status');
+    status.textContent = 'Uploading to Firebase Storage...';
+    try {
+      const downloadUrl = await EPD.uploadImage(file, 'covers');
+      $('f-image').value = downloadUrl;
+      status.textContent = '✓ Uploaded successfully to Firebase Storage!';
+      setTimeout(() => { status.textContent = ''; }, 4000);
+    } catch (err) {
+      console.error(err);
+      status.textContent = '❌ Upload failed: ' + (err.message || 'Error');
+    }
   });
 
   // ── Post Form Submit ─────────────────────────────────────────────────

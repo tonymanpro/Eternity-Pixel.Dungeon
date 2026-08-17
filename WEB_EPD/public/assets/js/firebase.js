@@ -1,6 +1,6 @@
 /**
  * firebase.js — Eternity Pixel Dungeon Website
- * Firebase initialization + Firestore + Analytics helpers.
+ * Firebase initialization + Firestore (eternitypd) + Storage + Analytics helpers.
  * Project: eternity-pixel-dungeon
  */
 
@@ -9,6 +9,8 @@ import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.0/fir
 import { getAnalytics }     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
 import { getFirestore, collection, getDocs, getDoc, doc, addDoc, updateDoc, deleteDoc, query, orderBy, limit, Timestamp }
                             from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject }
+                            from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
                             from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
@@ -23,16 +25,53 @@ const firebaseConfig = {
   measurementId:     "G-Y25SVBBP8L"
 };
 
-// ── Init ─────────────────────────────────────────────────────────────────────
+// ── Init Services ────────────────────────────────────────────────────────────
 const app       = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
-const db        = getFirestore(app);
+// Explicitly initialize custom Firestore database 'eternitypd'
+const db        = getFirestore(app, "eternitypd");
+// Explicitly initialize Cloud Storage bucket 'gs://eternity-pixel-dungeon.firebasestorage.app'
+const storage   = getStorage(app, "gs://eternity-pixel-dungeon.firebasestorage.app");
 const auth      = getAuth(app);
 
-// Expose config so other scripts can detect real vs placeholder setup
+// Expose config so other scripts can detect real setup
 window.firebaseConfig = firebaseConfig;
 
-// ── Posts Helpers ─────────────────────────────────────────────────────────────
+// ── Storage Helpers ──────────────────────────────────────────────────────────
+
+/**
+ * Upload an image/file to Firebase Storage bucket.
+ * @param {File} file
+ * @param {string} [folder='covers']
+ * @returns {Promise<string>} Download URL
+ */
+async function uploadImage(file, folder = 'covers') {
+  try {
+    const cleanName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+    const fileRef = ref(storage, `${folder}/${cleanName}`);
+    const snapshot = await uploadBytes(fileRef, file);
+    const downloadUrl = await getDownloadURL(snapshot.ref);
+    return downloadUrl;
+  } catch (e) {
+    console.error('uploadImage error:', e);
+    throw e;
+  }
+}
+
+/**
+ * Delete a file from Firebase Storage.
+ * @param {string} pathOrUrl
+ */
+async function deleteStorageFile(pathOrUrl) {
+  try {
+    const fileRef = ref(storage, pathOrUrl);
+    await deleteObject(fileRef);
+  } catch (e) {
+    console.error('deleteStorageFile error:', e);
+  }
+}
+
+// ── Posts Helpers (Firestore database: eternitypd) ───────────────────────────
 
 /**
  * Fetch latest N posts, ordered by date descending.
@@ -127,7 +166,8 @@ function onAuth(callback) {
 // ── Exports (global for non-module pages) ────────────────────────────────────
 window.EPD = window.EPD || {};
 Object.assign(window.EPD, {
-  db, auth,
+  db, auth, storage,
+  uploadImage, deleteStorageFile,
   getLatestPosts, getAllPosts, getPost, savePost, deletePost,
   signIn, logOut, onAuth,
   Timestamp

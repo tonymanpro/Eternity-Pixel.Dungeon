@@ -41,8 +41,14 @@
     "cleanUrls": true,
     "trailingSlash": false
   },
-  "firestore": {
-    "rules": "firestore.rules",
-    "indexes": "firestore.indexes.json"
+  "firestore": [
+    {
+      "database": "eternitypd",
+      "rules": "firestore.rules",
+      "indexes": "firestore.indexes.json"
+    }
+  ],
+  "storage": {
+    "rules": "storage.rules"
   }
 }
