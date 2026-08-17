@@ -21,8 +21,11 @@ Cada vez que el usuario solicite realizar un commit y subir los cambios al repos
 2. **Compilación de Artefactos**:
    - JAR Release: `$env:JAVA_HOME = "C:\Program Files\Eclipse Adoptium\jdk-17.0.20.8-hotspot"; .\gradlew.bat desktop:release`
    - Ejecutable Nativo de Windows: `.\gradlew.bat desktop:jpackageImage`
+   - APK Android Release: `.\gradlew.bat android:assembleRelease`
+   - APK Android Debug: `.\gradlew.bat android:assembleDebug`
 3. **Generación del Paquete de Distribución**:
-   - Comprimir el ejecutable: `Compress-Archive -Path "desktop/build/jpackage/Eternity Pixel Dungeon/*" -DestinationPath "desktop/build/Eternity-Pixel-Dungeon-v<VERSION>-Windows.zip" -Force`
+   - Comprimir el ejecutable de Windows: `Compress-Archive -Path "desktop/build/jpackage/Eternity Pixel Dungeon/*" -DestinationPath "desktop/build/Eternity-Pixel-Dungeon-v<VERSION>-Windows.zip" -Force`
+   - Artefacto APK Android: `android/build/outputs/apk/release/android-release-unsigned.apk`
 4. **Publicación y Tagging**:
    - Subir el commit a la rama principal: `git push origin main`
    - Crear y subir el Git Tag: `git tag -fa v<VERSION> -m "Eternity Pixel Dungeon v<VERSION> - <Resumen>"` y `git push origin v<VERSION>`

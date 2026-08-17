@@ -29,10 +29,6 @@ android {
         debug {
             applicationIdSuffix ".indev"
             versionNameSuffix '-INDEV'
-            dependencies {
-                debugImplementation project(':services:updates:debugUpdates')
-                //debugImplementation project(':services:news:debugNews')
-            }
         }
         release {
 
@@ -43,11 +39,6 @@ android {
             shrinkResources true
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-
-            dependencies {
-                releaseImplementation project(':services:updates:githubUpdates')
-                releaseImplementation project(':services:news:ingameNews')
-            }
         }
     }
 
@@ -76,6 +67,10 @@ dependencies {
     natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86"
     natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86_64"
     implementation "com.badlogicgames.gdx-controllers:gdx-controllers-android:$gdxControllersVersion"
+
+    debugImplementation project(':services:updates:debugUpdates')
+    releaseImplementation project(':services:updates:githubUpdates')
+    releaseImplementation project(':services:news:ingameNews')
 }
 
 // called every time gradle gets executed, takes the native dependencies of

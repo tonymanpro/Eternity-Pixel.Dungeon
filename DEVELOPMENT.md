@@ -15,6 +15,11 @@ Bienvenido a la guía técnica oficial para el desarrollo, compilación, depurac
 ## ☕ 1. Requisitos Previos del Entorno
 
 - **Java Development Kit (JDK)**: Requiere **Java 17+** (Adoptium Temurin Hotspot 17).
+- **Android SDK** (para compilar APKs): Ruta típica en Windows `C:\Users\<usuario>\AppData\Local\Android\Sdk`.
+  - Debe existir el archivo `local.properties` en la raíz con la línea:
+    ```properties
+    sdk.dir=C\:\\Users\\antho\\AppData\\Local\\Android\\Sdk
+    ```
 - **Variable de Entorno (PowerShell en Windows)**:
   Antes de ejecutar cualquier comando de Gradle, asegúrate de tener configurado tu `JAVA_HOME`:
   ```powershell
@@ -31,6 +36,8 @@ Bienvenido a la guía técnica oficial para el desarrollo, compilación, depurac
 | `.\gradlew.bat desktop:release` | Compila el archivo universal ejecutable `.jar`. | `desktop/build/libs/desktop-v<VERSION>.jar` |
 | `.\gradlew.bat desktop:jpackageImage` | Empaqueta el ejecutable nativo de Windows (`.exe`) con JRE 17 embebido. | `desktop/build/Eternity-Pixel-Dungeon/` |
 | `.\gradlew.bat desktop:autoTest` | Ejecuta la suite de pruebas automatizadas y el bot IA en modo Headless. | Reporte en consola y archivo de log |
+| `.\gradlew.bat android:assembleDebug` | Compila el paquete APK de depuración para Android. | `android/build/outputs/apk/debug/android-debug.apk` |
+| `.\gradlew.bat android:assembleRelease` | Compila el paquete APK optimizado (R8) para distribución Android. | `android/build/outputs/apk/release/android-release-unsigned.apk` |
 
 ---
 

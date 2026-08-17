@@ -27,11 +27,14 @@
 ## 2. Entorno de Compilación y Ejecución
 
 - **Java SDK**: Requiere Java 17+ (Adoptium Temurin Hotspot 17).
+- **Android SDK**: Requiere `local.properties` con `sdk.dir` apuntando al SDK de Android.
 - **Variable de entorno**: Configurar siempre `$env:JAVA_HOME = "C:\Program Files\Eclipse Adoptium\jdk-17.0.20.8-hotspot"` antes de invocar `.\gradlew.bat`.
 - **Comandos Principales**:
-  - Compilar JAR ejecutable: `.\gradlew.bat desktop:release`
-  - Empaquetar ejecutable `.exe` nativo: `.\gradlew.bat desktop:jpackageImage`
+  - Compilar JAR ejecutable Desktop: `.\gradlew.bat desktop:release`
+  - Empaquetar ejecutable `.exe` nativo Windows: `.\gradlew.bat desktop:jpackageImage`
   - Ejecutar en modo desarrollo: `.\gradlew.bat desktop:debug`
+  - Compilar APK Android Debug: `.\gradlew.bat android:assembleDebug`
+  - Compilar APK Android Release: `.\gradlew.bat android:assembleRelease`
 
 ---
 
