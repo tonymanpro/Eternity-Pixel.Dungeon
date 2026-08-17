@@ -72,6 +72,9 @@ public class WndHeroInfo extends WndTabbed {
 			case DUELIST:
 				tabIcon = new ItemSprite(ItemSpriteSheet.RAPIER, null);
 				break;
+			case CLERIC:
+				tabIcon = new ItemSprite(ItemSpriteSheet.ARTIFACT_TOME, null);
+				break;
 		}
 
 		int finalHeight = MIN_HEIGHT;
@@ -204,9 +207,15 @@ public class WndHeroInfo extends WndTabbed {
 							new ItemSprite(ItemSpriteSheet.THROWING_SPIKE),
 							new ItemSprite(ItemSpriteSheet.SCROLL_ISAZ)};
 					break;
+				case CLERIC:
+					icons = new Image[]{ new ItemSprite(ItemSpriteSheet.ARTIFACT_TOME),
+							new TalentIcon(Talent.HOLY_INTUITION),
+							new ItemSprite(ItemSpriteSheet.CUDGEL),
+							new ItemSprite(ItemSpriteSheet.SCROLL_ISAZ)};
+					break;
 			}
 			for (Image im : icons) {
-				add(im);
+				if (im != null) add(im);
 			}
 
 		}
@@ -223,8 +232,10 @@ public class WndHeroInfo extends WndTabbed {
 				info[i].maxWidth((int)width - 20);
 				info[i].setPos(20, pos);
 
-				icons[i].x = (20-icons[i].width())/2;
-				icons[i].y = info[i].top() + (info[i].height() - icons[i].height())/2;
+				if (i < icons.length && icons[i] != null) {
+					icons[i].x = (20-icons[i].width())/2;
+					icons[i].y = info[i].top() + (info[i].height() - icons[i].height())/2;
+				}
 
 				pos = info[i].bottom() + 4*MARGIN;
 			}
@@ -292,6 +303,14 @@ public class WndHeroInfo extends WndTabbed {
 							new TalentIcon(Talent.DIRECTED_POWER)
 					};
 					break;
+				case CLERIC:
+					icons = new Image[]{ new TalentIcon(Talent.SATIATED_SPELLS),
+							new TalentIcon(Talent.HOLY_INTUITION),
+							new TalentIcon(Talent.SEARING_LIGHT),
+							new TalentIcon(Talent.RECALL_INSCRIPTION),
+							new TalentIcon(Talent.SHIELD_OF_LIGHT)
+					};
+					break;
 				case RAT_KING:
 					icons = new Image[]{ new ItemSprite(ItemSpriteSheet.ARMOR_RAT_KING),
 							new ItemSprite(ItemSpriteSheet.ARMOR_RAT_KING),
@@ -303,7 +322,7 @@ public class WndHeroInfo extends WndTabbed {
 					break;
 			}
 			for (Image im : icons) {
-				add(im);
+				if (im != null) add(im);
 			}
 
 		}
@@ -320,8 +339,10 @@ public class WndHeroInfo extends WndTabbed {
 				info[i].maxWidth((int)width - 20);
 				info[i].setPos(20, pos);
 
-				icons[i].x = (20-icons[i].width())/2;
-				icons[i].y = info[i].top() + (info[i].height() - icons[i].height())/2;
+				if (i < icons.length && icons[i] != null) {
+					icons[i].x = (20-icons[i].width())/2;
+					icons[i].y = info[i].top() + (info[i].height() - icons[i].height())/2;
+				}
 
 				pos = info[i].bottom() + 4*MARGIN;
 			}

@@ -1,0 +1,23 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Posts: public read, only authenticated write
+    match /posts/{postId} {
+      allow read:  if true;
+      allow write: if request.auth != null;
+    }
+
+    // Changelog: public read only
+    match /changelog/{id} {
+      allow read:  if true;
+      allow write: if request.auth != null;
+    }
+
+    // Deny everything else
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

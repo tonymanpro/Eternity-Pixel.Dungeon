@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post — Eternity Pixel Dungeon</title>
+  <link rel="icon" href="assets/images/favicon.png">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    .post-header { padding: calc(var(--nav-h) + 48px) 0 32px; background: var(--bg-main); border-bottom: 1px solid var(--border); }
+    .post-header-tags { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
+    .post-title { font-family: var(--font-mono); font-size: clamp(20px,3vw,32px); font-weight:700; color: var(--text-bright); line-height: 1.3; margin-bottom:12px; }
+    .post-meta { font-family: var(--font-mono); font-size:13px; color:var(--text-muted); }
+    .post-hero-img { width:100%; max-height:400px; object-fit:cover; border-radius: var(--radius-md); margin: 32px 0; image-rendering:pixelated; border:1px solid var(--border); }
+    .markdown-content { font-size:16px; line-height:1.8; color:var(--text-main); max-width:760px; }
+    .markdown-content h1,.markdown-content h2,.markdown-content h3 { font-family:var(--font-mono); color:var(--text-bright); margin:32px 0 16px; }
+    .markdown-content h2 { color:var(--accent-gold); border-bottom:1px solid var(--border); padding-bottom:8px; }
+    .markdown-content p { margin-bottom:16px; }
+    .markdown-content ul,.markdown-content ol { margin: 0 0 16px 24px; }
+    .markdown-content li { margin-bottom:6px; }
+    .markdown-content code { background:var(--bg-card); border:1px solid var(--border); border-radius:3px; padding:2px 6px; font-family:var(--font-mono); font-size:13px; color:var(--accent-gold); }
+    .markdown-content pre { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); padding:20px; overflow-x:auto; margin-bottom:20px; }
+    .markdown-content pre code { background:none; border:none; padding:0; }
+    .markdown-content blockquote { border-left:3px solid var(--accent-gold); padding:12px 20px; margin:20px 0; background:rgba(232,185,79,0.05); color:var(--text-muted); }
+    .markdown-content img { max-width:100%; border-radius:var(--radius-md); }
+    .post-loading { padding: 80px 0; text-align:center; color:var(--text-muted); font-family:var(--font-mono); }
+  </style>
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <div class="container navbar-inner">
+    <a class="navbar-logo" href="index.html">
+      <img src="assets/images/favicon.png" alt="EPD">
+      <span class="navbar-logo-text">ETERNITY PIXEL DUNGEON<span data-i18n="hero.tag">Roguelike · Open Source</span></span>
+    </a>
+    <ul class="navbar-links">
+      <li><a href="game.html"      data-i18n="nav.game">The Game</a></li>
+      <li><a href="blog.html" class="active" data-i18n="nav.blog">Blog</a></li>
+      <li><a href="changelog.html" data-i18n="nav.changelog">Changelog</a></li>
+      <li><a href="about.html"     data-i18n="nav.about">About</a></li>
+    </ul>
+    <div class="navbar-actions">
+      <div class="lang-toggle">
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <button class="lang-btn"        data-lang="es">ES</button>
+      </div>
+      <button class="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+
+<div id="post-content">
+  <div class="post-loading" data-i18n="blog.loading">Loading post...</div>
+</div>
+
+<div style="padding: 32px 0; background:var(--bg-main); border-top:1px solid var(--border); margin-top:64px;">
+  <div class="container">
+    <a href="blog.html" class="btn btn-ghost">← <span data-i18n="nav.blog">Blog</span></a>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-bottom">
+      <span class="footer-copyright" data-i18n="footer.copyright">© 2026 Eternity Pixel Dungeon. GPL-3.0 License.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/i18n.js"></script>
+<script type="module" src="assets/js/firebase.js"></script>
+<script src="assets/js/blog.js" defer></script>
+<script src="assets/js/main.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    if (window.EPD && window.EPD.renderSinglePost) {
+      EPD.renderSinglePost();
+    } else {
+      document.getElementById('post-content').innerHTML = '<p class="post-loading">Firebase not configured. <a href="blog.html">← Back to Blog</a></p>';
+    }
+  });
+</script>
+</body>
+</html>

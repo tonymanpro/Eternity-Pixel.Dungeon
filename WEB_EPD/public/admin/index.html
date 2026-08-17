@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Eternity Pixel Dungeon</title>
+  <link rel="icon" href="../assets/images/favicon.png">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    body { background: var(--bg-deep); }
+    #login-screen { display: flex; }
+    #admin-screen { display: none; }
+    .admin-layout { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
+    .admin-sidebar { background: var(--bg-card); border-right: 1px solid var(--border); padding: 32px 24px; }
+    .admin-sidebar-logo { font-family:var(--font-pixel); font-size:9px; color:var(--accent-gold); line-height:1.8; margin-bottom:32px; padding-bottom:24px; border-bottom:1px solid var(--border); }
+    .admin-menu { display:flex; flex-direction:column; gap:4px; }
+    .admin-menu-btn { display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:var(--radius-sm); background:none; border:none; color:var(--text-nav); font-family:var(--font-mono); font-size:13px; cursor:pointer; transition:all var(--transition); text-align:left; width:100%; }
+    .admin-menu-btn:hover, .admin-menu-btn.active { background:rgba(232,185,79,0.08); color:var(--accent-gold); }
+    .admin-main { padding: 40px; overflow-y:auto; }
+    .admin-section { display:none; }
+    .admin-section.active { display:block; }
+    .admin-section-title { font-family:var(--font-pixel); font-size:12px; color:var(--accent-gold); margin-bottom:24px; letter-spacing:2px; padding-bottom:16px; border-bottom:1px solid var(--border); }
+    .post-form { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); padding:32px; }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+    .admin-posts-list { display:flex; flex-direction:column; gap:12px; }
+    .admin-post-item { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); padding:20px 24px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+    .admin-post-info { flex:1; }
+    .admin-post-title { font-family:var(--font-mono); font-weight:700; color:var(--text-bright); font-size:14px; }
+    .admin-post-date { font-size:12px; color:var(--text-muted); font-family:var(--font-mono); }
+    .admin-post-actions { display:flex; gap:8px; flex-shrink:0; }
+    @media (max-width:768px) {
+      .admin-layout { grid-template-columns:1fr; }
+      .admin-sidebar { padding:20px; }
+      .form-row { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══ LOGIN SCREEN ═══ -->
+<div id="login-screen" class="admin-login">
+  <div class="admin-card">
+    <h1 class="admin-title" data-i18n="admin.login_title">ADMIN<br>PANEL</h1>
+    <form id="login-form">
+      <div class="form-group">
+        <label class="form-label" for="email" data-i18n="admin.email">Email</label>
+        <input type="email" id="email" class="form-input" autocomplete="email" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="password" data-i18n="admin.password">Password</label>
+        <input type="password" id="password" class="form-input" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;" data-i18n="admin.sign_in">Sign In</button>
+      <div id="login-error" style="color:var(--accent-ruby); font-size:13px; margin-top:12px; font-family:var(--font-mono); display:none;"></div>
+    </form>
+    <p style="text-align:center; margin-top:20px;"><a href="../index.html" style="font-size:12px; color:var(--text-muted);">← Back to site</a></p>
+  </div>
+</div>
+
+<!-- ═══ ADMIN SCREEN ═══ -->
+<div id="admin-screen">
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+      <div class="admin-sidebar-logo">ETERNITY<br>PIXEL DUNGEON<br><span style="color:var(--text-muted); font-size:7px;">ADMIN PANEL</span></div>
+      <nav class="admin-menu">
+        <button class="admin-menu-btn active" data-section="posts">📋 <span data-i18n="admin.posts_list">All Posts</span></button>
+        <button class="admin-menu-btn" data-section="new-post">✍️ <span data-i18n="admin.new_post">New Post</span></button>
+        <hr style="border-color:var(--border); margin:16px 0;">
+        <button class="admin-menu-btn" id="signout-btn">🚪 <span data-i18n="admin.sign_out">Sign Out</span></button>
+        <a href="../index.html" class="admin-menu-btn" style="text-decoration:none;">🌐 View Site</a>
+      </nav>
+    </aside>
+
+    <!-- Main -->
+    <main class="admin-main">
+      <!-- Posts list -->
+      <div class="admin-section active" id="section-posts">
+        <h2 class="admin-section-title" data-i18n="admin.posts_list">All Posts</h2>
+        <div id="posts-list" class="admin-posts-list">
+          <p class="text-muted" style="font-family:var(--font-mono); font-size:13px;" data-i18n="blog.loading">Loading posts...</p>
+        </div>
+      </div>
+
+      <!-- New / Edit post form -->
+      <div class="admin-section" id="section-new-post">
+        <h2 class="admin-section-title" id="form-section-title" data-i18n="admin.new_post">New Post</h2>
+        <form id="post-form" class="post-form">
+          <input type="hidden" id="edit-post-id">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" data-i18n="admin.title_en">Title (English)</label>
+              <input type="text" id="f-title-en" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" data-i18n="admin.title_es">Title (Spanish)</label>
+              <input type="text" id="f-title-es" class="form-input" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" data-i18n="admin.summary_en">Summary (English)</label>
+              <textarea id="f-summary-en" class="form-textarea" style="min-height:80px;" required></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label" data-i18n="admin.summary_es">Summary (Spanish)</label>
+              <textarea id="f-summary-es" class="form-textarea" style="min-height:80px;" required></textarea>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" data-i18n="admin.body_en">Body — Markdown (English)</label>
+              <textarea id="f-body-en" class="form-textarea" style="min-height:240px; font-family:var(--font-mono); font-size:13px;"></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label" data-i18n="admin.body_es">Body — Markdown (Spanish)</label>
+              <textarea id="f-body-es" class="form-textarea" style="min-height:240px; font-family:var(--font-mono); font-size:13px;"></textarea>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" data-i18n="admin.image_url">Cover Image URL</label>
+              <input type="url" id="f-image" class="form-input" placeholder="https://...">
+            </div>
+            <div class="form-group">
+              <label class="form-label" data-i18n="admin.tags">Tags (comma-separated)</label>
+              <input type="text" id="f-tags" class="form-input" placeholder="release, feature, fix">
+            </div>
+          </div>
+          <div style="margin-top:24px; display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+            <button type="submit" class="btn btn-primary" id="publish-btn" data-i18n="admin.publish">Publish Post</button>
+            <button type="button" class="btn btn-ghost" id="cancel-edit-btn" style="display:none;">Cancel Edit</button>
+            <span id="form-status" style="font-family:var(--font-mono); font-size:13px; color:var(--accent-green);"></span>
+          </div>
+        </form>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="../assets/js/i18n.js"></script>
+<script type="module">
+  import '../assets/js/firebase.js';
+
+  // ── Helpers ──────────────────────────────────────────────────────────
+  const $ = id => document.getElementById(id);
+  const show = el => { el.style.display = ''; };
+  const hide = el => { el.style.display = 'none'; };
+
+  function formatDate(raw) {
+    try {
+      const d = (raw && raw.toDate) ? raw.toDate() : new Date(raw);
+      return d.toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
+    } catch { return ''; }
+  }
+
+  // ── Auth ─────────────────────────────────────────────────────────────
+  EPD.onAuth(user => {
+    if (user) {
+      hide($('login-screen'));
+      show($('admin-screen'));
+      $('admin-screen').style.display = 'block';
+      loadPostsList();
+    } else {
+      $('login-screen').style.display = 'flex';
+      hide($('admin-screen'));
+    }
+  });
+
+  $('login-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const errEl = $('login-error');
+    hide(errEl);
+    try {
+      await EPD.signIn($('email').value, $('password').value);
+    } catch (err) {
+      errEl.textContent = err.message;
+      show(errEl);
+    }
+  });
+
+  $('signout-btn').addEventListener('click', () => EPD.logOut());
+
+  // ── Section nav ──────────────────────────────────────────────────────
+  document.querySelectorAll('.admin-menu-btn[data-section]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.admin-menu-btn').forEach(b => b.classList.remove('active'));
+      $(`section-${btn.dataset.section}`).classList.add('active');
+      btn.classList.add('active');
+    });
+  });
+
+  // ── Posts List ───────────────────────────────────────────────────────
+  async function loadPostsList() {
+    const listEl = $('posts-list');
+    listEl.innerHTML = '<p class="text-muted" style="font-family:var(--font-mono); font-size:13px;">Loading...</p>';
+    const posts = await EPD.getAllPosts();
+    if (!posts.length) {
+      listEl.innerHTML = '<p class="text-muted" style="font-family:var(--font-mono); font-size:13px;">No posts yet. Create one!</p>';
+      return;
+    }
+    listEl.innerHTML = posts.map(p => `
+      <div class="admin-post-item" data-id="${p.id}">
+        <div class="admin-post-info">
+          <div class="admin-post-title">${p.title_en || p.title_es || '(Untitled)'}</div>
+          <div class="admin-post-date">📅 ${formatDate(p.date)}</div>
+        </div>
+        <div class="admin-post-actions">
+          <button class="btn btn-ghost edit-btn" style="padding:8px 14px; font-size:9px;" data-i18n="admin.edit">Edit</button>
+          <button class="btn btn-danger delete-btn" style="padding:8px 14px; font-size:9px;" data-i18n="admin.delete">Delete</button>
+        </div>
+      </div>
+    `).join('');
+    i18n.applyAll(listEl);
+
+    listEl.querySelectorAll('.edit-btn').forEach(btn => {
+      btn.addEventListener('click', () => editPost(btn.closest('[data-id]').dataset.id, posts));
+    });
+    listEl.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.closest('[data-id]').dataset.id;
+        const msg = i18n.t('admin.confirm_delete');
+        if (!confirm(msg)) return;
+        await EPD.deletePost(id);
+        showToast('Post deleted.');
+        loadPostsList();
+      });
+    });
+  }
+
+  // ── Edit Post ────────────────────────────────────────────────────────
+  function editPost(id, posts) {
+    const p = posts.find(x => x.id === id);
+    if (!p) return;
+    $('edit-post-id').value = id;
+    $('f-title-en').value   = p.title_en   || '';
+    $('f-title-es').value   = p.title_es   || '';
+    $('f-summary-en').value = p.summary_en || '';
+    $('f-summary-es').value = p.summary_es || '';
+    $('f-body-en').value    = p.body_en    || '';
+    $('f-body-es').value    = p.body_es    || '';
+    $('f-image').value      = p.image      || '';
+    $('f-tags').value       = (p.tags || []).join(', ');
+    $('form-section-title').textContent = 'Edit Post';
+    show($('cancel-edit-btn'));
+    // Navigate to form section
+    document.querySelector('[data-section="new-post"]').click();
+  }
+
+  $('cancel-edit-btn').addEventListener('click', () => {
+    $('post-form').reset();
+    $('edit-post-id').value = '';
+    $('form-section-title').setAttribute('data-i18n', 'admin.new_post');
+    hide($('cancel-edit-btn'));
+    i18n.applyAll($('section-new-post'));
+    document.querySelector('[data-section="posts"]').click();
+  });
+
+  // ── Post Form Submit ─────────────────────────────────────────────────
+  $('post-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn    = $('publish-btn');
+    const status = $('form-status');
+    btn.disabled = true;
+    btn.setAttribute('data-i18n', 'admin.saving');
+    i18n.applyAll(btn.parentElement);
+    status.textContent = '';
+
+    const id   = $('edit-post-id').value || null;
+    const tags = $('f-tags').value.split(',').map(t => t.trim()).filter(Boolean);
+    const data = {
+      title_en:   $('f-title-en').value.trim(),
+      title_es:   $('f-title-es').value.trim(),
+      summary_en: $('f-summary-en').value.trim(),
+      summary_es: $('f-summary-es').value.trim(),
+      body_en:    $('f-body-en').value.trim(),
+      body_es:    $('f-body-es').value.trim(),
+      image:      $('f-image').value.trim(),
+      tags
+    };
+
+    try {
+      await EPD.savePost(data, id);
+      showToast(i18n.t('admin.saved'));
+      $('post-form').reset();
+      $('edit-post-id').value = '';
+      hide($('cancel-edit-btn'));
+      loadPostsList();
+      document.querySelector('[data-section="posts"]').click();
+    } catch (err) {
+      showToast(i18n.t('admin.error'), 'error');
+      console.error(err);
+    } finally {
+      btn.disabled = false;
+      btn.setAttribute('data-i18n', 'admin.publish');
+      i18n.applyAll(btn.parentElement);
+    }
+  });
+</script>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eternity Pixel Dungeon</title>
+  <meta name="description" content="A dark and challenging roguelike dungeon crawler. 6 hero classes, infinite item rarities, procedurally generated dungeons.">
+  <meta property="og:title" content="Eternity Pixel Dungeon">
+  <meta property="og:description" content="The eternal roguelike dungeon crawler. Open source, bilingual, free to play.">
+  <meta property="og:image" content="assets/images/hero-bg.jpg">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#0d1018">
+  <link rel="icon" href="assets/images/favicon.png">
+  <link rel="apple-touch-icon" href="assets/images/icon_256.png">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    /* Fade-in-scroll helper */
+    .fade-in-scroll { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease; }
+    .fade-in-scroll.visible { opacity: 1; transform: none; }
+    /* Hero stat vertical line */
+    .hero-stat { position: relative; }
+    .hero-stat + .hero-stat::before { content: ''; position: absolute; left: -24px; top: 50%; transform: translateY(-50%); width: 1px; height: 40px; background: var(--border); }
+    /* Latest posts loading placeholder */
+    #latest-posts:empty::after { content: ''; display: block; }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════ NAVBAR ═══════════════════════════ -->
+<nav class="navbar" id="navbar">
+  <div class="container navbar-inner">
+    <a class="navbar-logo" href="index.html">
+      <img src="assets/images/favicon.png" alt="EPD Icon">
+      <span class="navbar-logo-text">ETERNITY PIXEL DUNGEON<span data-i18n="hero.tag">Roguelike · Open Source</span></span>
+    </a>
+    <ul class="navbar-links">
+      <li><a href="game.html"      data-i18n="nav.game">The Game</a></li>
+      <li><a href="blog.html"      data-i18n="nav.blog">Blog</a></li>
+      <li><a href="changelog.html" data-i18n="nav.changelog">Changelog</a></li>
+      <li><a href="about.html"     data-i18n="nav.about">About</a></li>
+    </ul>
+    <div class="navbar-actions">
+      <div class="lang-toggle" role="group" aria-label="Language selector">
+        <button class="lang-btn active" data-lang="en" aria-label="English">EN</button>
+        <button class="lang-btn"        data-lang="es" aria-label="Español">ES</button>
+      </div>
+      <a href="https://github.com/tonymanpro/Infinite-Pixel-Dungeon/releases/latest"
+         class="btn btn-primary" target="_blank" rel="noopener" data-i18n="nav.download">Download</a>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════ HERO ═══════════════════════════ -->
+<section class="hero" id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-scanlines"></div>
+  <div class="hero-content">
+    <div class="container">
+      <div class="hero-inner">
+        <div class="hero-tag" data-i18n="hero.tag">Roguelike · Open Source · v0.2.2</div>
+        <h1 class="hero-title">
+          <span class="gold" data-i18n="hero.title1">ETERNITY</span><br>
+          <span class="ruby" data-i18n="hero.title2">PIXEL DUNGEON</span>
+        </h1>
+        <p class="hero-version">v0.2.2 — August 2026</p>
+        <p class="hero-desc" data-i18n="hero.desc">A dark and challenging roguelike dungeon crawler built on the legacy of Shattered Pixel Dungeon.</p>
+        <div class="hero-btns">
+          <a href="https://github.com/tonymanpro/Infinite-Pixel-Dungeon/releases/latest"
+             class="btn btn-primary" target="_blank" rel="noopener" data-i18n="hero.btn_download">⬇ Download</a>
+          <a href="game.html" class="btn btn-outline" data-i18n="hero.btn_play">Explore</a>
+          <a href="https://github.com/tonymanpro/Infinite-Pixel-Dungeon"
+             class="btn btn-ghost" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.4.6.1.82-.26.82-.58v-2.02c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.33-1.76-1.33-1.76-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49 1 .1-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.13 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.82 1.1.82 2.22v3.29c0 .32.22.7.83.58C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/>
+            </svg>
+            GitHub
+          </a>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <span class="hero-stat-num">30+</span>
+            <span class="hero-stat-label" data-i18n="hero.stat_versions">Versions</span>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat-num">6</span>
+            <span class="hero-stat-label" data-i18n="hero.stat_classes">Hero Classes</span>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat-num">7</span>
+            <span class="hero-stat-label" data-i18n="hero.stat_rarities">Item Rarities</span>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat-num">GPL-3</span>
+            <span class="hero-stat-label" data-i18n="hero.stat_opensource">Open Source</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll" aria-hidden="true">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    <span data-i18n="hero.scroll">SCROLL DOWN</span>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ FEATURES ═══════════════════════════ -->
+<section class="section-pad" id="features" style="background: var(--bg-main);">
+  <div class="container">
+    <h2 class="section-title" data-i18n="features.title">GAME FEATURES</h2>
+    <p class="section-subtitle" data-i18n="features.subtitle">What makes Eternity Pixel Dungeon special</p>
+    <div class="features-grid">
+      <div class="feature-card fade-in-scroll">
+        <span class="feature-icon">💎</span>
+        <h3 class="feature-title" data-i18n="features.rarity_title">Item Rarity System</h3>
+        <p class="feature-desc" data-i18n="features.rarity_desc">7 rarity tiers from Common to Mythical with unique drop rates and power scaling.</p>
+        <div style="margin-top:16px; display:flex; gap:6px; flex-wrap:wrap;">
+          <span class="rarity r-common">Common</span>
+          <span class="rarity r-uncommon">Uncommon</span>
+          <span class="rarity r-rare">Rare</span>
+          <span class="rarity r-epic">Epic</span>
+          <span class="rarity r-legendary">Legendary</span>
+          <span class="rarity r-mythical">Mythical</span>
+        </div>
+      </div>
+      <div class="feature-card fade-in-scroll">
+        <span class="feature-icon">🎒</span>
+        <h3 class="feature-title" data-i18n="features.bags_title">Specialized Bags</h3>
+        <p class="feature-desc" data-i18n="features.bags_desc">Jewelry Box (40 slots) for rings & artifacts, Equipment Bag (60 slots) for weapons & armor.</p>
+      </div>
+      <div class="feature-card fade-in-scroll">
+        <span class="feature-icon">⚗️</span>
+        <h3 class="feature-title" data-i18n="features.filter_title">Loot Filter & Auto-Scrap</h3>
+        <p class="feature-desc" data-i18n="features.filter_desc">Configure minimum rarity thresholds and auto-convert junk loot into gold on pick-up.</p>
+      </div>
+      <div class="feature-card fade-in-scroll">
+        <span class="feature-icon">✝️</span>
+        <h3 class="feature-title" data-i18n="features.cleric_title">The Cleric Class</h3>
+        <p class="feature-desc" data-i18n="features.cleric_desc">Holy magic, divine abilities, and a unique buff & heal playstyle. Fully integrated.</p>
+      </div>
+      <div class="feature-card fade-in-scroll">
+        <span class="feature-icon">🏛️</span>
+        <h3 class="feature-title" data-i18n="features.vault_title">The Vault — New Level</h3>
+        <p class="feature-desc" data-i18n="features.vault_desc">A challenging bonus floor with new enemies, puzzle rooms, and exclusive loot.</p>
+      </div>
+      <div class="feature-card fade-in-scroll">
+        <span class="feature-icon">🌐</span>
+        <h3 class="feature-title" data-i18n="features.i18n_title">Bilingual (EN/ES)</h3>
+        <p class="feature-desc" data-i18n="features.i18n_desc">100% localized in English and Spanish with zero missing keys.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ LATEST POSTS ═══════════════════════════ -->
+<section class="section-pad" id="blog-preview">
+  <div class="container">
+    <h2 class="section-title" data-i18n="blog.title">LATEST NEWS</h2>
+    <p class="section-subtitle" data-i18n="blog.subtitle">Development updates, release notes and game insights</p>
+    <!-- Fallback when Firestore is not configured -->
+    <div id="latest-posts" class="posts-grid">
+      <!-- Loaded dynamically by blog.js; static fallback below -->
+      <article class="post-card fade-in-scroll">
+        <img class="post-card-img" src="assets/images/screenshots/gameplay.jpg" alt="v0.2.2 Release" loading="lazy">
+        <div class="post-card-body">
+          <div class="post-card-tags"><span class="badge badge-release">Release</span></div>
+          <h2 class="post-card-title"><a href="changelog.html">Eternity Pixel Dungeon v0.2.2</a></h2>
+          <div class="post-card-meta"><span>📅 August 16, 2026</span></div>
+          <p class="post-card-excerpt">Inventory management & loot filtering system, specialized bags (Jewelry Box, Equipment Bag), new "ETERNITY" title screen, and critical Windows launcher fixes.</p>
+          <div class="post-card-footer"><a href="changelog.html" class="btn btn-outline" data-i18n="blog.read_more">Read More →</a></div>
+        </div>
+      </article>
+      <article class="post-card fade-in-scroll">
+        <img class="post-card-img" src="assets/images/screenshots/classes.jpg" alt="Cleric Class" loading="lazy">
+        <div class="post-card-body">
+          <div class="post-card-tags"><span class="badge badge-feature">Feature</span></div>
+          <h2 class="post-card-title"><a href="game.html">The Cleric Class v3.0+</a></h2>
+          <div class="post-card-meta"><span>📅 August 10, 2026</span></div>
+          <p class="post-card-excerpt">A brand new hero class with holy magic, divine abilities, and a unique support playstyle centered around buffing allies and healing through combat.</p>
+          <div class="post-card-footer"><a href="game.html" class="btn btn-outline" data-i18n="blog.read_more">Read More →</a></div>
+        </div>
+      </article>
+      <article class="post-card fade-in-scroll">
+        <img class="post-card-img" src="assets/images/screenshots/gameplay.jpg" alt="The Vault" loading="lazy">
+        <div class="post-card-body">
+          <div class="post-card-tags"><span class="badge badge-feature">Content</span></div>
+          <h2 class="post-card-title"><a href="game.html">The Vault — New Level</a></h2>
+          <div class="post-card-meta"><span>📅 August 5, 2026</span></div>
+          <p class="post-card-excerpt">The Vault is a new optional challenge floor with unique enemies, environmental puzzles, and exclusive high-rarity loot rewards for brave adventurers.</p>
+          <div class="post-card-footer"><a href="game.html" class="btn btn-outline" data-i18n="blog.read_more">Read More →</a></div>
+        </div>
+      </article>
+    </div>
+    <div class="text-center" style="margin-top: 48px;">
+      <a href="blog.html" class="btn btn-outline" data-i18n="blog.all_posts">View All Posts</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ CTA BANNER ═══════════════════════════ -->
+<section style="background: linear-gradient(135deg, rgba(232,185,79,0.08) 0%, rgba(192,57,43,0.05) 100%); border-top: 1px solid var(--border-gold); border-bottom: 1px solid var(--border-gold); padding: 64px 0;">
+  <div class="container text-center">
+    <p style="font-family: var(--font-pixel); font-size: clamp(10px,2vw,16px); color: var(--accent-gold); margin-bottom: 16px; letter-spacing: 2px;">FREE &amp; OPEN SOURCE</p>
+    <h2 style="font-family: var(--font-mono); font-size: clamp(20px,3vw,32px); color: var(--text-bright); margin-bottom: 12px;">Ready to descend into the dungeon?</h2>
+    <p style="color: var(--text-muted); margin-bottom: 36px; font-size: 15px;" data-i18n="game.download_desc">Free and open-source. Available for Windows. Android coming soon.</p>
+    <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
+      <a href="https://github.com/tonymanpro/Infinite-Pixel-Dungeon/releases/latest"
+         class="btn btn-primary" target="_blank" rel="noopener" data-i18n="game.download_btn">Download v0.2.2 for Windows</a>
+      <a href="https://github.com/tonymanpro/Infinite-Pixel-Dungeon"
+         class="btn btn-ghost" target="_blank" rel="noopener" data-i18n="game.github_btn">View Source on GitHub</a>
+    </div>
+    <p style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);margin-top:16px;" data-i18n="game.download_size">~112 MB · Portable ZIP · No installer required</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ FOOTER ═══════════════════════════ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand-logo">
+          <img src="assets/images/favicon.png" alt="EPD">
+          <span class="footer-brand-name">ETERNITY<br>PIXEL DUNGEON</span>
+        </div>
+        <p class="footer-brand-desc" data-i18n="footer.tagline">The eternal roguelike dungeon crawler</p>
+        <div class="footer-socials">
+          <a href="https://github.com/tonymanpro/Infinite-Pixel-Dungeon" class="footer-social" target="_blank" rel="noopener" aria-label="GitHub">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.4.6.1.82-.26.82-.58v-2.02c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.33-1.76-1.33-1.76-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49 1 .1-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.13 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.82 1.1.82 2.22v3.29c0 .32.22.7.83.58C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div>
+        <h3 class="footer-col-title" data-i18n="footer.nav_title">Navigation</h3>
+        <ul class="footer-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="game.html"      data-i18n="nav.game">The Game</a></li>
+          <li><a href="blog.html"      data-i18n="nav.blog">Blog</a></li>
+          <li><a href="changelog.html" data-i18n="nav.changelog">Changelog</a></li>
+          <li><a href="about.html"     data-i18n="nav.about">About</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer-col-title" data-i18n="footer.resources">Resources</h3>
+        <ul class="footer-links">
+          <li><a href="https://github.com/tonymanpro/Infinite-Pixel-Dungeon" target="_blank" rel="noopener" data-i18n="footer.github">GitHub Repository</a></li>
+          <li><a href="https://github.com/tonymanpro/Infinite-Pixel-Dungeon/releases" target="_blank" rel="noopener" data-i18n="footer.releases">Releases</a></li>
+          <li><a href="https://github.com/tonymanpro/Infinite-Pixel-Dungeon/issues" target="_blank" rel="noopener" data-i18n="footer.issues">Report a Bug</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer-col-title" data-i18n="footer.community">Community</h3>
+        <ul class="footer-links">
+          <li><a href="https://github.com/tonymanpro/Infinite-Pixel-Dungeon/discussions" target="_blank" rel="noopener">Discussions</a></li>
+          <li><a href="changelog.html" data-i18n="nav.changelog">Changelog</a></li>
+          <li><a href="admin/index.html" data-i18n="nav.admin">Admin</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copyright" data-i18n="footer.copyright">© 2026 Eternity Pixel Dungeon. GPL-3.0 License.</span>
+      <span class="footer-license">Based on <a href="https://github.com/00-Evan/shattered-pixel-dungeon" target="_blank" rel="noopener">Shattered Pixel Dungeon</a></span>
+    </div>
+  </div>
+</footer>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer">
+  <button class="lightbox-close" aria-label="Close">✕</button>
+  <img src="" alt="">
+</div>
+
+<script src="assets/js/i18n.js"></script>
+<script type="module" src="assets/js/firebase.js"></script>
+<script src="assets/js/blog.js" defer></script>
+<script src="assets/js/main.js"></script>
+<script>
+  // Try to load live posts from Firestore; fallback to static HTML already in place
+  document.addEventListener('DOMContentLoaded', () => {
+    if (window.EPD && window.EPD.getLatestPosts) {
+      // Only replace if Firebase is configured
+      if (!window.firebaseConfig || window.firebaseConfig.apiKey !== "YOUR_API_KEY") {
+        EPD.renderLatestPosts && EPD.renderLatestPosts('latest-posts', 3);
+      }
+    }
+  });
+</script>
+</body>
+</html>

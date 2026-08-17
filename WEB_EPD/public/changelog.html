@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Changelog — Eternity Pixel Dungeon</title>
+  <meta name="description" content="Full version history and changelog for Eternity Pixel Dungeon.">
+  <link rel="icon" href="assets/images/favicon.png">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    .page-header { padding: calc(var(--nav-h) + 60px) 0 60px; background: var(--bg-main); border-bottom: 1px solid var(--border); }
+    .page-title { font-family: var(--font-pixel); font-size: clamp(14px,3vw,24px); color: var(--accent-gold); margin-bottom: 12px; }
+    .page-subtitle { font-family: var(--font-mono); font-size: 14px; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <div class="container navbar-inner">
+    <a class="navbar-logo" href="index.html">
+      <img src="assets/images/favicon.png" alt="EPD">
+      <span class="navbar-logo-text">ETERNITY PIXEL DUNGEON<span data-i18n="hero.tag">Roguelike · Open Source</span></span>
+    </a>
+    <ul class="navbar-links">
+      <li><a href="game.html"      data-i18n="nav.game">The Game</a></li>
+      <li><a href="blog.html"      data-i18n="nav.blog">Blog</a></li>
+      <li><a href="changelog.html" class="active" data-i18n="nav.changelog">Changelog</a></li>
+      <li><a href="about.html"     data-i18n="nav.about">About</a></li>
+    </ul>
+    <div class="navbar-actions">
+      <div class="lang-toggle">
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <button class="lang-btn"        data-lang="es">ES</button>
+      </div>
+      <a href="https://github.com/tonymanpro/Infinite-Pixel-Dungeon/releases/latest"
+         class="btn btn-primary" target="_blank" rel="noopener" data-i18n="nav.download">Download</a>
+      <button class="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+
+<header class="page-header">
+  <div class="container">
+    <h1 class="page-title" data-i18n="changelog.title">CHANGELOG</h1>
+    <p class="page-subtitle" data-i18n="changelog.subtitle">Full history of improvements and releases</p>
+  </div>
+</header>
+
+<main class="section-pad">
+  <div class="container">
+    <div class="changelog-list">
+
+      <!-- v0.2.2 -->
+      <div class="changelog-entry">
+        <div class="changelog-version-col">
+          <span class="changelog-version">v0.2.2</span>
+          <span class="changelog-date">Aug 16, 2026</span>
+          <a href="https://github.com/tonymanpro/Infinite-Pixel-Dungeon/releases/tag/v0.2.2"
+             class="btn btn-outline" style="margin-top:12px; font-size:8px; padding:6px 12px;"
+             target="_blank" rel="noopener">Release ↗</a>
+        </div>
+        <ul class="changelog-changes">
+          <li><span class="badge badge-feature">Feature</span>Real-time Loot Filter with configurable rarity threshold and Auto-Scrap to gold on pick-up</li>
+          <li><span class="badge badge-feature">Feature</span>Bulk Mass Scrap window — batch sell inventory junk with full protection of pinned/unique items</li>
+          <li><span class="badge badge-feature">Feature</span>Jewelry Box bag (40 slots) — auto-stores rings, artifacts and trinkets</li>
+          <li><span class="badge badge-feature">Feature</span>Equipment Bag (60 slots) — auto-stores weapons and armor</li>
+          <li><span class="badge badge-feature">Feature</span>New "ETERNITY" title screen logo with golden gradient and shimmer animation</li>
+          <li><span class="badge badge-fix">Fix</span>Windows executable crash on startup — null version parsing in DesktopLauncher and GitHubUpdates</li>
+          <li><span class="badge badge-fix">Fix</span>Clean jpackage configuration to avoid JVM argument splitting issue on Windows</li>
+          <li><span class="badge badge-i18n">i18n</span>100% EN/ES translation parity with zero missing keys</li>
+        </ul>
+      </div>
+
+      <!-- v0.2.1 -->
+      <div class="changelog-entry">
+        <div class="changelog-version-col">
+          <span class="changelog-version">v0.2.1</span>
+          <span class="changelog-date">Aug 15, 2026</span>
+          <a href="https://github.com/tonymanpro/Infinite-Pixel-Dungeon/releases/tag/v0.2.1"
+             class="btn btn-outline" style="margin-top:12px; font-size:8px; padding:6px 12px;"
+             target="_blank" rel="noopener">Release ↗</a>
+        </div>
+        <ul class="changelog-changes">
+          <li><span class="badge badge-feature">Feature</span>New icon — gold chest with demon face reflecting the game's dark aesthetic</li>
+          <li><span class="badge badge-feature">Feature</span>The Vault level (v3.3) — new enemies, puzzle rooms, exclusive loot</li>
+          <li><span class="badge badge-feature">Feature</span>The Cleric class (v3.0–v3.3.8) — holy magic, divine abilities, buff & heal playstyle</li>
+          <li><span class="badge badge-balance">Balance</span>Project officially renamed to Eternity Pixel Dungeon</li>
+          <li><span class="badge badge-i18n">i18n</span>Full localization update to v0.2.1 across all bundles</li>
+        </ul>
+      </div>
+
+      <!-- v0.2.0 -->
+      <div class="changelog-entry">
+        <div class="changelog-version-col">
+          <span class="changelog-version">v0.2.0</span>
+          <span class="changelog-date">Earlier 2026</span>
+        </div>
+        <ul class="changelog-changes">
+          <li><span class="badge badge-feature">Feature</span>Item Rarity System — 7 tiers (Common → Mythical) with drop rates and power scaling</li>
+          <li><span class="badge badge-feature">Feature</span>Rarity-based visual effects on item sprites and floor drops</li>
+          <li><span class="badge badge-balance">Balance</span>Major balancing pass across all hero classes for the new rarity economy</li>
+          <li><span class="badge badge-i18n">i18n</span>Initial bilingual support (English + Spanish)</li>
+        </ul>
+      </div>
+
+      <!-- v0.1.x -->
+      <div class="changelog-entry">
+        <div class="changelog-version-col">
+          <span class="changelog-version">v0.1.x</span>
+          <span class="changelog-date">2025–2026</span>
+        </div>
+        <ul class="changelog-changes">
+          <li><span class="badge badge-feature">Feature</span>Initial fork from Experienced Pixel Dungeon</li>
+          <li><span class="badge badge-feature">Feature</span>Desktop Windows packaging with jpackage + embedded JRE</li>
+          <li><span class="badge badge-fix">Fix</span>Numerous stability fixes and crash patches across v0.1.0–v0.1.9f</li>
+          <li><span class="badge badge-balance">Balance</span>Shop generation improvements, room distributions, enemy scaling</li>
+          <li><span class="badge badge-i18n">i18n</span>Properties bundle scaffolding for multi-language support</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-bottom">
+      <span class="footer-copyright" data-i18n="footer.copyright">© 2026 Eternity Pixel Dungeon. GPL-3.0 License.</span>
+      <div style="display:flex;gap:16px;">
+        <a href="index.html">Home</a>
+        <a href="https://github.com/tonymanpro/Infinite-Pixel-Dungeon" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
