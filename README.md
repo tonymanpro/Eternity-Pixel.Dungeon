@@ -1,32 +1,53 @@
-# Eternity Pixel Dungeon
+# Eternity Pixel Dungeon 👑
 
-**Eternity Pixel Dungeon** es una versión personalizada y extendida basada en *Infinite Pixel Dungeon* y *Experienced Pixel Dungeon (Redone)* con soporte completo de localización al español e inglés.
+[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Android%20%7C%20Linux%20%7C%20macOS-blue.svg)](https://eternity-pixel-dungeon.web.app)
+[![Version](https://img.shields.io/badge/Version-v1.0.0-green.svg)](https://github.com/tonymanpro/Eternity-Pixel.Dungeon/releases/tag/v1.0.0)
+[![Website](https://img.shields.io/badge/Website-eternity--pixel--dungeon.web.app-brightgreen.svg)](https://eternity-pixel-dungeon.web.app)
+[![Patreon](https://img.shields.io/badge/Patreon-Supporter%20Editions-red.svg)](https://www.patreon.com/c/EternityPixelDungeon/membership)
 
-## Características y Mejoras:
-- **Soporte Completo de Español e Inglés**: Localización al 100% de la interfaz, menús, objetos, enemigos y documentos.
-- **Sin límite de ciclos de mazmorra**: Progresión infinita y escalado de dificultad.
-- **Sistema de Rarezas y Emblemas**: Modificadores de objetos, armas y equipo legendario.
-- **Mazmorras y Arenas Expandidas**: Arenas por oleadas, farmeo intensivo y áreas secretas.
-- **Fila adicional de accesos rápidos**: Hasta 10 casillas de acción directa.
+**Eternity Pixel Dungeon** es un roguelike tradicional de exploración infinita, combate táctico por turnos y alta rejugabilidad basado en *Shattered Pixel Dungeon* y *Experienced Pixel Dungeon*, con soporte completo de localización al español e inglés, sistema de compañeros y mascotas, motor visual en alta resolución (HD 2x) y una suite completa de pruebas automatizadas.
 
-# Experienced Pixel Dungeon
+---
 
-Experienced Pixel Dungeon (Redone) is an open-source pretty grindy traditional roguelike dungeon sandbox with randomized levels, enemies and opportunities to abuse the game, and hundreds of items to collect and grind for. Its based on the [source code of Shattered Pixel Dungeon](https://github.com/00-Evan/shattered-pixel-dungeon), by [00-Evan](https://shatteredpixel.com).
+## 🌟 Características Principales de la Versión v1.0.0
 
-Experienced Pixel Dungeon currently compiles for Android and Desktop platforms. You can find official releases of the game on:
+- 🐾 **Sistema Completo de Mascotas y Compañeros**:
+  - Incubación y eclosión de huevos raros en la mazmorra.
+  - **4 Especies**: Cría de Dragón (fuego), Lobo Fiel (rastreo y sangrado), Hada de Luz (curación e iluminación) y Araña Tejedora (trampas y veneno).
+  - Evolución (*Cría* $\rightarrow$ *Joven* $\rightarrow$ *Adulto*), alimentación y órdenes tácticas (*Seguir*, *Defender*, *Quedarse*).
+- 🎨 **Motor Gráfico en Alta Resolución (HD 2x)**: Texturas en alta fidelidad y efectos de partículas brillantes en golpes críticos.
+- 🧙‍♂️ **7 Clases Jugables**: Guerrero, Mago, Pícaro, Cazadora, Duelista, Clérigo (con magias sagradas y subclases) y Rey Rata.
+- 🌐 **Localización e Internacionalización (i18n)**: 100% traducido y sincronizado en Español e Inglés.
+- 🤖 **Auto-Test Runner Headless**: Suite automatizada para validar mazmorras, héroes, mascotas, economía y simulación de bot con IA en menos de 1 segundo.
 
-[![Get it on Google Play](https://shatteredpixel.com/assets/images/badges/gplay.png)](https://play.google.com/store/apps/details?id=com.trashboxbobylev.experiencedpixeldungeon.redone)
-[![Github Releases](https://shatteredpixel.com/assets/images/badges/github.png)](https://github.com/TrashboxBobylev/Experienced-Pixel-Dungeon-Redone/releases)
+---
 
-If you like this game, you can't! [Support Evan Debenham](https://www.patreon.com/ShatteredPixel), who made Shattered, instead.
+## 🚀 Inicio Rápido (Comandos Principales)
 
-The game also has *no* translation project hosted on Transifex.
+> **Nota**: Requiere Java 17+ (Adoptium Temurin Hotspot 17). Configura `$env:JAVA_HOME = "C:\Program Files\Eclipse Adoptium\jdk-17.0.20.8-hotspot"` en PowerShell antes de compilar.
 
-Note that **this repository does not accept pull requests!** The code here is provided in hopes that others may find it useful for their own projects, not to allow community contribution. Issue reports of all kinds (bug reports, feature requests, etc.) are welcome. Or not. I don't actually know.
+```powershell
+# 1. Ejecutar en modo desarrollo con la Consola de Debug activa
+.\gradlew.bat desktop:debug
 
-If you'd like to work with the code, you can find the following guides in `/docs`:
-- [Compiling for Android.](docs/getting-started-android.md)
-    - **[If you plan to distribute on Google Play please read the end of this guide.](docs/getting-started-android.md#distributing-your-apk)**
-- [Compiling for desktop platforms.](docs/getting-started-desktop.md)
-- [Compiling for iOS, for people dancing mad enough to try it.](docs/getting-started-ios.md)
-- [Recommended changes for making your own version.](docs/recommended-changes.md)
+# 2. Ejecutar la suite de pruebas automáticas (Auto-Test Runner)
+.\gradlew.bat desktop:autoTest
+
+# 3. Compilar el archivo JAR ejecutable
+.\gradlew.bat desktop:release
+
+# 4. Empaquetar el ejecutable nativo para Windows (.exe)
+.\gradlew.bat desktop:jpackageImage
+```
+
+Para consultar la **lista completa de comandos de debug en el juego**, macros y guías de desarrollo, revisa el documento detallado:
+👉 **[DEVELOPMENT.md](DEVELOPMENT.md)**
+
+---
+
+## 🌐 Enlaces Oficiales del Proyecto
+
+- 🏠 **Sitio Web Oficial**: [https://eternity-pixel-dungeon.web.app](https://eternity-pixel-dungeon.web.app)
+- 📰 **Blog Oficial de Lanzamientos**: [https://eternity-pixel-dungeon.web.app/blog.html](https://eternity-pixel-dungeon.web.app/blog.html)
+- 👑 **Membresía Patreon**: [https://www.patreon.com/c/EternityPixelDungeon/membership](https://www.patreon.com/c/EternityPixelDungeon/membership)
+- 📦 **Releases en GitHub**: [https://github.com/tonymanpro/Eternity-Pixel.Dungeon/releases](https://github.com/tonymanpro/Eternity-Pixel.Dungeon/releases)

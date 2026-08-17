@@ -10,4 +10,6 @@ java.sourceCompatibility = java.targetCompatibility = appJavaCompatibility
 dependencies {
     api project(':SPD-classes')
     implementation project(':services')
+    compileOnly "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
+    compileOnly "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
 }

@@ -101,8 +101,13 @@ public class Game implements ApplicationListener {
 		if (density == Float.POSITIVE_INFINITY){
 			density = 100f / 160f; //assume 100PPI if density can't be found
 		}
-		dispHeight = Gdx.graphics.getDisplayMode().height;
-		dispWidth = Gdx.graphics.getDisplayMode().width;
+		if (Gdx.graphics.getDisplayMode() != null) {
+			dispHeight = Gdx.graphics.getDisplayMode().height;
+			dispWidth = Gdx.graphics.getDisplayMode().width;
+		} else {
+			dispHeight = 600;
+			dispWidth = 800;
+		}
 
 		inputHandler = new InputHandler( Gdx.input );
 		if (ControllerHandler.controllersSupported()){
@@ -110,10 +115,12 @@ public class Game implements ApplicationListener {
 		}
 
 		//refreshes texture and vertex data stored on the gpu
-		versionContextRef = Gdx.graphics.getGLVersion();
-		Blending.useDefault();
-		TextureCache.reload();
-		Vertexbuffer.reload();
+		if (Gdx.gl != null && Gdx.graphics.getGLVersion() != null) {
+			versionContextRef = Gdx.graphics.getGLVersion();
+			Blending.useDefault();
+			TextureCache.reload();
+			Vertexbuffer.reload();
+		}
 	}
 
 	private GLVersion versionContextRef;
@@ -168,6 +175,11 @@ public class Game implements ApplicationListener {
 			PointerEvent.clearPointerEvents();
 			justResumed = false;
 			if (DeviceCompat.isAndroid()) return;
+		}
+
+		if (Gdx.gl == null) {
+			step();
+			return;
 		}
 
 		NoosaScript.get().resetCamera();
