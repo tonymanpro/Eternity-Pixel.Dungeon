@@ -142,6 +142,8 @@ public class ShatteredPixelDungeon extends Game {
 	public void create() {
 		super.create();
 
+		com.shatteredpixel.shatteredpixeldungeon.services.platform.PlatformManager.init();
+
 		updateSystemUI();
 		SPDAction.loadBindings();
 		
@@ -215,6 +217,7 @@ public class ShatteredPixelDungeon extends Game {
 	@Override
 	public void destroy(){
 		super.destroy();
+		com.shatteredpixel.shatteredpixeldungeon.services.platform.PlatformManager.dispose();
 		GameScene.endActorThread();
 	}
 	

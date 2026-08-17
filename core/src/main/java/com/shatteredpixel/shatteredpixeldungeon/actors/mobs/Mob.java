@@ -739,8 +739,10 @@ public abstract class Mob extends Char {
 			}
 			if (enemy.buff(Preparation.class) != null) {
 				Wound.hit(this);
+				CellEmitter.get(pos).burst(com.shatteredpixel.shatteredpixeldungeon.effects.Speck.factory(com.shatteredpixel.shatteredpixeldungeon.effects.Speck.STAR), 5);
 			} else {
 				Surprise.hit(this);
+				CellEmitter.get(pos).burst(com.shatteredpixel.shatteredpixeldungeon.effects.Speck.factory(com.shatteredpixel.shatteredpixeldungeon.effects.Speck.STAR), 3);
 			}
 		}
 

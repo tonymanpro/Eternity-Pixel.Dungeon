@@ -32,7 +32,13 @@ public class ItemSpriteSheet {
 	private static final int WIDTH = 16;
 	public static final int SIZE = 16;
 
-	public static TextureFilm film = new TextureFilm( Assets.Sprites.ITEMS, SIZE, SIZE );
+	public static TextureFilm film = createFilm();
+
+	private static TextureFilm createFilm() {
+		com.watabou.gltextures.SmartTexture tx = com.watabou.gltextures.TextureCache.get( Assets.Sprites.ITEMS );
+		int scale = (tx.width >= 500) ? 2 : 1;
+		return new TextureFilm( tx, SIZE * scale, SIZE * scale );
+	}
 
 	private static int xy(int x, int y){
 		x -= 1; y -= 1;
@@ -40,9 +46,11 @@ public class ItemSpriteSheet {
 	}
 
 	private static void assignItemRect( int item, int width, int height ){
-		int x = (item % WIDTH) * SIZE;
-		int y = (item / WIDTH) * SIZE;
-		film.add( item, x, y, x+width, y+height);
+		com.watabou.gltextures.SmartTexture tx = com.watabou.gltextures.TextureCache.get( Assets.Sprites.ITEMS );
+		int scale = (tx.width >= 500) ? 2 : 1;
+		int x = (item % WIDTH) * SIZE * scale;
+		int y = (item / WIDTH) * SIZE * scale;
+		film.add( item, x, y, x + width * scale, y + height * scale );
 	}
 
 	private static final int PLACEHOLDERS   =                               xy(1, 1);   //18 slots

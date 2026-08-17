@@ -362,7 +362,19 @@ public class BuffIndicator extends Component {
 
 		@Override
 		protected String hoverText() {
-			return Messages.titleCase(buff.name());
+			if (buff != null) {
+				String name = Messages.titleCase(buff.name());
+				String turns = buff.iconTextDisplay();
+				if (turns != null && !turns.isEmpty()) {
+					name += " (" + turns + ")";
+				}
+				String desc = buff.desc();
+				if (desc != null && !desc.isEmpty()) {
+					return name + "\n" + desc;
+				}
+				return name;
+			}
+			return null;
 		}
 	}
 	

@@ -156,7 +156,7 @@ public class TextureCache {
 				
 			} else if (src instanceof String) {
 				
-				return new Pixmap(Gdx.files.internal((String)src));
+				return new Pixmap(com.watabou.utils.AssetPackResolver.resolveHandle((String)src));
 				
 			} else if (src instanceof Pixmap) {
 				

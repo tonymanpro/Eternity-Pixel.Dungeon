@@ -91,7 +91,7 @@ public enum Sample {
 				String asset = loadingQueue.poll();
 				if (asset != null) {
 					try {
-						Sound newSound = Gdx.audio.newSound(Gdx.files.internal(asset));
+						Sound newSound = Gdx.audio.newSound(com.watabou.utils.AssetPackResolver.resolveHandle(asset));
 						ids.put(asset, newSound);
 					} catch (Exception e){
 						Game.reportException(e);

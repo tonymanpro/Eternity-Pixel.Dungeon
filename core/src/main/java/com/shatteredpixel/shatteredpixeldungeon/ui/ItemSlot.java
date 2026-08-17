@@ -383,7 +383,27 @@ public class ItemSlot extends Button {
 	@Override
 	protected String hoverText() {
 		if (item != null && item.name() != null) {
-			return Messages.titleCase(item.name());
+			StringBuilder sb = new StringBuilder(Messages.titleCase(item.name()));
+			if (item.rarity != null && item.rarity != Item.Rarity.NONE && item.rarity != Item.Rarity.COMMON) {
+				sb.append(" [").append(item.rarity.trueName).append("]");
+			}
+			if (item.levelKnown && item.level() != 0) {
+				sb.append(item.level() > 0 ? " +" : " ").append(item.level());
+			}
+			if (item.quantity() > 1) {
+				sb.append(" (x").append(item.quantity()).append(")");
+			}
+			if (item instanceof Weapon && item.isIdentified()) {
+				Weapon w = (Weapon) item;
+				sb.append(" (").append(w.min()).append("-").append(w.max()).append(" dmg)");
+			} else if (item instanceof Armor && item.isIdentified()) {
+				Armor a = (Armor) item;
+				sb.append(" (").append(a.DRMin()).append("-").append(a.DRMax()).append(" def)");
+			} else if (item instanceof Wand && item.isIdentified()) {
+				Wand wand = (Wand) item;
+				sb.append(" (").append(wand.curCharges).append("/").append(wand.maxCharges).append(")");
+			}
+			return sb.toString();
 		} else {
 			return super.hoverText();
 		}

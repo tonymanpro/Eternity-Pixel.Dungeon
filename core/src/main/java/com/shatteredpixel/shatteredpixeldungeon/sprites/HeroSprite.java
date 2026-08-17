@@ -74,7 +74,17 @@ public class HeroSprite extends CharSprite {
 	
 	public void updateArmor() {
 
-		TextureFilm film = new TextureFilm( tiers(), Dungeon.hero.tier(), FRAME_WIDTH, FRAME_HEIGHT );
+		int frameWidth = FRAME_WIDTH;
+		int frameHeight = FRAME_HEIGHT;
+		if (texture != null && texture.width >= 500) {
+			frameWidth = FRAME_WIDTH * 2;
+			frameHeight = FRAME_HEIGHT * 2;
+			scale.set(0.5f, 0.5f);
+		} else {
+			scale.set(1f, 1f);
+		}
+
+		TextureFilm film = new TextureFilm( tiers(), Dungeon.hero.tier(), frameWidth, frameHeight );
 		
 		idle = new Animation( 1, true );
 		idle.frames( film, 0, 0, 0, 1, 0, 0, 1, 1 );
@@ -149,13 +159,6 @@ public class HeroSprite extends CharSprite {
 	@Override
 	public void bloodBurstA(PointF from, int damage) {
 		//Does nothing.
-
-		/*
-		 * This is both for visual clarity, and also for content ratings regarding violence
-		 * towards human characters. The heroes are the only human or human-like characters which
-		 * participate in combat, so removing all blood associated with them is a simple way to
-		 * reduce the violence rating of the game.
-		 */
 	}
 
 	@Override
@@ -182,19 +185,29 @@ public class HeroSprite extends CharSprite {
 	}
 	
 	public TextureFilm tiers() {
-		if (tiers == null) {
-			tiers = tiers(Assets.Sprites.ROGUE, FRAME_HEIGHT);
+		String sheet = Dungeon.hero != null ? Dungeon.hero.heroClass.spritesheet() : Assets.Sprites.ROGUE;
+		SmartTexture tex = TextureCache.get( sheet );
+		int frameH = FRAME_HEIGHT;
+		if (tex != null && tex.width >= 500) {
+			frameH = FRAME_HEIGHT * 2;
 		}
-		return tiers;
+		return tiers(sheet, frameH);
 	}
+
 	public static TextureFilm tiers(String spritesheet, int frameHeight) {
 		SmartTexture texture = TextureCache.get( spritesheet );
 		return new TextureFilm( texture, texture.width, frameHeight );
 	}
 
 	public static Image avatar( HeroClass cl, int armorTier ) {
+		SmartTexture texture = TextureCache.get( cl.spritesheet() );
 		int frameHeight = FRAME_HEIGHT;
 		int frameWidth = FRAME_WIDTH;
+		boolean isHD = texture != null && texture.width >= 500;
+		if (isHD) {
+			frameHeight = FRAME_HEIGHT * 2;
+			frameWidth = FRAME_WIDTH * 2;
+		}
 		if(cl == HeroClass.RAT_KING) {
 			frameHeight = 17;
 			frameWidth = 16;
@@ -206,6 +219,9 @@ public class HeroSprite extends CharSprite {
 		if (patch != null)
 			frame.shift( patch.left, patch.top );
 		avatar.frame( frame );
+		if (isHD) {
+			avatar.scale.set(0.5f, 0.5f);
+		}
 
 		return avatar;
 	}

@@ -250,14 +250,19 @@ public class StartScene extends PixelScene {
 						add(cycle);
 					}
 
-					classIcon = new Image(Icons.get(info.heroClass));
+					Image icon = Icons.get(info.heroClass);
+					if (icon == null) icon = new ItemSprite(ItemSpriteSheet.SOMETHING);
+					classIcon = new Image(icon);
 					add(classIcon);
 					level = new BitmapText(PixelScene.pixelFont);
 					add(level);
 				} else {
 					hero.copy(HeroSprite.avatar(info.heroClass,info.armorTier));
 					
-					classIcon.copy(Icons.get(info.heroClass));
+					Image icon = Icons.get(info.heroClass);
+					if (icon != null) {
+						classIcon.copy(icon);
+					}
 				}
 
                 long diff = Game.realTime - info.lastPlayed;

@@ -443,6 +443,17 @@ public class GameScene extends PixelScene {
 					}
 				}
 
+				if (Dungeon.hero != null && Dungeon.hero.pet != null && Dungeon.hero.pet.isAlive()) {
+					if (!Dungeon.level.mobs.contains(Dungeon.hero.pet)) {
+						int petCell = com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet.getEmptyCellNear(Dungeon.hero.pos);
+						if (Actor.findChar(petCell) != null) {
+							petCell = Dungeon.hero.pos;
+						}
+						Dungeon.hero.pet.pos = petCell;
+						GameScene.add(Dungeon.hero.pet);
+					}
+				}
+
 				int spawnersAbove = Statistics.spawnersAlive;
 				if (spawnersAbove > 0 && Dungeon.depth <= 25) {
 					for (Mob m : Dungeon.level.mobs) {

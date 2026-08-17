@@ -238,6 +238,8 @@ public class Hero extends Char {
 	public ArrayList<LinkedHashMap<Talent, Integer>> talents = new ArrayList<>();
 	public LinkedHashMap<Talent, Talent> metamorphedTalents = new LinkedHashMap<>();
 
+	public com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet pet = null;
+
 	public boolean isSubclass(HeroSubClass subClass) {
 		if (this.subClass == HeroSubClass.KING) return true;
 		return subClass == this.subClass;
@@ -2130,6 +2132,9 @@ if (!Dungeon.level.visited[cell] && !Dungeon.level.mapped[cell]
 		this.exp += exp;
 		this.totalExp += exp;
         this.totalExp_Transmutation += exp;
+		if (pet != null && pet.isAlive()) {
+			pet.gainExp((int)Math.max(1, exp / 2));
+		}
 		float percent = exp/(float)maxExp();
 
 		EtherealChains.chainsRecharge chains = buff(EtherealChains.chainsRecharge.class);

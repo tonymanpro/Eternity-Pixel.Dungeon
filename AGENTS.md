@@ -44,5 +44,32 @@
 > 2. Empaquetar el ejecutable nativo de Windows (`.\gradlew.bat desktop:jpackageImage`).
 > 3. Crear el paquete `.zip` de distribución para Windows (`desktop/build/Eternity-Pixel-Dungeon-v<VERSION>-Windows.zip`).
 > 4. Crear y subir el Git Tag correspondiente a la versión (`git tag -fa v<VERSION> -m "..."` y `git push origin v<VERSION>`).
-> 5. Generar y documentar las notas de Release / Package con la lista completa y detallada de todas las mejoras, nuevos héroes, mecánicas, ítems y cambios aplicados.
+> 5. Generar y documentar las notas de Release / Package con la lista completa de todas las mejoras y cambios aplicados.
+>
+> **REGLA 3 (Redacción Orientada al Jugador en Releases, Blogs y Changelogs)**:
+> - **Omitir detalles técnicos**: No incluir nombres de clases Java, métodos, excepciones (`NullPointerException`, etc.), rutas de archivos ni jerga interna de programación.
+> - **Contenido claro y directo**: Enfocarse exclusivamente en:
+>   - **Novedades**: Qué características, héroes, mascotas, objetos o mecánicas se agregaron.
+>   - **Cambios**: Qué elementos se modificaron o eliminaron del juego.
+>   - **Defectos y Bugs**: Qué errores ocurrían en el juego y cómo fueron corregidos desde la perspectiva del jugador (ej. *"Corregido un error que cerraba el juego al seleccionar hechizos del Clérigo"*).
+
+---
+
+## 4. Capa Propietaria de Recursos (Assets) y Wrapper de Steamworks
+
+### A. Desacoplamiento de Contenido Propietario / Comercial
+- **Motor de Juego (GPL v3)**: El código fuente base reside bajo GPL v3.
+- **Capa de Contenido Propietario (`core/src/main/assets/packages/eternity/`)**:
+  - `branding/`: Logos de título, banners y emblemas comerciales.
+  - `music/`: Pistas musicales originales de autor.
+  - `story/`: Textos narrativos, diálogos de historia y lore exclusivo.
+  - `sprites/`: Sprites de héroes, efectos y criaturas propietarias.
+- **Resolución Transparente (`AssetPackResolver`)**:
+  - Toda carga de texturas (`TextureCache`), música (`Music`), efectos de sonido (`Sample`) o fuentes se resuelve prioritariamente desde `packages/eternity/` con fallback automático al paquete base de assets.
+
+### B. Integración Multiplataforma y Steamworks
+- **Arquitectura Desacoplada (`PlatformServices`)**:
+  - Toda interacción con plataformas comerciales (Steam, itch.io, GOG) para logros, estadísticas, guardado en la nube y presencia enriquecida debe realizarse mediante `PlatformManager.get()`.
+  - El juego incluye por defecto `NullPlatformServices` (No-Op seguro) permitiendo compilaciones 100% libres y sin dependencias externas obligatorias, y `SteamworksWrapper` con enlace dinámico para compilaciones de Steam.
+
 

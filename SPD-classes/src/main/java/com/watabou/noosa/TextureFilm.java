@@ -126,4 +126,12 @@ public class TextureFilm {
 	public float height( RectF frame ) {
 		return frame.height() * texHeight;
 	}
+
+	public int texWidth() {
+		return texWidth;
+	}
+
+	public int texHeight() {
+		return texHeight;
+	}
 }

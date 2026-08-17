@@ -121,7 +121,8 @@ public class HeroIcon extends Image {
 		if (film == null){
 			film = new TextureFilm(texture, SIZE, SIZE);
 		}
-		frame(film.get(subCls.icon()));
+		com.watabou.utils.RectF r = film.get(subCls.icon());
+		if (r != null) frame(r);
 	}
 
 	public HeroIcon(ArmorAbility abil){
@@ -129,7 +130,8 @@ public class HeroIcon extends Image {
 		if (film == null){
 			film = new TextureFilm(texture, SIZE, SIZE);
 		}
-		frame(film.get(abil.icon()));
+		com.watabou.utils.RectF r = film.get(abil.icon());
+		if (r != null) frame(r);
 	}
 
 	public HeroIcon(ActionIndicator.Action action){
@@ -137,7 +139,8 @@ public class HeroIcon extends Image {
 		if (film == null){
 			film = new TextureFilm(texture, SIZE, SIZE);
 		}
-		frame(film.get(action.actionIcon()));
+		com.watabou.utils.RectF r = film.get(action.actionIcon());
+		if (r != null) frame(r);
 	}
 
 	public HeroIcon(ClericSpell spell){
@@ -145,7 +148,7 @@ public class HeroIcon extends Image {
 		if (film == null){
 			film = new TextureFilm(texture, SIZE, SIZE);
 		}
-		frame(film.get(spell.icon()));
+		com.watabou.utils.RectF r = film.get(spell.icon());
+		if (r != null) frame(r);
 	}
-
 }

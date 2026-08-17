@@ -217,7 +217,7 @@ public enum Music {
 		try {
 			fadeTime = fadeTotal = -1;
 
-			player = Gdx.audio.newMusic(Gdx.files.internal(track));
+			player = Gdx.audio.newMusic(com.watabou.utils.AssetPackResolver.resolveHandle(track));
 			player.setLooping(looping);
 			player.setVolume(volumeWithFade());
 			if (!paused) player.play();

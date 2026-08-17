@@ -27,6 +27,7 @@ package com.shatteredpixel.shatteredpixeldungeon.sprites;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
 import com.watabou.noosa.Game;
+import com.watabou.noosa.TextureFilm;
 import com.watabou.noosa.tweeners.AlphaTweener;
 import com.watabou.noosa.tweeners.ScaleTweener;
 import com.watabou.utils.PointF;
@@ -83,5 +84,15 @@ public class MobSprite extends CharSprite {
 				am = 1 - progress;
 			}
 		} );
+	}
+
+	public TextureFilm createFilm( int baseWidth, int baseHeight ) {
+		if (texture != null && (texture.width > 200 || texture.height > 200) && texture.width % (baseWidth * 2) == 0) {
+			scale.set( 0.5f, 0.5f );
+			return new com.watabou.noosa.TextureFilm( texture, baseWidth * 2, baseHeight * 2 );
+		} else {
+			scale.set( 1f, 1f );
+			return new com.watabou.noosa.TextureFilm( texture, baseWidth, baseHeight );
+		}
 	}
 }

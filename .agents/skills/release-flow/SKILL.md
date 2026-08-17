@@ -26,5 +26,9 @@ Cada vez que el usuario solicite realizar un commit y subir los cambios al repos
 4. **Publicación y Tagging**:
    - Subir el commit a la rama principal: `git push origin main`
    - Crear y subir el Git Tag: `git tag -fa v<VERSION> -m "Eternity Pixel Dungeon v<VERSION> - <Resumen>"` y `git push origin v<VERSION>`
-5. **Documentación del Package / Release**:
-   - Generar un desglose exhaustivo de todas las mejoras, héroes, enemigos, objetos, mecánicas y correcciones implementadas en las notas de la versión.
+5. **Documentación del Package / Release (Orientada al Jugador)**:
+   - **Cero detalles técnicos**: Omitir nombres de clases Java, funciones, excepciones (`NullPointerException`), rutas de archivos o jerga de código.
+   - **Enfoque en contenido**: Especificar claramente:
+     - **Novedades**: Qué características, mascotas, héroes o mecánicas se agregaron.
+     - **Cambios**: Qué elementos se quitaron o modificaron en el equilibrio del juego.
+     - **Defectos y Bugs**: Qué fallos o comportamientos extraños ocurrían en el juego y cómo fueron corregidos en un lenguaje sencillo y comprensible para cualquier jugador.
