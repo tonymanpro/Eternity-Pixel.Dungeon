@@ -40,29 +40,65 @@
 <!-- ═══ LOGIN SCREEN ═══ -->
 <div id="login-screen" class="admin-login">
   <div class="admin-card">
-    <h1 class="admin-title" data-i18n="admin.login_title">ADMIN<br>PANEL</h1>
+    <div style="text-align:center; margin-bottom:16px;">
+      <img src="../assets/images/logo.png" alt="EPD Phoenix Logo" style="width:72px; height:72px; margin:0 auto 12px; border-radius:12px; filter: drop-shadow(0 4px 12px rgba(232,185,79,0.35));">
+      <h1 class="admin-title" data-i18n="admin.login_title" style="margin-bottom:4px;">ADMIN<br>PANEL</h1>
+      <p style="font-family:var(--font-mono); font-size:12px; color:var(--text-muted);">Eternity Pixel Dungeon CMS</p>
+    </div>
+    
     <form id="login-form">
       <div class="form-group">
         <label class="form-label" for="email" data-i18n="admin.email">Email</label>
-        <input type="email" id="email" class="form-input" autocomplete="email" required>
+        <input type="email" id="email" class="form-input" autocomplete="email" required placeholder="admin@example.com">
       </div>
       <div class="form-group">
-        <label class="form-label" for="password" data-i18n="admin.password">Password</label>
-        <input type="password" id="password" class="form-input" autocomplete="current-password" required>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <label class="form-label" for="password" data-i18n="admin.password">Password</label>
+          <a href="#" id="forgot-password-link" style="font-size:11px; font-family:var(--font-mono); color:var(--accent-gold);" data-i18n="admin.forgot_password">Forgot password?</a>
+        </div>
+        <input type="password" id="password" class="form-input" autocomplete="current-password" required placeholder="••••••••">
       </div>
-      <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;" data-i18n="admin.sign_in">Sign In</button>
-      <div id="login-error" style="color:var(--accent-ruby); font-size:13px; margin-top:12px; font-family:var(--font-mono); display:none;"></div>
+      <button type="submit" id="signin-submit-btn" class="btn btn-primary" style="width:100%; justify-content:center;" data-i18n="admin.sign_in">Sign In</button>
+      
+      <div style="text-align:center; margin:14px 0; font-family:var(--font-mono); font-size:11px; color:var(--text-muted);" data-i18n="admin.or">— OR —</div>
+      
+      <button type="button" id="google-signin-btn" class="btn btn-outline" style="width:100%; justify-content:center; gap:8px;">
+        <svg width="16" height="16" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+        </svg>
+        <span data-i18n="admin.sign_in_google">Sign in with Google</span>
+      </button>
+
+      <div id="login-error" style="color:var(--accent-ruby); font-size:13px; margin-top:14px; font-family:var(--font-mono); display:none; background:rgba(192,57,43,0.15); padding:8px 12px; border-radius:4px; border:1px solid rgba(192,57,43,0.4);"></div>
+      <div id="login-info" style="color:var(--accent-green); font-size:13px; margin-top:14px; font-family:var(--font-mono); display:none; background:rgba(46,204,113,0.15); padding:8px 12px; border-radius:4px; border:1px solid rgba(46,204,113,0.4);"></div>
     </form>
+    
     <p style="text-align:center; margin-top:20px;"><a href="../index.html" style="font-size:12px; color:var(--text-muted);">← Back to site</a></p>
   </div>
 </div>
 
 <!-- ═══ ADMIN SCREEN ═══ -->
-<div id="admin-screen">
+<div id="admin-screen" style="display:none;">
   <div class="admin-layout">
     <!-- Sidebar -->
     <aside class="admin-sidebar">
-      <div class="admin-sidebar-logo">ETERNITY<br>PIXEL DUNGEON<br><span style="color:var(--text-muted); font-size:7px;">ADMIN PANEL</span></div>
+      <div class="admin-sidebar-logo" style="display:flex; align-items:center; gap:10px;">
+        <img src="../assets/images/logo.png" alt="Logo" style="width:36px; height:36px; border-radius:6px;">
+        <div>
+          ETERNITY<br>PIXEL DUNGEON
+          <span style="display:block; color:var(--text-muted); font-size:7px;">ADMIN PANEL</span>
+        </div>
+      </div>
+      
+      <!-- User profile badge -->
+      <div id="user-profile-badge" style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px; margin-bottom:16px;">
+        <div style="font-size:11px; font-family:var(--font-mono); color:var(--accent-gold); word-break:break-all;" id="user-email-display">admin</div>
+        <span class="badge badge-feature" style="font-size:7px; margin-top:4px;">AUTHENTICATED</span>
+      </div>
+
       <nav class="admin-menu">
         <button class="admin-menu-btn active" data-section="posts">📋 <span data-i18n="admin.posts_list">All Posts</span></button>
         <button class="admin-menu-btn" data-section="new-post">✍️ <span data-i18n="admin.new_post">New Post</span></button>
@@ -167,6 +203,7 @@
       hide($('login-screen'));
       show($('admin-screen'));
       $('admin-screen').style.display = 'block';
+      $('user-email-display').textContent = user.email || user.displayName || 'Admin User';
       loadPostsList();
     } else {
       $('login-screen').style.display = 'flex';
@@ -174,14 +211,84 @@
     }
   });
 
+  function formatAuthError(err) {
+    if (!err) return 'Authentication error';
+    const code = err.code || '';
+    if (code.includes('invalid-credential') || code.includes('wrong-password') || code.includes('user-not-found')) {
+      return i18n.currentLang() === 'es' 
+        ? 'Credenciales inválidas. Verifica tu correo y contraseña.' 
+        : 'Invalid credentials. Please verify your email and password.';
+    }
+    if (code.includes('too-many-requests')) {
+      return i18n.currentLang() === 'es'
+        ? 'Demasiados intentos fallidos. Intenta más tarde.'
+        : 'Too many failed attempts. Please try again later.';
+    }
+    if (code.includes('popup-closed-by-user')) {
+      return i18n.currentLang() === 'es'
+        ? 'El inicio de sesión con Google fue cancelado.'
+        : 'Google sign-in was cancelled.';
+    }
+    return err.message || 'Error occurred';
+  }
+
+  // Email & Password Sign In
   $('login-form').addEventListener('submit', async e => {
     e.preventDefault();
     const errEl = $('login-error');
+    const infoEl = $('login-info');
     hide(errEl);
+    hide(infoEl);
+    const submitBtn = $('signin-submit-btn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = '...';
     try {
       await EPD.signIn($('email').value, $('password').value);
     } catch (err) {
-      errEl.textContent = err.message;
+      errEl.textContent = formatAuthError(err);
+      show(errEl);
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.setAttribute('data-i18n', 'admin.sign_in');
+      i18n.applyAll(submitBtn.parentElement);
+    }
+  });
+
+  // Google Sign In
+  $('google-signin-btn').addEventListener('click', async () => {
+    const errEl = $('login-error');
+    const infoEl = $('login-info');
+    hide(errEl);
+    hide(infoEl);
+    try {
+      await EPD.signInWithGoogle();
+    } catch (err) {
+      errEl.textContent = formatAuthError(err);
+      show(errEl);
+    }
+  });
+
+  // Forgot Password
+  $('forgot-password-link').addEventListener('click', async e => {
+    e.preventDefault();
+    const email = $('email').value.trim();
+    const errEl = $('login-error');
+    const infoEl = $('login-info');
+    hide(errEl);
+    hide(infoEl);
+    if (!email) {
+      errEl.textContent = i18n.currentLang() === 'es'
+        ? 'Por favor ingresa tu correo en el campo de email primero.'
+        : 'Please enter your email address in the field above first.';
+      show(errEl);
+      return;
+    }
+    try {
+      await EPD.resetPassword(email);
+      infoEl.textContent = i18n.t('admin.reset_sent');
+      show(infoEl);
+    } catch (err) {
+      errEl.textContent = formatAuthError(err);
       show(errEl);
     }
   });

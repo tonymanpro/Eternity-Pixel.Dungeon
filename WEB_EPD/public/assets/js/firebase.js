@@ -11,7 +11,7 @@ import { getFirestore, collection, getDocs, getDoc, doc, addDoc, updateDoc, dele
                             from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject }
                             from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
+import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, sendPasswordResetEmail, signOut, onAuthStateChanged }
                             from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 // ── Firebase Config ──────────────────────────────────────────────────────────
@@ -151,8 +151,18 @@ async function deletePost(id) {
 
 // ── Auth Helpers ──────────────────────────────────────────────────────────────
 
+const googleProvider = new GoogleAuthProvider();
+
 async function signIn(email, password) {
   return signInWithEmailAndPassword(auth, email, password);
+}
+
+async function signInWithGoogle() {
+  return signInWithPopup(auth, googleProvider);
+}
+
+async function resetPassword(email) {
+  return sendPasswordResetEmail(auth, email);
 }
 
 async function logOut() {
@@ -169,6 +179,6 @@ Object.assign(window.EPD, {
   db, auth, storage,
   uploadImage, deleteStorageFile,
   getLatestPosts, getAllPosts, getPost, savePost, deletePost,
-  signIn, logOut, onAuth,
+  signIn, signInWithGoogle, resetPassword, logOut, onAuth,
   Timestamp
 });
