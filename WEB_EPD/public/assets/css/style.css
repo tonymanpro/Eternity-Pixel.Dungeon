@@ -421,12 +421,93 @@ ul { list-style: none; }
   padding-top: var(--nav-h);
   width: 100%;
 }
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  align-items: center;
+  gap: 48px;
+  padding: 80px 0;
+  width: 100%;
+}
+@media (max-width: 900px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding: 60px 0;
+  }
+}
 .hero-inner {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  max-width: 680px;
-  padding: 80px 0;
+}
+.hero-emblem-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  animation: fadeInUp 0.8s 0.3s ease both;
+}
+.hero-emblem-glow {
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(232,185,79,0.35) 0%, rgba(192,57,43,0.2) 50%, transparent 75%);
+  border-radius: 50%;
+  filter: blur(28px);
+  animation: pulseGlow 4s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+@keyframes pulseGlow {
+  0%   { transform: scale(0.9); opacity: 0.7; }
+  100% { transform: scale(1.15); opacity: 1; }
+}
+.hero-emblem-card {
+  position: relative;
+  z-index: 1;
+  background: var(--bg-card);
+  border: 2px solid var(--border-gold);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.7), 0 0 30px rgba(232,185,79,0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  animation: floatEmblem 6s ease-in-out infinite;
+  text-align: center;
+  max-width: 340px;
+}
+.hero-emblem-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 16px 50px rgba(0,0,0,0.8), 0 0 45px rgba(232,185,79,0.35);
+  border-color: var(--accent-gold);
+}
+@keyframes floatEmblem {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+.hero-emblem-img {
+  width: 240px;
+  height: 240px;
+  object-fit: contain;
+  border-radius: var(--radius-md);
+  margin: 0 auto 16px;
+  filter: drop-shadow(0 4px 16px rgba(232,185,79,0.3));
+}
+.hero-emblem-title {
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  color: var(--accent-gold);
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+.hero-emblem-badge {
+  display: inline-block;
+  background: rgba(192,57,43,0.2);
+  border: 1px solid var(--accent-ruby);
+  color: #ff8577;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 4px;
 }
 .hero-tag {
   display: inline-flex;
