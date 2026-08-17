@@ -234,6 +234,11 @@ public class Assets {
 		public static final String SHEEP    = "sounds/sheep.mp3";
 		public static final String MINE    = "sounds/mine.mp3";
 
+		public static final String PET_DRAGON = "sounds/dragonpet.mp3";
+		public static final String PET_WOLF   = "sounds/wolfpet.mp3";
+		public static final String PET_SPIDER = "sounds/spiderpet.mp3";
+		public static final String PET_SNAKE  = "sounds/snakepet.mp3";
+
 		public static final String[] all = new String[]{
 				CLICK, BADGE, GOLD,
 
@@ -245,11 +250,13 @@ public class Assets {
 				DESCEND, EAT, READ, LULLABY, DRINK, SHATTER, ZAP, LIGHTNING, LEVELUP, DEATH,
 				CHALLENGE, CURSED, TRAP, EVOKE, TOMB, ALERT, MELD, BOSS, BLAST, PLANT, RAY, BEACON,
 				TELEPORT, CHARMS, MASTERY, PUFF, ROCKS, BURNING, FALLING, GHOST, SECRET, BONES,
-				BEE, DEGRADE, MIMIC, DEBUFF, CHARGEUP, GAS, CHAINS, SCAN, SHEEP, MINE
+				BEE, DEGRADE, MIMIC, DEBUFF, CHARGEUP, GAS, CHAINS, SCAN, SHEEP, MINE,
+				PET_DRAGON, PET_WOLF, PET_SPIDER, PET_SNAKE
 		};
 	}
 
 	public static class Splashes {
+		public static final String TITLE    = "splashes/title.jpg";
 		public static final String WARRIOR  = "splashes/warrior.jpg";
 		public static final String MAGE     = "splashes/mage.jpg";
 		public static final String ROGUE    = "splashes/rogue.jpg";

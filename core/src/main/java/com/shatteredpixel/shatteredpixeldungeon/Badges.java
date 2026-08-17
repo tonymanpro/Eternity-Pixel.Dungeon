@@ -44,6 +44,7 @@ import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Document;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
+import com.shatteredpixel.shatteredpixeldungeon.services.platform.PlatformManager;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.FileUtils;
@@ -126,6 +127,7 @@ public class Badges {
 		BOSS_SLAIN_1_ROGUE,
 		BOSS_SLAIN_1_HUNTRESS,
 		BOSS_SLAIN_1_DUELIST,
+		BOSS_SLAIN_1_CLERIC,
 		BOSS_SLAIN_1_RAT_KING,
 		BOSS_SLAIN_1_ALL_CLASSES    ( 54, BadgeType.GLOBAL ),
 		RESEARCHER_2                ( 55, BadgeType.JOURNAL ),
@@ -178,6 +180,7 @@ public class Badges {
 		VICTORY_ROGUE,
 		VICTORY_HUNTRESS,
 		VICTORY_DUELIST,
+		VICTORY_CLERIC,
 		VICTORY_RAT_KING,
 		VICTORY_ALL_CLASSES         ( 101, BadgeType.GLOBAL ),
 		DEATH_FROM_ALL              ( 102, BadgeType.GLOBAL ),
@@ -191,6 +194,8 @@ public class Badges {
 		BOSS_SLAIN_3_WARDEN,
 		BOSS_SLAIN_3_CHAMPION,
 		BOSS_SLAIN_3_MONK,
+		BOSS_SLAIN_3_PRIEST,
+		BOSS_SLAIN_3_PALADIN,
 		BOSS_SLAIN_3_RATKING,
 		BOSS_SLAIN_3_ALL_SUBCLASSES ( 103, BadgeType.GLOBAL ),
 		BOSS_CHALLENGE_3            ( 104 ),
@@ -227,7 +232,19 @@ public class Badges {
         //ShPD new Badges
         MANY_BUFFS                  ( 136 ),
         PACIFIST_ASCENT             ( 137 ),
-        TAKING_THE_MICK             ( 138 );
+        TAKING_THE_MICK             ( 138 ),
+
+		//Eternity PD Badges
+		PET_FIRST_HATCH             ( 140 ),
+		PET_ALL_SPECIES             ( 141, BadgeType.GLOBAL ),
+		PET_MAX_EVOLUTION           ( 142 ),
+		PET_HATCH_DRAGON,
+		PET_HATCH_WOLF,
+		PET_HATCH_FAIRY,
+		PET_HATCH_SPIDER,
+		FIND_MYTHIC_ITEM            ( 143 ),
+		FIND_COSMIC_ITEM            ( 144 ),
+		FULLY_EQUIPPED_COSMIC       ( 145 );
 
 		public boolean meta;
 
@@ -863,6 +880,7 @@ public class Badges {
 		firstBossClassBadges.put(HeroClass.ROGUE, Badge.BOSS_SLAIN_1_ROGUE);
 		firstBossClassBadges.put(HeroClass.HUNTRESS, Badge.BOSS_SLAIN_1_HUNTRESS);
 		firstBossClassBadges.put(HeroClass.DUELIST, Badge.BOSS_SLAIN_1_DUELIST);
+		firstBossClassBadges.put(HeroClass.CLERIC, Badge.BOSS_SLAIN_1_CLERIC);
 		firstBossClassBadges.put(HeroClass.RAT_KING, Badge.BOSS_SLAIN_1_RAT_KING);
 	}
 
@@ -873,6 +891,7 @@ public class Badges {
 		victoryClassBadges.put(HeroClass.ROGUE, Badge.VICTORY_ROGUE);
 		victoryClassBadges.put(HeroClass.HUNTRESS, Badge.VICTORY_HUNTRESS);
 		victoryClassBadges.put(HeroClass.DUELIST, Badge.VICTORY_DUELIST);
+		victoryClassBadges.put(HeroClass.CLERIC, Badge.VICTORY_CLERIC);
 		victoryClassBadges.put(HeroClass.RAT_KING, Badge.VICTORY_RAT_KING);
 	}
 
@@ -888,6 +907,8 @@ public class Badges {
 		thirdBossSubclassBadges.put(HeroSubClass.WARDEN, Badge.BOSS_SLAIN_3_WARDEN);
 		thirdBossSubclassBadges.put(HeroSubClass.CHAMPION, Badge.BOSS_SLAIN_3_CHAMPION);
 		thirdBossSubclassBadges.put(HeroSubClass.MONK, Badge.BOSS_SLAIN_3_MONK);
+		thirdBossSubclassBadges.put(HeroSubClass.PRIEST, Badge.BOSS_SLAIN_3_PRIEST);
+		thirdBossSubclassBadges.put(HeroSubClass.PALADIN, Badge.BOSS_SLAIN_3_PALADIN);
 		thirdBossSubclassBadges.put(HeroSubClass.KING, Badge.BOSS_SLAIN_3_RATKING);
 	}
 
@@ -1234,6 +1255,88 @@ public class Badges {
             displayBadge( badge );
         }
     }
+
+	public static void validatePetHatched(com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet.PetType type) {
+		if (type == null) return;
+
+		if (!local.contains(Badge.PET_FIRST_HATCH)) {
+			local.add(Badge.PET_FIRST_HATCH);
+			displayBadge(Badge.PET_FIRST_HATCH);
+		}
+
+		Badge specBadge = null;
+		switch (type) {
+			case DRAGON: specBadge = Badge.PET_HATCH_DRAGON; break;
+			case WOLF: specBadge = Badge.PET_HATCH_WOLF; break;
+			case FAIRY: specBadge = Badge.PET_HATCH_FAIRY; break;
+			case SPIDER: specBadge = Badge.PET_HATCH_SPIDER; break;
+		}
+		if (specBadge != null) {
+			local.add(specBadge);
+			unlock(specBadge);
+		}
+
+		if (!isUnlocked(Badge.PET_ALL_SPECIES)) {
+			if (isUnlocked(Badge.PET_HATCH_DRAGON) &&
+				isUnlocked(Badge.PET_HATCH_WOLF) &&
+				isUnlocked(Badge.PET_HATCH_FAIRY) &&
+				isUnlocked(Badge.PET_HATCH_SPIDER)) {
+				displayBadge(Badge.PET_ALL_SPECIES);
+			}
+		}
+	}
+
+	public static void validatePetEvolution(com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet pet) {
+		if (pet != null && pet.evolutionStage() >= 2) {
+			if (!local.contains(Badge.PET_MAX_EVOLUTION)) {
+				local.add(Badge.PET_MAX_EVOLUTION);
+				displayBadge(Badge.PET_MAX_EVOLUTION);
+			}
+		}
+	}
+
+	public static void validateItemRarity(Item item) {
+		if (item == null) return;
+		if (item.rarity == Item.Rarity.MYTHICAL) {
+			if (!local.contains(Badge.FIND_MYTHIC_ITEM)) {
+				local.add(Badge.FIND_MYTHIC_ITEM);
+				displayBadge(Badge.FIND_MYTHIC_ITEM);
+			}
+		} else if (item.rarity == Item.Rarity.COSMIC) {
+			if (!local.contains(Badge.FIND_COSMIC_ITEM)) {
+				local.add(Badge.FIND_COSMIC_ITEM);
+				displayBadge(Badge.FIND_COSMIC_ITEM);
+			}
+		}
+	}
+
+	public static void validateCosmicEquipment(com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero hero) {
+		if (hero != null && hero.belongings != null) {
+			Item weapon = hero.belongings.weapon;
+			Item armor = hero.belongings.armor;
+			if (weapon != null && weapon.rarity == Item.Rarity.COSMIC &&
+				armor != null && armor.rarity == Item.Rarity.COSMIC) {
+				if (!local.contains(Badge.FULLY_EQUIPPED_COSMIC)) {
+					local.add(Badge.FULLY_EQUIPPED_COSMIC);
+					displayBadge(Badge.FULLY_EQUIPPED_COSMIC);
+				}
+			}
+		}
+	}
+
+	public static void syncPlatformAchievements() {
+		try {
+			loadGlobal();
+			if (global != null) {
+				for (Badge badge : global) {
+					try {
+						PlatformManager.get().unlockAchievement(badge.name());
+					} catch (Throwable ignored) {}
+				}
+			}
+		} catch (Throwable ignored) {}
+	}
+
 	private static void displayBadge( Badge badge ) {
 
 		if (badge == null || (badge.type != BadgeType.JOURNAL && !Dungeon.customSeedText.isEmpty())) {
@@ -1280,6 +1383,11 @@ public class Badges {
 		if (!isUnlocked(badge) && (badge.type == BadgeType.JOURNAL || Dungeon.customSeedText.isEmpty())){
 			global.add( badge );
 			saveNeeded = true;
+			try {
+				PlatformManager.get().unlockAchievement(badge.name());
+			} catch (Throwable ignored) {
+				// Communication issues with platform backends (Steam, GOG, etc.) will never interrupt gameplay
+			}
 		}
 	}
 

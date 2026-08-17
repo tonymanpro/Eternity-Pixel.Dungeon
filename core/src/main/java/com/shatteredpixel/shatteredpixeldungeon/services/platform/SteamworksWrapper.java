@@ -102,8 +102,8 @@ public class SteamworksWrapper implements PlatformServices {
 				steamUserStats.getClass().getMethod("setAchievement", String.class).invoke(steamUserStats, achievementId);
 				steamUserStats.getClass().getMethod("storeStats").invoke(steamUserStats);
 			}
-		} catch (Throwable t) {
-			Game.reportException(t);
+		} catch (Throwable ignored) {
+			// Safe degradation: platform/network failures never crash the game
 		}
 	}
 

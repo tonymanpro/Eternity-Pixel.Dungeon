@@ -30,10 +30,13 @@ public class AutoTestRunner {
 		System.out.println("[3/5] Ejecutando: Pets & Companions System Test...");
 		results.add(PetSystemTest.run());
 
-		System.out.println("[4/5] Ejecutando: Item Rarity & Generation Test...");
+		System.out.println("[4/6] Ejecutando: Item Rarity & Generation Test...");
 		results.add(ItemRarityTest.run());
 
-		System.out.println("[5/5] Ejecutando: Autonomous Bot AI Simulation (50 turns)...");
+		System.out.println("[5/6] Ejecutando: Platform Achievements & Badges Sync Test...");
+		results.add(PlatformAchievementsTest.run());
+
+		System.out.println("[6/6] Ejecutando: Autonomous Bot AI Simulation (50 turns)...");
 		results.add(AutonomousBotSim.run(50));
 
 		long totalDuration = System.currentTimeMillis() - totalStart;

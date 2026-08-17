@@ -52,6 +52,8 @@
 >   - **Novedades**: Qué características, héroes, mascotas, objetos o mecánicas se agregaron.
 >   - **Cambios**: Qué elementos se modificaron o eliminaron del juego.
 >   - **Defectos y Bugs**: Qué errores ocurrían en el juego y cómo fueron corregidos desde la perspectiva del jugador (ej. *"Corregido un error que cerraba el juego al seleccionar hechizos del Clérigo"*).
+>
+> **REGLA 4 (Control de Despliegues en Hosting / Web)**: **No realizar despliegues automáticos a Firebase Hosting (`firebase deploy` / `firebase-tools`) sin que el usuario lo autorice o solicite explícitamente.** Todos los cambios web se desarrollarán y probarán localmente hasta recibir la orden directa de despliegue.
 
 ---
 

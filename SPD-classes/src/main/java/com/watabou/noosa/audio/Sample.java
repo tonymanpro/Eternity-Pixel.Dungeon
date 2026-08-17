@@ -126,11 +126,28 @@ public enum Sample {
 	public synchronized long play( Object id, float leftVolume, float rightVolume, float pitch ) {
 		float volume = Math.max(leftVolume, rightVolume);
 		float pan = rightVolume - leftVolume;
-		if (enabled && ids.containsKey( id )) {
-			return ids.get(id).play( globalVolume*volume, pitch, pan );
-		} else {
-			return -1;
+		if (enabled) {
+			if (!ids.containsKey(id) && id instanceof String) {
+				try {
+					Sound newSound = Gdx.audio.newSound(com.watabou.utils.AssetPackResolver.resolveHandle((String)id));
+					if (newSound != null) {
+						ids.put(id, newSound);
+					}
+				} catch (Exception e) {
+					try {
+						String alt = ((String)id).startsWith("sounds/") ? ((String)id).replace("sounds/", "music/") : ((String)id).replace("music/", "sounds/");
+						Sound altSound = Gdx.audio.newSound(com.watabou.utils.AssetPackResolver.resolveHandle(alt));
+						if (altSound != null) {
+							ids.put(id, altSound);
+						}
+					} catch (Exception ignored) {}
+				}
+			}
+			if (ids.containsKey( id )) {
+				return ids.get(id).play( globalVolume*volume, pitch, pan );
+			}
 		}
+		return -1;
 	}
 
 	private class DelayedSoundEffect{

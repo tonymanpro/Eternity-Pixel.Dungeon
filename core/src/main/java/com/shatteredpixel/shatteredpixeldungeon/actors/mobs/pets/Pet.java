@@ -114,6 +114,24 @@ public abstract class Pet extends DirectableAlly {
 			}
 			Sample.INSTANCE.play(Assets.Sounds.ITEM);
 			GLog.p(Messages.get(Pet.class, "levelup_log", name(), petLevel));
+			com.shatteredpixel.shatteredpixeldungeon.Badges.validatePetEvolution(this);
+		}
+	}
+
+	public void playVoice() {
+		switch (petType) {
+			case DRAGON:
+				Sample.INSTANCE.play(Assets.Sounds.PET_DRAGON);
+				break;
+			case WOLF:
+				Sample.INSTANCE.play(Assets.Sounds.PET_WOLF);
+				break;
+			case SPIDER:
+				Sample.INSTANCE.play(Assets.Sounds.PET_SPIDER);
+				break;
+			case FAIRY:
+				Sample.INSTANCE.play(Assets.Sounds.PET_SNAKE);
+				break;
 		}
 	}
 

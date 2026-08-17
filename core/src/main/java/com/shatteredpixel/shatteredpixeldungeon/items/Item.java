@@ -267,6 +267,7 @@ public class Item implements Bundlable {
 				break;
 			}
 		}
+		com.shatteredpixel.shatteredpixeldungeon.Badges.validateItemRarity(this);
 	}
 
     public void randomizeCommonRarity() {
@@ -278,6 +279,7 @@ public class Item implements Bundlable {
                 break;
             }
         }
+        com.shatteredpixel.shatteredpixeldungeon.Badges.validateItemRarity(this);
     }
 
 	public long getRarityMultiplier() {
@@ -827,10 +829,21 @@ public class Item implements Bundlable {
 	}
 	
 	public ItemSprite.Glowing glowing() {
+		if (rarity != null && rarity != Rarity.NONE && rarity.color != 0xFFFFFF) {
+			return new ItemSprite.Glowing(rarity.color, 1.2f);
+		}
 		return null;
 	}
 
-	public Emitter emitter() { return null; }
+	public Emitter emitter() {
+		if (rarity != null && rarity != Rarity.NONE && rarity.color != 0xFFFFFF) {
+			Emitter emitter = new Emitter();
+			emitter.pos(0, 0);
+			emitter.pour(Speck.factory(Speck.STAR), 0.8f);
+			return emitter;
+		}
+		return null;
+	}
 	
 	public String info() {
 

@@ -51,6 +51,7 @@ import com.shatteredpixel.shatteredpixeldungeon.windows.WndVictoryCongrats;
 import com.watabou.glwrap.Blending;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.Camera;
+import com.watabou.noosa.ColorBlock;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.audio.Music;
@@ -74,41 +75,61 @@ public class TitleScene extends PixelScene {
 		int w = Camera.main.width;
 		int h = Camera.main.height;
 		
-		Archs archs = new Archs();
-		archs.setSize( w, h );
-		add( archs );
+		boolean customBgLoaded = false;
+		try {
+			Image titleBg = new Image(Assets.Splashes.TITLE);
+			float scale = Math.max((float)w / titleBg.width, (float)h / titleBg.height);
+			titleBg.scale.set(scale);
+			titleBg.x = (w - titleBg.width()) / 2f;
+			titleBg.y = (h - titleBg.height()) / 2f;
+			add(titleBg);
+
+			ColorBlock dim = new ColorBlock(w, h, 0x22000000);
+			add(dim);
+			customBgLoaded = true;
+		} catch (Throwable ignored) {
+			Archs archs = new Archs();
+			archs.setSize( w, h );
+			add( archs );
+		}
 		
 		Image title = BannerSprites.get( BannerSprites.Type.PIXEL_DUNGEON );
-		add( title );
+		if (!customBgLoaded) {
+			add( title );
+		} else {
+			title.visible = false;
+		}
 
-		float topRegion = Math.max(title.height - 6, h*0.45f);
+		float topRegion = Math.max(title.height - 6, h*0.48f);
 
 		title.x = (w - title.width()) / 2f;
 		title.y = 2 + (topRegion - title.height()) / 2f;
 
 		align(title);
 
-		placeTorch(title.x + 22, title.y + 46);
-		placeTorch(title.x + title.width - 22, title.y + 46);
+		if (!customBgLoaded) {
+			placeTorch(title.x + 22, title.y + 46);
+			placeTorch(title.x + title.width - 22, title.y + 46);
 
-		Image signs = new Image( BannerSprites.get( BannerSprites.Type.PIXEL_DUNGEON_SIGNS ) ) {
-			private float time = 0;
-			@Override
-			public void update() {
-				super.update();
-				am = Math.max(0f, (float)Math.sin( time += Game.elapsed ));
-				if (time >= 1.5f*Math.PI) time = 0;
-			}
-			@Override
-			public void draw() {
-				Blending.setLightMode();
-				super.draw();
-				Blending.setNormalMode();
-			}
-		};
-		signs.x = title.x + (title.width() - signs.width())/2f;
-		signs.y = title.y;
-		add( signs );
+			Image signs = new Image( BannerSprites.get( BannerSprites.Type.PIXEL_DUNGEON_SIGNS ) ) {
+				private float time = 0;
+				@Override
+				public void update() {
+					super.update();
+					am = Math.max(0f, (float)Math.sin( time += Game.elapsed ));
+					if (time >= 1.5f*Math.PI) time = 0;
+				}
+				@Override
+				public void draw() {
+					Blending.setLightMode();
+					super.draw();
+					Blending.setNormalMode();
+				}
+			};
+			signs.x = title.x + (title.width() - signs.width())/2f;
+			signs.y = title.y;
+			add( signs );
+		}
 
 		final Chrome.Type GREY_TR = Chrome.Type.GREY_BUTTON_TR;
 

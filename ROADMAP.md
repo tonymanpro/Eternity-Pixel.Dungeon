@@ -31,10 +31,10 @@ graph LR
 - [x] Rediseño visual del **Clérigo (Cleric)** con maza solar bendita, estola sagrada y golpe solar divino.
 - [x] Rediseño de los 6 avatares de selección de clase en alta resolución ([`avatars.png`](file:///d:/Desarollo/InfinityPixelDungeon/Infinite-Pixel-Dungeon/core/src/main/assets/packages/eternity/sprites/avatars.png)).
 
-### 🗡️ Fase 2: Ítems y Efectos de Combate (En Progreso)
-- [x] Soporte dinámico en `ItemSpriteSheet` para resolución estándar e ítems HD 2x (32x32 px).
+### 🗡️ Fase 2: Ítems y Efectos de Combate (Completado)
+- [x] Soporte dinámico en `ItemSpriteSheet` para resolución estándar e ítems HD 2x (32x32 px / 512x1536 px).
 - [x] Efectos visuales de impacto y partículas de combate (chispas estelares en golpes críticos y sigilosos).
-- [ ] Sprites de alta definición para armas y armaduras Legendarias y Míticas con brillo y runas grabadas.
+- [x] Sprites de alta definición para armas y armaduras Legendarias, Míticas y Cósmicas con auras de brillo pulsante y emisores de partículas estelares.
 
 ### 👹 Fase 3: Criaturas y Jefes Épicos (En Progreso)
 - [x] Soporte dinámico en `MobSprite` para resolución estándar y texturas HD 2x automáticas.
@@ -121,10 +121,10 @@ graph LR
 
 | Prioridad | Tarea | Componente | Estado |
 | :---: | :--- | :---: | :---: |
-| 🔥 Alta | Sprites HD para armas y armaduras Legendarias y Míticas | Gráficos | Pendiente |
 | 🔥 Alta | Música original de autor para el Menú Principal y Cloacas | Audio | Pendiente |
 | ⚡ Media | Sistema de Logros de Steam mapeados con los Badges del juego | Plataforma | Pendiente |
 | ⚡ Media | Tilesets de Mazmorras y Entorno HD | Gráficos | Pendiente |
+| ✅ Completado | **Sprites HD y Efectos de Auras/Partículas para Armas y Armaduras** | Gráficos / Core | ✅ Implementado |
 | ✅ Completado | **Sistema de Compañeros y Mascotas (*Pets & Companions*)** | Mecánicas / Core | ✅ Implementado |
 | ✅ Completado | **Soporte de Renderizado Dinámico HD para Ítems y Jefes** | Motor / Gráficos | ✅ Implementado |
 

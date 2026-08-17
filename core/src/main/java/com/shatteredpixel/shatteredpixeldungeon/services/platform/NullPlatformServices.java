@@ -55,22 +55,31 @@ public class NullPlatformServices implements PlatformServices {
 		return false;
 	}
 
+	private final java.util.HashSet<String> unlockedAchievements = new java.util.HashSet<>();
+	private final java.util.HashMap<String, Integer> stats = new java.util.HashMap<>();
+
 	@Override
 	public void unlockAchievement(String achievementId) {
+		if (achievementId != null) {
+			unlockedAchievements.add(achievementId);
+		}
 	}
 
 	@Override
 	public boolean isAchievementUnlocked(String achievementId) {
-		return false;
+		return achievementId != null && unlockedAchievements.contains(achievementId);
 	}
 
 	@Override
 	public void setStat(String statName, int value) {
+		if (statName != null) {
+			stats.put(statName, value);
+		}
 	}
 
 	@Override
 	public int getStat(String statName, int defaultValue) {
-		return defaultValue;
+		return statName != null && stats.containsKey(statName) ? stats.get(statName) : defaultValue;
 	}
 
 	@Override

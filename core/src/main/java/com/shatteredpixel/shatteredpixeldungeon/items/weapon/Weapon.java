@@ -469,8 +469,10 @@ abstract public class Weapon extends KindOfWeapon implements EquipableItem.Tiera
             } else {
                 return null;
             }
+        } else if (enchantment != null && (cursedKnown || !enchantment.curse())) {
+            return enchantment.glowing();
         } else {
-            return enchantment != null && (cursedKnown || !enchantment.curse()) ? enchantment.glowing() : null;
+            return super.glowing();
         }
 	}
 

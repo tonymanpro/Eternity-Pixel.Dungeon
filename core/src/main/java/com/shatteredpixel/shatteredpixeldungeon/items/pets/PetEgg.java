@@ -117,9 +117,11 @@ public class PetEgg extends Item {
 			if (hero.sprite != null) {
 				hero.sprite.operate(hero.pos);
 			}
+			newPet.playVoice();
 			Sample.INSTANCE.play(Assets.Sounds.EVOKE);
 			CellEmitter.get(spawnCell).burst(Speck.factory(Speck.STAR), 10);
 			GLog.p(Messages.get(this, "hatched", newPet.name()));
+			com.shatteredpixel.shatteredpixeldungeon.Badges.validatePetHatched(eggType);
 			hero.spendAndNext(1f);
 		}
 	}

@@ -683,4 +683,18 @@ public static void playMusicInBackground( boolean value ){
 	public static boolean lootFilterAutoScrap() {
 		return getBoolean( KEY_LOOT_FILTER_AUTO_SCRAP, false );
 	}
+
+	// Soundtrack Selection
+	public static final String KEY_SOUNDTRACK = "soundtrack";
+	public static final int SOUNDTRACK_ETERNITY = 0;
+	public static final int SOUNDTRACK_CLASSIC  = 1;
+
+	public static int soundtrack() {
+		return getInt( KEY_SOUNDTRACK, SOUNDTRACK_ETERNITY );
+	}
+
+	public static void soundtrack( int value ) {
+		put( KEY_SOUNDTRACK, value );
+		com.watabou.utils.AssetPackResolver.musicOverrideEnabled = (value == SOUNDTRACK_ETERNITY);
+	}
 }

@@ -68,7 +68,7 @@ public class HeadlessEnvironment {
 		new HeadlessApplication(game, config);
 
 		Game.versionCode = 1000;
-		Game.version = "v1.0.0";
+		Game.version = "v1.1.0";
 		Game.dispWidth = 800;
 		Game.dispHeight = 600;
 		Game.width = 800;

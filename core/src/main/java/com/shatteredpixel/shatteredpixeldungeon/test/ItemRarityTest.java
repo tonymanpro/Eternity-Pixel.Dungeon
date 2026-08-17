@@ -59,16 +59,30 @@ public class ItemRarityTest {
 
 			result.pass("Successfully generated and validated " + validItems + "/" + totalItems + " random items");
 
-			StringBuilder sb = new StringBuilder("Sample Rarity Distribution: ");
-			int displayed = 0;
-			for (Map.Entry<Item.Rarity, Integer> entry : rarityCounts.entrySet()) {
-				if (entry.getValue() > 0 && displayed < 8) {
-					sb.append(entry.getKey().name()).append("=").append(entry.getValue()).append(" (")
-							.append(String.format("%.1f", (entry.getValue() * 100.0 / totalItems))).append("%), ");
-					displayed++;
-				}
+			// Test HD Sprites and Glowing effects on Mythical / Cosmic equipment
+			com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.WarHammer hammer =
+					new com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.WarHammer();
+			hammer.rarity = Item.Rarity.MYSTICAL;
+			if (hammer.glowing() == null) {
+				result.fail("Mystical WarHammer should have a glowing aura", null);
+			} else {
+				result.pass("Mystical WarHammer glowing aura verified (Color: 0x" + Integer.toHexString(hammer.glowing().color) + ")");
 			}
-			result.info(sb.toString());
+
+			com.shatteredpixel.shatteredpixeldungeon.items.armor.PlateArmor plate =
+					new com.shatteredpixel.shatteredpixeldungeon.items.armor.PlateArmor();
+			plate.rarity = Item.Rarity.COSMIC;
+			if (plate.glowing() == null) {
+				result.fail("Cosmic PlateArmor should have a glowing aura", null);
+			} else {
+				result.pass("Cosmic PlateArmor glowing aura verified (Color: 0x" + Integer.toHexString(plate.glowing().color) + ")");
+			}
+
+			if (plate.emitter() == null) {
+				result.fail("Cosmic PlateArmor should have a star particle emitter", null);
+			} else {
+				result.pass("Cosmic PlateArmor star particle emitter verified");
+			}
 
 		} catch (Exception e) {
 			result.fail("Item rarity test suite encountered fatal exception", e);

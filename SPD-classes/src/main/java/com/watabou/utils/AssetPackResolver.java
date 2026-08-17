@@ -43,6 +43,8 @@ public class AssetPackResolver {
 	private static final List<String> activePacks = new ArrayList<>();
 	private static final Map<String, String> directOverrides = new HashMap<>();
 
+	public static boolean musicOverrideEnabled = true;
+
 	static {
 		// Paquete propietario por defecto de Eternity Pixel Dungeon
 		activePacks.add("packages/eternity/");
@@ -84,6 +86,10 @@ public class AssetPackResolver {
 	 */
 	public static synchronized String resolvePath(String path) {
 		if (path == null || path.isEmpty()) {
+			return path;
+		}
+
+		if (path.startsWith("music/") && !musicOverrideEnabled) {
 			return path;
 		}
 

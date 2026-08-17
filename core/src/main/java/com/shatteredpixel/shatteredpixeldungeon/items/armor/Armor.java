@@ -695,7 +695,7 @@ public class Armor extends EquipableItem implements EquipableItem.Tierable {
 	
 	@Override
 	public ItemSprite.Glowing glowing() {
-		return glyph != null && (cursedKnown || !glyph.curse()) ? glyph.glowing() : null;
+		return glyph != null && (cursedKnown || !glyph.curse()) ? glyph.glowing() : super.glowing();
 	}
 	
 	public static abstract class Glyph implements Bundlable {

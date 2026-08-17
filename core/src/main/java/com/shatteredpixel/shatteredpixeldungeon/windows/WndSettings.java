@@ -963,6 +963,8 @@ public class WndSettings extends WndTabbed {
 		ColorBlock sep3;
 		CheckBox chkIgnoreSilent;
 		CheckBox chkMusicBG;
+		ColorBlock sep4;
+		OptionSlider optSoundtrack;
 
 		@Override
 		protected void createChildren() {
@@ -1055,6 +1057,18 @@ public class WndSettings extends WndTabbed {
 				chkMusicBG.checked(SPDSettings.playMusicInBackground());
 				add(chkMusicBG);
 			}
+
+			sep4 = new ColorBlock(1, 1, 0xFF000000);
+			add(sep4);
+
+			optSoundtrack = new OptionSlider(Messages.get(this, "soundtrack"), Messages.get(this, "soundtrack_eternity"), Messages.get(this, "soundtrack_classic"), 0, 1) {
+				@Override
+				protected void onChange() {
+					SPDSettings.soundtrack(getSelectedValue());
+				}
+			};
+			optSoundtrack.setSelectedValue(SPDSettings.soundtrack());
+			add(optSoundtrack);
 		}
 
 		@Override
@@ -1099,6 +1113,12 @@ public class WndSettings extends WndTabbed {
 				chkMusicBG.setRect(0, sep3.y + 1 + GAP, width, BTN_HEIGHT);
 				height = chkMusicBG.bottom();
 			}
+
+			sep4.size(width, 1);
+			sep4.y = height + GAP;
+
+			optSoundtrack.setRect(0, sep4.y + 1 + GAP, width, SLIDER_HEIGHT);
+			height = optSoundtrack.bottom();
 		}
 
 	}
