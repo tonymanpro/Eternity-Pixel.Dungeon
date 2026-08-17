@@ -209,7 +209,7 @@ public class AboutScene extends PixelScene {
 		"Eternity Pixel Dungeon:",
 		null,
 		"Developed by: tonymanpro\nBased on Infinite & ExpPD",
-		"GitHub", "https://github.com/tonymanpro/Infinite-Pixel-Dungeon");
+		"GitHub", "https://github.com/tonymanpro/Eternity-Pixel.Dungeon");
 		if (landscape()){
 			eternityPR.setRect(bob.left(), infinitePD.bottom() + 8, fullWidth, 0);
 		} else {
