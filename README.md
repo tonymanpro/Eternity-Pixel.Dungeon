@@ -5,42 +5,42 @@
 [![Website](https://img.shields.io/badge/Website-eternity--pixel--dungeon.web.app-brightgreen.svg)](https://eternity-pixel-dungeon.web.app)
 [![License](https://img.shields.io/badge/License-GPL%20v3-orange.svg)](LICENSE)
 
-**Eternity Pixel Dungeon** es un roguelike táctico de exploración de mazmorras por turnos, con generación procedimental, combate estratégico e historia inmersiva. 
+**Eternity Pixel Dungeon** is a turn-based tactical dungeon-crawling roguelike featuring procedural generation, strategic combat, and an immersive story.
 
-Adéntrate en complejas catacumbas repletas de trampas mortales, tesoros ocultos, artefactos místicos y despiadadas criaturas en tu búsqueda del legendario Amuleto de Yendor.
+Venture into complex catacombs packed with deadly traps, hidden treasures, mystical artifacts, and ruthless creatures in your quest for the legendary Amulet of Yendor.
 
 ---
 
-## 🌐 Sitio Web Oficial
+## 🌐 Official Website
 
-Visita el portal oficial para descargar las últimas versiones ejecutable y APK, consultar noticias de desarrollo y explorar la comunidad:
+Visit the official portal to download the latest executable and APK versions, read development news, and explore the community:
 
 👉 **[https://eternity-pixel-dungeon.web.app](https://eternity-pixel-dungeon.web.app)**
 
 ---
 
-## 🎮 ¿Qué Diferencia a Eternity Pixel Dungeon?
+## 🎮 What Makes Eternity Pixel Dungeon Different?
 
-* 🐾 **Sistema Único de Compañeros y Mascotas**: Encuentra e incuba huevos raros en la mazmorra. Entrena, evoluciona y da órdenes tácticas a 4 especies de compañeros (Cría de Dragón, Lobo Fiel, Hada de Luz y Araña Tejedora).
-* 🛡️ **8 Clases Jugables**: Juega como el Guerrero, Mago, Pícaro, Cazadora, Duelista, Clérigo (con hechizos sagrados), Bárbaro (furia berserker) o el emblemático Rey Rata.
-* 🎨 **Motor Gráfico en Alta Resolución (HD 2x)**: Disfruta de un apartado visual retro en pixel art pulido con efectos de iluminación, auras mágicas y animaciones fluidas.
-* 🌐 **Sincronización Idiomática Completa (Español e Inglés)**: Experiencia 100% bilingüe con localización sincronizada sin claves faltantes.
-* ⚖️ **Juego Justo y Rejugabilidad Infinita**: Generación procedimental de niveles y objetos sin microtransacciones ni mecánicas pay-to-win.
-
----
-
-## 📜 Licencia, Autoría y Créditos
-
-### ⚖️ Licencia Código Fuente
-El código fuente base del proyecto reside bajo la licencia **GNU General Public License v3 (GPL v3)**. Puedes consultar el texto legal completo en el archivo [`LICENSE`](LICENSE).
-
-### 👥 Créditos de Autoría y Prolinaje
-- **Eternity Pixel Dungeon**: Desarrollado y mantenido por el equipo de Eternity Pixel Dungeon.
-- **Experienced Pixel Dungeon**: Basado en el trabajo de Trashbox Bobylev (2019-2024).
-- **Shattered Pixel Dungeon**: Basado en el trabajo original de Evan Debenham (2014-2024).
-- **Pixel Dungeon**: Creado originalmente por Oleg Dolya / Watabou (2012-2015).
+* 🐾 **Unique Companion and Pet System**: Find and hatch rare eggs in the dungeon. Train, evolve, and issue tactical commands to 4 companion species (Dragon Hatchling, Loyal Wolf, Light Fairy, and Weaver Spider).
+* 🛡️ **8 Playable Classes**: Play as the Warrior, Mage, Rogue, Huntress, Duelist, Cleric (with sacred spells), Barbarian (berserker fury), or the iconic Rat King.
+* 🎨 **High-Resolution Graphics Engine (HD 2x)**: Enjoy polished retro pixel-art visuals with lighting effects, magical auras, and smooth animations.
+* 🌐 **Full Language Synchronization** (**Spanish** and English): A 100% bilingual experience with synchronized localization and no missing keys.
+* ⚖️ **Fair Gameplay and Infinite Replayability**: Procedural generation of levels and items with no microtransactions or pay-to-win mechanics.
 
 ---
 
-### 🎨 Capa de Contenido Propietario
-El motor de juego y la estructura de código son software libre bajo GPL v3. Los recursos de marca comercial, música original de autor y narrativa exclusiva están organizados en capas desacopladas de assets propietarios.
+## 📜 License, Authorship, and Credits
+
+### ⚖️ Source Code License
+The project's core source code is licensed under the **GNU General Public License v3 (GPL v3)**. You can find the full legal text in the [`LICENSE`](LICENSE) file.
+
+### 👥 Authorship and Lineage Credits
+- **Eternity Pixel Dungeon**: Developed and maintained by the Eternity Pixel Dungeon team.
+- **Experienced Pixel Dungeon**: Based on the work of Trashbox Bobylev (2019-2024).
+- **Shattered Pixel Dungeon**: Based on the original work of Evan Debenham (2014-2024).
+- **Pixel Dungeon**: Originally created by Oleg Dolya / Watabou (2012-2015).
+
+---
+
+### 🎨 Proprietary Content Layer
+The game engine and code structure are free software under GPL v3. Trademarked branding resources, original authored music, and exclusive narrative content are organized in decoupled proprietary asset layers.
