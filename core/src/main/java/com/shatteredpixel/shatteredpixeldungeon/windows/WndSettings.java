@@ -856,6 +856,7 @@ public class WndSettings extends WndTabbed {
 		CheckBox chkUpdates;
 		CheckBox chkBetas;
 		CheckBox chkWifi;
+		RedButton btnSupporter;
 
 		@Override
 		protected void createChildren() {
@@ -914,6 +915,14 @@ public class WndSettings extends WndTabbed {
 				chkWifi.checked(SPDSettings.WiFi());
 				add(chkWifi);
 			}
+
+			btnSupporter = new RedButton(Messages.get(this, "supporter_btn")) {
+				@Override
+				public void onClick() {
+					ShatteredPixelDungeon.scene().addToFront(new WndSupporterUnlock());
+				}
+			};
+			add(btnSupporter);
 		}
 
 		@Override
@@ -925,7 +934,7 @@ public class WndSettings extends WndTabbed {
 			float pos;
 			if (width > 200 && chkUpdates != null){
 				chkNews.setRect(0, sep1.y + 1 + GAP, width/2-1, BTN_HEIGHT);
-				chkUpdates.setRect(chkNews.right() + GAP, chkNews.top(), width/2-1, BTN_HEIGHT);
+				chkUpdates.setRect(width/2+1, sep1.y + 1 + GAP, width/2-1, BTN_HEIGHT);
 				pos = chkUpdates.bottom();
 			} else {
 				chkNews.setRect(0, sep1.y + 1 + GAP, width, BTN_HEIGHT);
@@ -945,6 +954,9 @@ public class WndSettings extends WndTabbed {
 				chkWifi.setRect(0, pos + GAP, width, BTN_HEIGHT);
 				pos = chkWifi.bottom();
 			}
+
+			btnSupporter.setRect(0, pos + GAP * 2, width, BTN_HEIGHT);
+			pos = btnSupporter.bottom();
 
 			height = pos;
 

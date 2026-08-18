@@ -95,4 +95,15 @@ public class NullPlatformServices implements PlatformServices {
 	public byte[] loadFromCloud(String fileName) {
 		return null;
 	}
+
+	private boolean supporterEntitlement = false;
+
+	@Override
+	public boolean isSupporter() {
+		return supporterEntitlement;
+	}
+
+	public void setSupporter(boolean value) {
+		this.supporterEntitlement = value;
+	}
 }

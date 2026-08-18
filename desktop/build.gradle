@@ -140,3 +140,14 @@ tasks.register('autoTest', JavaExec) {
     systemProperty 'Specification-Version', appVersionName
     systemProperty 'Implementation-Version', appVersionCode
 }
+
+tasks.register('exportMaps', JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = "com.shatteredpixel.shatteredpixeldungeon.desktop.DesktopAutoTestLauncher"
+    args = ["--export-maps"]
+    systemProperty 'Specification-Title', appName
+    systemProperty 'Implementation-Title', appPackageName
+    systemProperty 'Specification-Version', appVersionName
+    systemProperty 'Implementation-Version', appVersionCode
+}
+

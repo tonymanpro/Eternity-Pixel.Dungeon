@@ -92,6 +92,12 @@ public class PetEgg extends Item {
 			hero.spendAndNext(1f);
 
 		} else if (action.equals(AC_HATCH)) {
+			if (eggType == Pet.PetType.MANTICORE && !com.shatteredpixel.shatteredpixeldungeon.services.platform.SupporterManager.isSupporter()) {
+				GLog.w(Messages.get(this, "manticore_supporter_locked"));
+				GameScene.show(new com.shatteredpixel.shatteredpixeldungeon.windows.WndSupporterUnlock());
+				return;
+			}
+
 			if (!isReadyToHatch()) {
 				GLog.w(Messages.get(this, "not_ready"));
 				return;

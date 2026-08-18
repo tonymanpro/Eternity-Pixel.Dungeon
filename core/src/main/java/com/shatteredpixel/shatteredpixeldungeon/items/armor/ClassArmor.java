@@ -123,6 +123,16 @@ abstract public class ClassArmor extends Armor {
 		case DUELIST:
 			classArmor = new DuelistArmor();
 			break;
+		case CLERIC:
+			classArmor = new ClericArmor();
+			break;
+		case BARBARIAN:
+			classArmor = new BarbarianArmor();
+			seal = armor.checkSeal();
+			if (seal != null) {
+				classArmor.affixSeal(seal);
+			}
+			break;
 		case RAT_KING:
 			classArmor = new RatKingArmor();
 			seal = armor.checkSeal();

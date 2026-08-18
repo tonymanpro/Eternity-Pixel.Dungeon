@@ -218,6 +218,22 @@ public class AboutScene extends PixelScene {
 		content.add(eternityPR);
 		addLine(eternityPR.top() - 4, content);
 
+		//*** Patreon Supporters & Hall of Fame ***
+		final int PATREON_COLOR = 0xFF6B4A;
+		CreditsBlock patreonPR = new CreditsBlock(true, PATREON_COLOR,
+				"Patreon Supporters & Hall of Fame:",
+				Icons.BADGES.get(),
+				"A huge, heartfelt thank you to our _Patreon supporters, backers, and community champions_! Your generous support directly funds ongoing development, new heroes, pet companions, and eternity content.",
+				"patreon.com/c/EternityPixelDungeon",
+				"https://www.patreon.com/c/EternityPixelDungeon");
+		if (landscape()){
+			patreonPR.setRect(bob.left(), eternityPR.bottom() + 8, fullWidth, 0);
+		} else {
+			patreonPR.setRect(gdx.left(), eternityPR.bottom() + 8, colWidth, 0);
+		}
+		content.add(patreonPR);
+		addLine(patreonPR.top() - 4, content);
+
 		//*** Transifex Credits ***
 
 		CreditsBlock transifex = new CreditsBlock(true,
@@ -227,7 +243,7 @@ public class AboutScene extends PixelScene {
 				"ShatteredPD is community-translated via _Transifex_! Thank you so much to all of Shattered's volunteer translators!",
 				"transifex.com/shattered-pixel/...",
 				"https://explore.transifex.com/shattered-pixel/shattered-pixel-dungeon/");
-		transifex.setRect((Camera.main.width - colWidth)/2f, eternityPR.bottom() + 12, colWidth, 0);
+		transifex.setRect((Camera.main.width - colWidth)/2f, patreonPR.bottom() + 12, colWidth, 0);
 		content.add(transifex);
 
 		addLine(transifex.top() - 4, content);

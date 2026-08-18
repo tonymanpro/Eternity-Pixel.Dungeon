@@ -11,6 +11,10 @@ import java.util.List;
 public class AutoTestRunner {
 
 	public static int runAllTests() {
+		return runAllTests(Boolean.getBoolean("export.maps") || Boolean.getBoolean("exportImages"));
+	}
+
+	public static int runAllTests(boolean exportMaps) {
 		System.out.println("===============================================================");
 		System.out.println(" 🤖 ETERNITY PIXEL DUNGEON — AUTO-TEST RUNNER SUITE");
 		System.out.println("===============================================================");
@@ -21,23 +25,32 @@ public class AutoTestRunner {
 		long totalStart = System.currentTimeMillis();
 
 		// Run Test Modules
-		System.out.println("\n[1/5] Ejecutando: Dungeon Generation & Reachability Test...");
+		System.out.println("\n[1/7] Ejecutando: Dungeon Generation & Reachability Test...");
 		results.add(DungeonGenTest.run());
 
-		System.out.println("[2/5] Ejecutando: Hero Mechanics & Classes Test...");
+		System.out.println("[2/7] Ejecutando: Hero Mechanics & Classes Test...");
 		results.add(HeroMechanicsTest.run());
 
-		System.out.println("[3/5] Ejecutando: Pets & Companions System Test...");
+		System.out.println("[3/7] Ejecutando: Pets & Companions System Test...");
 		results.add(PetSystemTest.run());
 
-		System.out.println("[4/6] Ejecutando: Item Rarity & Generation Test...");
+		System.out.println("[4/7] Ejecutando: Item Rarity & Generation Test...");
 		results.add(ItemRarityTest.run());
 
-		System.out.println("[5/6] Ejecutando: Platform Achievements & Badges Sync Test...");
+		System.out.println("[5/7] Ejecutando: Platform Achievements & Badges Sync Test...");
 		results.add(PlatformAchievementsTest.run());
 
-		System.out.println("[6/6] Ejecutando: Autonomous Bot AI Simulation (50 turns)...");
+		System.out.println("[6/7] Ejecutando: Supporter Licensing & Entitlements Test...");
+		results.add(SupporterLicensingTest.run());
+
+		System.out.println("[7/7] Ejecutando: Autonomous Bot AI Simulation (50 turns)...");
 		results.add(AutonomousBotSim.run(50));
+
+		// Map Screenshot Exporter (only when requested)
+		if (exportMaps) {
+			System.out.println("\n[OPTIONAL] Ejecutando: Map Screenshot & Visualizer Exporter...");
+			results.add(MapExporterTest.run());
+		}
 
 		long totalDuration = System.currentTimeMillis() - totalStart;
 

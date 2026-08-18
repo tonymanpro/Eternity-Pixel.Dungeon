@@ -1,53 +1,46 @@
 # Eternity Pixel Dungeon 👑
 
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Android%20%7C%20Linux%20%7C%20macOS-blue.svg)](https://eternity-pixel-dungeon.web.app)
-[![Version](https://img.shields.io/badge/Version-v1.0.0-green.svg)](https://github.com/tonymanpro/Eternity-Pixel.Dungeon/releases/tag/v1.0.0)
+[![Version](https://img.shields.io/badge/Version-v1.0.1-green.svg)](https://eternity-pixel-dungeon.web.app)
 [![Website](https://img.shields.io/badge/Website-eternity--pixel--dungeon.web.app-brightgreen.svg)](https://eternity-pixel-dungeon.web.app)
-[![Patreon](https://img.shields.io/badge/Patreon-Supporter%20Editions-red.svg)](https://www.patreon.com/c/EternityPixelDungeon/membership)
+[![License](https://img.shields.io/badge/License-GPL%20v3-orange.svg)](LICENSE)
 
-**Eternity Pixel Dungeon** es un roguelike tradicional de exploración infinita, combate táctico por turnos y alta rejugabilidad basado en *Shattered Pixel Dungeon* y *Experienced Pixel Dungeon*, con soporte completo de localización al español e inglés, sistema de compañeros y mascotas, motor visual en alta resolución (HD 2x) y una suite completa de pruebas automatizadas.
+**Eternity Pixel Dungeon** es un roguelike táctico de exploración de mazmorras por turnos, con generación procedimental, combate estratégico e historia inmersiva. 
 
----
-
-## 🌟 Características Principales de la Versión v1.0.0
-
-- 🐾 **Sistema Completo de Mascotas y Compañeros**:
-  - Incubación y eclosión de huevos raros en la mazmorra.
-  - **4 Especies**: Cría de Dragón (fuego), Lobo Fiel (rastreo y sangrado), Hada de Luz (curación e iluminación) y Araña Tejedora (trampas y veneno).
-  - Evolución (*Cría* $\rightarrow$ *Joven* $\rightarrow$ *Adulto*), alimentación y órdenes tácticas (*Seguir*, *Defender*, *Quedarse*).
-- 🎨 **Motor Gráfico en Alta Resolución (HD 2x)**: Texturas en alta fidelidad y efectos de partículas brillantes en golpes críticos.
-- 🧙‍♂️ **7 Clases Jugables**: Guerrero, Mago, Pícaro, Cazadora, Duelista, Clérigo (con magias sagradas y subclases) y Rey Rata.
-- 🌐 **Localización e Internacionalización (i18n)**: 100% traducido y sincronizado en Español e Inglés.
-- 🤖 **Auto-Test Runner Headless**: Suite automatizada para validar mazmorras, héroes, mascotas, economía y simulación de bot con IA en menos de 1 segundo.
+Adéntrate en complejas catacumbas repletas de trampas mortales, tesoros ocultos, artefactos místicos y despiadadas criaturas en tu búsqueda del legendario Amuleto de Yendor.
 
 ---
 
-## 🚀 Inicio Rápido (Comandos Principales)
+## 🌐 Sitio Web Oficial
 
-> **Nota**: Requiere Java 17+ (Adoptium Temurin Hotspot 17). Configura `$env:JAVA_HOME = "C:\Program Files\Eclipse Adoptium\jdk-17.0.20.8-hotspot"` en PowerShell antes de compilar.
+Visita el portal oficial para descargar las últimas versiones ejecutable y APK, consultar noticias de desarrollo y explorar la comunidad:
 
-```powershell
-# 1. Ejecutar en modo desarrollo con la Consola de Debug activa
-.\gradlew.bat desktop:debug
-
-# 2. Ejecutar la suite de pruebas automáticas (Auto-Test Runner)
-.\gradlew.bat desktop:autoTest
-
-# 3. Compilar el archivo JAR ejecutable
-.\gradlew.bat desktop:release
-
-# 4. Empaquetar el ejecutable nativo para Windows (.exe)
-.\gradlew.bat desktop:jpackageImage
-```
-
-Para consultar la **lista completa de comandos de debug en el juego**, macros y guías de desarrollo, revisa el documento detallado:
-👉 **[DEVELOPMENT.md](DEVELOPMENT.md)**
+👉 **[https://eternity-pixel-dungeon.web.app](https://eternity-pixel-dungeon.web.app)**
 
 ---
 
-## 🌐 Enlaces Oficiales del Proyecto
+## 🎮 ¿Qué Diferencia a Eternity Pixel Dungeon?
 
-- 🏠 **Sitio Web Oficial**: [https://eternity-pixel-dungeon.web.app](https://eternity-pixel-dungeon.web.app)
-- 📰 **Blog Oficial de Lanzamientos**: [https://eternity-pixel-dungeon.web.app/blog.html](https://eternity-pixel-dungeon.web.app/blog.html)
-- 👑 **Membresía Patreon**: [https://www.patreon.com/c/EternityPixelDungeon/membership](https://www.patreon.com/c/EternityPixelDungeon/membership)
-- 📦 **Releases en GitHub**: [https://github.com/tonymanpro/Eternity-Pixel.Dungeon/releases](https://github.com/tonymanpro/Eternity-Pixel.Dungeon/releases)
+* 🐾 **Sistema Único de Compañeros y Mascotas**: Encuentra e incuba huevos raros en la mazmorra. Entrena, evoluciona y da órdenes tácticas a 4 especies de compañeros (Cría de Dragón, Lobo Fiel, Hada de Luz y Araña Tejedora).
+* 🛡️ **8 Clases Jugables**: Juega como el Guerrero, Mago, Pícaro, Cazadora, Duelista, Clérigo (con hechizos sagrados), Bárbaro (furia berserker) o el emblemático Rey Rata.
+* 🎨 **Motor Gráfico en Alta Resolución (HD 2x)**: Disfruta de un apartado visual retro en pixel art pulido con efectos de iluminación, auras mágicas y animaciones fluidas.
+* 🌐 **Sincronización Idiomática Completa (Español e Inglés)**: Experiencia 100% bilingüe con localización sincronizada sin claves faltantes.
+* ⚖️ **Juego Justo y Rejugabilidad Infinita**: Generación procedimental de niveles y objetos sin microtransacciones ni mecánicas pay-to-win.
+
+---
+
+## 📜 Licencia, Autoría y Créditos
+
+### ⚖️ Licencia Código Fuente
+El código fuente base del proyecto reside bajo la licencia **GNU General Public License v3 (GPL v3)**. Puedes consultar el texto legal completo en el archivo [`LICENSE`](LICENSE).
+
+### 👥 Créditos de Autoría y Prolinaje
+- **Eternity Pixel Dungeon**: Desarrollado y mantenido por el equipo de Eternity Pixel Dungeon.
+- **Experienced Pixel Dungeon**: Basado en el trabajo de Trashbox Bobylev (2019-2024).
+- **Shattered Pixel Dungeon**: Basado en el trabajo original de Evan Debenham (2014-2024).
+- **Pixel Dungeon**: Creado originalmente por Oleg Dolya / Watabou (2012-2015).
+
+---
+
+### 🎨 Capa de Contenido Propietario
+El motor de juego y la estructura de código son software libre bajo GPL v3. Los recursos de marca comercial, música original de autor y narrativa exclusiva están organizados en capas desacopladas de assets propietarios.

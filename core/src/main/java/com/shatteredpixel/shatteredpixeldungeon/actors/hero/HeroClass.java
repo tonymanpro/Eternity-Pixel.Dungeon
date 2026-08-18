@@ -83,6 +83,7 @@ public enum HeroClass {
 	HUNTRESS( HeroSubClass.SNIPER, HeroSubClass.WARDEN ),
 	DUELIST( HeroSubClass.CHAMPION, HeroSubClass.MONK ),
 	CLERIC( HeroSubClass.PALADIN, HeroSubClass.PRIEST ),
+	BARBARIAN( HeroSubClass.WARMONGER, HeroSubClass.BEASTMASTER ),
 	RAT_KING(HeroSubClass.KING);
 
 	private HeroSubClass[] subClasses;
@@ -159,6 +160,10 @@ public enum HeroClass {
 				initCleric( hero );
 				break;
 
+			case BARBARIAN:
+				initBarbarian( hero );
+				break;
+
 			case RAT_KING:
 				initRK(hero);
 				break;
@@ -191,6 +196,8 @@ public enum HeroClass {
 				return Badges.Badge.MASTERY_DUELIST;
 			case CLERIC:
 				return Badges.Badge.MASTERY_CLERIC;
+			case BARBARIAN:
+				return Badges.Badge.MASTERY_BARBARIAN;
 			case RAT_KING:
 				return Badges.Badge.MASTERY_RAT_KING;
 		}
@@ -210,6 +217,25 @@ public enum HeroClass {
 		}
 
 		new PotionOfHealing().identify();
+		new ScrollOfRage().identify();
+	}
+
+	private static void initBarbarian( Hero hero ) {
+		(hero.belongings.weapon = new HandAxe()).identify();
+		hero.belongings.weapon.activate(hero);
+
+		ThrowingStone stones = new ThrowingStone();
+		stones.quantity(3).identify().collect();
+
+		Dungeon.quickslot.setSlot(0, hero.belongings.weapon);
+		Dungeon.quickslot.setSlot(1, stones);
+
+		if (hero.belongings.armor != null){
+			hero.belongings.armor.affixSeal(new BrokenSeal());
+			Catalog.setSeen(BrokenSeal.class);
+		}
+
+		new PotionOfStrength().identify();
 		new ScrollOfRage().identify();
 	}
 
@@ -359,6 +385,8 @@ public enum HeroClass {
 				return new ArmorAbility[]{new Challenge(), new ElementalStrike(), new Feint()};
 			case CLERIC:
 				return new ArmorAbility[]{new AscendedForm(), new Trinity(), new PowerOfMany()};
+			case BARBARIAN:
+				return new ArmorAbility[]{new HeroicLeap(), new Shockwave(), new Endure()};
 			case RAT_KING:
 				return new ArmorAbility[]{new Ratmogrify(), new LegacyWrath()};
 		}
@@ -378,6 +406,8 @@ public enum HeroClass {
 				return Assets.Sprites.DUELIST;
 			case CLERIC:
 				return Assets.Sprites.CLERIC;
+			case BARBARIAN:
+				return Assets.Sprites.BARBARIAN;
 			case RAT_KING:
 				return Assets.Sprites.RAT_KING_HERO;
 		}
@@ -397,13 +427,18 @@ public enum HeroClass {
 				return Assets.Splashes.DUELIST;
 			case CLERIC:
 				return Assets.Splashes.CLERIC;
+			case BARBARIAN:
+				return Assets.Splashes.BARBARIAN;
 			case RAT_KING:
 				return Assets.Splashes.RATKING;
 		}
 	}
 
 	public boolean isUnlocked(){
-        return true;
+		if (this == BARBARIAN) {
+			return com.shatteredpixel.shatteredpixeldungeon.services.platform.SupporterManager.isSupporter();
+		}
+		return true;
 	}
 	
 	public String unlockMsg() {

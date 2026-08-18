@@ -87,4 +87,11 @@ public interface PlatformServices {
 	 * Reads data from the platform's Cloud Save storage.
 	 */
 	byte[] loadFromCloud(String fileName);
+
+	/**
+	 * Checks if the current installation has Supporter / Premium entitlement.
+	 * Returns true if running from a commercial store (Steam / Google Play Premium)
+	 * or if a valid Supporter License Key is active.
+	 */
+	boolean isSupporter();
 }

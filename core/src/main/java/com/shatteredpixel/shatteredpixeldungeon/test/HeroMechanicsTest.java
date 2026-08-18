@@ -28,6 +28,7 @@ public class HeroMechanicsTest {
 					HeroClass.HUNTRESS,
 					HeroClass.DUELIST,
 					HeroClass.CLERIC,
+					HeroClass.BARBARIAN,
 					HeroClass.RAT_KING
 			};
 
@@ -95,6 +96,30 @@ public class HeroMechanicsTest {
 				result.pass("Cleric Spells verified: " + smite.name() + ", " + radiance.name() + ", " + holyWeapon.name());
 			} catch (Exception e) {
 				result.fail("Cleric Divine Mechanics verification failed", e);
+			}
+
+			// Specific Barbarian Mechanics & Subclasses Test
+			try {
+				Hero barbarian = new Hero();
+				barbarian.heroClass = HeroClass.BARBARIAN;
+				barbarian.live();
+				Dungeon.hero = barbarian;
+
+				// Test Subclasses
+				barbarian.subClass = HeroSubClass.WARMONGER;
+				result.pass("Barbarian Subclass Warmonger set successfully");
+				barbarian.subClass = HeroSubClass.BEASTMASTER;
+				result.pass("Barbarian Subclass Beastmaster set successfully");
+
+				// Test Talent Initialization
+				Talent.initClassTalents(barbarian);
+				result.pass("Barbarian talent tree initialized with " + barbarian.talents.size() + " tiers");
+
+				// Test Subclass Talents
+				Talent.initSubclassTalents(barbarian);
+				result.pass("Barbarian subclass talents initialized successfully");
+			} catch (Exception e) {
+				result.fail("Barbarian Mechanics verification failed", e);
 			}
 
 		} catch (Exception e) {

@@ -42,7 +42,8 @@ public abstract class Pet extends DirectableAlly {
 		DRAGON,
 		WOLF,
 		FAIRY,
-		SPIDER
+		SPIDER,
+		MANTICORE
 	}
 
 	public enum PetOrder {
@@ -131,6 +132,9 @@ public abstract class Pet extends DirectableAlly {
 				break;
 			case FAIRY:
 				Sample.INSTANCE.play(Assets.Sounds.PET_SNAKE);
+				break;
+			case MANTICORE:
+				Sample.INSTANCE.play(Assets.Sounds.PET_MANTICORE);
 				break;
 		}
 	}
@@ -297,11 +301,12 @@ public abstract class Pet extends DirectableAlly {
 
 	public static Pet create(PetType type) {
 		switch (type) {
-			case DRAGON: return new DragonPet();
-			case WOLF:   return new WolfPet();
-			case FAIRY:  return new FairyPet();
-			case SPIDER: return new SpiderPet();
-			default:     return new WolfPet();
+			case DRAGON:    return new DragonPet();
+			case WOLF:      return new WolfPet();
+			case FAIRY:     return new FairyPet();
+			case SPIDER:    return new SpiderPet();
+			case MANTICORE: return new ManticorePet();
+			default:        return new WolfPet();
 		}
 	}
 }

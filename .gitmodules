@@ -1,0 +1,3 @@
+[submodule "core/src/main/assets/packages/eternity"]
+	path = core/src/main/assets/packages/eternity
+	url = https://github.com/tonymanpro/Eternity-Commercial-Assets.git

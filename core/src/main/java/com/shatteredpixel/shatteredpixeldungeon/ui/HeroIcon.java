@@ -51,6 +51,8 @@ public class HeroIcon extends Image {
 	public static final int PRIEST      = 10;
 	public static final int PALADIN     = 11;
 	public static final int RATKING     = 12;
+	public static final int WARMONGER   = 13;
+	public static final int BEASTMASTER = 14;
 
 	//abilities
 	public static final int HEROIC_LEAP     = 16;
@@ -73,6 +75,9 @@ public class HeroIcon extends Image {
 	public static final int POWER_OF_MANY   = 33;
 	public static final int RATMOGRIFY      = 34;
 	public static final int LEGACYWRATH     = 35;
+	public static final int WHIRLWIND       = 36;
+	public static final int SAVAGE_ROAR     = 37;
+	public static final int PRIMAL_AVATAR   = 38;
 
 	//cleric spells
 	public static final int GUIDING_LIGHT   = 40;

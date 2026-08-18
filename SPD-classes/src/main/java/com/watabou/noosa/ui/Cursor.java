@@ -54,51 +54,83 @@ public class Cursor {
 	public static void setCustomCursor(Type type, int zoom){
 
 		//custom cursors (i.e. images which replace the mouse icon) are only supported on desktop
-		if (!DeviceCompat.isDesktop()){
+		if (!DeviceCompat.isDesktop() || Gdx.graphics == null || Gdx.input == null){
 			return;
 		}
 
 		if (currentCursor != null){
 			if (lastType == type && lastZoom == zoom){
+				try {
+					Gdx.graphics.setCursor(currentCursor);
+					if (!cursorCaptured && !ControllerHandler.controllerPointerActive()) {
+						Gdx.input.setCursorCatched(false);
+					}
+				} catch (Exception ignored) {}
 				return;
 			}
 
-			currentCursor.dispose();
+			try {
+				currentCursor.dispose();
+			} catch (Exception ignored) {}
 			currentCursor = null;
 		}
 
-		Pixmap cursorImg = new Pixmap(FileUtils.getFileHandle(Files.FileType.Internal, type.file));
+		try {
+			Pixmap cursorImg = new Pixmap(FileUtils.getFileHandle(Files.FileType.Internal, type.file));
 
-		int scaledWidth = cursorImg.getWidth()*zoom;
-		int width2 = 2;
-		while (width2 < scaledWidth) {
-			width2 <<= 1;
+			int scaledWidth = cursorImg.getWidth()*zoom;
+			int width2 = 2;
+			while (width2 < scaledWidth) {
+				width2 <<= 1;
+			}
+
+			int scaledHeight = cursorImg.getHeight()*zoom;
+			int height2 = 2;
+			while (height2 < scaledHeight) {
+				height2 <<= 1;
+			}
+
+			Pixmap scaledImg = new Pixmap(width2, height2, cursorImg.getFormat());
+			scaledImg.setFilter(Pixmap.Filter.NearestNeighbour);
+			scaledImg.drawPixmap(cursorImg, 0, 0, cursorImg.getWidth(), cursorImg.getHeight(), 0, 0, scaledWidth, scaledHeight);
+
+			currentCursor = Gdx.graphics.newCursor(scaledImg, 0, 0);
+			Gdx.graphics.setCursor(currentCursor);
+			scaledImg.dispose();
+			cursorImg.dispose();
+
+			lastType = type;
+			lastZoom = zoom;
+
+			if (!cursorCaptured && !ControllerHandler.controllerPointerActive()) {
+				Gdx.input.setCursorCatched(false);
+			}
+		} catch (Exception e) {
+			Game.reportException(e);
+			if (!cursorCaptured && Gdx.input != null) {
+				Gdx.input.setCursorCatched(false);
+			}
 		}
 
-		int scaledHeight = cursorImg.getHeight()*zoom;
-		int height2 = 2;
-		while (height2 < scaledHeight) {
-			height2 <<= 1;
+	}
+
+	public static void refreshCursor(){
+		if (!DeviceCompat.isDesktop() || Gdx.graphics == null || Gdx.input == null) return;
+		if (lastType != null && lastZoom > 0) {
+			setCustomCursor(lastType, lastZoom);
+		} else {
+			setCustomCursor(Type.DEFAULT, 2);
 		}
-
-		Pixmap scaledImg = new Pixmap(width2, height2, cursorImg.getFormat());
-		scaledImg.setFilter(Pixmap.Filter.NearestNeighbour);
-		scaledImg.drawPixmap(cursorImg, 0, 0, cursorImg.getWidth(), cursorImg.getHeight(), 0, 0, scaledWidth, scaledHeight);
-
-		currentCursor = Gdx.graphics.newCursor(scaledImg, 0, 0);
-		Gdx.graphics.setCursor(currentCursor);
-		scaledImg.dispose();
-		cursorImg.dispose();
-
-		lastType = type;
-		lastZoom = zoom;
-
+		if (!cursorCaptured && !ControllerHandler.controllerPointerActive()) {
+			Gdx.input.setCursorCatched(false);
+		}
 	}
 
 	private static boolean cursorCaptured = false;
 
 	public static void captureCursor(boolean captured){
 		cursorCaptured = captured;
+		if (Gdx.input == null) return;
 
 		if (captured) {
 			Gdx.input.setCursorCatched(true);
@@ -108,6 +140,7 @@ public class Cursor {
 				ControllerHandler.updateControllerPointer(new PointF(Game.width/2f, Game.height/2f), false);
 			} else {
 				Gdx.input.setCursorCatched(false);
+				refreshCursor();
 			}
 		}
 	}

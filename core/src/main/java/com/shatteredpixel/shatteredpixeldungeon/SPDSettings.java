@@ -697,4 +697,24 @@ public static void playMusicInBackground( boolean value ){
 		put( KEY_SOUNDTRACK, value );
 		com.watabou.utils.AssetPackResolver.musicOverrideEnabled = (value == SOUNDTRACK_ETERNITY);
 	}
+
+	// Supporter / Premium License Key & Token
+	public static final String KEY_SUPPORTER_KEY = "supporter_license_key";
+	public static final String KEY_SUPPORTER_TOKEN = "supporter_activation_token";
+
+	public static String supporterKey() {
+		return getString( KEY_SUPPORTER_KEY, "" );
+	}
+
+	public static void supporterKey( String value ) {
+		put( KEY_SUPPORTER_KEY, value != null ? value.trim().toUpperCase(Locale.ROOT) : "" );
+	}
+
+	public static String supporterToken() {
+		return getString( KEY_SUPPORTER_TOKEN, "" );
+	}
+
+	public static void supporterToken( String value ) {
+		put( KEY_SUPPORTER_TOKEN, value != null ? value.trim() : "" );
+	}
 }

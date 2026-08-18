@@ -74,7 +74,7 @@ public class Regeneration extends Buff {
 					regen /= RingOfEnergy.artifactChargeMultiplier(target);
 				}
 			}
-			if (Dungeon.hero.heroClass == HeroClass.WARRIOR){
+			if (Dungeon.hero.heroClass == HeroClass.WARRIOR || Dungeon.hero.heroClass == HeroClass.BARBARIAN){
 				regen /= 2;
 			}
 			regen /= SaltCube.healthRegenMultiplier();

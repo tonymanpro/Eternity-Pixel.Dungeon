@@ -28,6 +28,7 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Window;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3WindowListener;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.watabou.noosa.audio.Music;
+import com.watabou.noosa.ui.Cursor;
 
 public class DesktopWindowListener implements Lwjgl3WindowListener {
 	
@@ -40,6 +41,7 @@ public class DesktopWindowListener implements Lwjgl3WindowListener {
 		if (b){
 			SPDSettings.windowResolution(DesktopPlatformSupport.previousSizes[1]);
 		}
+		Cursor.refreshCursor();
 	}
 	
 	@Override
@@ -53,8 +55,11 @@ public class DesktopWindowListener implements Lwjgl3WindowListener {
 		if (!SPDSettings.playMusicInBackground()){
 			Music.INSTANCE.resume();
 		}
+		Cursor.refreshCursor();
 	}
 	public boolean closeRequested () { return true; }
 	public void filesDropped ( String[] strings ) { }
-	public void refreshRequested () { }
+	public void refreshRequested () {
+		Cursor.refreshCursor();
+	}
 }

@@ -1,6 +1,6 @@
 # 🗺️ Eternity Pixel Dungeon — Roadmap de Desarrollo & Mejoras
 
-Documento maestro con la visión técnica, planes por fases, arquitectura y tareas pendientes para el desarrollo de **Eternity Pixel Dungeon**.
+Documento maestro con la visión técnica, planes por fases, arquitectura y tareas del proyecto **Eternity Pixel Dungeon**.
 
 ---
 
@@ -9,124 +9,104 @@ Transformar *Eternity Pixel Dungeon* en un roguelike comercial de alta calidad y
 
 ---
 
-## 🎨 1. Roadmap de Modernización Gráfica HD (16x16 a 32x32 px)
+## 🎨 1. Modernización Gráfica HD y Entorno (Completado)
 
-El motor gráfico evoluciona hacia una **densidad 2x (HD Pixel Art)** sin alterar la lógica de juego, movimiento por turnos, pathfinding ni colisiones.
-
-```mermaid
-graph LR
-    F1["Fase 1: Motor HD + Héroes y Avatares"] --> F2["Fase 2: Ítems y Efectos de Combate"]
-    F2 --> F3["Fase 3: Criaturas y Jefes Épicos"]
-    F3 --> F4["Fase 4: Tilesets de Mazmorras y Entorno"]
-```
-
-### ⚔️ Fase 1: Motor HD + Héroes y Avatares (Completado)
-- [x] Adaptación del cargador `AssetPackResolver` para soportar assets prioritarios en `packages/eternity/`.
-- [x] Soporte dinámico en `HeroSprite` para resoluciones estándar (12x15) y HD 2x (24x30 / 32x32).
-- [x] Rediseño visual del **Guerrero (Warrior)** con mandoble a la espalda, capa carmesí, hombreras y tajo luminoso.
-- [x] Rediseño visual del **Mago (Mage)** con báculo arcano luminoso, capa zafiro y ráfaga mágica.
-- [x] Rediseño visual del **Pícaro (Rogue)** con dagas dobles en la cadera, capa sombría y estocada venenosa.
-- [x] Rediseño visual de la **Cazadora (Huntress)** con arco élfico curvado, carcaj de flechas y disparo soplado de viento.
-- [x] Rediseño visual de la **Duelista (Duelist)** con estoque de esgrima dorado, capa lateral y estocada relámpago.
-- [x] Rediseño visual del **Clérigo (Cleric)** con maza solar bendita, estola sagrada y golpe solar divino.
-- [x] Rediseño de los 6 avatares de selección de clase en alta resolución ([`avatars.png`](file:///d:/Desarollo/InfinityPixelDungeon/Infinite-Pixel-Dungeon/core/src/main/assets/packages/eternity/sprites/avatars.png)).
-
-### 🗡️ Fase 2: Ítems y Efectos de Combate (Completado)
-- [x] Soporte dinámico en `ItemSpriteSheet` para resolución estándar e ítems HD 2x (32x32 px / 512x1536 px).
-- [x] Efectos visuales de impacto y partículas de combate (chispas estelares en golpes críticos y sigilosos).
-- [x] Sprites de alta definición para armas y armaduras Legendarias, Míticas y Cósmicas con auras de brillo pulsante y emisores de partículas estelares.
-
-### 👹 Fase 3: Criaturas y Jefes Épicos (En Progreso)
-- [x] Soporte dinámico en `MobSprite` para resolución estándar y texturas HD 2x automáticas.
-- [x] Adaptación de los 5 Jefes Principales a la arquitectura de resolución dinámica:
-  - **Goo**: `GooSprite` con soporte HD 2x.
-  - **Tengu**: `TenguSprite` con soporte HD 2x.
-  - **DM-300**: `DM300Sprite` con soporte HD 2x.
-  - **Rey Enano (King of Dwarves)**: `KingSprite` con soporte HD 2x.
-  - **Yog-Dzewa & Puños**: `YogSprite` y `FistSprite` con soporte HD 2x.
-
-### 🏰 Fase 4: Tilesets de Mazmorras y Entorno (Próximo)
-- [ ] Tilesets personalizados para las zonas de la mazmorra.
-- [ ] Objetos interactivos (Cofres dorados, trampas con grabado, fuentes de vida, puertas ornamentadas).
-- [x] Conservación intacta de las pantallas de carga y splashes personalizados creados por el usuario en `splashes/`.
+- [x] **Fase 1: Motor HD + Héroes y Avatares**: Soporte en `HeroSprite` para resoluciones estándar y HD 2x para todas las clases y avatares.
+- [x] **Fase 2: Ítems y Efectos de Combate**: Sprites de alta definición para armas/armaduras Míticas y Cósmicas con auras y chispas estelares.
+- [x] **Fase 3: Criaturas y Jefes Épicos**: Soporte dinámico en `MobSprite` para los 5 jefes principales (Goo, Tengu, DM-300, Rey Enano, Yog-Dzewa).
+- [x] **Fase 4: Tilesets de Mazmorras y Entorno HD**: Renderizado de zonas, iluminación, fuentes, trampas y menú retro 16-bit.
 
 ---
 
-## 📦 2. Capa Propietaria y Licenciamiento Comercial
+## 🐾 2. Sistema de Compañeros y Mascotas (*Pets & Companions*)
 
-- **Motor GPL v3**: Código fuente base libre y modular.
-- **Capa Desacoplada (`packages/eternity/`)**:
-  - `branding/`: Logotipos comerciales, banners y emblemas.
-  - `music/`: Pistas musicales originales de autor.
-  - `story/`: Textos narrativos, diálogos y lore exclusivo.
-  - `sprites/`: Sprites de héroes, efectos y criaturas propietarias.
-- **Resolución Transparente (`AssetPackResolver`)**:
-  - Búsqueda con prioridad en `packages/eternity/` y fallback automático a `assets/`.
-
----
-
-## 🎮 3. Integración de Plataforma y Steamworks
-
-- **Arquitectura**: [`PlatformServices`](file:///d:/Desarollo/InfinityPixelDungeon/Infinite-Pixel-Dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/services/platform/PlatformServices.java) con fallback seguro [`NullPlatformServices`](file:///d:/Desarollo/InfinityPixelDungeon/Infinite-Pixel-Dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/services/platform/NullPlatformServices.java) y wrapper dinámico [`SteamworksWrapper`](file:///d:/Desarollo/InfinityPixelDungeon/Infinite-Pixel-Dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/services/platform/SteamworksWrapper.java).
-- **Características Soportadas**:
-  - [x] Desbloqueo de Logros (*Achievements*).
-  - [x] Guardado en la Nube (*Cloud Saves*).
-  - [x] Presencia Enriquecida (*Rich Presence* - ej. "Nivel 14 - Clérigo").
-  - [x] Estadísticas en la nube (*Leaderboards & Stats*).
-
----
-
-## 🌐 4. Plataforma Web y Devlog CMS (`WEB_EPD/`)
-
-- **Portal Web Oficial**:
-  - [x] Diseño responsivo bilingüe (Español / Inglés).
-  - [x] Explorador interactivo de héroes, lore y mecánicas.
-  - [x] Registro y descarga directa de versiones para Windows.
-  - [x] Vitrina interactiva de Mascotas y Compañeros con arte en alta definición.
-- **Blog y Devlog en Tiempo Real**:
-  - [x] Conexión a Firebase Firestore (`eternitypd`) con soporte bilingüe.
-  - [x] Integración de notas de versión oficiales permanentes (`v0.2.3`, `v0.2.2`, `v0.2.1`).
-  - [x] Panel de administración en la nube (`admin/`) para redactar y publicar posts con imágenes.
-
----
-
-## 🐾 5. Sistema de Compañeros y Mascotas (*Pets & Companions*)
-
-Inspirado en las mecánicas de compañeros de *Remixed Dungeon* (NYRDS), adaptado a la arquitectura moderna y visuales HD de *Eternity Pixel Dungeon*.
-
-```mermaid
-graph LR
-    Huevo["🥚 Hallazgo / Incubación de Huevo"] --> Nacimiento["🐣 Eclosión de Mascota"]
-    Nacimiento --> Nivel["📈 Progresión y Nivel en Combate"]
-    Nivel --> Habilidades["✨ Habilidades Pasivas y Órdenes Tácticas"]
-```
-
-### 🥚 Características Clave del Sistema:
-- [x] **Incubación y Eclosión**: Ítems de huevos raros (`PetEgg`) con acciones de calentar e incubación por pasos en la mazmorra.
-- [x] **Variedad de Mascotas**:
+- [x] **Incubación y Eclosión**: Sistema de huevos raros (`PetEgg`) con calor y pasos en la mazmorra.
+- [x] **4 Especies Base de Mascotas**:
   - *Cría de Dragón*: Inmunidad al fuego, mordida ígnea y aliento de llamas.
   - *Araña Tejedora*: Redes inmovilizadoras y veneno debilitante.
-  - *Can Fiel / Lobo*: Rastreo de secretos, trampas y mordedura con sangrado crítico.
-  - *Espíritu de Luz / Hada*: Curación periódica y revelación luminosa del mapa.
-- [x] **Progresión de la Mascota**: Ganancia de experiencia compartida al combatir, aumento de atributos y evolución en 3 etapas (*Cría* $\rightarrow$ *Joven* $\rightarrow$ *Adulto*).
-- [x] **Comandos Tácticos & UI**:
-  - Ventana táctica interactiva (`WndPet`) con órdenes directas (*Seguir*, *Defender*).
-  - Sistema de alimentación con carnes, raciones y pociones de salud.
-  - Renombrado de mascota y barras de salud/exp.
-- [x] **Vitrina Web y Emblemas HD**: Integración en `WEB_EPD/` con marcos de runas místicas.
+  - *Lobo Fiel*: Rastreo de secretos, trampas y mordedura con sangrado crítico.
+  - *Hada de Luz*: Curación periódica y revelación luminosa del mapa.
+- [x] **Evolución y UI Táctica**: Ventana `WndPet`, 3 etapas evolutivas, alimentación y comandos tácticos.
+- [x] **Audio de Eclosión**: Efectos sonoros y rugidos únicos para cada especie al nacer.
 
 ---
 
-## 📋 6. Backlog de Tareas Pendientes
+## 🎮 3. Plataformas, Logros y Distribución (Completado)
 
-| Prioridad | Tarea | Componente | Estado |
-| :---: | :--- | :---: | :---: |
-| 🔥 Alta | Música original de autor para el Menú Principal y Cloacas | Audio | Pendiente |
-| ⚡ Media | Sistema de Logros de Steam mapeados con los Badges del juego | Plataforma | Pendiente |
-| ⚡ Media | Tilesets de Mazmorras y Entorno HD | Gráficos | Pendiente |
-| ✅ Completado | **Sprites HD y Efectos de Auras/Partículas para Armas y Armaduras** | Gráficos / Core | ✅ Implementado |
-| ✅ Completado | **Sistema de Compañeros y Mascotas (*Pets & Companions*)** | Mecánicas / Core | ✅ Implementado |
-| ✅ Completado | **Soporte de Renderizado Dinámico HD para Ítems y Jefes** | Motor / Gráficos | ✅ Implementado |
+- [x] **Arquitectura Desacoplada `PlatformServices`**: Fallback `NullPlatformServices` y wrapper dinámico `SteamworksWrapper`.
+- [x] **10 Logros Propietarios**: Integrados con `Badges.java` y sincronizados con tolerancia a fallos offline.
+- [x] **Compilación y Soporte Móvil**: Pipeline probado para APK Release de Android y empaquetado nativo Windows.
+- [x] **Portal Web Oficial (`WEB_EPD/`)**: Conexión a Firebase Firestore, Devlog CMS bilingüe y descarga directa de versiones.
+
+---
+
+## 🚀 4. Nuevas Iniciativas en Desarrollo (Próximas Fases)
+
+```mermaid
+graph TD
+    A["👑 Acceso Supporter / Premium"] --> B["🪓 Héroe Exclusivo: El Bárbaro"]
+    A --> C["🦁 Mascota Exclusiva: La Mantícora"]
+    A --> D["🎖️ Créditos y Muro de Honor Patreon"]
+```
+
+---
+
+### 🪓 Módulo 1: Nuevo Héroe — El Bárbaro (*The Barbarian*)
+*Nueva clase de combate cuerpo a cuerpo agresiva centrada en la furia berserker y resistencia al dolor.*
+- [ ] **Mecánica Única de Clase**: *Medidor de Furia / Rabia* (acumula daño recibido para potenciar ataques devastadores y velocidad).
+- [ ] **Equipamiento Inicial**: Hacha de doble mano tosca, pieles curtidas, cuerno de guerra ancestral.
+- [ ] **Árbol de Talentos (Tiers 1 al 4)**: Bonificaciones a supervivencia a baja vida, ruptura de armadura y torbellino de golpes.
+- [ ] **Subclases (Nivel 12+)**:
+  - *Berserker del Norte*: Desenfreno en combate que ignora efectos de aturdimiento y aumenta el daño crítico a menor salud.
+  - *Señor de las Bestias (Beastmaster)*: Sinergia especial potenciada con las mascotas y compañeros.
+- [ ] **Sprites y Avatares**: Animaciones en pixel art estándar y HD 2x.
+
+---
+
+### 🦁 Módulo 2: Nueva Mascota Legendaria — La Mantícora (*The Manticore*)
+*Compañero híbrido mítico que combina el poder destructivo del Dragón y el control de masas de la Araña.*
+- [ ] **Origen y Hallazgo**: Huevo de Mantícora Legendario con brillo carmesí y púrpura.
+- [ ] **Habilidades Combinadas Dragón + Araña**:
+  - *Aliento de Fuego Carmesí (Dragón)*: Daño ígneo en cono contra grupos de enemigos.
+  - *Pinchazo de Cola Venenosa & Redes (Araña)*: Disparo de espinas de aguijón que ralentizan, envenenan e inmovilizan.
+  - *Vuelo / Embestida Aérea*: Capacidad de superar obstáculos y abalanzarse sobre objetivos lejanos.
+- [ ] **Evolución Triple**: Cría de Mantícora $\rightarrow$ Mantícora Joven $\rightarrow$ Mantícora Imperial Alfa.
+- [ ] **Audio y Efectos Visuales**: Rugido felino-reptil exclusivo y partículas de fuego y veneno.
+
+---
+
+### 👑 Módulo 3: Sistema de Licenciamiento y Acceso Supporter / Premium
+*Módulo unificado para verificar el derecho de acceso al Bárbaro y la Mantícora en todas las plataformas.*
+- [ ] **Canales de Validación Soportados**:
+  1. **Steam**: Detección automática mediante `PlatformManager.get().isAvailable()` (compradores del juego en Steam).
+  2. **Patreon**: Sistema de canje de Clave de Licencia Supporter / Token de Patrocinador.
+  3. **Google Play**: Verificación de compra en la app (Google Play Billing / Versión Premium).
+  4. **Clave de Licencia Directa**: Ventana de activación manual para compras directas.
+- [ ] **Interfaz de Selección Bloqueada**:
+  - Indicador visual elegante con corona dorada en el menú de héroes y huevos de mascota.
+  - Ventana informativa que explica cómo desbloquear el contenido apoyando el proyecto.
+
+---
+
+### 🎖️ Módulo 4: Muro de Honor y Créditos de Patrocinadores (*Patreon Wall of Fame*)
+*Reconocimiento permanente dentro del juego a la comunidad que apoya el proyecto en Patreon.*
+- [ ] **Nueva Sección en Pantalla de Créditos (`AboutScene`)**:
+  - Pestaña interactiva de *Patrocinadores de Patreon / Supporter Wall*.
+  - Clasificación por categorías de apoyo (*Campeones Supremos*, *Héroes Legendarios*, *Aventureros Místicos*).
+- [ ] **Sincronización Dinámica / JSON**:
+  - Carga local integrada con fallback a lista remota actualizada desde Firebase.
+  - Mención especial en la web oficial (`WEB_EPD`).
+
+---
+
+## 📋 5. Tabla de Prioridades y Plan de Ejecución
+
+| Prioridad | Tarea / Módulo | Componente | Estimación | Estado |
+| :---: | :--- | :---: | :---: | :---: |
+| 1️⃣ | **Sistema de Licenciamiento y Acceso Supporter / Premium** | `services.platform` / Core | Alta | 🚀 Planificado |
+| 2️⃣ | **Mascota Legendaria: La Mantícora (Manticore)** | `actors.mobs.pets` | Alta | 🚀 Planificado |
+| 3️⃣ | **Nuevo Héroe: El Bárbaro (Barbarian)** | `actors.hero` / Sprites | Muy Alta | 🚀 Planificado |
+| 4️⃣ | **Muro de Honor y Créditos de Patrocinadores (Patreon)** | `scenes.AboutScene` / Web | Media | 🚀 Planificado |
 
 ---
 

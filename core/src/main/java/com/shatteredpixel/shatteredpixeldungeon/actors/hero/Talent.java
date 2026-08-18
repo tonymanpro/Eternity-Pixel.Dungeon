@@ -545,7 +545,7 @@ public enum Talent {
 	public static class NatureBerriesDropped extends CounterBuff{{revivePersists = true;}};
 
 	public static void onFoodEaten( Hero hero, float foodVal, Item foodSource ){
-		if (hero.heroClass == HeroClass.WARRIOR) {
+		if (hero.heroClass == HeroClass.WARRIOR || hero.heroClass == HeroClass.BARBARIAN) {
 			if (hero.cooldown() > 0) {
 				Buff.affect(hero, WarriorFoodImmunity.class, hero.cooldown());
 			}
@@ -635,7 +635,7 @@ public enum Talent {
 
 	public static void onPotionUsed( Hero hero, int cell, float factor ){
 		if (hero.hasTalent(LIQUID_WILLPOWER)){
-			if (hero.heroClass == HeroClass.WARRIOR) {
+			if (hero.heroClass == HeroClass.WARRIOR || hero.heroClass == HeroClass.BARBARIAN) {
 				BrokenSeal.WarriorShield shield = hero.buff(BrokenSeal.WarriorShield.class);
 				if (shield != null) {
 					// 50/75% of total shield
@@ -955,6 +955,9 @@ public enum Talent {
 			case CLERIC:
 				Collections.addAll(tierTalents, SATIATED_SPELLS, HOLY_INTUITION, SEARING_LIGHT, SHIELD_OF_LIGHT);
 				break;
+			case BARBARIAN:
+				Collections.addAll(tierTalents, HEARTY_MEAL, PROVOKED_ANGER, IRON_WILL, AGGRESSIVE_BARRIER);
+				break;
 		}
 		for (Talent talent : tierTalents){
 			if (replacements.containsKey(talent)){
@@ -984,6 +987,9 @@ public enum Talent {
 			case CLERIC:
 				Collections.addAll(tierTalents, ENLIGHTENING_MEAL, RECALL_INSCRIPTION, SUNRAY, DIVINE_SENSE, BLESS);
 				break;
+			case BARBARIAN:
+				Collections.addAll(tierTalents, IRON_STOMACH, LIQUID_WILLPOWER, LETHAL_MOMENTUM, LETHAL_HASTE, IMPROVISED_PROJECTILES);
+				break;
 		}
 		for (Talent talent : tierTalents){
 			if (replacements.containsKey(talent)){
@@ -1012,6 +1018,9 @@ public enum Talent {
 				break;
 			case CLERIC:
 				Collections.addAll(tierTalents, CLEANSE, LIGHT_READING);
+				break;
+			case BARBARIAN:
+				Collections.addAll(tierTalents, HOLD_FAST, STRONGMAN);
 				break;
 		}
 		for (Talent talent : tierTalents){
@@ -1046,6 +1055,12 @@ public enum Talent {
 				break;
 			case GLADIATOR:
 				Collections.addAll(tierTalents, CLEAVE, LETHAL_DEFENSE, ENHANCED_COMBO);
+				break;
+			case WARMONGER:
+				Collections.addAll(tierTalents, CLEAVE, ENDLESS_RAGE, ENRAGED_CATALYST);
+				break;
+			case BEASTMASTER:
+				Collections.addAll(tierTalents, ALLY_WARP, NATURES_AID, DEATHLESS_FURY);
 				break;
 			case BATTLEMAGE:
 				Collections.addAll(tierTalents, EMPOWERED_STRIKE, MYSTICAL_CHARGE, EXCESS_CHARGE);

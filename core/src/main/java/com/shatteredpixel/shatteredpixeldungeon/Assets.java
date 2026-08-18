@@ -238,6 +238,7 @@ public class Assets {
 		public static final String PET_WOLF   = "sounds/wolfpet.mp3";
 		public static final String PET_SPIDER = "sounds/spiderpet.mp3";
 		public static final String PET_SNAKE  = "sounds/snakepet.mp3";
+		public static final String PET_MANTICORE = "sounds/manticorepet.mp3";
 
 		public static final String[] all = new String[]{
 				CLICK, BADGE, GOLD,
@@ -264,6 +265,7 @@ public class Assets {
 		public static final String RATKING  = "splashes/ratking.jpg";
 		public static final String DUELIST  = "splashes/duelist.jpg";
 		public static final String CLERIC   = "splashes/cleric.jpg";
+		public static final String BARBARIAN= "splashes/barbarian.jpg";
 
 		public static final String SEWERS   = "splashes/sewers.jpg";
 		public static final String PRISON   = "splashes/prison.jpg";
@@ -282,6 +284,7 @@ public class Assets {
 		public static final String HUNTRESS = "sprites/huntress.png";
 		public static final String DUELIST  = "sprites/duelist.png";
 		public static final String CLERIC   = "sprites/cleric.png";
+		public static final String BARBARIAN= "sprites/barbarian.png";
 		public static final String AVATARS  = "sprites/avatars.png";
 		public static final String PET      = "sprites/pet.png";
 		public static final String AMULET   = "sprites/amulet.png";

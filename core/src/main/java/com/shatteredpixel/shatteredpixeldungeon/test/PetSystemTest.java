@@ -40,12 +40,13 @@ public class PetSystemTest {
 				result.fail("PetEgg failed isReadyToHatch() check after incubation", null);
 			}
 
-			// 2. Test All 4 Pet Species Instantiation & Mechanics
+			// 2. Test All 5 Pet Species Instantiation & Mechanics
 			Pet[] pets = {
 					new DragonPet(),
 					new WolfPet(),
 					new FairyPet(),
-					new SpiderPet()
+					new SpiderPet(),
+					new com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.ManticorePet()
 			};
 
 			for (Pet pet : pets) {

@@ -222,7 +222,7 @@ public class BrokenSeal extends Item {
 		public synchronized boolean act() {
 			if (Regeneration.regenOn() && shielding() < maxShield()) {
 				partialShield += 1/30f;
-				if (Dungeon.hero.heroClass == HeroClass.WARRIOR){
+				if (Dungeon.hero.heroClass == HeroClass.WARRIOR || Dungeon.hero.heroClass == HeroClass.BARBARIAN){
 					partialShield += 1/30f;
 				}
 			}

@@ -68,6 +68,7 @@ public class Badges {
 		MASTERY_HUNTRESS,
 		MASTERY_DUELIST,
 		MASTERY_CLERIC,
+		MASTERY_BARBARIAN,
 		MASTERY_RAT_KING,
 		FOUND_RATMOGRIFY,
 
@@ -1031,6 +1032,9 @@ public class Badges {
 				break;
 		case CLERIC:
 			badge = Badge.MASTERY_CLERIC;
+			break;
+		case BARBARIAN:
+			badge = Badge.MASTERY_BARBARIAN;
 			break;
 		case RAT_KING:
 			badge = Badge.MASTERY_RAT_KING;

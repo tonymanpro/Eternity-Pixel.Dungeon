@@ -169,4 +169,9 @@ public class SteamworksWrapper implements PlatformServices {
 	public byte[] loadFromCloud(String fileName) {
 		return null;
 	}
+
+	@Override
+	public boolean isSupporter() {
+		return initialized;
+	}
 }

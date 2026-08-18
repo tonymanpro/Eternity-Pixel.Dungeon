@@ -177,7 +177,7 @@ public class ControllerHandler implements ControllerListener {
 
 	//we use a separate variable as Gdx.input.isCursorCatched only works on desktop
 	private static boolean controllerPointerActive = false;
-	private static PointF controllerPointerPos;
+	private static PointF controllerPointerPos = new PointF(0, 0);
 
 	public static void setControllerPointer( boolean active ){
 		if (active) controllerActive = true;
@@ -185,10 +185,13 @@ public class ControllerHandler implements ControllerListener {
 		controllerPointerActive = active;
 		if (active){
 			Gdx.input.setCursorCatched(true);
-			controllerPointerPos = new PointF(PointerEvent.currentHoverPos());
+			PointF hover = PointerEvent.currentHoverPos();
+			controllerPointerPos = hover != null ? new PointF(hover) : new PointF(Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 2f);
 		} else if (!Cursor.isCursorCaptured()) {
 			Gdx.input.setCursorCatched(false);
-			Gdx.input.setCursorPosition((int)controllerPointerPos.x, (int)controllerPointerPos.y);
+			if (controllerPointerPos != null) {
+				Gdx.input.setCursorPosition((int)controllerPointerPos.x, (int)controllerPointerPos.y);
+			}
 		}
 	}
 
@@ -197,11 +200,15 @@ public class ControllerHandler implements ControllerListener {
 	}
 
 	public static PointF getControllerPointerPos(){
-		return controllerPointerPos.clone();
+		return controllerPointerPos != null ? controllerPointerPos.clone() : new PointF(Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 2f);
 	}
 
 	public static void updateControllerPointer(PointF pos, boolean sendEvent){
-		controllerPointerPos.set(pos);
+		if (controllerPointerPos == null) {
+			controllerPointerPos = new PointF(pos);
+		} else {
+			controllerPointerPos.set(pos);
+		}
 		if (sendEvent) {
 			controllerActive = true;
 			PointerEvent.addPointerEvent(new PointerEvent((int) controllerPointerPos.x, (int) controllerPointerPos.y, 10_000, PointerEvent.Type.HOVER, PointerEvent.NONE));

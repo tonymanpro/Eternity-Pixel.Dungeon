@@ -35,9 +35,10 @@ Bienvenido a la guía técnica oficial para el desarrollo, compilación, depurac
 | `.\gradlew.bat desktop:debug` | Ejecuta el juego en modo desarrollo con la **Consola de Debug activa**. | Ejecución en vivo |
 | `.\gradlew.bat desktop:release` | Compila el archivo universal ejecutable `.jar`. | `desktop/build/libs/desktop-v<VERSION>.jar` |
 | `.\gradlew.bat desktop:jpackageImage` | Empaqueta el ejecutable nativo de Windows (`.exe`) con JRE 17 embebido. | `desktop/build/Eternity-Pixel-Dungeon/` |
-| `.\gradlew.bat desktop:autoTest` | Ejecuta la suite de pruebas automatizadas y el bot IA en modo Headless. | Reporte en consola y archivo de log |
+| `.\gradlew.bat desktop:autoTest` | Ejecuta la suite de pruebas automatizadas y el bot IA en modo Headless (sin exportar imágenes). | Reporte en consola y archivo de log |
+| `.\gradlew.bat desktop:exportMaps` | Ejecuta las pruebas y exporta renderizados HD de mapas procedimentales a `Marketing/art/`. | Imágenes PNG en `Marketing/art/map_*.png` |
 | `.\gradlew.bat android:assembleDebug` | Compila el paquete APK de depuración para Android. | `android/build/outputs/apk/debug/android-debug.apk` |
-| `.\gradlew.bat android:assembleRelease` | Compila el paquete APK optimizado (R8) para distribución Android. | `android/build/outputs/apk/release/android-release-unsigned.apk` |
+| `.\gradlew.bat android:assembleRelease` | Compila el paquete APK optimizado (R8) y firmado para distribución Android. | `android/build/outputs/apk/release/android-release.apk` |
 
 ---
 
@@ -45,11 +46,17 @@ Bienvenido a la guía técnica oficial para el desarrollo, compilación, depurac
 
 El **Auto-Test Runner** permite validar la integridad completa del juego en modo **Headless** (100% en memoria RAM, ultra-rápido y sin abrir ventanas).
 
-### Comando de Ejecución:
+### Comandos de Ejecución:
 ```powershell
 $env:JAVA_HOME = "C:\Program Files\Eclipse Adoptium\jdk-17.0.20.8-hotspot"
+
+# 1. Pruebas estándar (rápido, sin generar imágenes)
 .\gradlew.bat desktop:autoTest
+
+# 2. Pruebas con exportación opcional de capturas HD de mapas a Marketing/art/
+.\gradlew.bat desktop:exportMaps
 ```
+
 
 ### ¿Qué módulos prueba y para qué sirve cada uno?
 
@@ -57,8 +64,9 @@ $env:JAVA_HOME = "C:\Program Files\Eclipse Adoptium\jdk-17.0.20.8-hotspot"
    - Genera los niveles 1 al 26 y el piso de la Bóveda / Minería.
    - Comprueba que la entrada y la salida estén conectadas por caminos transitables y que las salas de los 5 jefes se generen correctamente.
 2. ⚔️ **Mecánicas de Héroes y Clases (`HeroMechanicsTest`)**:
-   - Prueba las 7 clases (Guerrero, Mago, Pícaro, Cazadora, Duelista, Clérigo, Rey Rata).
-   - Valida la progresión de nivel 1 al 30, escalado de vida (`HP`), fuerza (`STR`), árboles de talentos y hechizos del Clérigo (*Castigo Divino*, *Radiancia*, *Arma Sagrada*).
+   - Prueba las 8 clases (Guerrero, Mago, Pícaro, Cazadora, Duelista, Clérigo, Bárbaro, Rey Rata).
+   - Valida la progresión de nivel 1 al 30, escalado de vida (`HP`), fuerza (`STR`), árboles de talentos y hechizos del Clérigo (*Castigo Divino*, *Radiancia*, *Arma Sagrada*) y Bárbaro (*Furia*, *Sed de Sangre*).
+
 3. 🐾 **Sistema de Mascotas y Compañeros (`PetSystemTest`)**:
    - Prueba la incubación de huevos (`PetEgg`), eclosión de las 4 especies (*Dragón*, *Lobo*, *Hada*, *Araña*), alimentación con carnes/pociones y asignación de órdenes tácticas.
 4. 💎 **Economía y Rarezas de Ítems (`ItemRarityTest`)**:

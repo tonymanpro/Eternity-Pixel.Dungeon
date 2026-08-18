@@ -287,23 +287,40 @@ public class HeroSelectScene extends PixelScene {
 		} else {
 			background.visible = false;
 
-			int btnWidth = HeroBtn.MIN_WIDTH;
+			int cols = (int)Math.ceil(heroBtns.size() / 2f);
+			int btnHeight = HeroBtn.HEIGHT;
+			int availableWidth = Camera.main.width - 12;
+			int btnWidth = Math.min(28, Math.max(HeroBtn.MIN_WIDTH, availableWidth / cols));
 
-			float curX = (Camera.main.width - btnWidth * heroBtns.size()) / 2f;
-			if (curX > 0) {
-				btnWidth += Math.min(curX / (heroBtns.size() / 2f), 15);
-				curX = (Camera.main.width - btnWidth * heroBtns.size()) / 2f;
-			}
-			float curY = Camera.main.height - HeroBtn.HEIGHT + 3;
+			float totalWidth = cols * btnWidth + (cols - 1);
+			float startX = (Camera.main.width - totalWidth) / 2f;
+			float row1Y = Camera.main.height - (btnHeight * 2) - 4;
+			float row2Y = Camera.main.height - btnHeight - 2;
+
+			int count = 0;
+			float curX = startX;
+			float curY = row1Y;
 
 			for (StyledButton button : heroBtns) {
-				button.setRect(curX, curY, btnWidth, HeroBtn.HEIGHT);
-				curX += btnWidth;
+				button.setRect(curX, curY, btnWidth, btnHeight);
+				align(button);
+				curX += btnWidth + 1;
+				count++;
+				if (count >= cols) {
+					curX = startX;
+					curY = row2Y;
+					if (heroBtns.size() % 2 != 0) {
+						curX += btnWidth / 2f;
+					}
+					count = 0;
+				}
 			}
 
-			title.setPos((Camera.main.width - title.width()) / 2f, (Camera.main.height - HeroBtn.HEIGHT - title.height() - 4));
+			float btnsTop = row1Y;
+			title.setPos((Camera.main.width - title.width()) / 2f, Math.max(10, btnsTop - title.height() - 32));
+			align(title);
 
-			btnOptions.setRect(heroBtns.get(0).left() + 16, Camera.main.height-HeroBtn.HEIGHT-16, 20, 21);
+			btnOptions.setRect(heroBtns.get(0).left(), btnsTop - 25, 20, 21);
 			optionsPane.setPos(heroBtns.get(0).left(), 0);
 		}
 
@@ -405,18 +422,23 @@ public class HeroSelectScene extends PixelScene {
 
 			startBtn.visible = startBtn.active = true;
 			startBtn.text(Messages.titleCase(cl.title()));
-			startBtn.setSize(startBtn.reqWidth() + 8, 21);
+			startBtn.setSize(startBtn.reqWidth() + 10, 21);
 
-			startBtn.setPos((Camera.main.width - startBtn.width())/2f, (Camera.main.height - HeroBtn.HEIGHT + 2 - startBtn.height()));
+			int btnHeight = HeroBtn.HEIGHT;
+			float btnsTop = Camera.main.height - (btnHeight * 2) - 4;
+
+			startBtn.setPos((Camera.main.width - startBtn.width()) / 2f, btnsTop - startBtn.height() - 6);
 			PixelScene.align(startBtn);
 
 			infoButton.visible = infoButton.active = true;
-			infoButton.setPos(startBtn.right(), startBtn.top());
+			infoButton.setPos(startBtn.right() + 2, startBtn.top());
+			align(infoButton);
 
 			btnOptions.visible = btnOptions.active = !SPDSettings.intro();
-			btnOptions.setPos(startBtn.left()-btnOptions.width(), startBtn.top());
+			btnOptions.setPos(startBtn.left() - btnOptions.width() - 2, startBtn.top());
+			align(btnOptions);
 
-			optionsPane.setPos(heroBtns.get(0).left(), startBtn.top() - optionsPane.height() - 2);
+			optionsPane.setPos(Math.max(4, btnOptions.left()), Math.max(4, startBtn.top() - optionsPane.height() - 2));
 			align(optionsPane);
 		}
 
@@ -525,9 +547,9 @@ public class HeroSelectScene extends PixelScene {
 			super.update();
 			if (cl != GamesInProgress.selectedClass){
 				if (!cl.isUnlocked()){
-					icon.brightness(0.1f);
+					icon.brightness(0.45f);
 				} else {
-					icon.brightness(0.6f);
+					icon.brightness(0.7f);
 				}
 			} else {
 				icon.brightness(1f);
@@ -539,7 +561,11 @@ public class HeroSelectScene extends PixelScene {
 			super.onClick();
 
 			if( !cl.isUnlocked() ){
-				ShatteredPixelDungeon.scene().addToFront( new WndMessage(cl.unlockMsg()));
+				if (cl == HeroClass.BARBARIAN) {
+					ShatteredPixelDungeon.scene().addToFront( new com.shatteredpixel.shatteredpixeldungeon.windows.WndSupporterUnlock() );
+				} else {
+					ShatteredPixelDungeon.scene().addToFront( new WndMessage(cl.unlockMsg()));
+				}
 			} else if (GamesInProgress.selectedClass == cl) {
 				Window w = new WndHeroInfo(cl);
 				if (landscape()){
