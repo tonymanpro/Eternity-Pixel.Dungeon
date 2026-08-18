@@ -1,7 +1,7 @@
 # Eternity Pixel Dungeon 👑
 
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Android%20%7C%20Linux%20%7C%20macOS-blue.svg)](https://eternity-pixel-dungeon.web.app)
-[![Version](https://img.shields.io/badge/Version-v1.0.1-green.svg)](https://eternity-pixel-dungeon.web.app)
+[![Version](https://img.shields.io/badge/Version-v1.2.0-green.svg)](https://eternity-pixel-dungeon.web.app)
 [![Website](https://img.shields.io/badge/Website-eternity--pixel--dungeon.web.app-brightgreen.svg)](https://eternity-pixel-dungeon.web.app)
 [![License](https://img.shields.io/badge/License-GPL%20v3-orange.svg)](LICENSE)
 
