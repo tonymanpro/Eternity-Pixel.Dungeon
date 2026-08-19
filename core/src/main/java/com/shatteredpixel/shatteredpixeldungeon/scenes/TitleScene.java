@@ -77,7 +77,16 @@ public class TitleScene extends PixelScene {
 		
 		boolean customBgLoaded = false;
 		try {
-			Image titleBg = new Image(Assets.Splashes.TITLE);
+			String preferredSplash = (!DeviceCompat.isDesktop() && !landscape())
+					? Assets.Splashes.TITLE_MOBILE
+					: Assets.Splashes.TITLE;
+
+			Image titleBg;
+			try {
+				titleBg = new Image(preferredSplash);
+			} catch (Throwable ignoredPreferred) {
+				titleBg = new Image(Assets.Splashes.TITLE);
+			}
 			float scale = Math.max((float)w / titleBg.width, (float)h / titleBg.height);
 			titleBg.scale.set(scale);
 			titleBg.x = (w - titleBg.width()) / 2f;

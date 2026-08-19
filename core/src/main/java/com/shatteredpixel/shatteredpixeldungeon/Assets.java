@@ -258,6 +258,7 @@ public class Assets {
 
 	public static class Splashes {
 		public static final String TITLE    = "splashes/title.jpg";
+		public static final String TITLE_MOBILE = "splashes/title-mobile.jpg";
 		public static final String WARRIOR  = "splashes/warrior.jpg";
 		public static final String MAGE     = "splashes/mage.jpg";
 		public static final String ROGUE    = "splashes/rogue.jpg";
