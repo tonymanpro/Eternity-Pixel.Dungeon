@@ -49,6 +49,7 @@ public class AmbitiousImpRoom extends SpecialRoom {
 
 	@Override
 	public void paint(Level level) {
+		Imp.Quest.registerAmbitiousRoomSpawn();
 
 		Painter.fill( level, this, Terrain.WALL_DECO );
 		Painter.fill( level, this, 1, Terrain.EMPTY );

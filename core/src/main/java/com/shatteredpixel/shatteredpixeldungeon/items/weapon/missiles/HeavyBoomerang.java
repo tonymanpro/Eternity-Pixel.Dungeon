@@ -119,6 +119,8 @@ public class HeavyBoomerang extends MissileWeapon {
 			if (returnDepth == Dungeon.depth && returnBranch == Dungeon.branch){
 				left--;
 				if (left <= 0){
+					// Follow the hero's current tile so the return stays convenient while moving.
+					returnPos = target.pos;
 					final Char returnTarget = Actor.findChar(returnPos);
 					final Char target = this.target;
 					MissileSprite visual = ((MissileSprite) Dungeon.hero.sprite.parent.recycle(MissileSprite.class));
@@ -138,9 +140,7 @@ public class HeavyBoomerang extends MissileWeapon {
 												
 											} else if (returnTarget != null){
 												boomerang.circleBackhit = true;
-												if (((Hero)target).shoot( returnTarget, boomerang )) {
-													boomerang.decrementDurability();
-												}
+												((Hero)target).shoot( returnTarget, boomerang );
 												if (boomerang.durability > 0) {
 													Dungeon.level.drop(boomerang, returnPos).sprite.drop();
 												}

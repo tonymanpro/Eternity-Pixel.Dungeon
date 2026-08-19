@@ -31,6 +31,7 @@ import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class MobSpawner extends Actor {
 	{
@@ -416,25 +417,29 @@ public class MobSpawner extends Actor {
 		for (int i = 0; i < rotation.size(); i++) {
 			if (Random.Float() < altChance) {
 				Class<? extends Mob> cl = rotation.get(i);
-				if (cl == Rat.class) {
-					cl = Albino.class;
-				} else if (cl == Slime.class) {
-					cl = CausticSlime.class;
-				} else if (cl == Thief.class) {
-					cl = Bandit.class;
-				} else if (cl == Necromancer.class) {
-					cl = SpectralNecromancer.class;
-				} else if (cl == Brute.class) {
-					cl = ArmoredBrute.class;
-				} else if (cl == DM200.class) {
-					cl = DM201.class;
-				} else if (cl == Monk.class) {
-					cl = Senior.class;
-				} else if (cl == Scorpio.class) {
-					cl = Acidic.class;
+				Class<? extends Mob> alt = RARE_ALTS.get(cl);
+				if (alt != null) {
+					cl = alt;
 				}
 				rotation.set(i, cl);
 			}
 		}
+	}
+
+	public static final HashMap<Class<?extends Mob>, Class<?extends Mob>> RARE_ALTS = new HashMap<>();
+	static {
+		RARE_ALTS.put(Rat.class, Albino.class);
+		RARE_ALTS.put(Gnoll.class, GnollExile.class);
+		RARE_ALTS.put(Crab.class, HermitCrab.class);
+		RARE_ALTS.put(Slime.class, CausticSlime.class);
+
+		RARE_ALTS.put(Thief.class, Bandit.class);
+		RARE_ALTS.put(Necromancer.class, SpectralNecromancer.class);
+
+		RARE_ALTS.put(Brute.class, ArmoredBrute.class);
+		RARE_ALTS.put(DM200.class, DM201.class);
+
+		RARE_ALTS.put(Monk.class, Senior.class);
+		RARE_ALTS.put(Scorpio.class, Acidic.class);
 	}
 }

@@ -372,8 +372,8 @@ public class Bomb extends Item {
 			validIngredients.put(PotionOfLiquidFlame.class,     Firebomb.class);
 			validIngredients.put(ScrollOfRage.class,            Noisemaker.class);
 			
-			validIngredients.put(PotionOfInvisibility.class,    Flashbang.class);
-			validIngredients.put(ScrollOfRecharging.class,      ShockBomb.class);
+			validIngredients.put(PotionOfInvisibility.class,    ShockBomb.class);
+			validIngredients.put(ScrollOfRecharging.class,      Flashbang.class);
 			
 			validIngredients.put(PotionOfHealing.class,         RegrowthBomb.class);
 			validIngredients.put(ScrollOfRemoveCurse.class,     HolyBomb.class);

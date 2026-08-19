@@ -125,7 +125,8 @@ public class VaultFlameTraps extends Blob {
 		}
 	}
 
-	public void seed(Level level, int cell, int amount ) {
+	@Override
+	public void seed(Level level, int cell, long amount ) {
 		super.seed(level, cell, amount);
 		if (afterTriggerCooldowns == null) {
 			afterTriggerCooldowns = new int[level.length()];

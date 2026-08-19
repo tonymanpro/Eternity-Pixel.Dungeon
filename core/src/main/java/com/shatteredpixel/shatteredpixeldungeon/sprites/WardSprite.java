@@ -24,6 +24,8 @@ package com.shatteredpixel.shatteredpixeldungeon.sprites;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.VaultLaser;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.VaultSentry;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Beam;
 import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfWarding;
@@ -70,7 +72,9 @@ public class WardSprite extends MobSprite {
 		} else {
 			parent.add(new Beam.DeathRay(center(), DungeonTilemap.raisedTileCenterToWorld(pos)));
 		}
-		((WandOfWarding.Ward)ch).onZapComplete();
+		if (ch instanceof WandOfWarding.Ward) {
+			((WandOfWarding.Ward) ch).onZapComplete();
+		}
 	}
 	
 	@Override
@@ -107,8 +111,12 @@ public class WardSprite extends MobSprite {
 	public void linkVisuals(Char ch ){
 		
 		if (ch == null) return;
-		
-		updateTier( ((WandOfWarding.Ward)ch).tier );
+
+		if (ch instanceof WandOfWarding.Ward) {
+			updateTier(((WandOfWarding.Ward) ch).tier);
+		} else if (ch instanceof VaultLaser || ch instanceof VaultSentry) {
+			updateTier(4);
+		}
 		
 	}
 

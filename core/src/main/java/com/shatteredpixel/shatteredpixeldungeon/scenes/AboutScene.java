@@ -24,6 +24,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.scenes;
 
+import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Cripple;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Flare;
@@ -57,6 +58,18 @@ public class AboutScene extends PixelScene {
 		Component content = list.content();
 		content.clear();
 
+		//*** Eternity Pixel Dungeon Credits ***
+
+		Image eternityLogo = new Image(Assets.Splashes.TITLE);
+		eternityLogo.scale.set(120f / eternityLogo.width);
+		CreditsBlock eternityPR = new CreditsBlock(true, 0xFFD700,
+				"Eternity Pixel Dungeon",
+				eternityLogo,
+				"Developed by: tonymanpro\nBased on Infinite & ExpPD",
+				"GitHub", "https://github.com/tonymanpro/Eternity-Pixel.Dungeon");
+		eternityPR.setRect((w - fullWidth)/2f, 6, fullWidth, 0);
+		content.add(eternityPR);
+
 		//*** Shattered Pixel Dungeon Credits ***
 
 		CreditsBlock shpx = new CreditsBlock(true, Window.SHPX_COLOR,
@@ -65,11 +78,7 @@ public class AboutScene extends PixelScene {
 				"Developed by: _Evan Debenham_\nBased on Pixel Dungeon's open source",
 				"ShatteredPixel.com",
 				"https://ShatteredPixel.com");
-		if (landscape()){
-			shpx.setRect((w - fullWidth)/2f - 6, 10, 120, 0);
-		} else {
-			shpx.setRect((w - fullWidth)/2f, 6, 120, 0);
-		}
+		shpx.setRect((w - fullWidth)/2f, eternityPR.bottom() + 8, 120, 0);
 		content.add(shpx);
 
 		CreditsBlock alex = new CreditsBlock(false, Window.SHPX_COLOR,
@@ -205,19 +214,6 @@ public class AboutScene extends PixelScene {
 		content.add(infinitePD);
 		addLine(infinitePD.top() - 4, content);
 
-		CreditsBlock eternityPR = new CreditsBlock(false, 0xFFD700,
-		"Eternity Pixel Dungeon:",
-		null,
-		"Developed by: tonymanpro\nBased on Infinite & ExpPD",
-		"GitHub", "https://github.com/tonymanpro/Eternity-Pixel.Dungeon");
-		if (landscape()){
-			eternityPR.setRect(bob.left(), infinitePD.bottom() + 8, fullWidth, 0);
-		} else {
-			eternityPR.setRect(gdx.left(), infinitePD.bottom() + 8, colWidth, 0);
-		}
-		content.add(eternityPR);
-		addLine(eternityPR.top() - 4, content);
-
 		//*** Patreon Supporters & Hall of Fame ***
 		final int PATREON_COLOR = 0xFF6B4A;
 		CreditsBlock patreonPR = new CreditsBlock(true, PATREON_COLOR,
@@ -225,11 +221,11 @@ public class AboutScene extends PixelScene {
 				Icons.BADGES.get(),
 				"A huge, heartfelt thank you to our _Patreon supporters, backers, and community champions_! Your generous support directly funds ongoing development, new heroes, pet companions, and eternity content.",
 				"patreon.com/c/EternityPixelDungeon",
-				"https://www.patreon.com/c/EternityPixelDungeon");
+				"https://www.patreon.com/c/EternityPixelDungeon/membership");
 		if (landscape()){
-			patreonPR.setRect(bob.left(), eternityPR.bottom() + 8, fullWidth, 0);
+			patreonPR.setRect(bob.left(), Math.max(bob.bottom(), infinitePD.bottom()) + 8, fullWidth, 0);
 		} else {
-			patreonPR.setRect(gdx.left(), eternityPR.bottom() + 8, colWidth, 0);
+			patreonPR.setRect(gdx.left(), infinitePD.bottom() + 8, colWidth, 0);
 		}
 		content.add(patreonPR);
 		addLine(patreonPR.top() - 4, content);

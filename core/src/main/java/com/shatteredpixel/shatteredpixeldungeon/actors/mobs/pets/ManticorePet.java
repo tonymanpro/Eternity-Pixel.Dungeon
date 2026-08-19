@@ -27,14 +27,14 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Roots;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.BatSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ManticoreSprite;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Random;
 
 public class ManticorePet extends Pet {
 
 	{
-		spriteClass = BatSprite.class;
+		spriteClass = ManticoreSprite.class;
 		flying = true;
 	}
 

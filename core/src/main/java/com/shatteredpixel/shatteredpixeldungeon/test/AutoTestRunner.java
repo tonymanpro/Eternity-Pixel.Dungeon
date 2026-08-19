@@ -25,25 +25,40 @@ public class AutoTestRunner {
 		long totalStart = System.currentTimeMillis();
 
 		// Run Test Modules
-		System.out.println("\n[1/7] Ejecutando: Dungeon Generation & Reachability Test...");
+		System.out.println("\n[1/12] Ejecutando: Dungeon Generation & Reachability Test...");
 		results.add(DungeonGenTest.run());
 
-		System.out.println("[2/7] Ejecutando: Hero Mechanics & Classes Test...");
+		System.out.println("[2/12] Ejecutando: Hero Mechanics & Classes Test...");
 		results.add(HeroMechanicsTest.run());
 
-		System.out.println("[3/7] Ejecutando: Pets & Companions System Test...");
+		System.out.println("[3/12] Ejecutando: Pets & Companions System Test...");
 		results.add(PetSystemTest.run());
 
-		System.out.println("[4/7] Ejecutando: Item Rarity & Generation Test...");
+		System.out.println("[4/12] Ejecutando: Item Rarity & Generation Test...");
 		results.add(ItemRarityTest.run());
 
-		System.out.println("[5/7] Ejecutando: Platform Achievements & Badges Sync Test...");
+		System.out.println("[5/12] Ejecutando: Platform Achievements & Badges Sync Test...");
 		results.add(PlatformAchievementsTest.run());
 
-		System.out.println("[6/7] Ejecutando: Supporter Licensing & Entitlements Test...");
+		System.out.println("[6/12] Ejecutando: Supporter Licensing & Entitlements Test...");
 		results.add(SupporterLicensingTest.run());
 
-		System.out.println("[7/7] Ejecutando: Autonomous Bot AI Simulation (50 turns)...");
+		System.out.println("[7/12] Ejecutando: Rare Enemies & Variant Mapping Test...");
+		results.add(RareMobVariantsTest.run());
+
+		System.out.println("[8/12] Ejecutando: Rare Enemy Depth Smoke Test...");
+		results.add(RareMobDepthSmokeTest.run());
+
+		System.out.println("[9/12] Ejecutando: Rare Enemy Frequency Stats Test...");
+		results.add(RareMobFrequencyStatsTest.run());
+
+		System.out.println("[10/12] Ejecutando: Imp Quest Renewal Flow Test...");
+		results.add(ImpQuestRenewalTest.run());
+
+		System.out.println("[11/12] Ejecutando: Imp Quest Completion Test...");
+		results.add(ImpQuestCompletionTest.run());
+
+		System.out.println("[12/12] Ejecutando: Autonomous Bot AI Simulation (50 turns)...");
 		results.add(AutonomousBotSim.run(50));
 
 		// Map Screenshot Exporter (only when requested)

@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.windows;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
@@ -31,7 +32,6 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.watabou.noosa.Group;
 
 import java.text.NumberFormat;
-import java.util.Locale;
 
 public class WndScoreBreakdown extends Window {
 
@@ -47,13 +47,13 @@ public class WndScoreBreakdown extends Window {
 
 		float pos = title.bottom()+2;
 
-		NumberFormat num = NumberFormat.getInstance(Locale.US);
-		if (Dungeon.initialVersion > 453) {
+		NumberFormat num = NumberFormat.getInstance(Messages.locale());
+		if (Dungeon.initialVersion > ShatteredPixelDungeon.v1_2_3) {
 			pos = statSlot(this, Messages.get(this, "progress_title"),
-					num.format(Statistics.progressScore), pos, Statistics.progressScore >= 250_000);
+					num.format(Statistics.progressScore), pos, Statistics.progressScore >= 50_000);
 			pos = addInfo(this, Messages.get(this, "progress_desc"), pos);
 			pos = statSlot(this, Messages.get(this, "treasure_title"),
-					num.format(Statistics.treasureScore), pos, Statistics.treasureScore >= 100_000);
+					num.format(Statistics.treasureScore), pos, Statistics.treasureScore >= 20_000);
 			pos = addInfo(this, Messages.get(this, "treasure_desc"), pos);
 			pos = statSlot(this, Messages.get(this, "explore_title"),
 					num.format(Statistics.exploreScore), pos, Statistics.exploreScore >= 20_000);
@@ -74,20 +74,20 @@ public class WndScoreBreakdown extends Window {
 		}
 
 		if (Statistics.winMultiplier > 1) {
-			pos = statSlot(this, Messages.get(this, "win_multiplier"), Statistics.winMultiplier + "x", pos, false);
+			pos = statSlot(this, Messages.get(this, "win_multiplier"), Messages.decimalFormat("#.##", Statistics.winMultiplier) + "x", pos, false);
 		}
 		if (Statistics.chalMultiplier > 1) {
-			pos = statSlot(this, Messages.get(this, "challenge_multiplier"), Statistics.chalMultiplier + "x", pos, false);
+			pos = statSlot(this, Messages.get(this, "challenge_multiplier"), Messages.decimalFormat("#.##", Statistics.chalMultiplier) + "x", pos, false);
 		}
 		if (Statistics.cycleMultiplier > 1) {
-			pos = statSlot(this, Messages.get(this, "cycle_multiplier"), Statistics.cycleMultiplier + "x", pos, false);
+			pos = statSlot(this, Messages.get(this, "cycle_multiplier"), Messages.decimalFormat("#.##", Statistics.cycleMultiplier) + "x", pos, false);
 		}
         if (Statistics.weeklyMultiplier > 1) {
-            pos = statSlot(this, Messages.get(this, "weekly_multiplier"), Statistics.weeklyMultiplier + "x", pos, false);
+            pos = statSlot(this, Messages.get(this, "weekly_multiplier"), Messages.decimalFormat("#.##", Statistics.weeklyMultiplier) + "x", pos, false);
         }
 		pos = statSlot(this, Messages.get(this, "total"), num.format(Statistics.totalScore), pos, false);
 
-		if (Dungeon.initialVersion <= 453){
+		if (Dungeon.initialVersion <= ShatteredPixelDungeon.v1_2_3){
 			pos = addInfo(this, Messages.get(this, "old_score_desc"), pos);
 		}
 

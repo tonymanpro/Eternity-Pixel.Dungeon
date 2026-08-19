@@ -26,6 +26,7 @@ package com.shatteredpixel.shatteredpixeldungeon.windows;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.ui.ItemJournalButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.InventoryPane;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
@@ -38,11 +39,13 @@ public class WndUseItem extends WndInfoItem {
 	
 	private static final float GAP	= 2;
 	public final Window owner;
+	public final Item item;
 
 	public WndUseItem( final Window owner, final Item item ) {
 		
 		super(item);
 		this.owner = owner;
+		this.item = item;
 		float y = height;
 		
 		if (Dungeon.hero.isAlive() && Dungeon.hero.belongings.contains(item)) {
@@ -74,6 +77,10 @@ public class WndUseItem extends WndInfoItem {
 				
 			}
 			y = layoutButtons(buttons, width, y);
+
+			ItemJournalButton btn = new ItemJournalButton(item, this);
+			btn.setRect(width - 16, 0, 16, 16);
+			add(btn);
 		}
 		
 		resize( width, (int)(y) );

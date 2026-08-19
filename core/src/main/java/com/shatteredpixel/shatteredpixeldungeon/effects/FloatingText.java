@@ -35,6 +35,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Momentum;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.spells.GuidingLight;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.ArmoredStatue;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Statue;
@@ -319,9 +320,9 @@ public class FloatingText extends RenderedTextBlock {
         HashMap<Integer, Float> hitReasons = new HashMap<>();
 
         //go through some garunteed hit interactions first
-        //if (defRoll == 0 && defender.buff(GuidingLight.Illuminated.class) != null){
-        //  return HIT_BLS;
-        //}
+        if (defRoll == 0 && defender.buff(GuidingLight.Illuminated.class) != null){
+            return HIT_BLS;
+        }
         if (accRoll == Char.INFINITE_ACCURACY && attacker.invisible > 0){
             return HIT_SUPR;
         }
@@ -364,16 +365,19 @@ public class FloatingText extends RenderedTextBlock {
             blessBoost *= attacker.buff(ChampionEnemy.class).evasionAndAccuracyFactor();
         }
         if (attacker.buff(Bless.class) != null) blessBoost *= 1.25f;
-        //if (Dungeon.hero.heroClass != HeroClass.CLERIC
-        //        && Dungeon.hero.hasTalent(Talent.BLESS)
-        //        && attacker.alignment == Char.Alignment.ALLY){
-        //    // + 3%/5%
-        //    blessBoost *= 1.01f + 0.02f*Dungeon.hero.pointsInTalent(Talent.BLESS);
-        //}
+        if (Dungeon.hero.heroClass != HeroClass.CLERIC
+                && Dungeon.hero.hasTalent(Talent.BLESS)
+                && attacker.alignment == Char.Alignment.ALLY){
+            // + 3%/5%
+            blessBoost *= 1.01f + 0.02f*Dungeon.hero.pointsInTalent(Talent.BLESS);
+        }
         if (blessBoost > 1f) hitReasons.put(HIT_BLS, blessBoost);
         if (RingOfAccuracy.accuracyMultiplier(attacker) > 1)    hitReasons.put(HIT_ACC, RingOfAccuracy.accuracyMultiplier(attacker));
         if (attacker.buff(Scimitar.SwordDance.class) != null)   hitReasons.put(HIT_DANCE, 1.5f);
         if (!(wep instanceof MissileWeapon)) {
+            if (attacker instanceof Hero && ((Hero) attacker).hasTalent(Talent.PRECISE_ASSAULT) && ((Hero) attacker).heroClass != HeroClass.DUELIST){
+                hitReasons.put(HIT_PRES, 0.1f * Dungeon.hero.pointsInTalent(Talent.PRECISE_ASSAULT));
+            }
             if (attacker.buff(Talent.PreciseAssaultTracker.class) != null){
                 hitReasons.put(HIT_PRES, Dungeon.hero.pointsInTalent(Talent.PRECISE_ASSAULT) == 2 ? 5f : 2f);
             } else if (attacker.buff(Talent.LiquidAgilACCTracker.class) != null) {
@@ -383,7 +387,7 @@ public class FloatingText extends RenderedTextBlock {
             if (attacker.buff(Momentum.class) != null
                     && attacker.buff(Momentum.class).freerunning()
                     && ((Hero)attacker).hasTalent(Talent.PROJECTILE_MOMENTUM)) {
-                hitReasons.put(HIT_MOMEN, 1f + ((Hero) attacker).pointsInTalent(Talent.PROJECTILE_MOMENTUM) / 3f);
+                hitReasons.put(HIT_MOMEN, 1f + ((Hero) attacker).pointsInTalent(Talent.PROJECTILE_MOMENTUM) / 2f);
             }
         }
 
@@ -455,6 +459,12 @@ public class FloatingText extends RenderedTextBlock {
             blessBoost *= defender.buff(ChampionEnemy.class).evasionAndAccuracyFactor();
         }
         if (defender.buff(Bless.class) != null) blessBoost *= 1.25f;
+        if (Dungeon.hero.heroClass != HeroClass.CLERIC
+                && Dungeon.hero.hasTalent(Talent.BLESS)
+                && defender.alignment == Char.Alignment.ALLY){
+            // + 3%/5%
+            blessBoost *= 1.01f + 0.02f*Dungeon.hero.pointsInTalent(Talent.BLESS);
+        }
         if (blessBoost > 1f)                                    missReasons.put(MISS_BLS, blessBoost);
         if (FerretTuft.evasionMultiplier() > 1)                 missReasons.put(MISS_TUFT, FerretTuft.evasionMultiplier());
         if (RingOfEvasion.evasionMultiplier(defender) > 1)      missReasons.put(MISS_EVA, RingOfEvasion.evasionMultiplier(defender));

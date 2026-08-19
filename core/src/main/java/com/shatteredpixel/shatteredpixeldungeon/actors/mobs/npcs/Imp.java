@@ -165,6 +165,45 @@ public class Imp extends NPC {
 		private static boolean completed;
 		
 		public static Ring reward;
+
+		private static void initQuestStateForCurrentDepth() {
+			spawned = true;
+			given = false;
+			completed = false;
+
+			//always assigns monks on floor 17, golems on floor 19, and 50/50 between either on 18
+			switch (Dungeon.depth){
+				case 17: default:
+					alternative = true;
+					break;
+				case 18:
+					alternative = Random.Int(2) == 0;
+					break;
+				case 19:
+					alternative = false;
+					break;
+			}
+
+			do {
+				reward = (Ring)Generator.random( Generator.Category.RING );
+			} while (reward.cursed);
+			reward.upgrade( Dungeon.getCycleMultiplier(2) );
+			reward.cursed = true;
+			PsycheChest.questDepth = -1;
+		}
+
+		public static boolean shouldUseAmbitiousRoom() {
+			return !spawned
+					&& !completed
+					&& Dungeon.branch == Dungeon.BRANCH_NORMAL
+					&& Dungeon.depth >= 17 && Dungeon.depth <= 19;
+		}
+
+		public static void registerAmbitiousRoomSpawn() {
+			if (!spawned) {
+				initQuestStateForCurrentDepth();
+			}
+		}
 		
 		public static void reset() {
 			spawned = false;
@@ -215,6 +254,8 @@ public class Imp extends NPC {
 		public static void spawn( CityLevel level ) {
 			if (!spawned && (Dungeon.depth == PsycheChest.questDepth ||
 					(Dungeon.depth > 16 && Random.Int( 20 - Dungeon.depth ) == 0))) {
+				initQuestStateForCurrentDepth();
+
 				Imp npc = new Imp();
 				int tries = 30;
 				do {
@@ -231,33 +272,9 @@ public class Imp extends NPC {
 						!level.passable[npc.pos + PathFinder.CIRCLE4[0]] || !level.passable[npc.pos + PathFinder.CIRCLE4[1]] ||
 						!level.passable[npc.pos + PathFinder.CIRCLE4[2]] || !level.passable[npc.pos + PathFinder.CIRCLE4[3]]);
 				level.mobs.add( npc );
-				
-				spawned = true;
 
 				//imp always spawns on an empty tile, for better visibility
 				level.map[ npc.pos ] = Terrain.EMPTY;
-
-				//always assigns monks on floor 17, golems on floor 19, and 50/50 between either on 18
-				switch (Dungeon.depth){
-					case 17: default:
-						alternative = true;
-						break;
-					case 18:
-						alternative = Random.Int(2) == 0;
-						break;
-					case 19:
-						alternative = false;
-						break;
-				}
-				
-				given = false;
-				
-				do {
-					reward = (Ring)Generator.random( Generator.Category.RING );
-				} while (reward.cursed);
-				reward.upgrade( Dungeon.getCycleMultiplier(2) );
-				reward.cursed = true;
-				PsycheChest.questDepth = -1;
 			}
 		}
 		

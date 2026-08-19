@@ -38,11 +38,14 @@ import java.util.ArrayList;
 
 public class RightClickMenu extends Component {
 
+	private static final float TOP_RIGHT_BTN_SIZE = 11f;
+
 	private NinePatch bg;
 	private PointerArea blocker;
 
 	private Image icon;
 	private RenderedTextBlock titleText;
+	private ItemJournalButton topRightButton;
 	private ColorBlock separator;
 
 	private RedButton[] buttons;
@@ -94,6 +97,18 @@ public class RightClickMenu extends Component {
 		blocker.target = bg;
 		add(blocker);
 
+		if (item != null && Dungeon.hero.belongings.contains(item)) {
+			topRightButton = new ItemJournalButton(item, null) {
+				@Override
+				public void onClick() {
+					RightClickMenu.this.destroy();
+					RightClickMenu.this.killAndErase();
+					super.onClick();
+				}
+			};
+			add(topRightButton);
+		}
+
 		buttons = new RedButton[options.length];
 		for (int i = 0; i < options.length; i++){
 			int finalI = i;
@@ -136,7 +151,10 @@ public class RightClickMenu extends Component {
 		height += 2;
 		height += 13*buttons.length;
 
-		width = icon.width + 2 + titleText.width()+bg.marginVer();
+		width = icon.width + 2 + titleText.width() + bg.marginHor();
+		if (topRightButton != null) {
+			width += TOP_RIGHT_BTN_SIZE + 2;
+		}
 		for (RedButton button : buttons){
 			if (width < button.reqWidth()+bg.marginHor()){
 				width = button.reqWidth()+bg.marginHor();
@@ -157,6 +175,15 @@ public class RightClickMenu extends Component {
 		icon.y = y+bg.marginTop();
 
 		titleText.setPos(icon.x+icon.width()+2, icon.y + (icon.height()- titleText.height())/2);
+
+		if (topRightButton != null) {
+			topRightButton.setRect(
+				x + width - bg.marginRight() - TOP_RIGHT_BTN_SIZE,
+				y + bg.marginTop() + (Math.max(icon.height(), titleText.height()) - TOP_RIGHT_BTN_SIZE)/2,
+				TOP_RIGHT_BTN_SIZE,
+				TOP_RIGHT_BTN_SIZE
+			);
+		}
 
 		separator.x = x+bg.marginLeft();
 		separator.y = Math.max(icon.y + icon.height(), titleText.bottom()) + 1;

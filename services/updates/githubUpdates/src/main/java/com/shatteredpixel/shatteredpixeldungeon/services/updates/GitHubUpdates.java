@@ -37,6 +37,9 @@ import java.util.regex.Pattern;
 
 public class GitHubUpdates extends UpdateService {
 
+	private static final String REPO_API_URL = "https://api.github.com/repos/tonymanpro/Eternity-Pixel.Dungeon";
+	private static final String RELEASES_API_URL = REPO_API_URL + "/releases";
+
 	private static Pattern descPattern = Pattern.compile("(.*?)(\r\n|\n|\r)(\r\n|\n|\r)---", Pattern.DOTALL + Pattern.MULTILINE);
 	private static Pattern versionCodePattern = Pattern.compile("internal version number: ([0-9]*)", Pattern.CASE_INSENSITIVE);
 
@@ -62,7 +65,7 @@ public class GitHubUpdates extends UpdateService {
 		}
 
 		Net.HttpRequest httpGet = new Net.HttpRequest(Net.HttpMethods.GET);
-		httpGet.setUrl("https://api.github.com/repos/tonymanpro/Eternity-Pixel.Dungeon/releases");
+		httpGet.setUrl(RELEASES_API_URL);
 		httpGet.setHeader("Accept", "application/vnd.github.v3+json");
 
 		Gdx.net.sendHttpRequest(httpGet, new Net.HttpResponseListener() {

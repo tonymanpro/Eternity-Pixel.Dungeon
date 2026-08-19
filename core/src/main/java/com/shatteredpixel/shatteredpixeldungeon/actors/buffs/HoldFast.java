@@ -25,7 +25,9 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.watabou.noosa.Image;
@@ -58,6 +60,23 @@ public class HoldFast extends Buff {
 			return 0;
 		}
 	}
+
+    public static float buffDecayFactor(Char target){
+        HoldFast buff = target.buff(HoldFast.class);
+        if (buff != null && target.pos == buff.pos && target instanceof Hero){
+            switch (((Hero) target).pointsInTalent(Talent.HOLD_FAST)){
+                case 1:
+                    return 0.5f;
+                case 2:
+                    return 0.25f;
+                case 3:
+                    return 0f;
+            }
+        } else if (buff != null){
+            buff.detach();
+        }
+        return 1f;
+    }
 
     @Override
     public int icon() {

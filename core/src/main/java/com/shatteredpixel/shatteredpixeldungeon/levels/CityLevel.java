@@ -28,6 +28,9 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Imp;
+import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
+import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.quest.AmbitiousImpRoom;
+import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.SpecialRoom;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ElmoParticle;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.CityPainter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
@@ -40,6 +43,8 @@ import com.watabou.noosa.particles.Emitter;
 import com.watabou.noosa.particles.PixelParticle;
 import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
+
+import java.util.ArrayList;
 
 public class CityLevel extends RegularLevel {
 
@@ -74,6 +79,23 @@ public class CityLevel extends RegularLevel {
 		if (forceMax) return 3;
 		//2 to 3, average 2.33
 		return 2 + Dungeon.chances(new float[]{2, 1});
+	}
+
+	@Override
+	protected ArrayList<Room> initRooms() {
+		ArrayList<Room> initRooms = super.initRooms();
+
+		if (Imp.Quest.shouldUseAmbitiousRoom()) {
+			for (int i = 0; i < initRooms.size(); i++) {
+				if (initRooms.get(i) instanceof SpecialRoom) {
+					initRooms.set(i, new AmbitiousImpRoom());
+					return initRooms;
+				}
+			}
+			initRooms.add(new AmbitiousImpRoom());
+		}
+
+		return initRooms;
 	}
 	
 	@Override

@@ -104,7 +104,7 @@ public class Berserk extends Buff implements ActionIndicator.Action {
 			ShieldBuff buff = target.buff(WarriorShield.class);
 			if (target.shielding() > 0) {
 				//lose 2.5% of shielding per turn, but no less than 1
-				long dmg = (long) Math.ceil(target.shielding() * 0.025f);
+				long dmg = (long) Math.ceil(target.shielding() * 0.025f * HoldFast.buffDecayFactor(target));
 				if (buff != null && buff.shielding() > 0) {
 					dmg = buff.absorbDamage(dmg);
 				}

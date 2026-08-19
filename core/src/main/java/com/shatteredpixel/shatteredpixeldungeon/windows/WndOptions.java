@@ -92,6 +92,7 @@ public class WndOptions extends Window {
 				}
 			};
 			if (hasIcon(i)) btn.icon(getIcon(i));
+			btn.multiline = true;
 			btn.enable(enabled(i));
 			add( btn );
 

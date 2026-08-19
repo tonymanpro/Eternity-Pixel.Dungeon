@@ -87,12 +87,22 @@ public class MobSprite extends CharSprite {
 	}
 
 	public TextureFilm createFilm( int baseWidth, int baseHeight ) {
-		if (texture != null && (texture.width > 200 || texture.height > 200) && texture.width % (baseWidth * 2) == 0) {
-			scale.set( 0.5f, 0.5f );
-			return new com.watabou.noosa.TextureFilm( texture, baseWidth * 2, baseHeight * 2 );
-		} else {
-			scale.set( 1f, 1f );
-			return new com.watabou.noosa.TextureFilm( texture, baseWidth, baseHeight );
+		try {
+			boolean isHdSheet = texture != null
+					&& (texture.width > 200 || texture.height > 200)
+					&& texture.width % (baseWidth * 2) == 0
+					&& texture.height % (baseHeight * 2) == 0;
+
+			if (isHdSheet) {
+				scale.set( 0.5f, 0.5f );
+				return new TextureFilm( texture, baseWidth * 2, baseHeight * 2 );
+			}
+		} catch (RuntimeException e) {
+			// A malformed optional/overridden sprite sheet must not stop scene creation.
+			Game.reportException(e);
 		}
+
+		scale.set( 1f, 1f );
+		return new TextureFilm( texture, baseWidth, baseHeight );
 	}
 }

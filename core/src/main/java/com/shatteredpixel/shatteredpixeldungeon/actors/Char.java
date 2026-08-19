@@ -371,28 +371,16 @@ public abstract class Char extends Actor {
 	
 	public boolean attack( Char enemy, float dmgMulti, float dmgBonus, float accMulti ) {
 
+		// Ensure UI reason icons always belong to the current attack attempt.
+		hitMissIcon = -1;
+
 		if (enemy == null) return false;
 		
 		boolean visibleFight = Dungeon.level.heroFOV[pos] || Dungeon.level.heroFOV[enemy.pos];
 
 		if (enemy.isInvulnerable(getClass())) {
 
-            if (enemy.sprite != null) {
-                if (enemy.sprite != null) {
-                    if (hitMissIcon != -1) {
-                        //dooking is a playful sound Ferrets can make, like low pitched chirping
-                        // I doubt this will translate, so it's only in English
-                        if (hitMissIcon == FloatingText.MISS_TUFT && Messages.lang() == Languages.ENGLISH && Random.Int(10) == 0) {
-                            enemy.sprite.showStatusWithIcon(CharSprite.NEUTRAL, "dooked", hitMissIcon);
-                        } else {
-                            enemy.sprite.showStatusWithIcon(CharSprite.NEUTRAL, enemy.defenseVerb(), hitMissIcon);
-                        }
-                        hitMissIcon = -1;
-                    } else {
-                        enemy.sprite.showStatus(CharSprite.NEUTRAL, enemy.defenseVerb());
-                    }
-                }
-            }
+			showDefenseStatus(enemy);
 
 			if (visibleFight) {
 				enemy.sprite.showStatus( CharSprite.POSITIVE, Messages.get(this, "invulnerable") );
@@ -571,7 +559,7 @@ public abstract class Char extends Actor {
 			
 		} else {
 
-			enemy.sprite.showStatus( CharSprite.NEUTRAL, enemy.defenseVerb() );
+			showDefenseStatus(enemy);
 			if (visibleFight) {
 				//TODO enemy.defenseSound? currently miss plays for monks/crab even when they parry
 				Sample.INSTANCE.play(Assets.Sounds.MISS);
@@ -648,6 +636,24 @@ public abstract class Char extends Actor {
 	}
 
     private static int hitMissIcon = -1;
+
+	private static void showDefenseStatus(Char enemy){
+		if (enemy == null || enemy.sprite == null) return;
+
+		if (hitMissIcon != -1) {
+			//dooking is a playful sound Ferrets can make, like low pitched chirping
+			// I doubt this will translate, so it's only in English
+			if (hitMissIcon == FloatingText.MISS_TUFT && Messages.lang() == Languages.ENGLISH && Random.Int(10) == 0) {
+				enemy.sprite.showStatusWithIcon(CharSprite.NEUTRAL, "dooked", hitMissIcon);
+			} else {
+				enemy.sprite.showStatusWithIcon(CharSprite.NEUTRAL, enemy.defenseVerb(), hitMissIcon);
+			}
+			hitMissIcon = -1;
+		} else {
+			enemy.sprite.showStatus(CharSprite.NEUTRAL, enemy.defenseVerb());
+		}
+	}
+
 	public long attackSkill(Char target ) {
 		return 0;
 	}
