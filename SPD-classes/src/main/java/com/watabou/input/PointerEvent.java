@@ -143,9 +143,12 @@ public class PointerEvent {
 			return;
 		}
 
+		ArrayList<PointerEvent> toProcess = new ArrayList<>(pointerEvents);
+		pointerEvents.clear();
+
 		//handle any hover events separately first as we may need to add drag events
 		boolean hovered = false;
-		for (PointerEvent p : pointerEvents){
+		for (PointerEvent p : toProcess){
 			if (p.type == Type.HOVER){
 				lastHoverPos.set(p.current);
 				pointerSignal.dispatch(p);
@@ -153,7 +156,7 @@ public class PointerEvent {
 			}
 		}
 
-		for (PointerEvent p : pointerEvents){
+		for (PointerEvent p : toProcess){
 			if (p.type == Type.HOVER){
 				continue;
 			}
@@ -180,7 +183,6 @@ public class PointerEvent {
 				Game.platform.setOnscreenKeyboardVisible(false);
 			}
 		}
-		pointerEvents.clear();
 
 		//add drag events for any emulated presses
 		if (hovered && activePointers.containsKey(ControllerHandler.CONTROLLER_POINTER_ID)){

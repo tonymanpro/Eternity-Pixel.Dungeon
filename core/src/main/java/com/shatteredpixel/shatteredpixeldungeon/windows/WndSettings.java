@@ -213,6 +213,7 @@ public class WndSettings extends WndTabbed {
 		RenderedTextBlock title;
 		ColorBlock sep1;
 		CheckBox chkFullscreen;
+		RedButton btnResolution;
 		CheckBox chkLandscape;
 		OptionSlider optScale;
 		ColorBlock sep2;
@@ -230,20 +231,90 @@ public class WndSettings extends WndTabbed {
 			sep1 = new ColorBlock(1, 1, 0xFF000000);
 			add(sep1);
 
-			chkFullscreen = new CheckBox( Messages.get(this, "fullscreen") ) {
-				@Override
-                public void onClick() {
-					super.onClick();
-					SPDSettings.fullscreen(checked());
-				}
-			};
-			if (DeviceCompat.supportsFullScreen()){
-				chkFullscreen.checked(SPDSettings.fullscreen());
+			if (DeviceCompat.isDesktop()) {
+				btnResolution = new RedButton(Messages.get(this, "resolution")) {
+					@Override
+					public void onClick() {
+						super.onClick();
+						ShatteredPixelDungeon.scene().addToFront(new Window() {
+							RenderedTextBlock resTitle;
+							RedButton btnFree, btnFull, btnHD, btnMobile;
+							{
+								resTitle = PixelScene.renderTextBlock(Messages.get(WndSettings.DisplayTab.this, "resolution"), 9);
+								add(resTitle);
+
+								btnFree = new RedButton(Messages.get(WndSettings.DisplayTab.this, "res_free")) {
+									@Override
+									public void onClick() {
+										SPDSettings.fullscreen(false);
+										hide();
+									}
+								};
+								add(btnFree);
+
+								btnFull = new RedButton(Messages.get(WndSettings.DisplayTab.this, "res_fullscreen")) {
+									@Override
+									public void onClick() {
+										SPDSettings.fullscreen(true);
+										hide();
+									}
+								};
+								add(btnFull);
+
+								btnHD = new RedButton(Messages.get(WndSettings.DisplayTab.this, "res_hd")) {
+									@Override
+									public void onClick() {
+										SPDSettings.fullscreen(false);
+										SPDSettings.windowResolution(new com.watabou.utils.Point(1920, 1080));
+										com.badlogic.gdx.Gdx.graphics.setWindowedMode(1920, 1080);
+										hide();
+									}
+								};
+								add(btnHD);
+
+								btnMobile = new RedButton(Messages.get(WndSettings.DisplayTab.this, "res_mobile")) {
+									@Override
+									public void onClick() {
+										SPDSettings.fullscreen(false);
+										SPDSettings.windowResolution(new com.watabou.utils.Point(540, 960));
+										com.badlogic.gdx.Gdx.graphics.setWindowedMode(540, 960);
+										hide();
+									}
+								};
+								add(btnMobile);
+
+								resize(WIDTH_P, 0);
+
+								resTitle.setPos((width - resTitle.width()) / 2f, GAP);
+								PixelScene.align(resTitle);
+
+								btnFull.setRect(0, resTitle.bottom() + GAP, width, BTN_HEIGHT);
+								btnFree.setRect(0, btnFull.bottom() + GAP, width, BTN_HEIGHT);
+								btnHD.setRect(0, btnFree.bottom() + GAP, width, BTN_HEIGHT);
+								btnMobile.setRect(0, btnHD.bottom() + GAP, width, BTN_HEIGHT);
+
+								resize(WIDTH_P, (int)btnMobile.bottom());
+							}
+						});
+					}
+				};
+				add(btnResolution);
 			} else {
-				chkFullscreen.checked(true);
-				chkFullscreen.enable(false);
+				chkFullscreen = new CheckBox( Messages.get(this, "fullscreen") ) {
+					@Override
+					public void onClick() {
+						super.onClick();
+						SPDSettings.fullscreen(checked());
+					}
+				};
+				if (DeviceCompat.supportsFullScreen()){
+					chkFullscreen.checked(SPDSettings.fullscreen());
+				} else {
+					chkFullscreen.checked(true);
+					chkFullscreen.enable(false);
+				}
+				add(chkFullscreen);
 			}
-			add(chkFullscreen);
 
 			if (DeviceCompat.isAndroid()) {
 				chkLandscape = new CheckBox(Messages.get(this, "landscape")) {
@@ -314,8 +385,13 @@ public class WndSettings extends WndTabbed {
 
 			bottom = sep1.y + 1;
 
-			chkFullscreen.setRect(0, bottom + GAP, width, BTN_HEIGHT);
-			bottom = chkFullscreen.bottom();
+			if (btnResolution != null) {
+				btnResolution.setRect(0, bottom + GAP, width, BTN_HEIGHT);
+				bottom = btnResolution.bottom();
+			} else if (chkFullscreen != null) {
+				chkFullscreen.setRect(0, bottom + GAP, width, BTN_HEIGHT);
+				bottom = chkFullscreen.bottom();
+			}
 
 			if (chkLandscape != null) {
 				chkLandscape.setRect(0, bottom + GAP, width, BTN_HEIGHT);

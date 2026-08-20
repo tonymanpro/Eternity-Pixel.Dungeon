@@ -111,3 +111,52 @@ graph TD
 ---
 
 *Última actualización: Agosto 2026 — Eternity Pixel Dungeon Team*
+
+## 🔮 5. Análisis de Evolución, QoL e Innovaciones Futuras
+Esta sección detalla el plan estratégico de diseño para consolidar a Eternity Pixel Dungeon como una experiencia masiva, altamente rejugable y única combinando las fortalezas técnicas de su motor base y agregando mecánicas modernas de RPG y multijugador.
+
+### 💡 5.1 Innovaciones y Nuevas Mecánicas Principales
+- [ ] **Multijugador Cooperativo Simultáneo (Local/Lan):** Implementar la posibilidad de juego cooperativo donde **tú y un amigo** puedan descender simultáneamente la misma mazmorra (pantalla compartida o por conexión IP local/LAN), compartiendo inventario y coordinando ataques.
+- [ ] **Fase 2 de Evolución y Equipamiento de Mascotas:** Permitir que los compañeros suban de Tier mediante mezclas alquímicas (ej. Lobo al nivel 10 + Poción Elemental = *Lobo Huargo Elemental*). Añadir ranuras de equipamiento exclusivo para mascotas (Collares/Armaduras ligeras).
+- [ ] **Armas de Doble Empuñadura (Dual Wielding) y Colosales:** Complemento perfecto para el Bárbaro. Armas que ocupen slots accesorios o requieran configuración a dos manos, introduciendo la mecánica de "Ataques de Barrido" en área.
+- [ ] **Rey Rata Jugable & Subclases Exclusivas:** Evolución total del Rey Rata oculto a clase elegible, con especializaciones como *Señor de la Plaga* (Daño tóxico/corrupción) y *Monarca del Queso* (Supervivencia extrema, control mental de pequeños enemigos e invocación).
+
+### 🛠️ 5.2 Mejoras de Calidad de Vida (QoL) - Prioridades
+- [ ] **🚨 ALTA PRIORIDAD: Ausencia de Colisión para Mascotas:** Desactivar el *blocking* sólido entre el héroe y su mascota, permitiendo a los jugadores intercambiar posición de manera táctica sin quedar atascados en pasillos estrechos.
+- [ ] **Panel Táctico Rápido (HUD):** Una barra minimalista persistente en la pantalla de juego que permite asignar órdenes (Atacar, Seguir, Retirada) directamente sin tener que abrir el panel completo del inventario.
+- [ ] **Botón de Registro y Loadouts (Salón de la Fama):** Perfil de personaje que expone el equipamiento exacto que usaste en tus victorias (Armas, anillos, artefactos), vinculándolo al perfil online del Battle Pass.
+- [ ] **Diario Expandido de Lore:** Implementar fragmentos de historia en forma de diarios caídos, que profundicen en la historia del Bárbaro, el lore musical exclusivo y el origen secreto del Rey Rata.
+
+### 🎲 5.3 Eventos del Mundo y Dinamismo de Partida
+- [ ] **Sucesos Climáticos y Modificadores de Mazmorra:** Implementación de eventos globales con duración limitada (ej. *Maldición de la Humedad*, *Esporas Mutantes*) para forzar la adaptación del héroe en cada piso.
+- [ ] **Jefes Alternativos (Variantes):** Sustituir el 100% de predictibilidad por un sistema condicional. Ejemplo: probabilidad de encontrar una versión mutada de fuego del *Goo*, o un *Tengu de Hielo*, promoviendo preparación flexible por parte del jugador.
+- [ ] **Temporadas Narrativas integradas al Battle Pass:** Tematización activa. Si está activa la temporada *Luna de Sangre*, enemigos básicos cambian estética, comportamientos y recompensan con monedas de evento al ser derrotados.
+
+### 🔄 5.4 Rebalanceo Asistido por IA y Ritmo de Juego
+- [ ] **Retos Semanales Integrados por IA:** Utilización directa del framework *AutoTestRunner / AutonomousBotSim* en servidor para generar desafíos imposibles e iterarlos. Si el bot halla un camino viable para la victoria, esa "seed" se lanza como desafío global diario/semanal.
+- [ ] **Identificación Táctica Dinámica:** Nuevo rol económico para suavizar picos negativos de RNG; cuantas más veces utilices un arma u objeto consistentemente, más rápido ganarás su entendimiento empírico como personaje, complementando a los Pergaminos de Identificación clásicos.
+
+### 🎨 5.5 Extensión Cosmética, Modding y Modding UI
+- [ ] **Cosméticos, Temas de Interfaz y Sprites Alternativos:** Progresión del Battle Pass para ganar estéticas de interfaz visual (ej. *Marco Dorado Demoniaco*), partículas de movimiento exclusivas o apariencias base alternativas para Héroes (Magos oscuros, Bárbaros tribales).
+
+
+## ✨ 6. Modernización Gráfica y Visual Avanzada (Motor Renderizado)
+Aprovechando la base en LibGDX y OpenGL ES, se expandirán las capacidades gráficas manteniendo intacta el alma Pixel-Art del juego:
+
+### 🌈 6.1 Post-Procesamiento (Shaders)
+- [ ] **Bloom (Resplandor):** Efectos de emisión de luz en tiempo real para lava, magia y fuentes de luz extremas.
+- [ ] **Vignette & Color Grading (LUTs):** Filtros dinámicos de color y oscurecimiento de bordes según la topología del nivel y los eventos.
+
+### 💡 6.2 Iluminación Dinámica 2D (Raycasting)
+- [ ] **Sombras Direccionales Suaves:** Integración de iluminación avanzada para que antorchas y personajes proyecten sombras dinámicas contra los muros.
+- [ ] **Efectos Volumétricos:** Rayos de luz crepuscular ("God Rays") entrando desde grietas superiores del entorno.
+
+### 🌫️ 6.3 Sistemas de Partículas y Ambientes Densos
+- [ ] **Niebla Interactiva:** Bruma a ras de suelo que reacciona de forma fluida a los pasos del personaje.
+- [ ] **Scrolling Parallax Avanzado:** Fondos de profundidad múltiple en los Abismos (Chasms) para simular verdadera sensación de vértigo y escala 3D.
+- [ ] **Detalle Ambiental:** Partículas atmosféricas constantes como polvo, gotas o ascuas dependiendo del bioma.
+
+### 🗺️ 6.4 Materiales y Mejoras 2.5D
+- [ ] **Normal Mapping (Falso 3D):** Mapas de relieve para entidades y paredes, logrando que la luz dinámica asimile volumen real en 3D sobre sprites 2D.
+- [ ] **Smooth FPS & Tweens:** Suavizado de transiciones y frames intermedios para generar animaciones mucho más fluidas y reactivas.
+

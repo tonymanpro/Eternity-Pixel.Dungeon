@@ -202,7 +202,9 @@ public class HeroSelectScene extends PixelScene {
 		SPDSettings.customSeed("");
 
 		if (landscape()){
-			float leftArea = Math.max(100, Camera.main.width/3f);
+			int cols = (int)Math.ceil(heroBtns.size()/2f);
+			int btnWidthTemp = HeroBtn.MIN_WIDTH + 15;
+			float leftArea = Math.max(btnWidthTemp * cols + 20, Camera.main.width/3f);
 			float uiHeight = Math.min(Camera.main.height-20, 300);
 			float uiSpacing = (uiHeight-120)/2f;
 
@@ -223,7 +225,6 @@ public class HeroSelectScene extends PixelScene {
 				btnHeight += 6;
 			}
 
-			int cols = (int)Math.ceil(heroBtns.size()/2f);
 			float curX = (leftArea - btnWidth * cols + (cols-1))/2f;
 			float curY = title.bottom() + uiSpacing;
 
