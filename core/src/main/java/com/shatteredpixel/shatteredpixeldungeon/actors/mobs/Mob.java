@@ -938,6 +938,17 @@ public abstract class Mob extends Char {
 					Buff.affect(Dungeon.hero, Talent.LethalHasteCooldown.class, 100f);
 					Buff.affect(Dungeon.hero, GreaterHaste.class).set(2 + 2*Dungeon.hero.pointsInTalent(Talent.LETHAL_HASTE));
 				}
+				if (Dungeon.hero.isSubclass(HeroSubClass.BEASTMASTER)) {
+					// Beastmaster synergy: heal pets slightly and give momentum on kill
+					for (Char c : Actor.chars()) {
+						if (c != Dungeon.hero && c.alignment == Alignment.ALLY) {
+							// Buff speed/damage
+							Buff.affect(c, com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Light.class, 10f); // Temporarily give them Light instead of unfitting Fury which acts differently
+							c.HP = Math.min(c.HT, c.HP + Math.max(1, c.HT / 20));
+							c.sprite.emitter().burst(com.shatteredpixel.shatteredpixeldungeon.effects.particles.SparkParticle.FACTORY, 3);
+						}
+					}
+				}
 			}
 
 			if (PsycheChest.neededLevel() < Dungeon.hero.lvl) {

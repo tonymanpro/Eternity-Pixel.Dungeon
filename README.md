@@ -17,6 +17,11 @@ Visit the official portal to download the latest executable and APK versions, re
 
 👉 **[https://eternity-pixel-dungeon.web.app](https://eternity-pixel-dungeon.web.app)**
 
+## 📥 Download
+
+* **[Itch.io](https://eternitypixeldungeon.itch.io/game)**
+* **[Github Releases](https://github.com/EternityPixelDungeon/Infinite-Pixel-Dungeon/releases)**
+
 ---
 
 ## 🎮 What Makes Eternity Pixel Dungeon Different?

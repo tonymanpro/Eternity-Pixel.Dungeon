@@ -182,6 +182,23 @@ public enum Talent {
 	//Power of Many T4
 	BEAMING_RAY(183, 4), LIFE_LINK(184, 4), STASIS(185, 4),
 
+	//Barbarian T1
+	SAVAGE_MEAL(186), PRIMAL_INTUITION(187), RECKLESS_ANGER(188), THICK_SKIN(189),
+	//Barbarian T2
+	WILD_STOMACH(190), LIQUID_FURY(191), BRUTAL_MOMENTUM(192), FEARLESS_HASTE(193), PRIMAL_THROW(194),
+	//Barbarian T3
+	UNSTOPPABLE(195, 3), OVERWHELMING_STRENGTH(196, 3),
+	//Warmonger T3
+	SAVAGE_CLEAVE(197, 3), RELENTLESS_RAGE(198, 3), FURY_CATALYST(199, 3),
+	//Beastmaster T3
+	ANIMAL_BOND(200, 3), BESTIAL_AID(201, 3), PACK_LEADER(202, 3),
+	//Leaping Smash T4
+	SAVAGE_LEAP(203, 4), IMPACT_CRASH(204, 4), BOUNDING_ASSAULT(205, 4),
+	//Intimidating Roar T4
+	TERRIFYING_ROAR(206, 4), SHATTERING_YELL(207, 4), COMMANDING_BELLOW(208, 4),
+	//Frenzy T4
+	PRIMAL_FRENZY(209, 4), BLOODLUST(210, 4), RAMPAGE(211, 4),
+
 	//universal T4
 	HEROIC_ENERGY(26, 4), //See icon() and title() for special logic for this one
 	//Ratmogrify T4
@@ -956,7 +973,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, SATIATED_SPELLS, HOLY_INTUITION, SEARING_LIGHT, SHIELD_OF_LIGHT);
 				break;
 			case BARBARIAN:
-				Collections.addAll(tierTalents, HEARTY_MEAL, PROVOKED_ANGER, IRON_WILL, AGGRESSIVE_BARRIER);
+				Collections.addAll(tierTalents, SAVAGE_MEAL, PRIMAL_INTUITION, RECKLESS_ANGER, THICK_SKIN);
 				break;
 		}
 		for (Talent talent : tierTalents){
@@ -988,7 +1005,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, ENLIGHTENING_MEAL, RECALL_INSCRIPTION, SUNRAY, DIVINE_SENSE, BLESS);
 				break;
 			case BARBARIAN:
-				Collections.addAll(tierTalents, IRON_STOMACH, LIQUID_WILLPOWER, LETHAL_MOMENTUM, LETHAL_HASTE, IMPROVISED_PROJECTILES);
+				Collections.addAll(tierTalents, WILD_STOMACH, LIQUID_FURY, BRUTAL_MOMENTUM, FEARLESS_HASTE, PRIMAL_THROW);
 				break;
 		}
 		for (Talent talent : tierTalents){
@@ -1020,7 +1037,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, CLEANSE, LIGHT_READING);
 				break;
 			case BARBARIAN:
-				Collections.addAll(tierTalents, HOLD_FAST, STRONGMAN);
+				Collections.addAll(tierTalents, UNSTOPPABLE, OVERWHELMING_STRENGTH);
 				break;
 		}
 		for (Talent talent : tierTalents){
@@ -1057,10 +1074,10 @@ public enum Talent {
 				Collections.addAll(tierTalents, CLEAVE, LETHAL_DEFENSE, ENHANCED_COMBO);
 				break;
 			case WARMONGER:
-				Collections.addAll(tierTalents, CLEAVE, ENDLESS_RAGE, ENRAGED_CATALYST);
+				Collections.addAll(tierTalents, SAVAGE_CLEAVE, RELENTLESS_RAGE, FURY_CATALYST);
 				break;
 			case BEASTMASTER:
-				Collections.addAll(tierTalents, ALLY_WARP, NATURES_AID, DEATHLESS_FURY);
+				Collections.addAll(tierTalents, ANIMAL_BOND, BESTIAL_AID, PACK_LEADER);
 				break;
 			case BATTLEMAGE:
 				Collections.addAll(tierTalents, EMPOWERED_STRIKE, MYSTICAL_CHARGE, EXCESS_CHARGE);

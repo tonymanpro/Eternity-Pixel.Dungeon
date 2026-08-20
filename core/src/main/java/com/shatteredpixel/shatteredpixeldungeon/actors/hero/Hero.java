@@ -584,6 +584,10 @@ public class Hero extends Char {
 			Buff.affect( this, Combo.class ).hit( enemy );
 		}
 
+		if (hit && isClass(HeroClass.BARBARIAN) && wasEnemy){
+			Buff.affect( this, com.shatteredpixel.shatteredpixeldungeon.actors.buffs.PrimalFury.class ).hit( true );
+		}
+
 		if (hit && isClass(HeroClass.DUELIST) && wasEnemy){
 			Buff.affect( this, Sai.ComboStrikeTracker.class).addHit();
 		}
@@ -807,6 +811,11 @@ if (buff(RoundShield.GuardTracker.class) != null){
 		if (heroClass == HeroClass.DUELIST
 				&& (buff(Recharging.class) != null || buff(ArtifactRecharge.class) != null)){
 			dmg = Math.round(dmg * 1.08f);
+		}
+
+		com.shatteredpixel.shatteredpixeldungeon.actors.buffs.PrimalFury primalFury = buff(com.shatteredpixel.shatteredpixeldungeon.actors.buffs.PrimalFury.class);
+		if (primalFury != null) {
+			dmg = Math.round(dmg * primalFury.damageMultiplier());
 		}
 
         dmg *= (long) RingOfValor.damageMultiplier( this );
@@ -1655,12 +1664,17 @@ if (buff(RoundShield.GuardTracker.class) != null){
 	
 	@Override
 	public long defenseProc( Char enemy, long damage ) {
-		
+
 		if (damage > 0 && isSubclass(HeroSubClass.BERSERKER)){
 			Berserk berserk = Buff.affect(this, Berserk.class);
 			berserk.damage(damage);
 		}
-		
+
+		if (damage > 0 && isClass(HeroClass.BARBARIAN)) {
+			// Barbarian builds fury passively on taking damage
+			Buff.affect(this, com.shatteredpixel.shatteredpixeldungeon.actors.buffs.PrimalFury.class).addFury(damage > 10 ? 10 : damage); 
+		}
+
 		if (belongings.armor() != null) {
 			damage = belongings.armor().proc( enemy, this, damage );
 		}
@@ -1715,6 +1729,11 @@ if (buff(RoundShield.GuardTracker.class) != null){
 			if (buff(MonkEnergy.MonkAbility.Meditate.MeditateResistance.class) != null){
 				dmg *= 0.2f;
 			}
+		}
+
+		com.shatteredpixel.shatteredpixeldungeon.actors.buffs.PrimalFury primalFury = buff(com.shatteredpixel.shatteredpixeldungeon.actors.buffs.PrimalFury.class);
+		if (primalFury != null) {
+			dmg = Math.round(dmg * primalFury.reductionMultiplier());
 		}
 
 		CapeOfThorns.Thorns thorns = buff( CapeOfThorns.Thorns.class );
@@ -2526,6 +2545,10 @@ if (!Dungeon.level.visited[cell] && !Dungeon.level.mapped[cell]
 
 		if (hit && isSubclass(HeroSubClass.GLADIATOR) && wasEnemy){
 			Buff.affect( this, Combo.class ).hit( enemy );
+		}
+
+		if (hit && isClass(HeroClass.BARBARIAN) && wasEnemy){
+			Buff.affect( this, com.shatteredpixel.shatteredpixeldungeon.actors.buffs.PrimalFury.class ).hit( false );
 		}
 
 		if (hit && isClass(HeroClass.DUELIST) && wasEnemy){
