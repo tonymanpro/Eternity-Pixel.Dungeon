@@ -20,7 +20,7 @@ Visit the official portal to download the latest executable and APK versions, re
 ## 📥 Download
 
 * **[Itch.io](https://eternitypixeldungeon.itch.io/game)**
-* **[Github Releases](https://github.com/EternityPixelDungeon/Infinite-Pixel-Dungeon/releases)**
+* **[Github Releases](https://github.com/tonymanpro/Eternity-Pixel.Dungeon/releases)**
 
 ---
 
