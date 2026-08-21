@@ -77,7 +77,7 @@ public class TitleScene extends PixelScene {
 		
 		boolean customBgLoaded = false;
 		try {
-			String preferredSplash = (!DeviceCompat.isDesktop() && !landscape())
+			String preferredSplash = (SPDSettings.interfaceSize() == 0 || !landscape() || !DeviceCompat.isDesktop())
 					? Assets.Splashes.TITLE_MOBILE
 					: Assets.Splashes.TITLE;
 

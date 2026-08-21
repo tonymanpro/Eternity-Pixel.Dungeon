@@ -76,6 +76,8 @@ import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.particles.Emitter;
 import com.watabou.noosa.tweeners.Tweener;
 import com.watabou.utils.*;
+import com.watabou.input.KeyEvent;
+import com.badlogic.gdx.Input;
 import com.zrp200.scrollofdebug.ScrollOfDebug;
 
 import java.io.IOException;
@@ -137,6 +139,7 @@ public class GameScene extends PixelScene {
 	private LootIndicator loot;
 	private ActionIndicator action;
 	private ResumeIndicator resume;
+	private PetTacticalPanel petPanel;
 
 	{
 		inGameScene = true;
@@ -145,6 +148,8 @@ public class GameScene extends PixelScene {
 	@Override
 	public void create() {
 		
+		Thread.currentThread().setName("SHPD Render Thread");
+
 		if (Dungeon.hero == null || Dungeon.level == null){
 			ShatteredPixelDungeon.switchNoFade(TitleScene.class);
 			return;
@@ -352,6 +357,10 @@ public class GameScene extends PixelScene {
 		attack = new AttackIndicator();
 		attack.camera = uiCamera;
 		add( attack );
+
+		petPanel = new PetTacticalPanel();
+		petPanel.camera = uiCamera;
+		add( petPanel );
 
 		log = new GameLog();
 		log.camera = uiCamera;
@@ -845,6 +854,14 @@ private static float waterOfs = 0;
 		if (scene.tagResume) {
 			scene.resume.setRect( tagLeft, pos - Tag.SIZE, tagWidth, Tag.SIZE );
 			scene.resume.flip(tagsOnLeft);
+		}
+
+		if (scene.petPanel != null) {
+			float panelWidth = Math.min(168, uiCamera.width - 10);
+			float panelX = (uiCamera.width - panelWidth) / 2f;
+			float panelY = (SPDSettings.interfaceSize() == 0 && scene.status != null) ? scene.status.bottom() + 2 : 4;
+			scene.petPanel.setRect(panelX, panelY, panelWidth, PetTacticalPanel.PANEL_HEIGHT);
+			scene.bringToFront(scene.petPanel);
 		}
 	}
 	

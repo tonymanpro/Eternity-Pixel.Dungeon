@@ -1340,6 +1340,14 @@ public class Dungeon {
 		if (chars) {
 			for (Char c : Actor.chars()) {
 				if (vis[c.pos]) {
+					// Allies and Pets do NOT block pathfinding for the Hero (prevents hallway jams)
+					if (ch == Dungeon.hero && (c instanceof com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet || c.alignment == Char.Alignment.ALLY)) {
+						continue;
+					}
+					// Hero does NOT block pathfinding for Pets
+					if (ch instanceof com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet && c == Dungeon.hero) {
+						continue;
+					}
 					passable[c.pos] = false;
 				}
 			}

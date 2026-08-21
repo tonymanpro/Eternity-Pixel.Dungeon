@@ -37,6 +37,9 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Ooze;
 import com.shatteredpixel.shatteredpixeldungeon.effects.FloatingText;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
 import com.shatteredpixel.shatteredpixeldungeon.items.keys.WornKey;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet;
+import com.shatteredpixel.shatteredpixeldungeon.items.pets.PetEgg;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.GooBlob;
 import com.shatteredpixel.shatteredpixeldungeon.items.treasurebags.GooTreasureBag;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
@@ -307,6 +310,17 @@ public class Goo extends Mob {
         } else {
             Dungeon.level.drop(new GooTreasureBag(), pos).sprite.drop(pos);
         }
+
+		if (Dungeon.hero != null && Dungeon.hero.isClass(HeroClass.BARBARIAN)) {
+			if (Random.Float() < 0.50f) {
+				Dungeon.level.drop(new PetEgg(Pet.PetType.MANTICORE), pos).sprite.drop();
+			}
+		} else {
+			if (Random.Float() < 0.25f) {
+				Pet.PetType type = Random.element(new Pet.PetType[]{Pet.PetType.DRAGON, Pet.PetType.WOLF});
+				Dungeon.level.drop(new PetEgg(type), pos).sprite.drop();
+			}
+		}
 		
 		Badges.validateBossSlain();
 		if (Statistics.qualifiedForBossChallengeBadge){

@@ -439,6 +439,7 @@ public class WndSettings extends WndTabbed {
 		CheckBox chkFont;
 		CheckBox chkVibrate;
 		CheckBox chkExtraQuickslotRow;
+		CheckBox chkPetPanel;
 
 		public static boolean isAndroid() {
 			try {
@@ -663,6 +664,17 @@ public class WndSettings extends WndTabbed {
 
 			}
 
+			chkPetPanel = new CheckBox(Messages.get(this, "show_pet_panel")) {
+				@Override
+				public void onClick() {
+					super.onClick();
+					SPDSettings.showPetPanel(checked());
+					GameScene.layoutTags();
+				}
+			};
+			chkPetPanel.checked(SPDSettings.showPetPanel());
+			add(chkPetPanel);
+
 			sep2 = new ColorBlock(1, 1, 0xFF000000);
 			add(sep2);
 
@@ -734,6 +746,9 @@ public class WndSettings extends WndTabbed {
 				chkFlipTags.setRect(0, height + GAP, width, BTN_HEIGHT);
 				height = chkFlipTags.bottom();
 			}
+
+			chkPetPanel.setRect(0, height + GAP, width, BTN_HEIGHT);
+			height = chkPetPanel.bottom();
 
 			sep2.size(width, 1);
 			sep2.y = height + GAP;

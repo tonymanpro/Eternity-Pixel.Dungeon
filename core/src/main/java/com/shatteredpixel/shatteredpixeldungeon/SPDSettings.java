@@ -328,6 +328,12 @@ public class SPDSettings extends GameSettings {
 	}
 	
 	public static boolean flipTags(){ return getBoolean(KEY_FLIPTAGS, false); }
+
+	public static void showPetPanel( boolean value) {
+		put("show_pet_panel", value );
+	}
+
+	public static boolean showPetPanel(){ return getBoolean("show_pet_panel", true); }
 	
 	public static void toolbarMode( String value ) {
 		put( KEY_BARMODE, value );

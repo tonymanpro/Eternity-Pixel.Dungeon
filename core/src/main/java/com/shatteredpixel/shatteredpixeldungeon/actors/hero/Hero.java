@@ -35,6 +35,7 @@ import com.shatteredpixel.shatteredpixeldungeon.SeasonalTasks;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.Tasks;
+import com.watabou.utils.DeviceCompat;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
@@ -1950,7 +1951,8 @@ if (buff(RoundShield.GuardTracker.class) != null){
 
 			path = null;
 
-			if (Actor.findChar( target ) == null) {
+			Char targetOccupant = Actor.findChar( target );
+			if (targetOccupant == null || targetOccupant instanceof com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet || targetOccupant.alignment == Alignment.ALLY) {
 				if (Dungeon.level.passable[target] || Dungeon.level.avoid[target]) {
 					step = target;
 				}
@@ -1970,7 +1972,8 @@ if (buff(RoundShield.GuardTracker.class) != null){
 			else if (path.getLast() != target)
 				newPath = true;
 			else {
-				if (!Dungeon.level.passable[path.get(0)] || Actor.findChar(path.get(0)) != null) {
+				Char chAt = Actor.findChar(path.get(0));
+				if (!Dungeon.level.passable[path.get(0)] || (chAt != null && !(chAt instanceof com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet || chAt.alignment == Alignment.ALLY))) {
 					newPath = true;
 				}
 			}
@@ -2027,6 +2030,17 @@ if (buff(RoundShield.GuardTracker.class) != null){
 
 			if (isSubclass(HeroSubClass.FREERUNNER)){
 				Buff.affect(this, Momentum.class).gainStack();
+			}
+
+			// Smooth tactical position swap: when stepping into a tile occupied by a Pet or Ally,
+			// swap the Pet/Ally into the Hero's previous tile to avoid hallway blockages.
+			Char occupant = Actor.findChar(step);
+			if (occupant != null && occupant != this && (occupant instanceof com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet || occupant.alignment == Alignment.ALLY)) {
+				int oldHeroPos = pos;
+				occupant.pos = oldHeroPos;
+				if (occupant.sprite != null) {
+					occupant.sprite.move(step, oldHeroPos);
+				}
 			}
 
 			sprite.move(pos, step);

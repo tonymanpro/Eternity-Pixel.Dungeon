@@ -47,6 +47,8 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.KingsCrown;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.glyphs.Viscosity;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet;
+import com.shatteredpixel.shatteredpixeldungeon.items.pets.PetEgg;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.LloydsBeacon;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfForce;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
@@ -574,6 +576,11 @@ public class DwarfKing extends Mob {
                 Dungeon.level.drop(new DKTreasureBag(), pos).sprite.drop();
             }
         }
+
+		if (Random.Float() < 0.25f) {
+			Pet.PetType type = Random.element(new Pet.PetType[]{Pet.PetType.MANTICORE, Pet.PetType.DRAGON});
+			Dungeon.level.drop(new PetEgg(type), pos).sprite.drop();
+		}
 
 		Badges.validateBossSlain();
 		if (Statistics.qualifiedForBossChallengeBadge){

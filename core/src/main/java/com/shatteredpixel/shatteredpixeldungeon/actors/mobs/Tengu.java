@@ -47,6 +47,8 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.BlobEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.FloatingText;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Lightning;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet;
+import com.shatteredpixel.shatteredpixeldungeon.items.pets.PetEgg;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.BlastParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.FlameParticle;
@@ -223,6 +225,11 @@ public class Tengu extends Mob {
         } else {
             Dungeon.level.drop(new TenguTreasureBag(), pos).sprite.drop();
         }
+
+		if (com.watabou.utils.Random.Float() < 0.25f) {
+			Pet.PetType type = com.watabou.utils.Random.element(new Pet.PetType[]{Pet.PetType.SPIDER, Pet.PetType.WOLF});
+			Dungeon.level.drop(new PetEgg(type), pos).sprite.drop();
+		}
 		
 		GameScene.bossSlain();
 		super.die( cause );

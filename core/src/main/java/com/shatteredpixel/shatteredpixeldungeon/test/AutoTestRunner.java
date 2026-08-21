@@ -31,34 +31,37 @@ public class AutoTestRunner {
 		System.out.println("[2/12] Ejecutando: Hero Mechanics & Classes Test...");
 		results.add(HeroMechanicsTest.run());
 
-		System.out.println("[3/12] Ejecutando: Pets & Companions System Test...");
+		System.out.println("[3/13] Ejecutando: Pets & Companions System Test...");
 		results.add(PetSystemTest.run());
 
-		System.out.println("[4/12] Ejecutando: Item Rarity & Generation Test...");
+		System.out.println("[4/13] Ejecutando: Pet Collision Exemption & Swapping Test...");
+		results.add(PetCollisionExemptionTest.run());
+
+		System.out.println("[5/13] Ejecutando: Item Rarity & Generation Test...");
 		results.add(ItemRarityTest.run());
 
-		System.out.println("[5/12] Ejecutando: Platform Achievements & Badges Sync Test...");
+		System.out.println("[6/13] Ejecutando: Platform Achievements & Badges Sync Test...");
 		results.add(PlatformAchievementsTest.run());
 
-		System.out.println("[6/12] Ejecutando: Supporter Licensing & Entitlements Test...");
+		System.out.println("[7/13] Ejecutando: Supporter Licensing & Entitlements Test...");
 		results.add(SupporterLicensingTest.run());
 
-		System.out.println("[7/12] Ejecutando: Rare Enemies & Variant Mapping Test...");
+		System.out.println("[8/13] Ejecutando: Rare Enemies & Variant Mapping Test...");
 		results.add(RareMobVariantsTest.run());
 
-		System.out.println("[8/12] Ejecutando: Rare Enemy Depth Smoke Test...");
+		System.out.println("[9/13] Ejecutando: Rare Enemy Depth Smoke Test...");
 		results.add(RareMobDepthSmokeTest.run());
 
-		System.out.println("[9/12] Ejecutando: Rare Enemy Frequency Stats Test...");
+		System.out.println("[10/13] Ejecutando: Rare Enemy Frequency Stats Test...");
 		results.add(RareMobFrequencyStatsTest.run());
 
-		System.out.println("[10/12] Ejecutando: Imp Quest Renewal Flow Test...");
+		System.out.println("[11/13] Ejecutando: Imp Quest Renewal Flow Test...");
 		results.add(ImpQuestRenewalTest.run());
 
-		System.out.println("[11/12] Ejecutando: Imp Quest Completion Test...");
+		System.out.println("[12/13] Ejecutando: Imp Quest Completion Test...");
 		results.add(ImpQuestCompletionTest.run());
 
-		System.out.println("[12/12] Ejecutando: Autonomous Bot AI Simulation (50 turns)...");
+		System.out.println("[13/13] Ejecutando: Autonomous Bot AI Simulation (50 turns)...");
 		results.add(AutonomousBotSim.run(50));
 
 		// Map Screenshot Exporter (only when requested)

@@ -47,6 +47,8 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Slow;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Terror;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Vertigo;
 import com.shatteredpixel.shatteredpixeldungeon.effects.FloatingText;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet;
+import com.shatteredpixel.shatteredpixeldungeon.items.pets.PetEgg;
 import com.shatteredpixel.shatteredpixeldungeon.effects.TargetedCell;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SparkParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
@@ -586,6 +588,11 @@ public class DM300 extends Mob {
         } else {
             Dungeon.level.drop( new DM300TreasureBag(), pos ).sprite.drop( pos );
         }
+
+		if (Random.Float() < 0.25f) {
+			Pet.PetType type = Random.element(new Pet.PetType[]{Pet.PetType.FAIRY, Pet.PetType.DRAGON});
+			Dungeon.level.drop(new PetEgg(type), pos).sprite.drop();
+		}
 
         Badges.validateBossSlain();
 		if (Statistics.qualifiedForBossChallengeBadge){
