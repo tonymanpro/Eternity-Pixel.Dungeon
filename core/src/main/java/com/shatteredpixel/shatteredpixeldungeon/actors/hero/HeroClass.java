@@ -436,7 +436,8 @@ public enum HeroClass {
 
 	public boolean isUnlocked(){
 		if (this == BARBARIAN) {
-			return com.shatteredpixel.shatteredpixeldungeon.services.platform.SupporterManager.isSupporter();
+			// TEMPORAL: Desbloqueando siempre al Bárbaro para simplificar testeo/uso
+			return true;
 		}
 		return true;
 	}

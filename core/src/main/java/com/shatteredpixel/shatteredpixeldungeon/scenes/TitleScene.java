@@ -75,39 +75,12 @@ public class TitleScene extends PixelScene {
 		int w = Camera.main.width;
 		int h = Camera.main.height;
 		
-		boolean customBgLoaded = false;
-		try {
-			String preferredSplash = (SPDSettings.interfaceSize() == 0 || !landscape() || !DeviceCompat.isDesktop())
-					? Assets.Splashes.TITLE_MOBILE
-					: Assets.Splashes.TITLE;
-
-			Image titleBg;
-			try {
-				titleBg = new Image(preferredSplash);
-			} catch (Throwable ignoredPreferred) {
-				titleBg = new Image(Assets.Splashes.TITLE);
-			}
-			float scale = Math.max((float)w / titleBg.width, (float)h / titleBg.height);
-			titleBg.scale.set(scale);
-			titleBg.x = (w - titleBg.width()) / 2f;
-			titleBg.y = (h - titleBg.height()) / 2f;
-			add(titleBg);
-
-			ColorBlock dim = new ColorBlock(w, h, 0x22000000);
-			add(dim);
-			customBgLoaded = true;
-		} catch (Throwable ignored) {
-			Archs archs = new Archs();
-			archs.setSize( w, h );
-			add( archs );
-		}
+		Archs archs = new Archs();
+		archs.setSize( w, h );
+		add( archs );
 		
 		Image title = BannerSprites.get( BannerSprites.Type.PIXEL_DUNGEON );
-		if (!customBgLoaded) {
-			add( title );
-		} else {
-			title.visible = false;
-		}
+		add( title );
 
 		float topRegion = Math.max(title.height - 6, h*0.48f);
 
@@ -116,29 +89,8 @@ public class TitleScene extends PixelScene {
 
 		align(title);
 
-		if (!customBgLoaded) {
-			placeTorch(title.x + 22, title.y + 46);
-			placeTorch(title.x + title.width - 22, title.y + 46);
-
-			Image signs = new Image( BannerSprites.get( BannerSprites.Type.PIXEL_DUNGEON_SIGNS ) ) {
-				private float time = 0;
-				@Override
-				public void update() {
-					super.update();
-					am = Math.max(0f, (float)Math.sin( time += Game.elapsed ));
-					if (time >= 1.5f*Math.PI) time = 0;
-				}
-				@Override
-				public void draw() {
-					Blending.setLightMode();
-					super.draw();
-					Blending.setNormalMode();
-				}
-			};
-			signs.x = title.x + (title.width() - signs.width())/2f;
-			signs.y = title.y;
-			add( signs );
-		}
+		placeTorch(title.x + 22, title.y + 46);
+		placeTorch(title.x + title.width - 22, title.y + 46);
 
 		final Chrome.Type GREY_TR = Chrome.Type.GREY_BUTTON_TR;
 
