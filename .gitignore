@@ -29,3 +29,9 @@ Marketing/
 docs/
 
 .agents/
+
+AGENTS.md
+DEVELOPMENT.md
+PATREON_LICENSING.md
+ROADMAP.md
+docs/*.md
