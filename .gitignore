@@ -27,3 +27,5 @@ bin/
 WEB_EPD/
 Marketing/
 docs/
+
+.agents/
