@@ -1,5 +1,5 @@
 $baseDir = "D:\Desarollo\InfinityPixelDungeon\Infinite-Pixel-Dungeon\core\src\main\assets\messages"
-$langCodes = @("be", "cs", "de", "el", "eo", "es", "fr", "hu", "in", "it", "ja", "ko", "nl", "pl", "pt", "ru", "sv", "tr", "uk", "vi", "zh", "zh-hant")
+$langCodes = @("be", "cs", "de", "el", "eo", "fr", "hu", "in", "it", "ja", "ko", "nl", "pl", "pt", "ru", "sv", "tr", "uk", "vi", "zh", "zh-hant")
 
 $baseFiles = Get-ChildItem -Path $baseDir -Recurse -Filter "*.properties" | Where-Object { $_.Name -notmatch "_[a-z]{2}(-[a-z]+)?\.properties" }
 

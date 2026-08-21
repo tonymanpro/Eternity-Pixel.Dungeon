@@ -94,7 +94,7 @@ public class Messages {
 		bundles = new ArrayList<>();
 		Locale bundleLocal = new Locale(lang.code());
 		for (String file : prop_files) {
-			bundles.add(I18NBundle.createBundle(Gdx.files.internal(file), bundleLocal));
+			bundles.add(I18NBundle.createBundle(Gdx.files.internal(file), bundleLocal, "UTF-8"));
 		}
 	}
 

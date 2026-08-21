@@ -324,7 +324,8 @@ public class WndSettings extends WndTabbed {
 						SPDSettings.landscape(checked());
 					}
 				};
-				chkLandscape.checked(SPDSettings.landscape());
+				Boolean landscape = SPDSettings.landscape();
+				chkLandscape.checked(landscape != null ? landscape : PixelScene.landscape());
 				add(chkLandscape);
 			}
 
@@ -1232,19 +1233,11 @@ public class WndSettings extends WndTabbed {
 					@Override
                     public void onClick() {
 						super.onClick();
+						SPDSettings.language(langs.get(langIndex));
 						Messages.setup(langs.get(langIndex));
-						ShatteredPixelDungeon.seamlessResetScene(new Game.SceneChangeCallback() {
-							@Override
-							public void beforeCreate() {
-								SPDSettings.language(langs.get(langIndex));
-								GameLog.wipe();
-								Game.platform.resetGenerators();
-							}
-							@Override
-							public void afterCreate() {
-								//do nothing
-							}
-						});
+						GameLog.wipe();
+						Game.platform.resetGenerators();
+						ShatteredPixelDungeon.resetScene();
 					}
 				};
 				if (currLang == langs.get(i)){
