@@ -46,7 +46,7 @@ public class ScrollOfIdentify extends InventoryScroll {
 
 	@Override
 	protected boolean usableOnItem(Item item) {
-		return !item.isIdentified();
+		return item != null && !item.isIdentified();
 	}
 
 	@Override

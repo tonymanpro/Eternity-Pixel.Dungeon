@@ -111,7 +111,7 @@ public class ScrollOfEnchantment extends ExoticScroll {
 
 		@Override
 		public boolean itemSelectable(Item item) {
-			return enchantable(item);
+			return item != null && enchantable(item);
 		}
 
 		@Override

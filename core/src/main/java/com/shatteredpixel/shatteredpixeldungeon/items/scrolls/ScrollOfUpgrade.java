@@ -68,7 +68,7 @@ public class ScrollOfUpgrade extends InventoryScroll {
 
 	@Override
 	protected boolean usableOnItem(Item item) {
-		return item.isUpgradable();
+		return item != null && item.isUpgradable();
 	}
 
 	@Override
