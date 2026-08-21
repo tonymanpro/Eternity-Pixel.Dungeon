@@ -3,7 +3,7 @@ param(
 )
 
 $baseDir = "core/src/main/assets/messages"
-$files = Get-ChildItem -Path $baseDir -Recurse -Filter "*.properties" | Where-Object { $_.Name -notmatch "_[a-z]{2}\.properties" }
+$files = Get-ChildItem -Path $baseDir -Recurse -Filter "*.properties" | Where-Object { $_.Name -notmatch "_[a-z]{2}(-[a-z]+)?\.properties" }
 
 $totalMissing = 0
 

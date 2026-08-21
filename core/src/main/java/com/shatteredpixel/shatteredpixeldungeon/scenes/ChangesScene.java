@@ -133,9 +133,7 @@ if (Messages.lang() != Languages.ENGLISH){
 				InfPDChanges.addAllChanges(changeInfos);
 				break;
 			case 1:
-				ExpPDChanges.addAllChanges(changeInfos);
-				break;
-			case 2:
+				v3_X_Changes.addAllChanges(changeInfos);
 				v2_X_Changes.addAllChanges(changeInfos);
 				v1_X_Changes.addAllChanges(changeInfos);
 				v0_9_X_Changes.addAllChanges(changeInfos);
@@ -201,9 +199,11 @@ if (Messages.lang() != Languages.ENGLISH){
 				panel.innerHeight() + 2);
 		list.scrollTo(0, 0);
 
-		RedButton btnInf = new RedButton("InfPD"){
+		float btnW = (panel.innerWidth() - 2) / 2f;
+
+		RedButton btnEternity = new RedButton("Eternity"){
 			@Override
-            public void onClick() {
+			public void onClick() {
 				super.onClick();
 				if (changesSelected != 0) {
 					changesSelected = 0;
@@ -211,37 +211,23 @@ if (Messages.lang() != Languages.ENGLISH){
 				}
 			}
 		};
-		if (changesSelected == 0) btnInf.textColor(Window.TITLE_COLOR);
-		btnInf.setRect(list.left()-4f, list.bottom()+5, 46, 14);
-		add(btnInf);
+		if (changesSelected == 0) btnEternity.textColor(Window.TITLE_COLOR);
+		btnEternity.setRect(panel.x + panel.marginLeft(), list.bottom() + 5, btnW, 14);
+		add(btnEternity);
 
-        RedButton btnEXP = new RedButton("ExpPD"){
-            @Override
-            public void onClick() {
-                super.onClick();
-                if (changesSelected != 1) {
-                    changesSelected = 1;
-                    ShatteredPixelDungeon.seamlessResetScene();
-                }
-            }
-        };
-        if (changesSelected == 1) btnEXP.textColor(Window.TITLE_COLOR);
-        btnEXP.setRect(btnInf.right() + 1, list.bottom()+5, 45, 14);
-        add(btnEXP);
-
-		RedButton btn0_8 = new RedButton("ShPD"){
+		RedButton btnShattered = new RedButton("Shattered"){
 			@Override
-            public void onClick() {
+			public void onClick() {
 				super.onClick();
-				if (changesSelected != 2) {
-					changesSelected = 2;
+				if (changesSelected != 1) {
+					changesSelected = 1;
 					ShatteredPixelDungeon.seamlessResetScene();
 				}
 			}
 		};
-		if (changesSelected == 2) btn0_8.textColor(Window.TITLE_COLOR);
-		btn0_8.setRect(btnEXP.right() + 1, btnEXP.top(), 45, 14);
-		add(btn0_8);
+		if (changesSelected == 1) btnShattered.textColor(Window.TITLE_COLOR);
+		btnShattered.setRect(btnEternity.right() + 2, btnEternity.top(), btnW, 14);
+		add(btnShattered);
 
 		Archs archs = new Archs();
 		archs.setSize( Camera.main.width, Camera.main.height );

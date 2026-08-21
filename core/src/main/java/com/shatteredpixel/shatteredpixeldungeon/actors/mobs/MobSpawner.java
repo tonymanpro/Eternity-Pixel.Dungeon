@@ -432,6 +432,7 @@ public class MobSpawner extends Actor {
 		RARE_ALTS.put(Gnoll.class, GnollExile.class);
 		RARE_ALTS.put(Crab.class, HermitCrab.class);
 		RARE_ALTS.put(Slime.class, CausticSlime.class);
+		RARE_ALTS.put(Goo.class, GoldenGoo.class);
 
 		RARE_ALTS.put(Thief.class, Bandit.class);
 		RARE_ALTS.put(Necromancer.class, SpectralNecromancer.class);

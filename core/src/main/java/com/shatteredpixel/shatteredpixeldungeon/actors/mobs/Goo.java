@@ -35,6 +35,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LockedFloor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Ooze;
 import com.shatteredpixel.shatteredpixeldungeon.effects.FloatingText;
+import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
 import com.shatteredpixel.shatteredpixeldungeon.items.keys.WornKey;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
@@ -295,7 +296,8 @@ public class Goo extends Mob {
 		Dungeon.level.unseal();
 		
 		GameScene.bossSlain();
-		Dungeon.level.drop( new WornKey( Dungeon.depth ), pos ).sprite.drop();
+		Heap hKey = Dungeon.level.drop( new WornKey( Dungeon.depth ), pos );
+		if (hKey.sprite != null) hKey.sprite.drop();
 
 		if (!Badges.isObtainedLocally(Badges.Badge.BOSS_SLAIN_1)) {
             //60% chance of 2 blobs, 30% chance of 3, 10% chance for 4. Average of 2.5
@@ -305,20 +307,24 @@ public class Goo extends Mob {
                 do {
                     ofs = PathFinder.NEIGHBOURS8[Random.Int(8)];
                 } while (!Dungeon.level.passable[pos + ofs]);
-                Dungeon.level.drop(new GooBlob(), pos + ofs).sprite.drop(pos);
+                Heap hBlob = Dungeon.level.drop(new GooBlob(), pos + ofs);
+                if (hBlob.sprite != null) hBlob.sprite.drop(pos);
             }
         } else {
-            Dungeon.level.drop(new GooTreasureBag(), pos).sprite.drop(pos);
+            Heap hBag = Dungeon.level.drop(new GooTreasureBag(), pos);
+            if (hBag.sprite != null) hBag.sprite.drop(pos);
         }
 
 		if (Dungeon.hero != null && Dungeon.hero.isClass(HeroClass.BARBARIAN)) {
 			if (Random.Float() < 0.50f) {
-				Dungeon.level.drop(new PetEgg(Pet.PetType.MANTICORE), pos).sprite.drop();
+				Heap hEgg = Dungeon.level.drop(new PetEgg(Pet.PetType.MANTICORE), pos);
+				if (hEgg.sprite != null) hEgg.sprite.drop();
 			}
 		} else {
 			if (Random.Float() < 0.25f) {
 				Pet.PetType type = Random.element(new Pet.PetType[]{Pet.PetType.DRAGON, Pet.PetType.WOLF});
-				Dungeon.level.drop(new PetEgg(type), pos).sprite.drop();
+				Heap hEgg = Dungeon.level.drop(new PetEgg(type), pos);
+				if (hEgg.sprite != null) hEgg.sprite.drop();
 			}
 		}
 		

@@ -302,6 +302,7 @@ public class Assets {
 		public static final String GNOLL    = "sprites/gnoll.png";
 		public static final String CRAB     = "sprites/crab.png";
 		public static final String GOO      = "sprites/goo.png";
+		public static final String GOLDEN_GOO = "sprites/golden_goo.png";
 		public static final String SWARM    = "sprites/swarm.png";
 		public static final String SKELETON = "sprites/skeleton.png";
 		public static final String SHAMAN   = "sprites/shaman.png";

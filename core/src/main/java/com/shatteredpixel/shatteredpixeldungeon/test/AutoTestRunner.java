@@ -61,7 +61,10 @@ public class AutoTestRunner {
 		System.out.println("[12/13] Ejecutando: Imp Quest Completion Test...");
 		results.add(ImpQuestCompletionTest.run());
 
-		System.out.println("[13/13] Ejecutando: Autonomous Bot AI Simulation (50 turns)...");
+		System.out.println("[13/14] Ejecutando: Golden Goo Boss Variant Test...");
+		results.add(GoldenGooTest.run());
+
+		System.out.println("[14/14] Ejecutando: Autonomous Bot AI Simulation (50 turns)...");
 		results.add(AutonomousBotSim.run(50));
 
 		// Map Screenshot Exporter (only when requested)

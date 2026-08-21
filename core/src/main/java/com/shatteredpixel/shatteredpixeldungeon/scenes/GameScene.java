@@ -1405,10 +1405,11 @@ private static float waterOfs = 0;
 	
 	public static void bossSlain() {
 		if (Dungeon.hero.isAlive()) {
-			Banner bossSlain = new Banner( BannerSprites.get( BannerSprites.Type.BOSS_SLAIN ) );
-			bossSlain.show( 0xFFFFFF, 0.3f, 5f );
-			scene.showBanner( bossSlain );
-			
+			if (scene != null) {
+				Banner bossSlain = new Banner( BannerSprites.get( BannerSprites.Type.BOSS_SLAIN ) );
+				bossSlain.show( 0xFFFFFF, 0.3f, 5f );
+				scene.showBanner( bossSlain );
+			}
 			Sample.INSTANCE.play( Assets.Sounds.BOSS );
 		}
 	}
