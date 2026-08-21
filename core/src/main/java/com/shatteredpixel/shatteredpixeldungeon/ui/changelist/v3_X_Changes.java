@@ -243,7 +243,7 @@ public class v3_X_Changes {
 				"\n" +
 				"The **Cracked Spyglass** is a new Trinket that's a sort of milder version of the Mimic's Tooth. It generates extra items in the dungeon, but those items are very hard to see, so keep your eyes peeled!"));
 
-		changes.addButton( new ChangeButton(Icons.get(Icons.SHUFFLE), "Randomize Options",
+		changes.addButton( new ChangeButton(Icons.get(Icons.PREFS), "Randomize Options",
 				"**It's now possible to play runs with randomly selected game options!**\n" +
 				"\n" +
 				"This includes a random class and challenges (optionally) in hero select, and random talents, subclass, and armor ability within the game! This add some replayability for experienced players, or just another option for people who aren't sure about what they want.\n" +
@@ -1018,3 +1018,5 @@ public class v3_X_Changes {
 	}
 
 }
+
+

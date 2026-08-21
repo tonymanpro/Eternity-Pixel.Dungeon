@@ -45,8 +45,25 @@ import com.watabou.noosa.Image;
 import java.util.ArrayList;
 
 public class InfPDChanges {
-    public static void addAllChanges( ArrayList<ChangeInfo> changeInfos ) {
-        ChangeInfo changes = new ChangeInfo("Future Updates Announcement", true, "");
+        public static void addAllChanges( ArrayList<ChangeInfo> changeInfos ) {
+        ChangeInfo changes;
+        changes = new ChangeInfo("Eternity Pixel Dungeon v1.2.2", true, "The Barbarian Remaster, New Talents & Primal Fury.");
+        changeInfos.add(changes);
+        changes.addButton( new ChangeButton(Icons.get(Icons.PREFS), "Barbarian Remaster", "Implemented completely distinct and independent talent trees and mechanics for the Barbarian subclass, separating it directly from the Warrior."));
+        changes.addButton( new ChangeButton(Icons.get(Icons.BUFFS), "Primal Fury", "New dynamic Primal Rage aura mechanism replacing standard combo stacking, expanding incoming damage resistance and outbound fury modifiers."));
+        changes.addButton( new ChangeButton(Icons.get(Icons.WARNING), "Beastmaster", "Beastmaster subclass now successfully shares combat momentum and synergistic healing with allied companions and pets on kill."));
+        changes.addButton( new ChangeButton(Icons.get(Icons.PREFS), "Fixes & Settings", "Added interactive settings panel allowing dynamic resolution selection in desktop builds.\n\nFixed a recurring concurrency exception affecting input events during sequential hero selections in large aspect ratios."));
+
+        changes = new ChangeInfo("Eternity Pixel Dungeon v1.2.1", true, "Imp Quest & Vault Stability.");
+        changeInfos.add(changes);
+        changes.addButton( new ChangeButton(Icons.get(Icons.CHALLENGE_COLOR), "Imp Quest & Vaults", "Imp quest trial route now appears consistently on floors 17-19 with improved transition flow.\n\nFixed a vault-related crash during quest branch transitions in specific room/sentry combinations."));
+
+        changes = new ChangeInfo("Eternity Pixel Dungeon v1.0.0", true, "Official Launch, Pets & HD.");
+        changeInfos.add(changes);
+        changes.addButton( new ChangeButton(Icons.get(Icons.INFO), "Welcome to Eternity", "Official launch of the 1.0.0 version featuring full ally Pet systems, HD 2x hi-res graphics support, combat sparks, and a transparent model."));
+
+
+        changes = new ChangeInfo("Future Updates Announcement", true, "");
         changes.hardlight(0xFF2400);
         changeInfos.add(changes);
         changes.addButton( new ChangeButton(Icons.get(Icons.PREFS), "Tentative Changes",
@@ -1024,3 +1041,6 @@ public class InfPDChanges {
         ));
     }
 }
+
+
+
