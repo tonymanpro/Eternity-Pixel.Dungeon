@@ -129,11 +129,15 @@ public class AndroidLauncher extends AndroidApplication {
             });
         }
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            getWindow().getAttributes().layoutInDisplayCutoutMode =
+                    android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+        }
+
         AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
         config.depth = 0;
 
-        //we manage this ourselves
-        config.useImmersiveMode = false;
+        config.useImmersiveMode = SPDSettings.fullscreen();
 
         config.useCompass = false;
         config.useAccelerometer = false;
@@ -142,6 +146,8 @@ public class AndroidLauncher extends AndroidApplication {
         else                 support.reloadGenerators();
 
         support.updateSystemUI();
+
+        com.shatteredpixel.shatteredpixeldungeon.services.platform.PlatformManager.setService(new AndroidPlatformServices(this));
 
         Button.longClick = ViewConfiguration.getLongPressTimeout()/1000f;
 

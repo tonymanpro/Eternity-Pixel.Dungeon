@@ -24,7 +24,11 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.sprites;
 
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Gnoll;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Rat;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Skeleton;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.TextureFilm;
@@ -38,6 +42,17 @@ public class MobSprite extends CharSprite {
 	private static final float FADE_TIME	= 3f;
 	private static final float FALL_TIME	= 1f;
 	
+	@Override
+	public void link( Char ch ) {
+		super.link( ch );
+		if (com.shatteredpixel.shatteredpixeldungeon.HolidayEventConfig.get().isWinterEventActive()
+				&& com.shatteredpixel.shatteredpixeldungeon.HolidayEventConfig.get().santaHatEnabled) {
+			if (ch instanceof Rat || ch instanceof Skeleton || ch instanceof Gnoll || ch instanceof com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Thief) {
+				this.hardlight(0xff7777);
+			}
+		}
+	}
+
 	@Override
 	public void update() {
 		sleeping = ch != null && ch.isAlive() && ((Mob)ch).state == ((Mob)ch).SLEEPING;
@@ -98,7 +113,6 @@ public class MobSprite extends CharSprite {
 				return new TextureFilm( texture, baseWidth * 2, baseHeight * 2 );
 			}
 		} catch (RuntimeException e) {
-			// A malformed optional/overridden sprite sheet must not stop scene creation.
 			Game.reportException(e);
 		}
 

@@ -49,9 +49,13 @@ public class GooSprite extends MobSprite {
 	private ArrayList<Emitter> pumpUpEmitters = new ArrayList<>();
 
 	public GooSprite() {
+		this( Assets.Sprites.GOO );
+	}
+
+	public GooSprite( String textureAsset ) {
 		super();
 		
-		texture( Assets.Sprites.GOO );
+		texture( textureAsset );
 		
 		TextureFilm frames = createFilm( 20, 14 );
 		
@@ -78,9 +82,13 @@ public class GooSprite extends MobSprite {
 		spray = centerEmitter();
 		if (spray != null) {
 			spray.autoKill = false;
-			spray.pour(GooParticle.FACTORY, 0.04f);
+			spray.pour(particleFactory(), 0.04f);
 			spray.on = false;
 		}
+	}
+
+	protected Factory particleFactory() {
+		return GooParticle.FACTORY;
 	}
 
 	@Override
@@ -106,7 +114,7 @@ public class GooSprite extends MobSprite {
 						&& new Ballistica( ch.pos, i, Ballistica.STOP_TARGET | Ballistica.STOP_SOLID | Ballistica.IGNORE_SOFT_SOLID).collisionPos == i
 						&& new Ballistica( i, ch.pos, Ballistica.STOP_TARGET | Ballistica.STOP_SOLID | Ballistica.IGNORE_SOFT_SOLID).collisionPos == ch.pos){
 					Emitter e = CellEmitter.get(i);
-					e.pour(GooParticle.FACTORY, 0.04f);
+					e.pour(particleFactory(), 0.04f);
 					pumpUpEmitters.add(e);
 				}
 			}

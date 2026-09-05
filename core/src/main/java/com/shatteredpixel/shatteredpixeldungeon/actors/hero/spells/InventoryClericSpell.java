@@ -47,7 +47,7 @@ public abstract class InventoryClericSpell extends ClericSpell {
 
 			@Override
 			public boolean itemSelectable(Item item) {
-				return usableOnItem(item);
+				return item != null && usableOnItem(item);
 			}
 
 			@Override

@@ -179,6 +179,8 @@ public class GameScene extends PixelScene {
 
 		Dungeon.level.playLevelMusic();
 
+
+
 		SPDSettings.lastClass(Dungeon.hero.heroClass.ordinal());
 		
 		super.create();
@@ -1032,6 +1034,10 @@ private static float waterOfs = 0;
 	
 	public static void add( EmoIcon icon ) {
 		scene.emoicons.add( icon );
+	}
+
+	public static void add( com.shatteredpixel.shatteredpixeldungeon.effects.SantaHatOverlay hat ) {
+		if (scene != null && scene.emoicons != null) scene.emoicons.add( hat );
 	}
 	
 	public static void add( CharHealthIndicator indicator ){

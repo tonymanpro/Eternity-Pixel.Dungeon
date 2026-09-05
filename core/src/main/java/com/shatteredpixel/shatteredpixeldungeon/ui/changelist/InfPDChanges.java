@@ -4,37 +4,19 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.effects.BadgeBanner;
-import com.shatteredpixel.shatteredpixeldungeon.items.BlackPsycheChest;
-import com.shatteredpixel.shatteredpixeldungeon.items.InfoPage;
-import com.shatteredpixel.shatteredpixeldungeon.items.LostBackpack;
-import com.shatteredpixel.shatteredpixeldungeon.items.PsycheChest;
-import com.shatteredpixel.shatteredpixeldungeon.items.TicketToPortableShop;
-import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.ExaminationParchment;
-import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.SkeletonKey;
-import com.shatteredpixel.shatteredpixeldungeon.items.bags.EquipmentBag;
-import com.shatteredpixel.shatteredpixeldungeon.items.bags.SackOfHolding;
-import com.shatteredpixel.shatteredpixeldungeon.items.bags.UtilityBag;
-import com.shatteredpixel.shatteredpixeldungeon.items.bombs.ExperienceBomb;
-import com.shatteredpixel.shatteredpixeldungeon.items.emblem.CommonEmblem;
-import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.ElixirOfDivineInspiration;
-import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
-import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfArcana;
-import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfValor;
-import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfWealth;
-import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfPower;
-import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfInsurgence;
-import com.shatteredpixel.shatteredpixeldungeon.items.spells.ArmorTierUpgrade;
-import com.shatteredpixel.shatteredpixeldungeon.items.spells.Barricade;
-import com.shatteredpixel.shatteredpixeldungeon.items.spells.DeterminantInfusion;
-import com.shatteredpixel.shatteredpixeldungeon.items.spells.GalacticInfusion;
-import com.shatteredpixel.shatteredpixeldungeon.items.spells.IdentificationBomb;
-import com.shatteredpixel.shatteredpixeldungeon.items.spells.ItemQuantifier;
-import com.shatteredpixel.shatteredpixeldungeon.items.spells.PocketAlchemy;
-import com.shatteredpixel.shatteredpixeldungeon.items.spells.TierUpgrade;
+import com.shatteredpixel.shatteredpixeldungeon.items.*;
+import com.shatteredpixel.shatteredpixeldungeon.items.bags.*;
+import com.shatteredpixel.shatteredpixeldungeon.items.emblem.*;
+import com.shatteredpixel.shatteredpixeldungeon.items.rings.*;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.*;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.*;
+import com.shatteredpixel.shatteredpixeldungeon.items.bombs.*;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.*;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.*;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.*;
 import com.shatteredpixel.shatteredpixeldungeon.items.treasurebags.LegendaryTreasureBag;
-import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.FerretTuft;
-import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.StaircaseTotem;
-import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfTeleportation;
+import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.*;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.*;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ShurikenOfShadows;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
@@ -45,1002 +27,1007 @@ import com.watabou.noosa.Image;
 import java.util.ArrayList;
 
 public class InfPDChanges {
-        public static void addAllChanges( ArrayList<ChangeInfo> changeInfos ) {
-        ChangeInfo changes;
-        changes = new ChangeInfo("Eternity Pixel Dungeon v1.2.2", true, "The Barbarian Remaster, New Talents & Primal Fury.");
-        changeInfos.add(changes);
-        changes.addButton( new ChangeButton(Icons.get(Icons.PREFS), "Barbarian Remaster", "Implemented completely distinct and independent talent trees and mechanics for the Barbarian subclass, separating it directly from the Warrior."));
-        changes.addButton( new ChangeButton(Icons.get(Icons.BUFFS), "Primal Fury", "New dynamic Primal Rage aura mechanism replacing standard combo stacking, expanding incoming damage resistance and outbound fury modifiers."));
-        changes.addButton( new ChangeButton(Icons.get(Icons.WARNING), "Beastmaster", "Beastmaster subclass now successfully shares combat momentum and synergistic healing with allied companions and pets on kill."));
-        changes.addButton( new ChangeButton(Icons.get(Icons.PREFS), "Fixes & Settings", "Added interactive settings panel allowing dynamic resolution selection in desktop builds.\n\nFixed a recurring concurrency exception affecting input events during sequential hero selections in large aspect ratios."));
-
-        changes = new ChangeInfo("Eternity Pixel Dungeon v1.2.1", true, "Imp Quest & Vault Stability.");
-        changeInfos.add(changes);
-        changes.addButton( new ChangeButton(Icons.get(Icons.CHALLENGE_COLOR), "Imp Quest & Vaults", "Imp quest trial route now appears consistently on floors 17-19 with improved transition flow.\n\nFixed a vault-related crash during quest branch transitions in specific room/sentry combinations."));
-
-        changes = new ChangeInfo("Eternity Pixel Dungeon v1.0.0", true, "Official Launch, Pets & HD.");
-        changeInfos.add(changes);
-        changes.addButton( new ChangeButton(Icons.get(Icons.INFO), "Welcome to Eternity", "Official launch of the 1.0.0 version featuring full ally Pet systems, HD 2x hi-res graphics support, combat sparks, and a transparent model."));
-
-
-        changes = new ChangeInfo("Future Updates Announcement", true, "");
-        changes.hardlight(0xFF2400);
-        changeInfos.add(changes);
-        changes.addButton( new ChangeButton(Icons.get(Icons.PREFS), "Tentative Changes",
-                "This is a tentative changes that maybe added/changed in the future updates: \n\n" +
-                        "_-_ Buffs and Nerfs (as always)\n" +
-                        "_-_ New Challenges (harder than the previous mods)\n" +
-                        "_-_ Event-based runs, just like the daily and weekly runs!\n" +
-                        "_-_ New Spells\n" +
-                        "_-_ New Scrolls and Potions?\n" +
-                        "_-_ New Lores (infinity, and beyond)\n" +
-                        "_-_ Lastly, an unexpected nerfs and buffs out of nowhere.\n\n" +
-                        "So these things are maybe added in the future updates and are subject to change, maybe if the devs were not lazy, I guess?"
-        ));
-        changes.addButton( new ChangeButton(Icons.get(Icons.CHALLENGE_COLOR), "Challenge Onboard",
-                "I'd like to make new challenges, but I want to make it harder than the current challenges in this game. Stay tuned!"
-        ));
-
-        changes.addButton( new ChangeButton(Icons.BUFFS.get(), "Upcoming: v0.2.0",
-                "In the next update, we will try to add new items, and possibly adding new mechanics to the game!"
-        ));
-
-        changes = new ChangeInfo("InfPD-0.2.0", true, "");
-        changes.hardlight(0x00FFFF);
-        changeInfos.add(changes);
-
-        changes = new ChangeInfo("B", false, "");
-        changes.hardlight(0x00FFFF);
-        changeInfos.add(changes);
-
-        changes.addButton( new ChangeButton(Icons.get(Icons.INFO), "Import/Export Data System",
-                "In this update, we added a new feature: I/E Saves\n\n" +
-                        "This feature can help you to backup your run, upload them an import to other devices. They are useful on Android devices since Android don't let you access inner application data without root access"
-        ));
-
-        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Fixes",
-                "_-_ Added null checks on bitmap texts.\n"
-        ));
-
-        changes = new ChangeInfo("A", false, "");
-        changes.hardlight(0x00FFFF);
-        changeInfos.add(changes);
-
-        changes.addButton( new ChangeButton(Icons.get(Icons.STAIRS), "New Rooms",
-                "In this update, we added new rooms: 5 special and 5 standard rooms\n\n" +
-                        "You'll find them out after you venture in to your runs! :>"
-        ));
-
-        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.BLUEPRINT), "Blueprints!",
-                "Blueprints are just a raw item used to store similar items and combine them to get the stronger version of themselves.\n\n" +
-                        "They are available on shops with 1/5 chance or craft them with a decent recipe and energy cost."
-        ));
-
-        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.CYCLED), "New Item Category!",
-                "The new category for this update: Modules\n\n" +
-                        "There are several type of modules that directly do its job, but they have the most expensive cost in the game, there are things in on modules that you can't do normally:\n" +
-                        "_-_ Increasing the cycle immediately\n" +
-                        "_-_ Gain extra strength and luck\n" +
-                        "_-_ Permanently increase your health\n" +
-                        "_-_ Makes you immortal for a long time\n" +
-                        "... and many more!\n\n" +
-                        "Modules can be found on battle pass, and in Portable Shop Room :P"
-        ));
-
-        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.TERRAFORM_WAND), "New Wand!",
-                "The new wand for this update: Wand of Terraforming\n\n" +
-                        "This wand can do various terrain tricks... just kidding, they only manipulate your terrain by zapping on to valid cells"
-        ));
-
-        changes.addButton( new ChangeButton(Icons.get(Icons.NEWS), "Global Notes",
-                "A newly implemented feature, the Global Notes!\n\n" +
-                        "Aside from the adventurous notes, we implemented the Global Notes for you to create something interesting..\n\n" +
-                        "Not only that, along with the Global Notes, we also implemented how LibGDX color markup works! Like these examples:\n" +
-                        "_-_ [red]This is a red text, mo matter what.[]\n" +
-                        "_-_ [#ff000066]This is a semi-transparent red text in #rrggbbaa format (#rrggbb works too!)[]\n" +
-                        "_-_ [rainbow]This is a rainbow text, works with [[rainbow] thing[]\n" +
-                        "_-_ [glint+gold]This is a glinted with gold text, works the same as rainbow, you'll need to just add +color inside the sq. brackets\n" +
-                        "_-_ [particle+rainbow]This is good![]"
-        ));
-
-        changes.addButton( new ChangeButton(Icons.get(Icons.CYCLE_COUNT), "Waved Arena",
-                "Also a newly implemented feature, the same as arenas but in a waved manner, the Waved Arena!\n\n" +
-                        "In this level, you will have your current items temporarily removed, and can be retrieved after you came back alive. You can also keep things that you obtained in this arena.\n\n" +
-                        "_This level is in current beta stage, so feel free to try it._"
-        ));
-
-        changes.addButton( new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
-                "_-_ (Battle Pass) You can now reset the battlepass for 600k energy crystals, able to buy unclaimed tiers from history for 100 energy, and battlepass tiers may now contain bonus items\n" +
-                        "_-_ Added seasonal tasks, and per-run tasks. They have the similar function but has different objectives.\n" +
-                        "_-_ (Powerless) You are now able to receive mind vision when casting the spell\n" +
-                        "_-_ Items in the battlepass are now automatically identified when claimed"
-        ));
-
-        changes.addButton( new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
-                "_-_ Decreased ring, misc and artifact slots' cost to _3 ^ level_\n"
-        ));
-
-        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Fixes",
-                "_-_ Fixed WndBag's gaps on item slots per page\n" +
-                        "_-_ Added a safety check for generating items in Portable Shop\n" +
-                        "_-_ Fixed Galactic enchantment's name and description on catalog\n" +
-                        "_-_ Fixed high quantity values of shuriken of shadows on fishing rods\n" +
-                        "_-_ [Quick Fix] Rarity invasion when adding new rarities\n" +
-                        "_-_ [Quick Fix] Crashes on rankings due to null array on bitmap texts"
-        ));
-
-        changes = new ChangeInfo("InfPD-0.1.9", true, "");
-        changes.hardlight(0x00FFFF);
-        changeInfos.add(changes);
-
-        changes = new ChangeInfo("F", false, "");
-        changes.hardlight(0x00FFFF);
-        changeInfos.add(changes);
-
-        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.INFO_PAGE), "Battlepasses",
-                "The brand new feature of the game: Battlepass\n\n" +
-                        "It gives a mere advantage for your hero, every depth, gold, and kills are counted and rewarded every completed run." +
-                        " However, you must finish your run before it gives you the xp, and the premium rewards will cost you x300 of one specific in-game item" +
-                        " per month.\n\n_Every month, the battlepass will refresh, and will give you a different set of items to obtain, every player will have" +
-                        " a different set of items and a same season name throughout the game._"
-        ));
-
-        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.POWERLESS), "New Spell!",
-                "The new spell for this update: Powerless Spell\n\n" +
-                        "This spell can reveal enemies once per 5 turns, they will also stunned."
-        ));
-
-        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.SEARING_SLASHER), "New Weapon!",
-                "The new T-4 weapon for this update: Searing Slasher\n\n" +
-                        "Searing Slasher may be the newest OP weapon since it inflicts 5% of every elemental damage."
-        ));
-
-        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.BACKPACK), "Backpack Pagination",
-                "Reconsidering the storage issues before: too small bag size, window problems from too many slots.\n\n" +
-                        "This feature is added for something useful in the future updates. Maybe an upgradable slots would do? Also, this" +
-                        " pagination doesn't affect equipment bags since they are capped to 60 slots, and items can be pinned to the first page."
-        ));
-
-        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.WEAPON_HOLDER), "New Enchantment!",
-                "In this update, we added a new enchantment!\n\n" +
-                        "_- Interfered Enchantment:_ is a rare enchantment that inflicts elemental damage all at once within a chance\n"
-        ));
-
-        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.MACE), "Weapon Changes",
-                "There are weapons that are OP in the early to mid game, so here are the changes:\n\n" +
-                        "_-_ Dirk's max base damage is now 10 (down from 14)\n" +
-                        "_-_ Mace's max base damage is now 15 (down from 20)\n" +
-                        "_-_ Longsword's max base damage is now 20 (down from 25)\n"
-        ));
-
-        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.ELIXIR_MIGHT), "Luck",
-                "Well, luck is too op for this game.. so we made a change(s):\n\n" +
-                        "_-_ There is 5% chance that the luck you have doesn't apply. This applies to everything that is applicable by dungeon based luck."
-        ));
-
-        changes.addButton( new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
-                "_-_ Portable Shop dimension's item placement is now random and traps are noew active\n" +
-                        "_-_ Racked damage will now deal separately and logs a message when reaching a specific stack\n"
-        ));
-
-        changes.addButton( new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
-                "_-_ Reaching a specific level in the current cycle no longer gives EXP from mobs. (No SoU challenge have 20% less level requirements)\n" +
-                        "_-_ Refined bags' specials drop rate decreased to 3.5% from 5%\n" +
-                        "_-_ Slightly buffed Racked enchantments to deal additional damage up to 10x"
-        ));
-
-        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Fixes",
-                "_-_ [Quick Fix] Fixed rings' crash similar in the way of transmuting the artifacts before\n" +
-                        "_-_ [Quick Fix] The battlepass scene no longer scrolls all the way up when claiming an item"
-
-        ));
-
-        changes = new ChangeInfo("E", false, "");
-        changes.hardlight(0x00FFFF);
-        changeInfos.add(changes);
-
-        changes.addButton( new ChangeButton(Icons.get(Icons.CHALLENGE_COLOR), "Another Challenge",
-                "_Dance Dance_ is a challenge that is implemented from Too Cruel PD. Well, this is actually a hard challenge even the Last Waltz is not added."
-        ));
-
-        changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.JAVELIN), "Thrown Weapon Sets",
-                "_Thrown weapons have been majorly overhauled to be more worthwhile to upgrade!_\n" +
-                        "\n" +
-                        "_-_ Thrown weapons now spawn in sets of three, sets do not mix.\n" +
-                        "_-_ Thrown weapon base durability increased to 3x5/8/12, from 2x5/10/15.\n" +
-                        "_-_ Sets are upgraded as a unit (all 3), and upgrading fully repairs the set.\n" +
-                        "_-_ Upgrades now boost durability by 1.5x, down from 3x.\n" +
-                        "_-_ Thrown weapon default damage scaling per upgrade reduced to 1-tier, down from 2-tier.\n" +
-                        "_-_ Sets can be enchanted, cursed, augmented, unidentified, etc.\n" +
-                        "_-_ Sets can spawn with natural upgrades, enchants, or curses.\n" +
-                        "_-_ Liquid Metal functionality has been significantly changed to work with these new set mechanics.\n" +
-                        "_-_ A few special rooms now have a chance to spawn higher value thrown weapon sets.\n" +
-                        "\n" +
-                        "Note that darts are not affected by these changes, they effectively all belong to the same set and still cannot be upgraded."));
-
-
-        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.WEAPON_HOLDER), "New Enchantments!",
-                "In this update, we added an enchantment that will help you through your run!\n\n" +
-                        "_- Sharpened Enchantment:_ is an uncommon enchantment that inflicts bleeding within a chance\n"
-        ));
-
-        changes.addButton( new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
-                "_-_ Reduced overall rooms per floor by ~33%, special and secret rooms increased by 100%\n" +
-                        "_-_ Implemented Shard of Oblivion's QoL from ShPD"
-        ));
-
-        changes.addButton( new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
-                "_-_ Changed Warrior's first perk, now gives adrenaline surge instead\n" +
-                        "_-_ Racked enchantment's stacks will now decay in a short time\n" +
-                        "_-_ Scorching enchantment no longer activates when insta-killing an enemy\n" +
-                        "_-_ Slightly increased the Staircase Totem's initial room multiplier bonus\n" +
-                        "_-_ Rotting fist now gets 1.2x bleeding effect, from 0.6x\n" +
-                        "_-_ Extractor spell now requires massive energy cost (from 50 to 750)\n" +
-                        "_-_ Increased view distance from 2 to 3 when Into Darkness challenge is enabled\n" +
-                        "_-_ Added a counter spell to Dance Dance challenge"
-
-        ));
-
-        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Fixes",
-                "_-_ Fixed how corrupting power of Dark Blade works\n" +
-                        "_-_ [Quick Fix] Fixed spirit bow's button doesn't show\n"
-        ));
-
-        changes = new ChangeInfo("D", false, "");
-        changes.hardlight(0x00FFFF);
-        changeInfos.add(changes);
-
-        changes.addButton( new ChangeButton(Icons.MAGNIFY.get(), "Seedfinding",
-                "Implemented seed finding from EsPD, with Weekly run included!"
-        ));
-
-        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.DARK_RUNIC), "New Weapon: Dark Blade",
-                "This tier 5 weapon can corrupt enemies (higher chance with Duelist's ability) and has higher max damage output than a normal runic blade"
-        ));
-
-        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.WEAPON_HOLDER), "New Enchantments!",
-                "In this update, we added a new early to mid-game enchantments that will help you through your run!\n\n" +
-                        "_- Scorching Enchantment:_ deals additional damage when the attacker deals damage more than 7% of their enemies' max HP (an indicator included)\n" +
-                        "_- Racked Enchantment:_ deals enormous damage on the next hit when reaching 15 stacks of hits on the enemies"
-        ));
-
-        changes.addButton( new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
-                "_-_ Nerfed charge use of Examination Parchment, now takes an additional 5% of available energy\n" +
-                        "_-_ Slightly nerfed SoU farms on Fishing Rods"
-        ));
-
-        changes.addButton( new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
-                "_-_ Made a shortcut button when Sack of Holding is bought or it is in your inventory\n" +
-                        "_-_ Loots, Traps and Enemies has been reduced drastically, and Rooms reduced by 25%\n" +
-                        "_-_ Elixir of Divine Inspiration has now a proper percentage format and no longer rounds off\n" +
-                        "_-_ Renamed items now highlights in blue\n" +
-                        "_-_ Dungeon now drops 2 upgrades per chapter"
-        ));
-
-        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Fixes",
-                "_-_ Fixed renamed items' name disappears when the same custom name is set\n" +
-                        "_-_ Fixed typos in Utility bag and Scroll of Insurgence"
-        ));
-
-        changes = new ChangeInfo("C", false, "");
-        changes.hardlight(0x00FFFF);
-        changeInfos.add(changes);
-
-        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.STARHAMMER), "Kill Threshold Abilities",
-                "When killing an enemy with a weapon that is associated with kill counter buff, you will gain the power to do dashes and empowering your weapons.\n\n" +
-                        "Blacksmith Weapons now has this ability, which is also part of their small rework!"
-        ));
-
-        changes.addButton( new ChangeButton(Icons.get(Icons.STATS), "Exploration and Quest Score",
-                "Implemented score adjustments on ShPD!\n\n" +
-                        "_Exploration Score_ - For each floor, score is reduced to 75%/50%/25%/5%/0% for 1/2/3/4/5+ missed rooms.\n\n" +
-                        "_Quest Score_ remains unchanged from the patch on v3.1.0 of ShPD"
-        ));
-
-        changes.addButton( new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
-                "_-_ Nerfed Elixir of Divine Inspiration's crafting cost (from 45, to 70), and its effect (from 7% compounded, to 1.5% compounded) per stack"
-        ));
-
-        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Fixes",
-                "_-_ Fixed Skeleton key not properly clearing keys on depth"
-        ));
-
-        changes = new ChangeInfo("B", false, "");
-        changes.hardlight(0x00FFFF);
-        changeInfos.add(changes);
-
-        changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.STARHAMMER), "Small Blacksmith Weapon Rework!",
-                "Due to blacksmith weapons being weak in the mid-game, in this update, their damage is increased by roughly 20%, and their traits: \n\n" +
-                        "_- Fanstasmal Stabber:_ increased its charging ability by 50%, and deals 75% toward max to max on surprise\n" +
-                        "_- Firing Snapper:_ damage dealt on those not at the center of the blast is now 75% and increased max damage by 50%\n" +
-                        "_- Gleaming Staff:_ slightly increased defense factor and decreased combo needed to 15, from 20\n" +
-                        "_- Regrowing Slasher:_ now heals 0.8% of max hp in each strike and max defense factor is doubled\n" +
-                        "_- Starlight Smasher:_ accuracy boost increased to 45%, from 30% and slightly reduced paralysis effect to attackers"));
-
-        changes.addButton( new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
-                "_-_ The items tab in ranking window is now scrollable\n" +
-                        "_-_ Examination Parchment no longer detach action indicator based buffs\n" +
-                        "_-_ Added an option for strength and luck potions and elixir of divine inspiration to be gulped all at once\n" +
-                        "_-_ Stone of Empowerment now damages the target instead of corroding it\n" +
-                        "_-_ Added _Frostbite_ glyph, which nullifies the chilled and frosting effects\n" +
-                        "_-_ Lowered requirements of Dark Fate Lock to 45 (min), from 100 (min)\n" +
-                        "_-_ Added a log message when drinking Tube of Experience and Tube of Godspeed"
-        ));
-
-        changes.addButton( new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
-                "_-_ Nerfed level-up mechanics of Examination Parchment\n" +
-                        "_-_ Increased the chances of increased limits of Galactic enchantment\n" +
-                        "_-_ Increased max cap of Ring of Elements to 99% elemental resistance\n" +
-                        "_-_ Sacrificial Rooms' prizes has now a chance to upgrade again for 5 times\n" +
-                        "_-_ Decreased Item Quantifier's crafted output quantity by 50% (from 10 to 5)"
-        ));
-
-        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Fixes",
-                "_-_ Fixed NTF in Examination Parchment when warming up\n" +
-                        "_-_ Fixed Wand of Transfusion's desc where self-shield is inaccurate\n" +
-                        "_-_ Fixed orders for weekly multiplier appearing in record even it is not weekly run"
-        ));
-
-        changes = new ChangeInfo("A", false, "");
-        changes.hardlight(0x00FFFF);
-        changeInfos.add(changes);
-
-        changes.addButton( new ChangeButton(Icons.STAIRS.get(), "New Rooms and Terrain Types",
-                "This update includes an _expansion to the dungeon's standard rooms!_ (from the ShPD, of course!)\n" +
-                        "\n" +
-                        "_- New decorative terrain_ has been added to each region, largely inspired by details from the region splash arts. \n" +
-                        "_- 5 new standard rooms_ have been added that use these new terrain objects, one per region.\n" +
-                        "_- 8 existing standard rooms_ have been modified to use the new terrain objects.\n" +
-                        "_- 10 new entrance/exit variants_ of standard rooms have been added as well. two per region.\n" +
-                        "_- Boss Arenas_ also use these new terrain types in a few places\n" +
-                        "_- Plain empty rooms_ no longer spawn normally."));
-
-        changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.EXAM_PARCHMENT), new ExaminationParchment().trueName(),
-                "A brand new artifact that gives you a freedom to get an item without getting caught by the shopkeeper (this is not a bait), " +
-                        "and it gives you an opportunity to remove buffs at will!"));
-
-        changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.A_TIER_UPGRADE), new ArmorTierUpgrade().trueName(),
-                "The new spell that enhances your armor's tier."));
-
-        changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.STAIRCASE_TOTEM), new StaircaseTotem().trueName(),
-                "The new trinket that increases rooms and enemies as you descend to next floors."));
-
-        changes.addButton( new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
-                "_-_ Scroll of Transmutation now caps the new trinket's level to its max upgrade\n" +
-                        "_-_ Changed the app icon for android\n" +
-                        "_-_ Reworked Laserised enchantment's code to avoid future crashes\n" +
-                        "_-_ Added a caution desc when using SoTrans on a weapon where it is used on Tier Upgrade\n" +
-                        "_-_ Standard and Connection rooms' generation are no longer dungeon luck based"
-        ));
-
-        changes.addButton( new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
-                "_-_ Increased wand of transfusion's self-shielding to 7, from 5\n" +
-                        "_-_ Crafting Telekinetic Grab now requires 5 more liquid metals\n" +
-                        "_-_ Reclaim Trap's crafting cost has been increased to 12, from 8\n" +
-                        "_-_ Barricade's crafting cost has been increased to 75, from 45\n" +
-                        "_-_ Tube of Strengthened Luck's luck has been decreased to 2, from 3\n" +
-                        "_-_ Item Quantifier now quantifies unique items with 25% chance\n" +
-                        "_-_ Tier Upgrade spells' recipe no longer requires Potion of Mastery, changed with Alchemize instead\n" +
-                        "_-_ Buffed cycle scaling, now increases slightly within the hero level\n" +
-                        "_-_ Conquest challenge now spawns enemies with titles within 25% chance three times\n" +
-                        "_-_ Limits of Galactic enchantment is now luck based\n" +
-                        "_-_ Getting a glyph for armor and enchantment on weapon are no longer dungeon luck based"
-        ));
-
-        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Fixes",
-                "_-_ Fixed incorrect description on Elixir of Divine Inspiration\n" +
-                        "_-_ Fixed cases where Galatic enchantment only gives few enchantment in high luck levels"
-        ));
-
-        changes = new ChangeInfo("InfPD-0.1.8", true, "");
-        changes.hardlight(0x00FFFF);
-        changeInfos.add(changes);
-
-        changes = new ChangeInfo("E", false, "");
-        changes.hardlight(0x00FFFF);
-        changeInfos.add(changes);
-
-        changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.TIER_UPGRADE), new TierUpgrade().trueName(),
-                "This new spell enhances your weapon's tier."));
-
-        changes.addButton( new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
-                "_-_ King's Crown no longer erases old armor's rarity\n" +
-                        "_-_ Removed scene resetting from custom note entry (ShPD)"
-        ));
-
-        changes.addButton( new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
-                "_-_ Buffed Wand of Teleportation's charge per cast, is now fixed to 2 charges\n" +
-                        "_-_ Rat King now drops cheese after 35 trades, from 30"
-        ));
-
-        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Fixes",
-                "_-_ Fixed crash related to Elixir of Divine Inspiration\n" +
-                        "_-_ Fixed conflicts with additional description of emblem use and custom notes on items"
-        ));
-
-        changes = new ChangeInfo("D", false, "");
-        changes.hardlight(0x00FFFF);
-        changeInfos.add(changes);
-
-        changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.ELIXIR_DI), new ElixirOfDivineInspiration().trueName(),
-                "A substitute for Potion of same name, its effect is permanent, and gives you bonus EXP."));
-
-        changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.PORTABLE_ALCHEMY), new PocketAlchemy().trueName(),
-                "A new spell to help you craft things in the early game."));
-
-        changes.addButton( new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
-                "_-_ Scroll of Transmutation can now produce the same artifact when transmuting, and can now transfer rarities on transmuted items\n" +
-                        "_-_ Made all Blacksmith weapons' tier to 5\n" +
-                        "_-_ Wand of Lifesteal can now damage enemies even if you are in full health\n" +
-                        "_-_ Slightly reduced the probability of dropping foods on enemies\n" +
-                        "_-_ Changed Ring of Might's HP cap to 20, instead of 10 (2 * 10 = 20)\n" +
-                        "_-_ Removed Scroll of Determination in the Catalog"
-        ));
-
-        changes.addButton( new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
-                "_-_ Buffed Gambler spell slightly, it will now take 30% of your gold when failed, instead of 50%\n" +
-                        "_-_ Buffed Item Quantifier spell, now has 75% chance to add 3 of the selected item's quantity\n" +
-                        "_-_ Increased Ring of Valor's per upgrade value to 3.5% up from 1.5%\n" +
-                        "_-_ Reduced Ring of Sharpshooting's durability multiplier to 15% compounded per level, down from 20% compounded\n" +
-                        "_-_ Wand of Teleportation now consumes 5 charges times rarity multi"
-        ));
-
-        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Fixes",
-                "_-_ Fixed crash when transmuting artifacts when equipped\n" +
-                        "_-_ Actually fixed NTF on obsidian rings\n"
-        ));
-
-        changes = new ChangeInfo("C", false, "");
-        changes.hardlight(0x00FFFF);
-        changeInfos.add(changes);
-
-        Image ic = Icons.get(Icons.CALENDAR);
-        ic.hardlight(1.5f, 1.5f, 0f);
-        changes.addButton( new ChangeButton(ic, "Weekly Runs Changes",
-                "Enemies in weekly runs now have their health doubled, and gives you a 2.5x score multiplier regardless if you win or not. It's your choice."));
-
-        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.LIFESTEAL_WAND), "New Wand: Wand of Lifesteal",
-                "A brand new wand that steals health from each enemy affected. It doesn't work if you have already full health and consumes wand charge anyway."
-        ));
-
-        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.INFO_PAGE), "New Lore: Beyond Reality",
-                "New lores are waiting for you.. You can get some of those after reaching cycle 1 :P"
-        ));
-
-        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.MYSTERY_CAKE), "Mystery Cake?",
-                "A special cake exclusive on the month of October. Please be patient to find it out."
-        ));
-
-        changes.addButton( new ChangeButton(Icons.get(Icons.CHALLENGE_COLOR), "Challenge Balances",
-                "The following challenges are balanced due to difficulty spiking high when other challenges was combined:\n\n" +
-                        "_On Diet_: Increased effectivity of satisfying hunger from _1/10_ to _1/7_\n" +
-                        "_Pharmacophobia_: Reduced poison duration from _lvl/4_ to _lvl/6_\n" +
-                        "_Into Darkness_: Increased torch count per floor _by 2_, _total of 4_ if the floor is large\n" +
-                        "_Forbidden Runes_: Lowered requirements of getting SoU by _80%_ (from +150%, to +70%), reset and SoTrans are still affected\n" +
-                        "_Hostile Champions_: Reduced enemies with titles spawn rate by _25%_ (from 1/8, to 1/10)\n" +
-                        "_For the Worthy_: Reduced max exp required by _50%_, total of _150% exp_ (from +100%, to +50%)\n"
-        ));
-
-        changes.addButton( new ChangeButton(Icons.get(Icons.SCROLL_COLOR), "Nameable Heroes!",
-                "You can now name your heroes as you wish!\n\n_This is purely cosmetic and doesn't affect gameplay._"));
-
-        changes.addButton( new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
-                "_-_ Added GameID in rankings\n" +
-                        "_-_ Moved recipe of WoA to custom recipes and added recipe of Elixir of Might\n" +
-                        "_-_ Added a Save Game Button\n" +
-                        "_-_ Emblem exclusive enchantments can now be actually obtain from Enchantment Scrolls/Stone"
-        ));
-
-        changes.addButton( new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
-                "_-_ Drastically increased the energy required for Elixir of Might to be crafted"
-        ));
-
-        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Fixes",
-                "_-_ Fixed NTF in obsidian ring\n" +
-                        "_-_ Fixed Tubes' color pre-identified on start\n" +
-                        "_-_ Fixed unintended pre-identification of PoH and SoU at the start of the game"
-        ));
-
-        changes = new ChangeInfo("B", false, "");
-        changes.hardlight(0x00FFFF);
-        changeInfos.add(changes);
-
-        changes.addButton( new ChangeButton( new Image(Assets.Environment.TERRAIN_FEATURES, 112, 16, 16, 16), "New Trap!",
-                "We added a new trap, the Multi Trap!\n\n" +
-                        "Multi trap consists of 5 combined traps, they commonly appear as you descend to new regions, and I don't think grim traps can appear here...."
-        ));
-
-        changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.EXP_BOMB), new ExperienceBomb().trueName(),
-                "A new bomb that gives a bonus experience when an enemy is affected."));
-
-        changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.INFO_PAGE), new InfoPage().trueName(),
-                "This is your statistic companion, do whatever you want."));
-
-        changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.RING_OBSIDIAN), new RingOfValor().trueName(),
-                "_A new ring has been added that enhances hero's damage!_\n\n" +
-                        "The Ring of Valor lets the player directly enhances their weapons' damage, instead of only being able to enhance the damage up by only upgrading the item itself."));
-
-        changes.addButton( new ChangeButton(Icons.get(Icons.CHALLENGE_COLOR), "New Challenges",
-                "In this update, we added a new challenge(s)!\n\n" +
-                        "_-_ For the Worthy\n" +
-                        "_-_ Conquest"
-        ));
-
-        changes.addButton( new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
-                "_-_ Warrior healing after healing increased to _~14.29% max HP_, from 12.5% max HP\n" +
-                        "_-_ Warrior blind duration when throwing that isn't a missile to enemy is increased to _5 turns_, from 3 turns\n" +
-                        "_-_ Mage will now get _12 turns_ of recharging when eating up from 9 turns\n" +
-                        "_-_ Mage's shield when they targeted the wand on themself will now gain _10.5% shielding per charge_ from max HP, up from 6.5%\n" +
-                        "_-_ Nature's Bounty berry count is no longer in fixed value, made berries drop within _1/(15 + (5 * berries found))_ chance\n" +
-                        "_-_ Cached Ration's supply ration count is no longer in fixed value, made rations drop within _1/(25 + (5 * rations found))_ chance\n"
-        ));
-
-        changes.addButton( new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
-                "_-_ Added the new treasure bags into the catalog\n" +
-                        "_-_ Sort button no longer sticks to the left side when you are in portrait mode\n" +
-                        "_-_ Made challenge tab scrollable in ranking window\n" +
-                        "_-_ Made some tubes more common: Pure Immunity, Ultimate Power and Godspeed"
-        ));
-
-        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Fixes",
-                "_-_ Fixed Black Mimic infinite loop on venting gas when Badder Bosses enabled\n" +
-                        "_-_ Fixed rankings window doesn't load after adding a new challenge\n"
-        ));
-
-        changes = new ChangeInfo("A", false, "");
-        changes.hardlight(0x00FFFF);
-        changeInfos.add(changes);
-
-        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.LEGENDARY_BAG), "New Treasure Bags!",
-                "These bags can only be found on fishing hooks, and a pity system to get the Legendary Treasure Bag!\n\n" +
-                        "_The higher the rarity, the higher the quality of the loots!_"
-        ));
-        changes.addButton( new ChangeButton(BadgeBanner.image( Badges.Badge.MANY_BUFFS.image ), "Added Badges from ShPD!",
-                "These new badges are implemented and from ShPD, and these are:\n\n" +
-                        "_-_ Taking the Mick\n" +
-                        "_-_ So Many Colors\n" +
-                        "_-_ Pacifist Ascent"
+        public static void addAllChanges(ArrayList<ChangeInfo> changeInfos) {
+                ChangeInfo changes;
+                changes = new ChangeInfo("Eternity Pixel Dungeon v1.2.2", true,
+                                "The Barbarian Remaster, New Talents & Primal Fury.");
+                changeInfos.add(changes);
+                changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), "Barbarian Remaster",
+                                "Implemented completely distinct and independent talent trees and mechanics for the Barbarian subclass, separating it directly from the Warrior."));
+                changes.addButton(new ChangeButton(Icons.get(Icons.BUFFS), "Primal Fury",
+                                "New dynamic Primal Rage aura mechanism replacing standard combo stacking, expanding incoming damage resistance and outbound fury modifiers."));
+                changes.addButton(new ChangeButton(Icons.get(Icons.WARNING), "Beastmaster",
+                                "Beastmaster subclass now successfully shares combat momentum and synergistic healing with allied companions and pets on kill."));
+                changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), "Fixes & Settings",
+                                "Added interactive settings panel allowing dynamic resolution selection in desktop builds.\n\nFixed a recurring concurrency exception affecting input events during sequential hero selections in large aspect ratios."));
+
+                changes = new ChangeInfo("Eternity Pixel Dungeon v1.2.1", true, "Imp Quest & Vault Stability.");
+                changeInfos.add(changes);
+                changes.addButton(new ChangeButton(Icons.get(Icons.CHALLENGE_COLOR), "Imp Quest & Vaults",
+                                "Imp quest trial route now appears consistently on floors 17-19 with improved transition flow.\n\nFixed a vault-related crash during quest branch transitions in specific room/sentry combinations."));
+
+                changes = new ChangeInfo("Eternity Pixel Dungeon v1.0.0", true, "Official Launch, Pets & HD.");
+                changeInfos.add(changes);
+                changes.addButton(new ChangeButton(Icons.get(Icons.INFO), "Welcome to Eternity",
+                                "Official launch of the 1.0.0 version featuring full ally Pet systems, HD 2x hi-res graphics support, combat sparks, and a transparent model."));
+
+                changes = new ChangeInfo("Future Updates Announcement", true, "");
+                changes.hardlight(0xFF2400);
+                changeInfos.add(changes);
+                changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), "Tentative Changes",
+                                "This is a tentative changes that maybe added/changed in the future updates: \n\n" +
+                                                "_-_ Buffs and Nerfs (as always)\n" +
+                                                "_-_ New Challenges (harder than the previous mods)\n" +
+                                                "_-_ Event-based runs, just like the daily and weekly runs!\n" +
+                                                "_-_ New Spells\n" +
+                                                "_-_ New Scrolls and Potions?\n" +
+                                                "_-_ New Lores (infinity, and beyond)\n" +
+                                                "_-_ Lastly, an unexpected nerfs and buffs out of nowhere.\n\n" +
+                                                "So these things are maybe added in the future updates and are subject to change, maybe if the devs were not lazy, I guess?"));
+                changes.addButton(new ChangeButton(Icons.get(Icons.CHALLENGE_COLOR), "Challenge Onboard",
+                                "I'd like to make new challenges, but I want to make it harder than the current challenges in this game. Stay tuned!"));
+
+                changes.addButton(new ChangeButton(Icons.BUFFS.get(), "Upcoming: v0.2.0",
+                                "In the next update, we will try to add new items, and possibly adding new mechanics to the game!"));
+
+                changes = new ChangeInfo("InfPD-0.2.0", true, "");
+                changes.hardlight(0x00FFFF);
+                changeInfos.add(changes);
+
+                changes = new ChangeInfo("B", false, "");
+                changes.hardlight(0x00FFFF);
+                changeInfos.add(changes);
+
+                changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.RING_OBSIDIAN),
+                                new RingOfScorch().trueName(),
+                                "Formerly Ring of Valor, changed to Ring of Scorching where the player can deal additional damage based on player's weapon damage"));
+
+                changes.addButton(new ChangeButton(Icons.get(Icons.INFO), "Import/Export Data System",
+                                "In this update, we added a new feature: I/E Saves\n\n" +
+                                                "This feature can help you to backup your run, upload them an import to other devices. They are useful on Android devices since Android don't let you access inner application data without root access"));
+
+                changes.addButton(new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
+                                "_-_ Raritize's energy cost increased to 175, from 150\n" +
+                                                "_-_ Default rarity when gaining a raritized item is now set to common, from none\n"));
+
+                changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Fixes",
+                                "_-_ Added null checks on bitmap texts.\n"));
+
+                changes = new ChangeInfo("A", false, "");
+                changes.hardlight(0x00FFFF);
+                changeInfos.add(changes);
+
+                changes.addButton(new ChangeButton(Icons.get(Icons.STAIRS), "New Rooms",
+                                "In this update, we added new rooms: 5 special and 5 standard rooms\n\n" +
+                                                "You'll find them out after you venture in to your runs! :>"));
+
+                changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.BLUEPRINT), "Blueprints!",
+                                "Blueprints are just a raw item used to store similar items and combine them to get the stronger version of themselves.\n\n"
+                                                +
+                                                "They are available on shops with 1/5 chance or craft them with a decent recipe and energy cost."));
+
+                changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.CYCLED), "New Item Category!",
+                                "The new category for this update: Modules\n\n" +
+                                                "There are several type of modules that directly do its job, but they have the most expensive cost in the game, there are things in on modules that you can't do normally:\n"
+                                                +
+                                                "_-_ Increasing the cycle immediately\n" +
+                                                "_-_ Gain extra strength and luck\n" +
+                                                "_-_ Permanently increase your health\n" +
+                                                "_-_ Makes you immortal for a long time\n" +
+                                                "... and many more!\n\n" +
+                                                "Modules can be found on battle pass, and in Portable Shop Room :P"));
+
+                changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.TERRAFORM_WAND), "New Wand!",
+                                "The new wand for this update: Wand of Terraforming\n\n" +
+                                                "This wand can do various terrain tricks... just kidding, they only manipulate your terrain by zapping on to valid cells"));
+
+                changes.addButton(new ChangeButton(Icons.get(Icons.NEWS), "Global Notes",
+                                "A newly implemented feature, the Global Notes!\n\n" +
+                                                "Aside from the adventurous notes, we implemented the Global Notes for you to create something interesting..\n\n"
+                                                +
+                                                "Not only that, along with the Global Notes, we also implemented how LibGDX color markup works! Like these examples:\n"
+                                                +
+                                                "_-_ [red]This is a red text, mo matter what.[]\n" +
+                                                "_-_ [#ff000066]This is a semi-transparent red text in #rrggbbaa format (#rrggbb works too!)[]\n"
+                                                +
+                                                "_-_ [rainbow]This is a rainbow text, works with [[rainbow] thing[]\n" +
+                                                "_-_ [glint+gold]This is a glinted with gold text, works the same as rainbow, you'll need to just add +color inside the sq. brackets\n"
+                                                +
+                                                "_-_ [particle+rainbow]This is good![]"));
+
+                changes.addButton(new ChangeButton(Icons.get(Icons.CYCLE_COUNT), "Waved Arena",
+                                "Also a newly implemented feature, the same as arenas but in a waved manner, the Waved Arena!\n\n"
+                                                +
+                                                "In this level, you will have your current items temporarily removed, and can be retrieved after you came back alive. You can also keep things that you obtained in this arena.\n\n"
+                                                +
+                                                "_This level is in current beta stage, so feel free to try it._"));
+
+                changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
+                                "_-_ (Battle Pass) You can now reset the battlepass for 600k energy crystals, able to buy unclaimed tiers from history for 100 energy, and battlepass tiers may now contain bonus items\n"
+                                                +
+                                                "_-_ Added seasonal tasks, and per-run tasks. They have the similar function but has different objectives.\n"
+                                                +
+                                                "_-_ (Powerless) You are now able to receive mind vision when casting the spell\n"
+                                                +
+                                                "_-_ Items in the battlepass are now automatically identified when claimed"));
+
+                changes.addButton(new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
+                                "_-_ Decreased ring, misc and artifact slots' cost to _3 ^ level_\n"));
+
+                changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Fixes",
+                                "_-_ Fixed WndBag's gaps on item slots per page\n" +
+                                                "_-_ Added a safety check for generating items in Portable Shop\n" +
+                                                "_-_ Fixed Galactic enchantment's name and description on catalog\n" +
+                                                "_-_ Fixed high quantity values of shuriken of shadows on fishing rods\n"
+                                                +
+                                                "_-_ [Quick Fix] Rarity invasion when adding new rarities\n" +
+                                                "_-_ [Quick Fix] Crashes on rankings due to null array on bitmap texts"));
+
+                changes = new ChangeInfo("InfPD-0.1.9", true, "");
+                changes.hardlight(0x00FFFF);
+                changeInfos.add(changes);
+
+                changes = new ChangeInfo("F", false, "");
+                changes.hardlight(0x00FFFF);
+                changeInfos.add(changes);
+
+                changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.INFO_PAGE), "Battlepasses",
+                                "The brand new feature of the game: Battlepass\n\n" +
+                                                "It gives a mere advantage for your hero, every depth, gold, and kills are counted and rewarded every completed run."
+                                                +
+                                                " However, you must finish your run before it gives you the xp, and the premium rewards will cost you x10 of one specific in-game item"
+                                                +
+                                                " per month.\n\n_Every month, the battlepass will refresh, and will give you a different set of items to obtain, every player will have"
+                                                +
+                                                " a different set of items and a same season name throughout the game._"));
+
+                changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.POWERLESS), "New Spell!",
+                                "The new spell for this update: Powerless Spell\n\n" +
+                                                "This spell can reveal enemies once per 5 turns, they will also stunned."));
+
+                changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.SEARING_SLASHER), "New Weapon!",
+                                "The new T-4 weapon for this update: Searing Slasher\n\n" +
+                                                "Searing Slasher may be the newest OP weapon since it inflicts 5% of every elemental damage."));
+
+                changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.BACKPACK), "Backpack Pagination",
+                                "Reconsidering the storage issues before: too small bag size, window problems from too many slots.\n\n"
+                                                +
+                                                "This feature is added for something useful in the future updates. Maybe an upgradable slots would do? Also, this"
+                                                +
+                                                " pagination doesn't affect equipment bags since they are capped to 60 slots, and items can be pinned to the first page."));
+
+                changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.WEAPON_HOLDER), "New Enchantment!",
+                                "In this update, we added a new enchantment!\n\n" +
+                                                "_- Interfered Enchantment:_ is a rare enchantment that inflicts elemental damage all at once within a chance\n"));
+
+                changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.MACE), "Weapon Changes",
+                                "There are weapons that are OP in the early to mid game, so here are the changes:\n\n" +
+                                                "_-_ Dirk's max base damage is now 10 (down from 14)\n" +
+                                                "_-_ Mace's max base damage is now 15 (down from 20)\n" +
+                                                "_-_ Longsword's max base damage is now 20 (down from 25)\n"));
+
+                changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.ELIXIR_MIGHT), "Luck",
+                                "Well, luck is too op for this game.. so we made a change(s):\n\n" +
+                                                "_-_ There is 5% chance that the luck you have doesn't apply. This applies to everything that is applicable by dungeon based luck."));
+
+                changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
+                                "_-_ Portable Shop dimension's item placement is now random and traps are noew active\n"
+                                                +
+                                                "_-_ Racked damage will now deal separately and logs a message when reaching a specific stack\n"));
+
+                changes.addButton(new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
+                                "_-_ Reaching a specific level in the current cycle no longer gives EXP from mobs. (No SoU challenge have 20% less level requirements)\n"
+                                                +
+                                                "_-_ Refined bags' specials drop rate decreased to 3.5% from 5%\n" +
+                                                "_-_ Slightly buffed Racked enchantments to deal additional damage up to 10x"));
+
+                changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Fixes",
+                                "_-_ [Quick Fix] Fixed rings' crash similar in the way of transmuting the artifacts before\n"
+                                                +
+                                                "_-_ [Quick Fix] The battlepass scene no longer scrolls all the way up when claiming an item"
+
                 ));
 
-        changes.addButton( new ChangeButton(BadgeBanner.image( Badges.Badge.CYCLE_5.image ), "New Cycle Badges!",
-                "These new badges that you'll obtain will be the proof for yourself for hours of grinding and slaining enemies, appreciating your hard work through this game :)"));
+                changes = new ChangeInfo("E", false, "");
+                changes.hardlight(0x00FFFF);
+                changeInfos.add(changes);
 
-        changes.addButton( new ChangeButton(new WandOfTeleportation(),
-                "Due to its nature of being an overpowered wand, we have to make a nerf for them:\n\n" +
-                        "_-_ No longer appears in the dungeon, it is now a _craftable item_ with 5000 energy.\n" +
-                        "_-_ Charge per cast increased to _2 * rarity_, from 1 (capped at 50 charge)\n" +
-                        "_-_ No longer upgradable, instead it will depend on its rarity\n"
-        ));
+                changes.addButton(new ChangeButton(Icons.get(Icons.CHALLENGE_COLOR), "Another Challenge",
+                                "_Dance Dance_ is a challenge that is implemented from Too Cruel PD. Well, this is actually a hard challenge even the Last Waltz is not added."));
 
-        ic = Icons.get(Icons.CALENDAR);
-        ic.hardlight(1.5f, 1.5f, 0f);
-        changes.addButton( new ChangeButton(ic, "Weekly Runs!",
-                "_Every week there is a specific seeded run that's available to all players!_\n\n" +
-                        "The weekly run makes it easy to compete again friends or other folks on the internet, without having to coordinate and share a specific seed.\n\n" +
-                        "The game does keep track of your previous weekly scores, and there is a separate leaderboard for them.\n\n" +
-                        "To avoid confusion in reading the weekly run seed, their format is Year-Month/Week"));
+                changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.JAVELIN), "Thrown Weapon Sets",
+                                "_Thrown weapons have been majorly overhauled to be more worthwhile to upgrade!_\n" +
+                                                "\n" +
+                                                "_-_ Thrown weapons now spawn in sets of three, sets do not mix.\n" +
+                                                "_-_ Thrown weapon base durability increased to 3x5/8/12, from 2x5/10/15.\n"
+                                                +
+                                                "_-_ Sets are upgraded as a unit (all 3), and upgrading fully repairs the set.\n"
+                                                +
+                                                "_-_ Upgrades now boost durability by 1.5x, down from 3x.\n" +
+                                                "_-_ Thrown weapon default damage scaling per upgrade reduced to 1-tier, down from 2-tier.\n"
+                                                +
+                                                "_-_ Sets can be enchanted, cursed, augmented, unidentified, etc.\n" +
+                                                "_-_ Sets can spawn with natural upgrades, enchants, or curses.\n" +
+                                                "_-_ Liquid Metal functionality has been significantly changed to work with these new set mechanics.\n"
+                                                +
+                                                "_-_ A few special rooms now have a chance to spawn higher value thrown weapon sets.\n"
+                                                +
+                                                "\n" +
+                                                "Note that darts are not affected by these changes, they effectively all belong to the same set and still cannot be upgraded."));
 
-        changes.addButton( new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
-                "_-_ Added shuriken of shadows into the catalog\n" +
-                        "_-_ Changed save limit to 10k, allowing you to save more run at once\n" +
-                        "_-_ Improved the save select scene\n" +
-                        "_-_ Missile's max durability is returned to 100\n" +
-                        "_-_ Capped ring, misc, and ring slot upgrade to 18\n" +
-                        "_-_ You can now get SoU and PoH per challenges active\n" +
-                        "_-_ Implemented aiming in missiles and wands\n" +
-                        "_-_ Generalized applying emblem message\n" +
-                        "_-_ Added a true elemental strike for Galactic, Laserised, Summonner, and Trihit enchantment"
-        ));
+                changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.WEAPON_HOLDER), "New Enchantments!",
+                                "In this update, we added an enchantment that will help you through your run!\n\n" +
+                                                "_- Sharpened Enchantment:_ is an uncommon enchantment that inflicts bleeding within a chance\n"));
 
-        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Fixes",
-                "_-_ Fixed Nature's Bounty perk not working\n" +
-                        "_-_ Fixed Ring of Wealth's name identified when picked up\n" +
-                        "_-_ Fixed crash on Elemental Strike when using it with enchantments with no missile effects\n" +
-                        "_-_ Fixed Summoner enchantment's knight spawn chance is not true 25%\n" +
-                        "_-_ Fixed incorrect description display on Ring of Haste\n" +
-                        "_-_ Fixed wild energy's sprite"
-        ));
+                changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
+                                "_-_ Reduced overall rooms per floor by ~33%, special and secret rooms increased by 100%\n"
+                                                +
+                                                "_-_ Implemented Shard of Oblivion's QoL from ShPD"));
 
-        changes = new ChangeInfo("InfPD-0.1.7", true, "");
-        changes.hardlight(0x00FFFF);
-        changeInfos.add(changes);
+                changes.addButton(new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
+                                "_-_ Changed Warrior's first perk, now gives adrenaline surge instead\n" +
+                                                "_-_ Racked enchantment's stacks will now decay in a short time\n" +
+                                                "_-_ Scorching enchantment no longer activates when insta-killing an enemy\n"
+                                                +
+                                                "_-_ Slightly increased the Staircase Totem's initial room multiplier bonus\n"
+                                                +
+                                                "_-_ Rotting fist now gets 1.2x bleeding effect, from 0.6x\n" +
+                                                "_-_ Extractor spell now requires massive energy cost (from 50 to 750)\n"
+                                                +
+                                                "_-_ Increased view distance from 2 to 3 when Into Darkness challenge is enabled\n"
+                                                +
+                                                "_-_ Added a counter spell to Dance Dance challenge"
 
-        changes = new ChangeInfo("F", false, "");
-        changes.hardlight(0x00FFFF);
-        changeInfos.add(changes);
+                ));
 
-        changes.addButton( new ChangeButton(Icons.get(Icons.CHALLENGE_COLOR), "New Champion Enemies",
-                "New Champions has been added in the game!\n\n" +
-                        "Blunt Champions - they are expert for using their hands or something they use as a blunt weapons, they deal 75% more damage as well as inflicts vertigo when they attack and paralyzes you in rare cases.\n" +
-                        "Frozen Champions - deal 25% more melee damage but they have -20% speed, chills enemies they attack and sometimes freezes them, are immune to cold gases or effects, and spread blizzard around them as they die."
-        ));
-        changes.addButton( new ChangeButton(new ShurikenOfShadows(),
-                "The thrown weapon designed to destroy terrains... and also damaging enemies around it. This can only be obtained on special items."
-        ));
-        changes.addButton( new ChangeButton(Icons.PLUS.get(), "New Curse",
-                "The Warmaster curse, which set-ups an arena instantly and calling all mobs in the dungeon. Leaving in arena will result to taking ~30% of your health."
-        ));
-        changes.addButton( new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
-                "_-_ Changed the behavior of fire ability in Firing snapper\n" +
-                        "_-_ Portable Shops now stocks exotic variants of scrolls and potions\n" +
-                        "_-_ Added Cached Ration perk\n" +
-                        "_-_ Added Nature's Bounty perk\n" +
-                        "_-_ Added Utility Bag in the catalog\n" +
-                        "_-_ Chalice of Blood should now regen properly with rarity\n" +
-                        "_-_ Resized the bag window"
-        ));
-        changes.addButton( new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
-                "_-_ Gleaming Staff can now materialize Refined Bags with very low chance\n" +
-                        "_-_ Changed and capped Ring of Tenacity to ~99.99% HP reduction\n" +
-                        "_-_ Doubled the max exp required to level up\n" +
-                        "_-_ The max durability of missiles to be considered as infinite is increased to 10k\n" +
-                        "_-_ Increased the health of quest mobs by 100% in Ghost quest\n" +
-                        "_-_ Each taken damage while Faith in my Armor chal. activated now literally increases damage taken by x1.005"
-        ));
-        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Bug Fixes",
-                "_-_ Fixed crash on depth 26+ when skeleton key is equipped\n" +
-                        "_-_ Fixed SoU's upgrade amount button using only 1 scroll after upgrading"
-        ));
+                changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Fixes",
+                                "_-_ Fixed how corrupting power of Dark Blade works\n" +
+                                                "_-_ [Quick Fix] Fixed spirit bow's button doesn't show\n"));
 
-        changes = new ChangeInfo("E", false, "");
-        changes.hardlight(0x00FFFF);
-        changeInfos.add(changes);
+                changes = new ChangeInfo("D", false, "");
+                changes.hardlight(0x00FFFF);
+                changeInfos.add(changes);
 
-        changes.addButton( new ChangeButton(new TicketToPortableShop(),
-                "A new peaceful branch where you can buy things and return again if you're done. It can only be crafted at the alchemy."
-        ));
-        changes.addButton( new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
-                "_-_ Blocking enchantment has now an initial 4 shielding, from 2\n" +
-                        "_-_ Extractor output quantity is increased to 3, from 2\n" +
-                        "_-_ Determinant Infusion rage shield increased by 1.5x, from max hp/2\n" +
-                        "_-_ Increased chance of item quantifier by 25%, total of 50%"
-        ));
-        changes.addButton( new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
-                "_-_ Actually added Utility Bag in shops\n" +
-                        "_-_ Added very high drop flare for fishing hook\n" +
-                        "_-_ Added Cheese Chunk on quick recipe\n"
-        ));
+                changes.addButton(new ChangeButton(Icons.MAGNIFY.get(), "Seedfinding",
+                                "Implemented seed finding from EsPD, with Weekly run included!"));
 
-        changes = new ChangeInfo("D", false, "");
-        changes.hardlight(0x00FFFF);
-        changeInfos.add(changes);
+                changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.DARK_RUNIC), "New Weapon: Dark Blade",
+                                "This tier 5 weapon can corrupt enemies (higher chance with Duelist's ability) and has higher max damage output than a normal runic blade"));
 
-        changes.addButton( new ChangeButton(new UtilityBag(),
-                "The new bag that is useful but expensive... Shopkeeper was so greedy :P"
-        ));
-        changes.addButton( new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
-                "_-_ Bosses' max HP will now base on hero's level\n" +
-                        "_-_ Hunger and Starvation now takes 150 more turns"
-        ));
-        changes.addButton( new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
-                "_-_ Energy bottle can now be held by potion bandolier\n" +
-                        "_-_ Max blacksmith favor cap has been increased by 7k, total of 10k\n" +
-                        "_-_ Added small rations into the arena shop\n" +
-                        "_-_ Fate Lock cna onw be used in quickslots\n" +
-                        "_-_ Gold in mining levels increased to 60-100"
-        ));
-        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Bug Fixes",
-                "_-_ Fixed emblem use still limits to 3, and to enchant emblems\n" +
-                        "_-_ Fixed Scroll of Transmutation doesn't drop at required EXP"
-        ));
+                changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.WEAPON_HOLDER), "New Enchantments!",
+                                "In this update, we added a new early to mid-game enchantments that will help you through your run!\n\n"
+                                                +
+                                                "_- Scorching Enchantment:_ deals additional damage when the attacker deals damage more than 7% of their enemies' max HP (an indicator included)\n"
+                                                +
+                                                "_- Racked Enchantment:_ deals enormous damage on the next hit when reaching 15 stacks of hits on the enemies"));
 
-        changes = new ChangeInfo("C", false, "");
-        changes.hardlight(0x00FFFF);
-        changeInfos.add(changes);
+                changes.addButton(new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
+                                "_-_ Nerfed charge use of Examination Parchment, now takes an additional 5% of available energy\n"
+                                                +
+                                                "_-_ Slightly nerfed SoU farms on Fishing Rods"));
 
-        changes.addButton( new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
-                "_-_ Wand of Disintegration now stops until the targeted cell\n" +
-                        "_-_ Emblem use is now increased to 5, from 3 uses.\n"  +
-                        "_-_ Fishing Rod rare drops will now scale to fishing rod's level\n" +
-                        "_-_ Increased treasure bags' amount by 100%\n"
-        ));
-        changes.addButton( new ChangeButton(new ScrollOfInsurgence(),
-                "Changed the effect of this scroll:\n" +
-                        "_-_ It will now create an arena that gives an additional 150% EXP, and additional items in some cases."
-        ));
-        changes.addButton( new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
-                "_-_ Emblem exclusive enchantments will now occur with a very low chance\n" +
-                        "_-_ Aleph Knights no longer inherits enchantment on weapons\n" +
-                        "_-_ Shop in arena now actually sells ankhs and some emblems\n" +
-                        "_-_ Made custom notes' limit infinite\n" +
-                        "_-_ Added the new spells into the catalog\n"
-        ));
-        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Bug Fixes",
-                "_-_ Fixed false 45% health penalty in the Fate Lock\n"
-        ));
+                changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
+                                "_-_ Made a shortcut button when Sack of Holding is bought or it is in your inventory\n"
+                                                +
+                                                "_-_ Loots, Traps and Enemies has been reduced drastically, and Rooms reduced by 25%\n"
+                                                +
+                                                "_-_ Elixir of Divine Inspiration has now a proper percentage format and no longer rounds off\n"
+                                                +
+                                                "_-_ Renamed items now highlights in blue\n" +
+                                                "_-_ Dungeon now drops 2 upgrades per chapter"));
 
-        changes = new ChangeInfo("B", false, "");
-        changes.hardlight(0x00FFFF);
-        changeInfos.add(changes);
+                changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Fixes",
+                                "_-_ Fixed renamed items' name disappears when the same custom name is set\n" +
+                                                "_-_ Fixed typos in Utility bag and Scroll of Insurgence"));
 
-        changes.addButton( new ChangeButton(new Barricade(),
-                "A spell that changes your terrain, casting will a build barricade for you."
-        ));
-        changes.addButton( new ChangeButton(new DeterminantInfusion(),
-                "A spell that gives you life stealing shield, perhaps, used to something.."
-        ));
-        changes.addButton( new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
-                "_-_ Fixed inconsistencies in tubes' descriptions\n" +
-                        "_-_ Made Elixir of Might rarer\n" +
-                        "_-_ Emblems can now be held by Velvet Pouch\n" +
-                        "_-_ Tubes can now be held by Potion Bandolier\n" +
-                        "_-_ Reduced rooms by ~33%\n" +
-                        "_-_ Arena now sells Ankhs and some emblems\n" +
-                        "_-_ Fate Lock will now give scroll of transmutation when reached very high experience"
-        ));
-        changes.addButton( new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
-                "_-_ Pharmacophobia will give you ~25% turns of your health, from ~40%\n" +
-                        "_-_ Fishing Hooks now drop Refined Bags at very low chance\n" +
-                        "_-_ Fishing Hooks rare drops has been decreased"
-        ));
-        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Bug Fixes",
-                "_-_ Fixed Ring Capacity upgrade doesn't work.\n" +
-                        "_-_ Fixed crash when resetting floor 26 in some cases\n" +
-                        "_-_ Fixed long negative actor spend time when opening treasurebags\n"
-        ));
+                changes = new ChangeInfo("C", false, "");
+                changes.hardlight(0x00FFFF);
+                changeInfos.add(changes);
 
-        changes = new ChangeInfo("A", false, "");
-        changes.hardlight(0x00FFFF);
-        changeInfos.add(changes);
+                changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.STARHAMMER),
+                                "Kill Threshold Abilities",
+                                "When killing an enemy with a weapon that is associated with kill counter buff, you will gain the power to do dashes and empowering your weapons.\n\n"
+                                                +
+                                                "Blacksmith Weapons now has this ability, which is also part of their small rework!"));
 
-        changes.addButton( new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
-                "_-_ Implemented tubes, balanced form and will now appear in the dungeon\n" +
-                        "_-_ Added new three emblems with emblem-exclusive enchants\n" +
-                        "_-_ Reduced bag size to 60, from 61 (overlaps)"
-        ));
-        changes.addButton( new ChangeButton(new WandOfTeleportation(),
-                "Teleportation makes you......? Crazy! Right?\n\n" +
-                        "Wand of teleportation has been added to the game!"
-        ));
-        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.WEAPON_HOLDER), "Enchantments",
-                "Added new three emblem-exclusive enchantments, all of them was got in some special weapon abilities"
-        ));
-        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.STONE_EMPOWER), "Stone of Empowerment",
-                "Another runestone that helps you in the early game, I guess? It's rare to appear in the game."
-        ));
-        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Bug Fixes",
-                "_-_ Fixed emblems doubling the count use in bestiary.\n"
-        ));
+                changes.addButton(new ChangeButton(Icons.get(Icons.STATS), "Exploration and Quest Score",
+                                "Implemented score adjustments on ShPD!\n\n" +
+                                                "_Exploration Score_ - For each floor, score is reduced to 75%/50%/25%/5%/0% for 1/2/3/4/5+ missed rooms.\n\n"
+                                                +
+                                                "_Quest Score_ remains unchanged from the patch on v3.1.0 of ShPD"));
 
-        changes = new ChangeInfo("InfPD-0.1.6", true, "");
-        changes.hardlight(0x00FFFF);
-        changeInfos.add(changes);
+                changes.addButton(new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
+                                "_-_ Nerfed Elixir of Divine Inspiration's crafting cost (from 45, to 70), and its effect (from 7% compounded, to 1.5% compounded) per stack"));
 
-        changes = new ChangeInfo("D", false, "");
-        changes.hardlight(0x00FFFF);
-        changeInfos.add(changes);
+                changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Fixes",
+                                "_-_ Fixed Skeleton key not properly clearing keys on depth"));
 
-        changes.addButton( new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
-                "_-_ Massively decreased overload duration buff in arena\n" +
-                        "_-_ Delayed some overpowered stat mobs in arena\n"
-        ));
-        changes.addButton( new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
-                "_-_ Shopkeeper key no longer drops if the previous badge isn't unlocked.\n" +
-                        "_-_ Improved Rage Shield's floating text.\n" +
-                        "_-_ All bags' capacity is increased to 61\n" +
-                        "_-_ Increased the chance of having an emblem in shoprooms\n"
-        ));
-        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Bug Fixes",
-                "_-_ Fixed shopkeeper key drops in an incorrect condition.\n" +
-                        "_-_ Added a temporary fix for the bestiary crashes due to null challenges\n"
-        ));
+                changes = new ChangeInfo("B", false, "");
+                changes.hardlight(0x00FFFF);
+                changeInfos.add(changes);
 
-        changes = new ChangeInfo("C", false, "");
-        changes.hardlight(0x00FFFF);
-        changeInfos.add(changes);
+                changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.STARHAMMER),
+                                "Small Blacksmith Weapon Rework!",
+                                "Due to blacksmith weapons being weak in the mid-game, in this update, their damage is increased by roughly 20%, and their traits: \n\n"
+                                                +
+                                                "_- Fanstasmal Stabber:_ increased its charging ability by 50%, and deals 75% toward max to max on surprise\n"
+                                                +
+                                                "_- Firing Snapper:_ damage dealt on those not at the center of the blast is now 75% and increased max damage by 50%\n"
+                                                +
+                                                "_- Gleaming Staff:_ slightly increased defense factor and decreased combo needed to 15, from 20\n"
+                                                +
+                                                "_- Regrowing Slasher:_ now heals 0.8% of max hp in each strike and max defense factor is doubled\n"
+                                                +
+                                                "_- Starlight Smasher:_ accuracy boost increased to 45%, from 30% and slightly reduced paralysis effect to attackers"));
 
-        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.SCROLL_ZYCHRON), "New Scrolls",
-                "Another scrolls that will help you in the early game, can you get it in the beginning?"
-        ));
-        changes.addButton( new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
-                "_-_ The max capacity of rings can now be upgraded\n"
-        ));
-        changes.addButton(new ChangeButton(new SackOfHolding(),
-                "Sack of Holding's behavior has been changed:\n" +
-                        "_-_ You must click _enable_ and drop the item you selected to put it into sack of holding"
-        ));
-        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Bug Fixes",
-                "_-_ Fixed shopkeeper key doesn't drop\n" +
-                        "_-_ Fixed fireboost spell description\n" +
-                        "_-_ Fixed NTF in galactic infusion\n"
-        ));
+                changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
+                                "_-_ The items tab in ranking window is now scrollable\n" +
+                                                "_-_ Examination Parchment no longer detach action indicator based buffs\n"
+                                                +
+                                                "_-_ Added an option for strength and luck potions and elixir of divine inspiration to be gulped all at once\n"
+                                                +
+                                                "_-_ Stone of Empowerment now damages the target instead of corroding it\n"
+                                                +
+                                                "_-_ Added _Frostbite_ glyph, which nullifies the chilled and frosting effects\n"
+                                                +
+                                                "_-_ Lowered requirements of Dark Fate Lock to 45 (min), from 100 (min)\n"
+                                                +
+                                                "_-_ Added a log message when drinking Tube of Experience and Tube of Godspeed"));
 
-        changes = new ChangeInfo("B", false, "");
-        changes.hardlight(0x00FFFF);
-        changeInfos.add(changes);
+                changes.addButton(new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
+                                "_-_ Nerfed level-up mechanics of Examination Parchment\n" +
+                                                "_-_ Increased the chances of increased limits of Galactic enchantment\n"
+                                                +
+                                                "_-_ Increased max cap of Ring of Elements to 99% elemental resistance\n"
+                                                +
+                                                "_-_ Sacrificial Rooms' prizes has now a chance to upgrade again for 5 times\n"
+                                                +
+                                                "_-_ Decreased Item Quantifier's crafted output quantity by 50% (from 10 to 5)"));
 
-        changes.addButton(new ChangeButton(new GalacticInfusion(), "Another spell which guarantee Galactic enchantment on your weapon. How nice..."));
-        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Bug Fixes",
-                "_-_ Fixed NPE caused by level reset and resurrect + skeleton key\n" +
-                        "_-_ Fixed visual bug in Emblems on changelog\n" +
-                        "_-_ Fixed a NTR (AGAIN) when using skeleton key on door with no charge\n" +
-                        "_-_ Fixed NTF on skeleton key's keywall\n" +
-                        "_-_ Fixed crash on opening a journal\n" +
-                        "_-_ Fixed skeleton key not recharging within higher level and high rarity"
-        ));
+                changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Fixes",
+                                "_-_ Fixed NTF in Examination Parchment when warming up\n" +
+                                                "_-_ Fixed Wand of Transfusion's desc where self-shield is inaccurate\n"
+                                                +
+                                                "_-_ Fixed orders for weekly multiplier appearing in record even it is not weekly run"));
 
-        changes.addButton( new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
-                "_-_ Added Potion of Debug\n" +
-                        "_-_ Added RoExperience in generation\n" +
-                        "_-_ Added Emblems into the catalog"
-        ));
+                changes = new ChangeInfo("A", false, "");
+                changes.hardlight(0x00FFFF);
+                changeInfos.add(changes);
 
-        changes = new ChangeInfo("A", false, "");
-        changes.hardlight(0x00FFFF);
-        changeInfos.add(changes);
+                changes.addButton(new ChangeButton(Icons.STAIRS.get(), "New Rooms and Terrain Types",
+                                "This update includes an _expansion to the dungeon's standard rooms!_ (from the ShPD, of course!)\n"
+                                                +
+                                                "\n" +
+                                                "_- New decorative terrain_ has been added to each region, largely inspired by details from the region splash arts. \n"
+                                                +
+                                                "_- 5 new standard rooms_ have been added that use these new terrain objects, one per region.\n"
+                                                +
+                                                "_- 8 existing standard rooms_ have been modified to use the new terrain objects.\n"
+                                                +
+                                                "_- 10 new entrance/exit variants_ of standard rooms have been added as well. two per region.\n"
+                                                +
+                                                "_- Boss Arenas_ also use these new terrain types in a few places\n" +
+                                                "_- Plain empty rooms_ no longer spawn normally."));
 
-        changes.addButton( new ChangeButton(Icons.get(Icons.CHALLENGE_COLOR), "Trinket Changes",
-                "Certain trinkets has now increased max levels\n\n" +
-                        "_-_ Dimensional Sundial: 3 -> 10\n" +
-                        "_-_ Exotic Crystals: 3 -> 5\n" +
-                        "_-_ Mimic Tooth: 3 -> 5\n" +
-                        "_-_ Rat Skull: 3 -> 15\n" +
-                        "_-_ Shard of Oblivion: 3 -> 10\n\n" +
-                        "This ensures the chaos and the unpredictability of the trinkets."
-        ));
-        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.RING_LIMESTONE), "New Rings",
-                "Another rings that was actually made for chaos, do they help you?"
-        ));
-        changes.addButton(new ChangeButton(new ItemQuantifier(), "Another gamble item, which adds two or remove one quantity of an item."));
-        changes.addButton(new ChangeButton(new SkeletonKey(), "Skeleton Key has been added to the game! Have fun to this stuff.... I guess?"));
-        changes.addButton(new ChangeButton(new FerretTuft(), "Ferret Tuft has been added to the game! Also, added the hit and miss icons from vanilla."));
-        changes.addButton(new ChangeButton(new CommonEmblem(),
-                "Yes, a brand new item, the _Emblem_!\n\nThis is somewhat like the Raritizing spell but the rarity of the emblem is 100% guaranteed! You can only use emblems on items thrice.\n\nThey can also include some enchants or something powerful..."
-        ));
-        changes.addButton( new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
-                "_-_ OOFThiefs can no longer steals bags\n" +
-                        "_-_ Cheese and Magnetic Meal perk no longer collects item out of range\n" +
-                        "_-_ Added \"More Loots\" upgrade\n" +
-                        "_-_ Fixed wrong indicator in Gambler spell\n" +
-                        "_-_ Added emblems in shops appearing within 15% chance\n" +
-                        "_-_ Added price on emblems (base 400)"
-        ));
-        changes.addButton( new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
-                "_-_ Nerfed gold drops by -50% min, and -25% max\n" +
-                        "_-_ Nerfed all of the rings, their effects now caps at x10 multiplier per cycle (starting x10 on cycle 0)\n" +
-                        "_-_ Slightly buffed Fishing Rods\n" +
-                        "_-_ Increased the chance of getting unique items in Refined Bags (from 4.5% to 5%)\n" +
-                        "_-_ Artifact, Ring and Mics slots' SoU cost reduced to _20_ from _25_.\n" +
-                        "_-_ Increased fire boost damage in fire booster spell by 10%\n" +
-                        "_-_ Added a slight damage boost in _Creative Gloves_ but increased their attack delay by 50%"
-        ));
+                changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.EXAM_PARCHMENT),
+                                new ExaminationParchment().trueName(),
+                                "A brand new artifact that gives you a freedom to get an item without getting caught by the shopkeeper (this is not a bait), "
+                                                +
+                                                "and it gives you an opportunity to remove buffs at will!"));
 
-        changes = new ChangeInfo("InfPD-0.1.5", true, "");
-        changes.hardlight(0x00FFFF);
-        changeInfos.add(changes);
-        changes.addButton( new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
-                        "_-_ Changed trait of Tanky champions, now takes only 5% damage\n" +
-                        "_-_ Changed rarity display to its true name\n" +
-                        "_-_ You can now see what rarity was replaced in the item\n" +
-                        "_-_ Changed description of Scroll of Magic Mapping\n" +
-                        "_-_ Changed description of Galactic enchantment\n"
-        ));
-        changes.addButton( new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
-                "_-_ Nerfed Ring of Haste's base speed\n"
-        ));
-        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Bug Fixes",
-                "_-_ Fixed crash on journal related to Kunai when discovered\n" +
-                        "_-_ Fixed conditions on Black Fate Lock for ascension\n" +
-                        "_-_ Fixed missing description on Round Shield\n" +
-                        "_-_ Fixed a minor crash related to identifying item with a rarity\n" +
-                        "_-_ Fixed Ring of Haste where the hero is slower at start\n"
-        ));
+                changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.A_TIER_UPGRADE),
+                                new ArmorTierUpgrade().trueName(),
+                                "The new spell that enhances your armor's tier."));
 
-        changes = new ChangeInfo("InfPD-0.1.4", true, "");
-        changes.hardlight(0x00FFFF);
-        changeInfos.add(changes);
-        changes.addButton( new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
-                "_-_ Added 2 new ring sprites\n" +
-                        "_-_ Scak of Holding no longer holds: rings, scrolls and wands\n" +
-                        "_-_ Increasing cycles now requires levels...\n" +
-                        "_-_ Added 2 new champions, Speedy and Tanky\n" +
-                        "_-_ Increased spawn duration on enemies\n" +
-                        "_-_ Added _Gambling_ spell\n"
-        ));
-        changes.addButton( new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
-                "_-_ Ghost's reward upgrade level has been reduced to 2, from 5\n" +
-                        "_-_ Ring of Tenacity is now capped at 90% damage resistance, and reduced per-upgrade effect\n" +
-                        "_-_ Ring of Elements' per=upgrade percentages is massively reduced\n" +
-                        "_-_ Nerfed spirit bow's min and max damage\n" +
-                        "_-_ EXP required for getting SoU is now scaled with cycles\n"
-        ));
-        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Bug Fixes",
-                "_-_ Fixed crash related to RoW with Exotic Crystals\n" +
-                        "_-_ Fixed crash on journal's catalog\n" +
-                        "_-_ Fixed a small bug when the rarity name was shown even unidentified\n"
-        ));
+                changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.STAIRCASE_TOTEM),
+                                new StaircaseTotem().trueName(),
+                                "The new trinket that increases rooms and enemies as you descend to next floors."));
 
-        changes = new ChangeInfo("InfPD-0.1.3", true, "");
-        changes.hardlight(0x00FFFF);
-        changeInfos.add(changes);
-        changes.addButton( new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
-                "_-_ Added true names for Rarities\n" +
-                        "_-_ Reverted back Ring of Haste\n" +
-                        "_-_ Removed additional descriptions for Galactic Enchanment\n" +
-                        "_-_ Increased standard rooms by ~50%\n" +
-                        "_-_ Challenges, Daily Runs, and Custom Seeds are now unlocked by default"
-        ));
-        changes.addButton( new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
-                "_-_ Nerfed Ring of Haste at its finest\n" +
-                        "_-_ Treasure Bags' price were increased by 10 gold\n" +
-                        "_-_ Scroll of Mirror Image now summons 3 images from 2\n" +
-                        "_-_ Scroll of Teleportation now paralyzes you for 3 turns\n" +
-                        "_-_ Potion of Liquid Flame now lasts 50% longer\n" +
-                        "_-_ Potion of Strength now gives additional strength in 1/2147483647"
-        ));
-        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Bug Fixes",
-                "_-_ Fixed sack of holding TAKES ALL YOUR ITEMS AT ONCE.\n" +
-                        "_-_ Fixed stone of clairvoyance crashing the game\n" +
-                        "_-_ Adjusted clayball sprite"
-        ));
+                changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
+                                "_-_ Scroll of Transmutation now caps the new trinket's level to its max upgrade\n" +
+                                                "_-_ Changed the app icon for android\n" +
+                                                "_-_ Reworked Laserised enchantment's code to avoid future crashes\n" +
+                                                "_-_ Added a caution desc when using SoTrans on a weapon where it is used on Tier Upgrade\n"
+                                                +
+                                                "_-_ Standard and Connection rooms' generation are no longer dungeon luck based"));
 
-        changes = new ChangeInfo("InfPD-0.1.2", true, "");
-        changes.hardlight(0x00FFFF);
-        changeInfos.add(changes);
-        changes.addButton( new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
-                "_-_ Added item renaming\n" +
-                        "_-_ Made challenge window scrollable\n" +
-                        "_-_ Aligned the update link to github (you can now get updates in-game)\n"
-        ));
-        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Bug Fixes",
-                "_-_ Fixed crashes on the perk Raritizing Magic\n"
-        ));
-        changes.addButton( new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
-                "_-_ Nerfed hero max exp\n" +
-                        "_-_ Reduced the entire loot multiplier\n"
-        ));
+                changes.addButton(new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
+                                "_-_ Increased wand of transfusion's self-shielding to 7, from 5\n" +
+                                                "_-_ Crafting Telekinetic Grab now requires 5 more liquid metals\n" +
+                                                "_-_ Reclaim Trap's crafting cost has been increased to 12, from 8\n" +
+                                                "_-_ Barricade's crafting cost has been increased to 75, from 45\n" +
+                                                "_-_ Tube of Strengthened Luck's luck has been decreased to 2, from 3\n"
+                                                +
+                                                "_-_ Item Quantifier now quantifies unique items with 25% chance\n" +
+                                                "_-_ Tier Upgrade spells' recipe no longer requires Potion of Mastery, changed with Alchemize instead\n"
+                                                +
+                                                "_-_ Buffed cycle scaling, now increases slightly within the hero level\n"
+                                                +
+                                                "_-_ Conquest challenge now spawns enemies with titles within 25% chance three times\n"
+                                                +
+                                                "_-_ Limits of Galactic enchantment is now luck based\n" +
+                                                "_-_ Getting a glyph for armor and enchantment on weapon are no longer dungeon luck based"));
 
+                changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Fixes",
+                                "_-_ Fixed incorrect description on Elixir of Divine Inspiration\n" +
+                                                "_-_ Fixed cases where Galatic enchantment only gives few enchantment in high luck levels"));
 
-        changes = new ChangeInfo("InfPD-0.1.1", true, "");
-        changes.hardlight(0x00FFFF);
-        changeInfos.add(changes);
-        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Bug Fixes",
-                "_-_ Fixed Potion of Strength not being droppped on the dungeon\n"
-        ));
-        changes.addButton( new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
-                "_-_ Added a sprite for Raritize spell\n" +
-                        "_-_ Added _Extractor_ spell\n" +
-                        "_-_ Increased custom note size to 30\n" +
-                        "_-_ Added new spells on the Catalog\n" +
-                        "_-_ Added some useful info on mobs\n"
-        ));
-        changes.addButton( new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
-                "_-_ Drastically nerfed gold drops\n" +
-                        "_-_ Fire Booster now multiplies the fire damage by 1.15x\n" +
-                        "_-_ Recharging buffs now gives you 35 turns of duration\n" +
-                        "_-_ Stone of Clairvoyance now scans within 23 cells radius\n" +
-                        "_-_ Arena now spawns with 2x HP and gains a champion title after power 30\n"
-        ));
+                changes = new ChangeInfo("InfPD-0.1.8", true, "");
+                changes.hardlight(0x00FFFF);
+                changeInfos.add(changes);
 
-        changes = new ChangeInfo("InfPD-0.1.0", true, "");
-        changes.hardlight(0x00FFFF);
-        changeInfos.add(changes);
-        changes.addButton(new ChangeButton(new RingOfWealth(), "Added back ring of wealth"));
-        changes.addButton(new ChangeButton(new EquipmentBag(), "Moved the ring, artifact and misc slots into their own bag"));
-        changes.addButton(new ChangeButton(new SackOfHolding(), "Added the sack of holding, a bag that can hold any item, its sold on the shop at floor 16"));
-        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "System changes",
-                "Changed the cycle system to allow for basicly infinite cycles, also changed hardcoded values to be calculated exponentially",
-                "Allowed the amount of ring, artifact and misc slots to be variable, for use in later Content",
-                "Added variables for multiplying the amount of rooms, monsters, loot, traps and the size of rooms in a layer"));
-        changes.addButton(new ChangeButton(new LostBackpack(), "Added an optional second row of quickslots"));
-        changes.addButton( new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
-                "_-_ Nerfed all rarities' effects\n" +
-                        "_-_ Rebalanced chances and multipliers of rarities\n" +
-                        "_-_ Buffed Mimic and Cycle Multiplier\n" +
-                        "_-_ The chances of getting luck potion is decreased\n" +
-                        "_-_ Bosses now gains 2.5% HP bonus per escalating depth\n"
-        ));
-        changes.addButton( new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
-                "_-_ Added _Galactic_ enchanment\n" +
-                        "_-_ Added _Raritize_ spell\n" +
-                        "_-_ Extended other bags from 36 to 57\n" +
-                        "_-_ Added Raritizing Magic perk\n"
-        ));
-        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Bug Fixes",
-                "_-_ Fixed fishing rods not working\n"
-        ));
-    }
+                changes = new ChangeInfo("E", false, "");
+                changes.hardlight(0x00FFFF);
+                changeInfos.add(changes);
+
+                changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.TIER_UPGRADE),
+                                new TierUpgrade().trueName(),
+                                "This new spell enhances your weapon's tier."));
+
+                changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
+                                "_-_ King's Crown no longer erases old armor's rarity\n" +
+                                                "_-_ Removed scene resetting from custom note entry (ShPD)"));
+
+                changes.addButton(new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
+                                "_-_ Buffed Wand of Teleportation's charge per cast, is now fixed to 2 charges\n" +
+                                                "_-_ Rat King now drops cheese after 35 trades, from 30"));
+
+                changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Fixes",
+                                "_-_ Fixed crash related to Elixir of Divine Inspiration\n" +
+                                                "_-_ Fixed conflicts with additional description of emblem use and custom notes on items"));
+
+                changes = new ChangeInfo("D", false, "");
+                changes.hardlight(0x00FFFF);
+                changeInfos.add(changes);
+
+                changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.ELIXIR_DI),
+                                new ElixirOfDivineInspiration().trueName(),
+                                "A substitute for Potion of same name, its effect is permanent, and gives you bonus EXP."));
+
+                changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.PORTABLE_ALCHEMY),
+                                new PocketAlchemy().trueName(),
+                                "A new spell to help you craft things in the early game."));
+
+                changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
+                                "_-_ Scroll of Transmutation can now produce the same artifact when transmuting, and can now transfer rarities on transmuted items\n"
+                                                +
+                                                "_-_ Made all Blacksmith weapons' tier to 5\n" +
+                                                "_-_ Wand of Lifesteal can now damage enemies even if you are in full health\n"
+                                                +
+                                                "_-_ Slightly reduced the probability of dropping foods on enemies\n" +
+                                                "_-_ Changed Ring of Might's HP cap to 20, instead of 10 (2 * 10 = 20)\n"
+                                                +
+                                                "_-_ Removed Scroll of Determination in the Catalog"));
+
+                changes.addButton(new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
+                                "_-_ Buffed Gambler spell slightly, it will now take 30% of your gold when failed, instead of 50%\n"
+                                                +
+                                                "_-_ Buffed Item Quantifier spell, now has 75% chance to add 3 of the selected item's quantity\n"
+                                                +
+                                                "_-_ Increased Ring of Valor's per upgrade value to 3.5% up from 1.5%\n"
+                                                +
+                                                "_-_ Reduced Ring of Sharpshooting's durability multiplier to 15% compounded per level, down from 20% compounded\n"
+                                                +
+                                                "_-_ Wand of Teleportation now consumes 5 charges times rarity multi"));
+
+                changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Fixes",
+                                "_-_ Fixed crash when transmuting artifacts when equipped\n" +
+                                                "_-_ Actually fixed NTF on obsidian rings\n"));
+
+                changes = new ChangeInfo("C", false, "");
+                changes.hardlight(0x00FFFF);
+                changeInfos.add(changes);
+
+                Image ic = Icons.get(Icons.CALENDAR);
+                ic.hardlight(1.5f, 1.5f, 0f);
+                changes.addButton(new ChangeButton(ic, "Weekly Runs Changes",
+                                "Enemies in weekly runs now have their health doubled, and gives you a 2.5x score multiplier regardless if you win or not. It's your choice."));
+
+                changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.LIFESTEAL_WAND),
+                                "New Wand: Wand of Lifesteal",
+                                "A brand new wand that steals health from each enemy affected. It doesn't work if you have already full health and consumes wand charge anyway."));
+
+                changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.INFO_PAGE),
+                                "New Lore: Beyond Reality",
+                                "New lores are waiting for you.. You can get some of those after reaching cycle 1 :P"));
+
+                changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.MYSTERY_CAKE), "Mystery Cake?",
+                                "A special cake exclusive on the month of October. Please be patient to find it out."));
+
+                changes.addButton(new ChangeButton(Icons.get(Icons.CHALLENGE_COLOR), "Challenge Balances",
+                                "The following challenges are balanced due to difficulty spiking high when other challenges was combined:\n\n"
+                                                +
+                                                "_On Diet_: Increased effectivity of satisfying hunger from _1/10_ to _1/7_\n"
+                                                +
+                                                "_Pharmacophobia_: Reduced poison duration from _lvl/4_ to _lvl/6_\n" +
+                                                "_Into Darkness_: Increased torch count per floor _by 2_, _total of 4_ if the floor is large\n"
+                                                +
+                                                "_Forbidden Runes_: Lowered requirements of getting SoU by _80%_ (from +150%, to +70%), reset and SoTrans are still affected\n"
+                                                +
+                                                "_Hostile Champions_: Reduced enemies with titles spawn rate by _25%_ (from 1/8, to 1/10)\n"
+                                                +
+                                                "_For the Worthy_: Reduced max exp required by _50%_, total of _150% exp_ (from +100%, to +50%)\n"));
+
+                changes.addButton(new ChangeButton(Icons.get(Icons.SCROLL_COLOR), "Nameable Heroes!",
+                                "You can now name your heroes as you wish!\n\n_This is purely cosmetic and doesn't affect gameplay._"));
+
+                changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
+                                "_-_ Added GameID in rankings\n" +
+                                                "_-_ Moved recipe of WoA to custom recipes and added recipe of Elixir of Might\n"
+                                                +
+                                                "_-_ Added a Save Game Button\n" +
+                                                "_-_ Emblem exclusive enchantments can now be actually obtain from Enchantment Scrolls/Stone"));
+
+                changes.addButton(new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
+                                "_-_ Drastically increased the energy required for Elixir of Might to be crafted"));
+
+                changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Fixes",
+                                "_-_ Fixed NTF in obsidian ring\n" +
+                                                "_-_ Fixed Tubes' color pre-identified on start\n" +
+                                                "_-_ Fixed unintended pre-identification of PoH and SoU at the start of the game"));
+
+                changes = new ChangeInfo("B", false, "");
+                changes.hardlight(0x00FFFF);
+                changeInfos.add(changes);
+
+                changes.addButton(new ChangeButton(new Image(Assets.Environment.TERRAIN_FEATURES, 112, 16, 16, 16),
+                                "New Trap!",
+                                "We added a new trap, the Multi Trap!\n\n" +
+                                                "Multi trap consists of 5 combined traps, they commonly appear as you descend to new regions, and I don't think grim traps can appear here...."));
+
+                changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.EXP_BOMB),
+                                new ExperienceBomb().trueName(),
+                                "A new bomb that gives a bonus experience when an enemy is affected."));
+
+                changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.INFO_PAGE), new InfoPage().trueName(),
+                                "This is your statistic companion, do whatever you want."));
+
+                changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.RING_OBSIDIAN),
+                                new RingOfScorch().trueName(),
+                                "_A new ring has been added that enhances hero's damage!_\n\n" +
+                                                "The Ring of Valor lets the player directly enhances their weapons' damage, instead of only being able to enhance the damage up by only upgrading the item itself."));
+
+                changes.addButton(new ChangeButton(Icons.get(Icons.CHALLENGE_COLOR), "New Challenges",
+                                "In this update, we added a new challenge(s)!\n\n" +
+                                                "_-_ For the Worthy\n" +
+                                                "_-_ Conquest"));
+
+                changes.addButton(new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
+                                "_-_ Warrior healing after healing increased to _~14.29% max HP_, from 12.5% max HP\n" +
+                                                "_-_ Warrior blind duration when throwing that isn't a missile to enemy is increased to _5 turns_, from 3 turns\n"
+                                                +
+                                                "_-_ Mage will now get _12 turns_ of recharging when eating up from 9 turns\n"
+                                                +
+                                                "_-_ Mage's shield when they targeted the wand on themself will now gain _10.5% shielding per charge_ from max HP, up from 6.5%\n"
+                                                +
+                                                "_-_ Nature's Bounty berry count is no longer in fixed value, made berries drop within _1/(15 + (5 * berries found))_ chance\n"
+                                                +
+                                                "_-_ Cached Ration's supply ration count is no longer in fixed value, made rations drop within _1/(25 + (5 * rations found))_ chance\n"));
+
+                changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
+                                "_-_ Added the new treasure bags into the catalog\n" +
+                                                "_-_ Sort button no longer sticks to the left side when you are in portrait mode\n"
+                                                +
+                                                "_-_ Made challenge tab scrollable in ranking window\n" +
+                                                "_-_ Made some tubes more common: Pure Immunity, Ultimate Power and Godspeed"));
+
+                changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Fixes",
+                                "_-_ Fixed Black Mimic infinite loop on venting gas when Badder Bosses enabled\n" +
+                                                "_-_ Fixed rankings window doesn't load after adding a new challenge\n"));
+
+                changes = new ChangeInfo("A", false, "");
+                changes.hardlight(0x00FFFF);
+                changeInfos.add(changes);
+
+                changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.LEGENDARY_BAG), "New Treasure Bags!",
+                                "These bags can only be found on fishing hooks, and a pity system to get the Legendary Treasure Bag!\n\n"
+                                                +
+                                                "_The higher the rarity, the higher the quality of the loots!_"));
+                changes.addButton(new ChangeButton(BadgeBanner.image(Badges.Badge.MANY_BUFFS.image),
+                                "Added Badges from ShPD!",
+                                "These new badges are implemented and from ShPD, and these are:\n\n" +
+                                                "_-_ Taking the Mick\n" +
+                                                "_-_ So Many Colors\n" +
+                                                "_-_ Pacifist Ascent"));
+
+                changes.addButton(new ChangeButton(BadgeBanner.image(Badges.Badge.CYCLE_5.image), "New Cycle Badges!",
+                                "These new badges that you'll obtain will be the proof for yourself for hours of grinding and slaining enemies, appreciating your hard work through this game :)"));
+
+                changes.addButton(new ChangeButton(new WandOfTeleportation(),
+                                "Due to its nature of being an overpowered wand, we have to make a nerf for them:\n\n" +
+                                                "_-_ No longer appears in the dungeon, it is now a _craftable item_ with 5000 energy.\n"
+                                                +
+                                                "_-_ Charge per cast increased to _2 * rarity_, from 1 (capped at 50 charge)\n"
+                                                +
+                                                "_-_ No longer upgradable, instead it will depend on its rarity\n"));
+
+                ic = Icons.get(Icons.CALENDAR);
+                ic.hardlight(1.5f, 1.5f, 0f);
+                changes.addButton(new ChangeButton(ic, "Weekly Runs!",
+                                "_Every week there is a specific seeded run that's available to all players!_\n\n" +
+                                                "The weekly run makes it easy to compete again friends or other folks on the internet, without having to coordinate and share a specific seed.\n\n"
+                                                +
+                                                "The game does keep track of your previous weekly scores, and there is a separate leaderboard for them.\n\n"
+                                                +
+                                                "To avoid confusion in reading the weekly run seed, their format is Year-Month/Week"));
+
+                changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
+                                "_-_ Added shuriken of shadows into the catalog\n" +
+                                                "_-_ Changed save limit to 10k, allowing you to save more run at once\n"
+                                                +
+                                                "_-_ Improved the save select scene\n" +
+                                                "_-_ Missile's max durability is returned to 100\n" +
+                                                "_-_ Capped ring, misc, and ring slot upgrade to 18\n" +
+                                                "_-_ You can now get SoU and PoH per challenges active\n" +
+                                                "_-_ Implemented aiming in missiles and wands\n" +
+                                                "_-_ Generalized applying emblem message\n" +
+                                                "_-_ Added a true elemental strike for Galactic, Laserised, Summonner, and Trihit enchantment"));
+
+                changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Fixes",
+                                "_-_ Fixed Nature's Bounty perk not working\n" +
+                                                "_-_ Fixed Ring of Wealth's name identified when picked up\n" +
+                                                "_-_ Fixed crash on Elemental Strike when using it with enchantments with no missile effects\n"
+                                                +
+                                                "_-_ Fixed Summoner enchantment's knight spawn chance is not true 25%\n"
+                                                +
+                                                "_-_ Fixed incorrect description display on Ring of Haste\n" +
+                                                "_-_ Fixed wild energy's sprite"));
+
+                changes = new ChangeInfo("InfPD-0.1.7", true, "");
+                changes.hardlight(0x00FFFF);
+                changeInfos.add(changes);
+
+                changes = new ChangeInfo("F", false, "");
+                changes.hardlight(0x00FFFF);
+                changeInfos.add(changes);
+
+                changes.addButton(new ChangeButton(Icons.get(Icons.CHALLENGE_COLOR), "New Champion Enemies",
+                                "New Champions has been added in the game!\n\n" +
+                                                "Blunt Champions - they are expert for using their hands or something they use as a blunt weapons, they deal 75% more damage as well as inflicts vertigo when they attack and paralyzes you in rare cases.\n"
+                                                +
+                                                "Frozen Champions - deal 25% more melee damage but they have -20% speed, chills enemies they attack and sometimes freezes them, are immune to cold gases or effects, and spread blizzard around them as they die."));
+                changes.addButton(new ChangeButton(new ShurikenOfShadows(),
+                                "The thrown weapon designed to destroy terrains... and also damaging enemies around it. This can only be obtained on special items."));
+                changes.addButton(new ChangeButton(Icons.PLUS.get(), "New Curse",
+                                "The Warmaster curse, which set-ups an arena instantly and calling all mobs in the dungeon. Leaving in arena will result to taking ~30% of your health."));
+                changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
+                                "_-_ Changed the behavior of fire ability in Firing snapper\n" +
+                                                "_-_ Portable Shops now stocks exotic variants of scrolls and potions\n"
+                                                +
+                                                "_-_ Added Cached Ration perk\n" +
+                                                "_-_ Added Nature's Bounty perk\n" +
+                                                "_-_ Added Utility Bag in the catalog\n" +
+                                                "_-_ Chalice of Blood should now regen properly with rarity\n" +
+                                                "_-_ Resized the bag window"));
+                changes.addButton(new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
+                                "_-_ Gleaming Staff can now materialize Refined Bags with very low chance\n" +
+                                                "_-_ Changed and capped Ring of Tenacity to ~99.99% HP reduction\n" +
+                                                "_-_ Doubled the max exp required to level up\n" +
+                                                "_-_ The max durability of missiles to be considered as infinite is increased to 10k\n"
+                                                +
+                                                "_-_ Increased the health of quest mobs by 100% in Ghost quest\n" +
+                                                "_-_ Each taken damage while Faith in my Armor chal. activated now literally increases damage taken by x1.005"));
+                changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Bug Fixes",
+                                "_-_ Fixed crash on depth 26+ when skeleton key is equipped\n" +
+                                                "_-_ Fixed SoU's upgrade amount button using only 1 scroll after upgrading"));
+
+                changes = new ChangeInfo("E", false, "");
+                changes.hardlight(0x00FFFF);
+                changeInfos.add(changes);
+
+                changes.addButton(new ChangeButton(new TicketToPortableShop(),
+                                "A new peaceful branch where you can buy things and return again if you're done. It can only be crafted at the alchemy."));
+                changes.addButton(new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
+                                "_-_ Blocking enchantment has now an initial 4 shielding, from 2\n" +
+                                                "_-_ Extractor output quantity is increased to 3, from 2\n" +
+                                                "_-_ Determinant Infusion rage shield increased by 1.5x, from max hp/2\n"
+                                                +
+                                                "_-_ Increased chance of item quantifier by 25%, total of 50%"));
+                changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
+                                "_-_ Actually added Utility Bag in shops\n" +
+                                                "_-_ Added very high drop flare for fishing hook\n" +
+                                                "_-_ Added Cheese Chunk on quick recipe\n"));
+
+                changes = new ChangeInfo("D", false, "");
+                changes.hardlight(0x00FFFF);
+                changeInfos.add(changes);
+
+                changes.addButton(new ChangeButton(new UtilityBag(),
+                                "The new bag that is useful but expensive... Shopkeeper was so greedy :P"));
+                changes.addButton(new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
+                                "_-_ Bosses' max HP will now base on hero's level\n" +
+                                                "_-_ Hunger and Starvation now takes 150 more turns"));
+                changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
+                                "_-_ Energy bottle can now be held by potion bandolier\n" +
+                                                "_-_ Max blacksmith favor cap has been increased by 7k, total of 10k\n"
+                                                +
+                                                "_-_ Added small rations into the arena shop\n" +
+                                                "_-_ Fate Lock cna onw be used in quickslots\n" +
+                                                "_-_ Gold in mining levels increased to 60-100"));
+                changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Bug Fixes",
+                                "_-_ Fixed emblem use still limits to 3, and to enchant emblems\n" +
+                                                "_-_ Fixed Scroll of Transmutation doesn't drop at required EXP"));
+
+                changes = new ChangeInfo("C", false, "");
+                changes.hardlight(0x00FFFF);
+                changeInfos.add(changes);
+
+                changes.addButton(new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
+                                "_-_ Wand of Disintegration now stops until the targeted cell\n" +
+                                                "_-_ Emblem use is now increased to 5, from 3 uses.\n" +
+                                                "_-_ Fishing Rod rare drops will now scale to fishing rod's level\n" +
+                                                "_-_ Increased treasure bags' amount by 100%\n"));
+                changes.addButton(new ChangeButton(new ScrollOfInsurgence(),
+                                "Changed the effect of this scroll:\n" +
+                                                "_-_ It will now create an arena that gives an additional 150% EXP, and additional items in some cases."));
+                changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
+                                "_-_ Emblem exclusive enchantments will now occur with a very low chance\n" +
+                                                "_-_ Aleph Knights no longer inherits enchantment on weapons\n" +
+                                                "_-_ Shop in arena now actually sells ankhs and some emblems\n" +
+                                                "_-_ Made custom notes' limit infinite\n" +
+                                                "_-_ Added the new spells into the catalog\n"));
+                changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Bug Fixes",
+                                "_-_ Fixed false 45% health penalty in the Fate Lock\n"));
+
+                changes = new ChangeInfo("B", false, "");
+                changes.hardlight(0x00FFFF);
+                changeInfos.add(changes);
+
+                changes.addButton(new ChangeButton(new Barricade(),
+                                "A spell that changes your terrain, casting will a build barricade for you."));
+                changes.addButton(new ChangeButton(new DeterminantInfusion(),
+                                "A spell that gives you life stealing shield, perhaps, used to something.."));
+                changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
+                                "_-_ Fixed inconsistencies in tubes' descriptions\n" +
+                                                "_-_ Made Elixir of Might rarer\n" +
+                                                "_-_ Emblems can now be held by Velvet Pouch\n" +
+                                                "_-_ Tubes can now be held by Potion Bandolier\n" +
+                                                "_-_ Reduced rooms by ~33%\n" +
+                                                "_-_ Arena now sells Ankhs and some emblems\n" +
+                                                "_-_ Fate Lock will now give scroll of transmutation when reached very high experience"));
+                changes.addButton(new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
+                                "_-_ Pharmacophobia will give you ~25% turns of your health, from ~40%\n" +
+                                                "_-_ Fishing Hooks now drop Refined Bags at very low chance\n" +
+                                                "_-_ Fishing Hooks rare drops has been decreased"));
+                changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Bug Fixes",
+                                "_-_ Fixed Ring Capacity upgrade doesn't work.\n" +
+                                                "_-_ Fixed crash when resetting floor 26 in some cases\n" +
+                                                "_-_ Fixed long negative actor spend time when opening treasurebags\n"));
+
+                changes = new ChangeInfo("A", false, "");
+                changes.hardlight(0x00FFFF);
+                changeInfos.add(changes);
+
+                changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
+                                "_-_ Implemented tubes, balanced form and will now appear in the dungeon\n" +
+                                                "_-_ Added new three emblems with emblem-exclusive enchants\n" +
+                                                "_-_ Reduced bag size to 60, from 61 (overlaps)"));
+                changes.addButton(new ChangeButton(new WandOfTeleportation(),
+                                "Teleportation makes you......? Crazy! Right?\n\n" +
+                                                "Wand of teleportation has been added to the game!"));
+                changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.WEAPON_HOLDER), "Enchantments",
+                                "Added new three emblem-exclusive enchantments, all of them was got in some special weapon abilities"));
+                changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.STONE_EMPOWER),
+                                "Stone of Empowerment",
+                                "Another runestone that helps you in the early game, I guess? It's rare to appear in the game."));
+                changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Bug Fixes",
+                                "_-_ Fixed emblems doubling the count use in bestiary.\n"));
+
+                changes = new ChangeInfo("InfPD-0.1.6", true, "");
+                changes.hardlight(0x00FFFF);
+                changeInfos.add(changes);
+
+                changes = new ChangeInfo("D", false, "");
+                changes.hardlight(0x00FFFF);
+                changeInfos.add(changes);
+
+                changes.addButton(new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
+                                "_-_ Massively decreased overload duration buff in arena\n" +
+                                                "_-_ Delayed some overpowered stat mobs in arena\n"));
+                changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
+                                "_-_ Shopkeeper key no longer drops if the previous badge isn't unlocked.\n" +
+                                                "_-_ Improved Rage Shield's floating text.\n" +
+                                                "_-_ All bags' capacity is increased to 61\n" +
+                                                "_-_ Increased the chance of having an emblem in shoprooms\n"));
+                changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Bug Fixes",
+                                "_-_ Fixed shopkeeper key drops in an incorrect condition.\n" +
+                                                "_-_ Added a temporary fix for the bestiary crashes due to null challenges\n"));
+
+                changes = new ChangeInfo("C", false, "");
+                changes.hardlight(0x00FFFF);
+                changeInfos.add(changes);
+
+                changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.SCROLL_ZYCHRON), "New Scrolls",
+                                "Another scrolls that will help you in the early game, can you get it in the beginning?"));
+                changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
+                                "_-_ The max capacity of rings can now be upgraded\n"));
+                changes.addButton(new ChangeButton(new SackOfHolding(),
+                                "Sack of Holding's behavior has been changed:\n" +
+                                                "_-_ You must click _enable_ and drop the item you selected to put it into sack of holding"));
+                changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Bug Fixes",
+                                "_-_ Fixed shopkeeper key doesn't drop\n" +
+                                                "_-_ Fixed fireboost spell description\n" +
+                                                "_-_ Fixed NTF in galactic infusion\n"));
+
+                changes = new ChangeInfo("B", false, "");
+                changes.hardlight(0x00FFFF);
+                changeInfos.add(changes);
+
+                changes.addButton(new ChangeButton(new GalacticInfusion(),
+                                "Another spell which guarantee Galactic enchantment on your weapon. How nice..."));
+                changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Bug Fixes",
+                                "_-_ Fixed NPE caused by level reset and resurrect + skeleton key\n" +
+                                                "_-_ Fixed visual bug in Emblems on changelog\n" +
+                                                "_-_ Fixed a NTR (AGAIN) when using skeleton key on door with no charge\n"
+                                                +
+                                                "_-_ Fixed NTF on skeleton key's keywall\n" +
+                                                "_-_ Fixed crash on opening a journal\n" +
+                                                "_-_ Fixed skeleton key not recharging within higher level and high rarity"));
+
+                changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
+                                "_-_ Added Potion of Debug\n" +
+                                                "_-_ Added RoExperience in generation\n" +
+                                                "_-_ Added Emblems into the catalog"));
+
+                changes = new ChangeInfo("A", false, "");
+                changes.hardlight(0x00FFFF);
+                changeInfos.add(changes);
+
+                changes.addButton(new ChangeButton(Icons.get(Icons.CHALLENGE_COLOR), "Trinket Changes",
+                                "Certain trinkets has now increased max levels\n\n" +
+                                                "_-_ Dimensional Sundial: 3 -> 10\n" +
+                                                "_-_ Exotic Crystals: 3 -> 5\n" +
+                                                "_-_ Mimic Tooth: 3 -> 5\n" +
+                                                "_-_ Rat Skull: 3 -> 15\n" +
+                                                "_-_ Shard of Oblivion: 3 -> 10\n\n" +
+                                                "This ensures the chaos and the unpredictability of the trinkets."));
+                changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.RING_LIMESTONE), "New Rings",
+                                "Another rings that was actually made for chaos, do they help you?"));
+                changes.addButton(new ChangeButton(new ItemQuantifier(),
+                                "Another gamble item, which adds two or remove one quantity of an item."));
+                changes.addButton(new ChangeButton(new SkeletonKey(),
+                                "Skeleton Key has been added to the game! Have fun to this stuff.... I guess?"));
+                changes.addButton(new ChangeButton(new FerretTuft(),
+                                "Ferret Tuft has been added to the game! Also, added the hit and miss icons from vanilla."));
+                changes.addButton(new ChangeButton(new CommonEmblem(),
+                                "Yes, a brand new item, the _Emblem_!\n\nThis is somewhat like the Raritizing spell but the rarity of the emblem is 100% guaranteed! You can only use emblems on items thrice.\n\nThey can also include some enchants or something powerful..."));
+                changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
+                                "_-_ OOFThiefs can no longer steals bags\n" +
+                                                "_-_ Cheese and Magnetic Meal perk no longer collects item out of range\n"
+                                                +
+                                                "_-_ Added \"More Loots\" upgrade\n" +
+                                                "_-_ Fixed wrong indicator in Gambler spell\n" +
+                                                "_-_ Added emblems in shops appearing within 15% chance\n" +
+                                                "_-_ Added price on emblems (base 400)"));
+                changes.addButton(new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
+                                "_-_ Nerfed gold drops by -50% min, and -25% max\n" +
+                                                "_-_ Nerfed all of the rings, their effects now caps at x10 multiplier per cycle (starting x10 on cycle 0)\n"
+                                                +
+                                                "_-_ Slightly buffed Fishing Rods\n" +
+                                                "_-_ Increased the chance of getting unique items in Refined Bags (from 4.5% to 5%)\n"
+                                                +
+                                                "_-_ Artifact, Ring and Mics slots' SoU cost reduced to _20_ from _25_.\n"
+                                                +
+                                                "_-_ Increased fire boost damage in fire booster spell by 10%\n" +
+                                                "_-_ Added a slight damage boost in _Creative Gloves_ but increased their attack delay by 50%"));
+
+                changes = new ChangeInfo("InfPD-0.1.5", true, "");
+                changes.hardlight(0x00FFFF);
+                changeInfos.add(changes);
+                changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
+                                "_-_ Changed trait of Tanky champions, now takes only 5% damage\n" +
+                                                "_-_ Changed rarity display to its true name\n" +
+                                                "_-_ You can now see what rarity was replaced in the item\n" +
+                                                "_-_ Changed description of Scroll of Magic Mapping\n" +
+                                                "_-_ Changed description of Galactic enchantment\n"));
+                changes.addButton(new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
+                                "_-_ Nerfed Ring of Haste's base speed\n"));
+                changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Bug Fixes",
+                                "_-_ Fixed crash on journal related to Kunai when discovered\n" +
+                                                "_-_ Fixed conditions on Black Fate Lock for ascension\n" +
+                                                "_-_ Fixed missing description on Round Shield\n" +
+                                                "_-_ Fixed a minor crash related to identifying item with a rarity\n" +
+                                                "_-_ Fixed Ring of Haste where the hero is slower at start\n"));
+
+                changes = new ChangeInfo("InfPD-0.1.4", true, "");
+                changes.hardlight(0x00FFFF);
+                changeInfos.add(changes);
+                changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
+                                "_-_ Added 2 new ring sprites\n" +
+                                                "_-_ Scak of Holding no longer holds: rings, scrolls and wands\n" +
+                                                "_-_ Increasing cycles now requires levels...\n" +
+                                                "_-_ Added 2 new champions, Speedy and Tanky\n" +
+                                                "_-_ Increased spawn duration on enemies\n" +
+                                                "_-_ Added _Gambling_ spell\n"));
+                changes.addButton(new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
+                                "_-_ Ghost's reward upgrade level has been reduced to 2, from 5\n" +
+                                                "_-_ Ring of Tenacity is now capped at 90% damage resistance, and reduced per-upgrade effect\n"
+                                                +
+                                                "_-_ Ring of Elements' per=upgrade percentages is massively reduced\n" +
+                                                "_-_ Nerfed spirit bow's min and max damage\n" +
+                                                "_-_ EXP required for getting SoU is now scaled with cycles\n"));
+                changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Bug Fixes",
+                                "_-_ Fixed crash related to RoW with Exotic Crystals\n" +
+                                                "_-_ Fixed crash on journal's catalog\n" +
+                                                "_-_ Fixed a small bug when the rarity name was shown even unidentified\n"));
+
+                changes = new ChangeInfo("InfPD-0.1.3", true, "");
+                changes.hardlight(0x00FFFF);
+                changeInfos.add(changes);
+                changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
+                                "_-_ Added true names for Rarities\n" +
+                                                "_-_ Reverted back Ring of Haste\n" +
+                                                "_-_ Removed additional descriptions for Galactic Enchanment\n" +
+                                                "_-_ Increased standard rooms by ~50%\n" +
+                                                "_-_ Challenges, Daily Runs, and Custom Seeds are now unlocked by default"));
+                changes.addButton(new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
+                                "_-_ Nerfed Ring of Haste at its finest\n" +
+                                                "_-_ Treasure Bags' price were increased by 10 gold\n" +
+                                                "_-_ Scroll of Mirror Image now summons 3 images from 2\n" +
+                                                "_-_ Scroll of Teleportation now paralyzes you for 3 turns\n" +
+                                                "_-_ Potion of Liquid Flame now lasts 50% longer\n" +
+                                                "_-_ Potion of Strength now gives additional strength in 1/2147483647"));
+                changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Bug Fixes",
+                                "_-_ Fixed sack of holding TAKES ALL YOUR ITEMS AT ONCE.\n" +
+                                                "_-_ Fixed stone of clairvoyance crashing the game\n" +
+                                                "_-_ Adjusted clayball sprite"));
+
+                changes = new ChangeInfo("InfPD-0.1.2", true, "");
+                changes.hardlight(0x00FFFF);
+                changeInfos.add(changes);
+                changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
+                                "_-_ Added item renaming\n" +
+                                                "_-_ Made challenge window scrollable\n" +
+                                                "_-_ Aligned the update link to github (you can now get updates in-game)\n"));
+                changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Bug Fixes",
+                                "_-_ Fixed crashes on the perk Raritizing Magic\n"));
+                changes.addButton(new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
+                                "_-_ Nerfed hero max exp\n" +
+                                                "_-_ Reduced the entire loot multiplier\n"));
+
+                changes = new ChangeInfo("InfPD-0.1.1", true, "");
+                changes.hardlight(0x00FFFF);
+                changeInfos.add(changes);
+                changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Bug Fixes",
+                                "_-_ Fixed Potion of Strength not being droppped on the dungeon\n"));
+                changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
+                                "_-_ Added a sprite for Raritize spell\n" +
+                                                "_-_ Added _Extractor_ spell\n" +
+                                                "_-_ Increased custom note size to 30\n" +
+                                                "_-_ Added new spells on the Catalog\n" +
+                                                "_-_ Added some useful info on mobs\n"));
+                changes.addButton(new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
+                                "_-_ Drastically nerfed gold drops\n" +
+                                                "_-_ Fire Booster now multiplies the fire damage by 1.15x\n" +
+                                                "_-_ Recharging buffs now gives you 35 turns of duration\n" +
+                                                "_-_ Stone of Clairvoyance now scans within 23 cells radius\n" +
+                                                "_-_ Arena now spawns with 2x HP and gains a champion title after power 30\n"));
+
+                changes = new ChangeInfo("InfPD-0.1.0", true, "");
+                changes.hardlight(0x00FFFF);
+                changeInfos.add(changes);
+                changes.addButton(new ChangeButton(new RingOfWealth(), "Added back ring of wealth"));
+                changes.addButton(new ChangeButton(new EquipmentBag(),
+                                "Moved the ring, artifact and misc slots into their own bag"));
+                changes.addButton(new ChangeButton(new SackOfHolding(),
+                                "Added the sack of holding, a bag that can hold any item, its sold on the shop at floor 16"));
+                changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "System changes",
+                                "Changed the cycle system to allow for basicly infinite cycles, also changed hardcoded values to be calculated exponentially",
+                                "Allowed the amount of ring, artifact and misc slots to be variable, for use in later Content",
+                                "Added variables for multiplying the amount of rooms, monsters, loot, traps and the size of rooms in a layer"));
+                changes.addButton(new ChangeButton(new LostBackpack(), "Added an optional second row of quickslots"));
+                changes.addButton(new ChangeButton(Icons.BUFFS.get(), "Buffs and Nerfs",
+                                "_-_ Nerfed all rarities' effects\n" +
+                                                "_-_ Rebalanced chances and multipliers of rarities\n" +
+                                                "_-_ Buffed Mimic and Cycle Multiplier\n" +
+                                                "_-_ The chances of getting luck potion is decreased\n" +
+                                                "_-_ Bosses now gains 2.5% HP bonus per escalating depth\n"));
+                changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), "Other Changes",
+                                "_-_ Added _Galactic_ enchanment\n" +
+                                                "_-_ Added _Raritize_ spell\n" +
+                                                "_-_ Extended other bags from 36 to 57\n" +
+                                                "_-_ Added Raritizing Magic perk\n"));
+                changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), "Bug Fixes",
+                                "_-_ Fixed fishing rods not working\n"));
+        }
 }
-
-
-

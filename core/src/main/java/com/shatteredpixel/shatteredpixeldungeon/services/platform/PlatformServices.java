@@ -94,4 +94,19 @@ public interface PlatformServices {
 	 * or if a valid Supporter License Key is active.
 	 */
 	boolean isSupporter();
+
+	/**
+	 * Returns the active supporter tier rank (0 = None, 1 = Bronze, 2 = Silver, 3 = Gold, 4 = Platinum).
+	 */
+	int getSupporterTier();
+
+	/**
+	 * Initiates a supporter purchase for the specified tier.
+	 */
+	void purchaseSupporter(int tierRank, com.watabou.utils.Callback callback);
+
+	/**
+	 * Restores previously purchased supporter tiers from the platform.
+	 */
+	void restorePurchases(com.watabou.utils.Callback callback);
 }

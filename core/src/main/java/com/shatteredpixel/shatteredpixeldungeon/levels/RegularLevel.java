@@ -36,6 +36,9 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.SacrificialFire;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Perks;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
+import com.shatteredpixel.shatteredpixeldungeon.FallenHeroRecord;
+import com.shatteredpixel.shatteredpixeldungeon.NemesisConfig;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.GhostHeroNPC;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.EbonyMimic;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GoldenMimic;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mimic;
@@ -300,9 +303,20 @@ public abstract class RegularLevel extends Level {
 				map[m.pos] = Terrain.GRASS;
 				losBlocking[m.pos] = false;
 			}
-
 		}
 
+		NemesisConfig nCfg = NemesisConfig.get();
+		if (nCfg.enabled) {
+			FallenHeroRecord fRecord = FallenHeroRecord.load();
+			if (fRecord != null && !fRecord.released && fRecord.depth == Dungeon.depth) {
+				int cell = randomDropCell();
+				if (cell != -1) {
+					GhostHeroNPC gNPC = new GhostHeroNPC(fRecord);
+					gNPC.pos = cell;
+					mobs.add(gNPC);
+				}
+			}
+		}
 	}
 
 	@Override

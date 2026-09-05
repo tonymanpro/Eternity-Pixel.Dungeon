@@ -291,6 +291,8 @@ public class Assets {
 		public static final String AMULET   = "sprites/amulet.png";
 
 		public static final String RAT      = "sprites/rat.png";
+		public static final String RAT_HOLIDAY = "sprites/rat_holiday.png";
+		public static final String SANTA_HAT= "sprites/santa_hat.png";
 		public static final String BRUTE    = "sprites/brute.png";
 		public static final String SPINNER  = "sprites/spinner.png";
 		public static final String DM300    = "sprites/dm300.png";
@@ -300,13 +302,16 @@ public class Assets {
 		public static final String PIRANHA  = "sprites/piranha.png";
 		public static final String EYE      = "sprites/eye.png";
 		public static final String GNOLL    = "sprites/gnoll.png";
+		public static final String GNOLL_HOLIDAY = "sprites/gnoll_holiday.png";
 		public static final String CRAB     = "sprites/crab.png";
 		public static final String GOO      = "sprites/goo.png";
 		public static final String GOLDEN_GOO = "sprites/golden_goo.png";
 		public static final String SWARM    = "sprites/swarm.png";
 		public static final String SKELETON = "sprites/skeleton.png";
+		public static final String SKELETON_HOLIDAY = "sprites/skeleton_holiday.png";
 		public static final String SHAMAN   = "sprites/shaman.png";
 		public static final String THIEF    = "sprites/thief.png";
+		public static final String THIEF_HOLIDAY = "sprites/thief_holiday.png";
 		public static final String TENGU    = "sprites/tengu.png";
 		public static final String SHEEP    = "sprites/sheep.png";
 		public static final String KEEPER   = "sprites/shopkeeper.png";

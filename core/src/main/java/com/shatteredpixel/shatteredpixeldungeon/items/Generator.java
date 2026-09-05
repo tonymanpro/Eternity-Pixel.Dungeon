@@ -607,7 +607,7 @@ public class Generator {
 					RingOfTenacity.class,
 					RingOfWealth.class,
                     RingOfExperience.class,
-                    RingOfValor.class};
+                    RingOfScorch.class};
 			RING.probs = new float[]{ 3, 3, 0, 3, 3, 3, 1, 3, 3, 3, 3, 1, 1, 1 };
 			
 			ARTIFACT.classes = new Class<?>[]{

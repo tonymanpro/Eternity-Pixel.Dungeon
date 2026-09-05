@@ -95,7 +95,7 @@ public class Raritize extends InventorySpell {
 			inputs =  new Class[]{ScrollOfUpgrade.class, ScrollOfTransmutation.class};
 			inQuantity = new int[]{1, 1};
 			
-			cost = 150;
+			cost = 175;
 			
 			output = Raritize.class;
 			outQuantity = OUT_QUANTITY;

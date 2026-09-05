@@ -66,6 +66,40 @@ public class WndSupporterUnlock extends Window {
 		float pos = text.bottom() + GAP * 2;
 
 		if (!isSupporter) {
+			// Tier Donation Buttons for Google Play / Platform IAP
+			for (final SupporterManager.SupporterTier t : SupporterManager.SupporterTier.values()) {
+				if (t == SupporterManager.SupporterTier.NONE) continue;
+				RedButton btnTier = new RedButton(t.displayName()) {
+					@Override
+					public void onClick() {
+						SupporterManager.purchase(t, () -> {
+							hide();
+							ShatteredPixelDungeon.scene().addToFront(new WndSupporterUnlock());
+							if (ShatteredPixelDungeon.scene() instanceof com.shatteredpixel.shatteredpixeldungeon.scenes.HeroSelectScene) {
+								ShatteredPixelDungeon.switchNoFade(com.shatteredpixel.shatteredpixeldungeon.scenes.HeroSelectScene.class);
+							}
+						});
+					}
+				};
+				btnTier.textColor(t.color);
+				btnTier.setRect(0, pos, width, 18);
+				add(btnTier);
+				pos = btnTier.bottom() + GAP;
+			}
+
+			RedButton btnRestore = new RedButton(Messages.get(this, "btn_restore")) {
+				@Override
+				public void onClick() {
+					SupporterManager.restore(() -> {
+						hide();
+						ShatteredPixelDungeon.scene().addToFront(new WndSupporterUnlock());
+					});
+				}
+			};
+			btnRestore.setRect(0, pos, width, 18);
+			add(btnRestore);
+			pos = btnRestore.bottom() + GAP;
+
 			RedButton btnEnterKey = new RedButton(Messages.get(this, "btn_enter_key")) {
 				@Override
 				public void onClick() {

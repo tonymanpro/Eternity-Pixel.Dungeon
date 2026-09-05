@@ -196,6 +196,35 @@ public class SPDSettings extends GameSettings {
 	public static final String KEY_GRID 	    = "visual_grid";
 	public static final String KEY_CAMERA_FOLLOW= "camera_follow";
 	public static final String KEY_SCREEN_SHAKE = "screen_shake";
+	public static final String KEY_DYNAMIC_LIGHTING = "dynamic_lighting";
+	public static final String KEY_BLOOM_ENABLED    = "bloom_enabled";
+	public static final String KEY_VIGNETTE_ENABLED = "vignette_enabled";
+
+	public static void dynamicLighting( boolean value ) {
+		put( KEY_DYNAMIC_LIGHTING, value );
+	}
+
+	public static boolean dynamicLighting() {
+		return getBoolean( KEY_DYNAMIC_LIGHTING, true );
+	}
+
+	public static void bloomEnabled( boolean value ) {
+		put( KEY_BLOOM_ENABLED, value );
+		com.watabou.noosa.PostProcessing.bloomEnabled = value;
+	}
+
+	public static boolean bloomEnabled() {
+		return getBoolean( KEY_BLOOM_ENABLED, false );
+	}
+
+	public static void vignetteEnabled( boolean value ) {
+		put( KEY_VIGNETTE_ENABLED, value );
+		com.watabou.noosa.PostProcessing.vignetteEnabled = value;
+	}
+
+	public static boolean vignetteEnabled() {
+		return getBoolean( KEY_VIGNETTE_ENABLED, false );
+	}
 
 	public static void fullscreen( boolean value ) {
 		put( KEY_FULLSCREEN, value );
@@ -204,7 +233,7 @@ public class SPDSettings extends GameSettings {
 	}
 	
 	public static boolean fullscreen() {
-		return getBoolean( KEY_FULLSCREEN, DeviceCompat.isDesktop() );
+		return getBoolean( KEY_FULLSCREEN, true );
 	}
 	
 	public static void landscape( boolean value ){
@@ -722,5 +751,15 @@ public static void playMusicInBackground( boolean value ){
 
 	public static void supporterToken( String value ) {
 		put( KEY_SUPPORTER_TOKEN, value != null ? value.trim() : "" );
+	}
+
+	public static final String KEY_SUPPORTER_TIER = "supporter_tier";
+
+	public static int supporterTier() {
+		return getInt( KEY_SUPPORTER_TIER, 0 );
+	}
+
+	public static void supporterTier( int value ) {
+		put( KEY_SUPPORTER_TIER, value );
 	}
 }

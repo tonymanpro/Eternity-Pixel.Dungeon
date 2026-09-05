@@ -121,7 +121,7 @@ public class TitleScene extends PixelScene {
 		btnPlay.icon(Icons.get(Icons.ENTER));
 		add(btnPlay);
 
-		StyledButton btnBattlepass = new BattlePassButton(GREY_TR, Messages.get(BattlePassScene.class, "title_prev", BattlePass.currentSeasonName()));
+		StyledButton btnBattlepass = new BattlePassButton(GREY_TR, Messages.get(BattlePassScene.class, "title_prev"));
 		add(btnBattlepass);
 
 		StyledButton btnRankings = new StyledButton(GREY_TR,Messages.get(this, "rankings")){
@@ -144,7 +144,7 @@ public class TitleScene extends PixelScene {
 		btnBadges.icon(Icons.get(Icons.JOURNAL));
 		add(btnBadges);
 
-		StyledButton btnSave = new NewsButton(GREY_TR, "I/E Save");
+		StyledButton btnSave = new NewsButton(GREY_TR, "Saves");
 		btnSave.icon(Icons.get(Icons.INFO));
 		add(btnSave);
 
@@ -332,7 +332,7 @@ public class TitleScene extends PixelScene {
 
 		@Override
         public void onClick() {
-			// we no longer show preview.
+			ShatteredPixelDungeon.switchNoFade(BattlePassScene.class);
 		}
 	}
 

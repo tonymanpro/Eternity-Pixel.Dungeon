@@ -103,6 +103,7 @@ public class BattlePassScene extends PixelScene {
                 ? Messages.get( this, "title", BattlePass.currentSeasonName() )
                 : Messages.get( this, "title_past", viewRecord.seasonName );
         RenderedTextBlock title = renderTextBlock( titleStr, 12 );
+        title.maxWidth( (int)(w - MARGIN * 2) );
         title.hardlight( 0xFFFF44 );
         title.setPos( (w - title.width()) / 2f, 6 );
         align( title );
@@ -112,6 +113,7 @@ public class BattlePassScene extends PixelScene {
 
         if (!live && viewRecord.premium) {
             RenderedTextBlock premiumBadge = renderTextBlock( Messages.get( this, "premium_badge" ), 8 );
+            premiumBadge.maxWidth( (int)(w - MARGIN * 2) );
             premiumBadge.hardlight( 0xFFD700 );
             premiumBadge.setPos( (w - premiumBadge.width()) / 2f, headerY );
             align( premiumBadge );
@@ -134,6 +136,7 @@ public class BattlePassScene extends PixelScene {
             if (prevSeason != null) {
                 RenderedTextBlock prevLine = renderTextBlock(
                         Messages.get( this, "previous_season", prevSeason ), 8 );
+                prevLine.maxWidth( (int)(w - MARGIN * 2) );
                 prevLine.hardlight( 0x888888 );
                 prevLine.setPos( (w - prevLine.width()) / 2f, headerY );
                 align( prevLine );
@@ -153,6 +156,7 @@ public class BattlePassScene extends PixelScene {
         }
 
         progress = renderTextBlock( progressStr, 9 );
+        progress.maxWidth( (int)(w - MARGIN * 2) );
         progress.hardlight( 0xCACFC2 );
         progress.setPos( (w - progress.width()) / 2f, headerY );
         align( progress );
@@ -601,12 +605,16 @@ public class BattlePassScene extends PixelScene {
             rewardIcon.y = boxY + (boxH - rewardIcon.height()) / 2f;
             rewardIcon.alpha( unlocked ? 1f : 0.3f );
 
+            btnClaim.visible = btnClaim.active = claimable && Dungeon.hero != null && Dungeon.hero.isAlive() && Dungeon.level != null;
+            btnClaim.setRect( normalX + boxW - 40, boxY + (boxH - (boxH - 4)) / 2f, 36, boxH - 4 );
+
             rewardNameLabel.visible = reward != null;
             if (reward != null) {
                 rewardNameLabel.text( reward.name() );
-                rewardNameLabel.maxWidth( (int)(btnClaim.left() - (rewardIcon.x + rewardIcon.width() + 6) - 4) );
+                float maxRLabelW = Math.max(10, (btnClaim.visible ? btnClaim.left() : (normalX + boxW - 4)) - (rewardIcon.x + rewardIcon.width() + 4));
+                rewardNameLabel.maxWidth( (int)maxRLabelW );
                 rewardNameLabel.setPos(
-                        rewardIcon.x + rewardIcon.width() + 6,
+                        rewardIcon.x + rewardIcon.width() + 4,
                         rewardIcon.y + (rewardIcon.height() - rewardNameLabel.height()) / 2f
                 );
             }
@@ -627,9 +635,6 @@ public class BattlePassScene extends PixelScene {
                 rewardBonusLabel.text( "+" + (rewardTotalCount - 1) );
                 rewardBonusLabel.setPos( rewardIcon.x + rewardIcon.width() - rewardBonusLabel.width(), rewardIcon.y - 2 );
             }
-
-            btnClaim.visible = btnClaim.active = claimable && Dungeon.hero != null && Dungeon.hero.isAlive() && Dungeon.level != null;
-            btnClaim.setRect( normalX + boxW - 40, boxY + (boxH - (boxH - 4)) / 2f, 36, boxH - 4 );
 
             boolean showPremium = BattlePassTiers.hasPremiumReward( tier );
             if (showPremium) {
@@ -667,9 +672,10 @@ public class BattlePassScene extends PixelScene {
                 premiumNameLabel.visible = premiumReward != null;
                 if (premiumReward != null) {
                     premiumNameLabel.text( premiumReward.name() );
-                    premiumNameLabel.maxWidth( (int)(btnClaimPremium.left() - (premiumIcon.x + premiumIcon.width() + 6) - 4) );
+                    float maxPLabelW = Math.max(10, (btnClaimPremium.visible ? btnClaimPremium.left() : (premiumX + boxW - 4)) - (premiumIcon.x + premiumIcon.width() + 4));
+                    premiumNameLabel.maxWidth( (int)maxPLabelW );
                     premiumNameLabel.setPos(
-                            premiumIcon.x + premiumIcon.width() + 6,
+                            premiumIcon.x + premiumIcon.width() + 4,
                             premiumIcon.y + (premiumIcon.height() - premiumNameLabel.height()) / 2f
                     );
                 }

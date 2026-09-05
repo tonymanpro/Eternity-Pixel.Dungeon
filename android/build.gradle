@@ -25,10 +25,34 @@ android {
 
     }
 
+    Properties localProps = new Properties()
+    File localPropsFile = project.rootProject.file('local.properties')
+    if (localPropsFile.exists()) {
+        localProps.load(new FileInputStream(localPropsFile))
+    }
+
+    signingConfigs {
+        debug {
+            storeFile file("${System.getProperty('user.home')}/.android/debug.keystore")
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
+        }
+        release {
+            if (localProps.getProperty('key.store') != null) {
+                storeFile project.rootProject.file(localProps.getProperty('key.store'))
+                storePassword localProps.getProperty('key.store.password')
+                keyAlias localProps.getProperty('key.alias')
+                keyPassword localProps.getProperty('key.alias.password')
+            }
+        }
+    }
+
     buildTypes {
         debug {
             applicationIdSuffix ".indev"
             versionNameSuffix '-INDEV'
+            signingConfig signingConfigs.debug
         }
         release {
 
@@ -39,13 +63,14 @@ android {
             shrinkResources true
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.debug
+            signingConfig (localProps.getProperty('key.store') != null ? signingConfigs.release : signingConfigs.debug)
         }
     }
 
     sourceSets {
         main {
             jniLibs.srcDirs = ['libs']
+            resources.srcDirs = ['src/main/resources']
         }
     }
 }
@@ -68,6 +93,7 @@ dependencies {
     natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86"
     natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86_64"
     implementation "com.badlogicgames.gdx-controllers:gdx-controllers-android:$gdxControllersVersion"
+    implementation 'com.android.billingclient:billing:8.0.0'
 
     debugImplementation project(':services:updates:debugUpdates')
     releaseImplementation project(':services:updates:githubUpdates')

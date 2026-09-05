@@ -25,6 +25,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.sprites;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.HolidayEventConfig;
 import com.watabou.noosa.TextureFilm;
 
 public class RatSprite extends MobSprite {
@@ -32,9 +33,14 @@ public class RatSprite extends MobSprite {
 	public RatSprite() {
 		super();
 		
-		texture( Assets.Sprites.RAT );
+		boolean holiday = HolidayEventConfig.get().isWinterEventActive() && HolidayEventConfig.get().santaHatEnabled;
+		if (holiday) {
+			texture( Assets.Sprites.RAT_HOLIDAY );
+		} else {
+			texture( Assets.Sprites.RAT );
+		}
 		
-		TextureFilm frames = new TextureFilm( texture, 16, 15 );
+		TextureFilm frames = new TextureFilm( texture, 16, holiday ? 19 : 15 );
 		
 		idle = new Animation( 2, true );
 		idle.frames( frames, 0, 0, 0, 1 );

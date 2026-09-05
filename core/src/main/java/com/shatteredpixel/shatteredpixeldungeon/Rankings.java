@@ -122,6 +122,17 @@ public enum Rankings {
 
 		rec.gameID = UUID.randomUUID().toString();
 
+		boolean qualifiesForHallOfFame = rec.win || Statistics.deepestFloor >= 20 || rec.depth >= 20;
+		if (qualifiesForHallOfFame) {
+			rec.victoryBuild = VictoryBuild.captureCurrentRun(rec);
+			com.shatteredpixel.shatteredpixeldungeon.services.OnlineLeaderboardService.submitRecordAsync(rec, rec.victoryBuild);
+		}
+
+		if (!rec.win) {
+			String causeName = rec.cause != null ? Messages.get(rec.cause, "name") : "Oscuridad de la Mazmorra";
+			FallenHeroRecord.captureDeath(Dungeon.hero, rec.depth, causeName);
+		}
+
 		if (rec.daily){
 			if (Dungeon.dailyReplay){
 				latestDailyReplay = rec;
@@ -536,6 +547,7 @@ public enum Rankings {
 
 		private static final String DATE    = "date";
 		private static final String VERSION = "version";
+		private static final String BUILD   = "victory_build";
 
 		public Class cause;
 		public boolean win;
@@ -548,6 +560,7 @@ public enum Rankings {
 
 		public Bundle gameData;
 		public String gameID;
+		public VictoryBuild victoryBuild;
 
 		//Note this is for summary purposes, visible score should be re-calculated from game data
 		public long score;
@@ -611,6 +624,9 @@ public enum Rankings {
 			
 			if (gameID == null) gameID = UUID.randomUUID().toString();
 
+			if (bundle.contains(BUILD)) {
+				victoryBuild = (VictoryBuild) bundle.get(BUILD);
+			}
 		}
 		
 		@Override
@@ -635,6 +651,8 @@ public enum Rankings {
 
 			if (gameData != null) bundle.put( DATA, gameData );
 			bundle.put( ID, gameID );
+
+			if (victoryBuild != null) bundle.put( BUILD, victoryBuild );
 		}
 	}
 

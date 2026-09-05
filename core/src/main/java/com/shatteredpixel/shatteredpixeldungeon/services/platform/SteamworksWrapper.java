@@ -174,4 +174,19 @@ public class SteamworksWrapper implements PlatformServices {
 	public boolean isSupporter() {
 		return initialized;
 	}
+
+	@Override
+	public int getSupporterTier() {
+		return initialized ? 3 : 0; // Steam players get Gold tier by default
+	}
+
+	@Override
+	public void purchaseSupporter(int tierRank, com.watabou.utils.Callback callback) {
+		if (callback != null) callback.call();
+	}
+
+	@Override
+	public void restorePurchases(com.watabou.utils.Callback callback) {
+		if (callback != null) callback.call();
+	}
 }

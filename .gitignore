@@ -1,10 +1,9 @@
-# Built application files
+# Built application files
 *.apk
-
-# Files for the Dalvik VM
+*.aab
+*.keystore
+*.jks
 *.dex
-
-# Java class files
 *.class
 
 # Gradle build files

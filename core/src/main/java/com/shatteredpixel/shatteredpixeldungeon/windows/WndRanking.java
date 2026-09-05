@@ -288,6 +288,19 @@ public class WndRanking extends WndTabbed {
 				add(btnSeed);
 			}
 
+			if (record.win || record.victoryBuild != null) {
+				RedButton btnBuild = new RedButton(Messages.get(WndHallOfFameBuild.class, "view_build")) {
+					@Override
+					public void onClick() {
+						super.onClick();
+						ShatteredPixelDungeon.scene().addToFront(new WndHallOfFameBuild(record, record.victoryBuild));
+					}
+				};
+				btnBuild.icon(Icons.get(Icons.RANKINGS));
+				btnBuild.setRect(0, buttontop - 18, 115, 16);
+				add(btnBuild);
+			}
+
 		}
 		
 		private float statSlot( Group parent, String label, String value, float pos ) {

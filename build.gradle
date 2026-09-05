@@ -19,16 +19,16 @@ allprojects {
 
     ext {
         appName = 'Eternity Pixel Dungeon'
-        appPackageName = 'com.eternity.pixeldungeon.com'
+        appPackageName = 'com.eternity.pixeldungeon'
 
-        appVersionCode = 1203
-        appVersionName = 'v1.2.3'
+        appVersionCode = 1206
+        appVersionName = 'v1.2.4'
 
         appJavaCompatibility = JavaVersion.VERSION_11
 
-        appAndroidCompileSDK = 35   //Android 15
+        appAndroidCompileSDK = 36   //Android 16
         appAndroidMinSDK = 21       //Android 5.0
-        appAndroidTargetSDK = 35    //Android 15
+        appAndroidTargetSDK = 36    //Android 16
 
         gdxVersion = '1.12.1'
         gdxControllersVersion = '2.2.4'

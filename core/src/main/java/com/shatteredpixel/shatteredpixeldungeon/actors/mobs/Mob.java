@@ -962,6 +962,12 @@ public abstract class Mob extends Char {
 
 		boolean soulMarked = buff(SoulMark.class) != null;
 
+		if (com.shatteredpixel.shatteredpixeldungeon.HolidayEventConfig.get().isWinterEventActive()) {
+			if (Random.Float() < com.shatteredpixel.shatteredpixeldungeon.HolidayEventConfig.get().giftDropChance) {
+				Dungeon.level.drop(new com.shatteredpixel.shatteredpixeldungeon.items.holiday.HolidayGift(), pos);
+			}
+		}
+
 		super.die( cause );
 
 		if (!(this instanceof Wraith)
@@ -1187,7 +1193,9 @@ public abstract class Mob extends Char {
 	}
 
 	public void notice() {
-		sprite.showAlert();
+		if (sprite != null) {
+			sprite.showAlert();
+		}
 	}
 	
 	public void yell( String str ) {

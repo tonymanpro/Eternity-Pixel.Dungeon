@@ -123,7 +123,7 @@ public abstract class EmblemSystem extends Item {
 
         @Override
         public boolean itemSelectable(Item item) {
-            return usableOnItem(item);
+            return item != null && usableOnItem(item);
         }
 
         @Override

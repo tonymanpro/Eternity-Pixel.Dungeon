@@ -27,6 +27,8 @@ package com.shatteredpixel.shatteredpixeldungeon.services.platform;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 
+import com.watabou.utils.Callback;
+
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Locale;
@@ -34,19 +36,33 @@ import java.util.Locale;
 public class SupporterManager {
 
 	public enum SupporterTier {
-		NONE(0, "tier_none"),
-		SUPPORTER(1, "tier_supporter");
+		NONE(0, "tier_none", 0xFFFFFF, "supporter_none"),
+		BRONZE(1, "tier_bronze", 0xCD7F32, "supporter_bronze"),
+		SILVER(2, "tier_silver", 0xC0C0C0, "supporter_silver"),
+		GOLD(3, "tier_gold", 0xFFD700, "supporter_gold"),
+		PLATINUM(4, "tier_platinum", 0x00FFFF, "supporter_platinum");
 
 		public final int rank;
 		public final String key;
+		public final int color;
+		public final String sku;
 
-		SupporterTier(int rank, String key) {
+		SupporterTier(int rank, String key, int color, String sku) {
 			this.rank = rank;
 			this.key = key;
+			this.color = color;
+			this.sku = sku;
 		}
 
 		public String displayName() {
 			return Messages.get(SupporterManager.class, key);
+		}
+
+		public static SupporterTier fromRank(int rank) {
+			for (SupporterTier t : values()) {
+				if (t.rank == rank) return t;
+			}
+			return rank > 0 ? PLATINUM : NONE;
 		}
 	}
 
@@ -70,32 +86,55 @@ public class SupporterManager {
 	 * 4. Verified Algorithmic License Key
 	 */
 	public static boolean isSupporter() {
-		// 1. Steam check: Running on Steam gives automatic full supporter entitlement
+		return getActiveTier() != SupporterTier.NONE;
+	}
+
+	/**
+	 * Returns the active Supporter Tier (NONE, BRONZE, SILVER, GOLD, PLATINUM).
+	 */
+	public static SupporterTier getActiveTier() {
+		// 1. Steam check: Running on Steam gives automatic Gold supporter entitlement
 		PlatformServices platform = PlatformManager.get();
 		if (platform != null && platform.isAvailable() && "STEAMWORKS".equalsIgnoreCase(platform.getPlatformId())) {
-			return true;
+			return SupporterTier.GOLD;
 		}
 
 		// 2. Platform native supporter check (e.g., Google Play In-App Purchase)
-		if (platform != null && platform.isSupporter()) {
-			return true;
+		if (platform != null && platform.getSupporterTier() > 0) {
+			return SupporterTier.fromRank(platform.getSupporterTier());
 		}
 
 		// 3. Device-bound activation token check
 		String token = SPDSettings.supporterToken();
 		if (token != null && !token.isEmpty() && isTokenValid(token)) {
-			return true;
+			return getTierFromToken(token);
 		}
 
 		// 4. Local validated Patreon / Direct Supporter License Key
-		return isKeyValid(SPDSettings.supporterKey());
+		String key = SPDSettings.supporterKey();
+		if (isKeyValid(key)) {
+			return getTierFromKey(key);
+		}
+
+		return SupporterTier.NONE;
 	}
 
-	/**
-	 * Returns the active Supporter Tier (SUPPORTER or NONE).
-	 */
-	public static SupporterTier getActiveTier() {
-		return isSupporter() ? SupporterTier.SUPPORTER : SupporterTier.NONE;
+	public static void purchase(SupporterTier tier, Callback callback) {
+		PlatformServices platform = PlatformManager.get();
+		if (platform != null) {
+			platform.purchaseSupporter(tier.rank, callback);
+		} else if (callback != null) {
+			callback.call();
+		}
+	}
+
+	public static void restore(Callback callback) {
+		PlatformServices platform = PlatformManager.get();
+		if (platform != null) {
+			platform.restorePurchases(callback);
+		} else if (callback != null) {
+			callback.call();
+		}
 	}
 
 	/**
@@ -181,6 +220,32 @@ public class SupporterManager {
 		} catch (Throwable ignored) {
 			return false;
 		}
+	}
+
+	public static SupporterTier getTierFromToken(String token) {
+		if (!isTokenValid(token)) return SupporterTier.NONE;
+		try {
+			String[] parts = token.split("-");
+			if (parts.length >= 2) {
+				String tierName = parts[1].toUpperCase(Locale.ROOT);
+				if (tierName.contains("PLATINUM")) return SupporterTier.PLATINUM;
+				if (tierName.contains("GOLD")) return SupporterTier.GOLD;
+				if (tierName.contains("SILVER")) return SupporterTier.SILVER;
+				if (tierName.contains("BRONZE")) return SupporterTier.BRONZE;
+				if (tierName.contains("SUPPORTER")) return SupporterTier.GOLD;
+			}
+		} catch (Throwable ignored) {}
+		return SupporterTier.BRONZE;
+	}
+
+	public static SupporterTier getTierFromKey(String key) {
+		if (!isKeyValid(key)) return SupporterTier.NONE;
+		String upper = key.toUpperCase(Locale.ROOT);
+		if (upper.contains("PLAT")) return SupporterTier.PLATINUM;
+		if (upper.contains("GOLD")) return SupporterTier.GOLD;
+		if (upper.contains("SILV")) return SupporterTier.SILVER;
+		if (upper.contains("BRON")) return SupporterTier.BRONZE;
+		return SupporterTier.GOLD;
 	}
 
 	/**

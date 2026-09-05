@@ -70,7 +70,7 @@ public abstract class InventorySpell extends Spell {
 
 		@Override
 		public boolean itemSelectable(Item item) {
-			return usableOnItem(item);
+			return item != null && usableOnItem(item);
 		}
 
 		@Override

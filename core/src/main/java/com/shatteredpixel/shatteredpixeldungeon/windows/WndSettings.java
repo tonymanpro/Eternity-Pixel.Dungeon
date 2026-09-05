@@ -215,6 +215,9 @@ public class WndSettings extends WndTabbed {
 		CheckBox chkFullscreen;
 		RedButton btnResolution;
 		CheckBox chkLandscape;
+		CheckBox chkDynamicLighting;
+		CheckBox chkBloom;
+		CheckBox chkVignette;
 		OptionSlider optScale;
 		ColorBlock sep2;
 		OptionSlider optBrightness;
@@ -329,6 +332,36 @@ public class WndSettings extends WndTabbed {
 				add(chkLandscape);
 			}
 
+			chkDynamicLighting = new CheckBox(Messages.get(this, "dynamic_lighting")) {
+				@Override
+				public void onClick() {
+					super.onClick();
+					SPDSettings.dynamicLighting(checked());
+				}
+			};
+			chkDynamicLighting.checked(SPDSettings.dynamicLighting());
+			add(chkDynamicLighting);
+
+			chkBloom = new CheckBox(Messages.get(this, "bloom")) {
+				@Override
+				public void onClick() {
+					super.onClick();
+					SPDSettings.bloomEnabled(checked());
+				}
+			};
+			chkBloom.checked(SPDSettings.bloomEnabled());
+			add(chkBloom);
+
+			chkVignette = new CheckBox(Messages.get(this, "vignette")) {
+				@Override
+				public void onClick() {
+					super.onClick();
+					SPDSettings.vignetteEnabled(checked());
+				}
+			};
+			chkVignette.checked(SPDSettings.vignetteEnabled());
+			add(chkVignette);
+
 			sep2 = new ColorBlock(1, 1, 0xFF000000);
 			add(sep2);
 
@@ -403,6 +436,15 @@ public class WndSettings extends WndTabbed {
 				optScale.setRect(0, bottom + GAP, width, SLIDER_HEIGHT);
 				bottom = optScale.bottom();
 			}
+
+			chkDynamicLighting.setRect(0, bottom + GAP, width, BTN_HEIGHT);
+			bottom = chkDynamicLighting.bottom();
+
+			chkBloom.setRect(0, bottom + GAP, width, BTN_HEIGHT);
+			bottom = chkBloom.bottom();
+
+			chkVignette.setRect(0, bottom + GAP, width, BTN_HEIGHT);
+			bottom = chkVignette.bottom();
 
 			sep2.size(width, 1);
 			sep2.y = bottom + GAP;

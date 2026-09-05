@@ -194,7 +194,7 @@ public abstract class Recipe {
 	//*******
 
 	private static Recipe[] variableRecipes = new Recipe[]{
-
+		new WeaponBlueprint.Recipe()
 	};
 
 	private static Recipe[] oneIngredientRecipes = new Recipe[]{
@@ -307,10 +307,9 @@ public abstract class Recipe {
 	}
 	
 	public static boolean usableInRecipe(Item item){
-		//only upgradeable thrown weapons and wands allowed among equipment items
+		//only upgradeable equipment and wands allowed among equipment items
 		if (item instanceof EquipableItem){
-			return item.isIdentified() && !item.cursed &&
-					item instanceof MissileWeapon && item.isUpgradable();
+			return item.isIdentified() && !item.cursed && item.isUpgradable();
 		} else if (item instanceof Wand) {
 			return item.isIdentified() && !item.cursed;
 		} else {

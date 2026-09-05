@@ -25,6 +25,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.sprites;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.HolidayEventConfig;
 import com.watabou.noosa.TextureFilm;
 
 public class GnollSprite extends MobSprite {
@@ -32,9 +33,14 @@ public class GnollSprite extends MobSprite {
 	public GnollSprite() {
 		super();
 		
-		texture( Assets.Sprites.GNOLL );
+		boolean holiday = HolidayEventConfig.get().isWinterEventActive() && HolidayEventConfig.get().santaHatEnabled;
+		if (holiday) {
+			texture( Assets.Sprites.GNOLL_HOLIDAY );
+		} else {
+			texture( Assets.Sprites.GNOLL );
+		}
 		
-		TextureFilm frames = new TextureFilm( texture, 12, 15 );
+		TextureFilm frames = new TextureFilm( texture, 12, holiday ? 19 : 15 );
 		
 		idle = new Animation( 2, true );
 		idle.frames( frames, 0, 0, 0, 1, 0, 0, 1, 1 );

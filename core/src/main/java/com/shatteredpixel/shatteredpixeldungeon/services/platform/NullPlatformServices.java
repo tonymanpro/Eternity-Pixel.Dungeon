@@ -97,13 +97,31 @@ public class NullPlatformServices implements PlatformServices {
 	}
 
 	private boolean supporterEntitlement = false;
+	private int supporterTier = 0;
 
 	@Override
 	public boolean isSupporter() {
-		return supporterEntitlement;
+		return supporterEntitlement || supporterTier > 0;
 	}
 
 	public void setSupporter(boolean value) {
 		this.supporterEntitlement = value;
+	}
+
+	@Override
+	public int getSupporterTier() {
+		return supporterTier > 0 ? supporterTier : (supporterEntitlement ? 1 : 0);
+	}
+
+	@Override
+	public void purchaseSupporter(int tierRank, com.watabou.utils.Callback callback) {
+		this.supporterTier = tierRank;
+		this.supporterEntitlement = true;
+		if (callback != null) callback.call();
+	}
+
+	@Override
+	public void restorePurchases(com.watabou.utils.Callback callback) {
+		if (callback != null) callback.call();
 	}
 }
