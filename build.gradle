@@ -21,7 +21,7 @@ allprojects {
         appName = 'Eternity Pixel Dungeon'
         appPackageName = 'com.eternity.pixeldungeon'
 
-        appVersionCode = 1206
+        appVersionCode = 1207
         appVersionName = 'v1.2.4'
 
         appJavaCompatibility = JavaVersion.VERSION_11

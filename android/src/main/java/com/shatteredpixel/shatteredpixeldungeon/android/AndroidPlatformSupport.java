@@ -136,53 +136,71 @@ public class AndroidPlatformSupport extends PlatformSupport {
 	}
 	
 	public void updateSystemUI() {
-		
+		if (AndroidLauncher.instance == null) {
+			return;
+		}
+
 		AndroidLauncher.instance.runOnUiThread(new Runnable() {
 			@SuppressLint("NewApi")
 			@Override
 			public void run() {
-				boolean fullscreen = Build.VERSION.SDK_INT < Build.VERSION_CODES.N
-						|| !AndroidLauncher.instance.isInMultiWindowMode();
-				
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-					AndroidLauncher.instance.getWindow().getAttributes().layoutInDisplayCutoutMode =
-							WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+				if (AndroidLauncher.instance == null || AndroidLauncher.instance.getWindow() == null) {
+					return;
 				}
 
-				if (fullscreen){
-					AndroidLauncher.instance.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-							WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-				} else {
-					AndroidLauncher.instance.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN,
-							WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-				}
+				try {
+					boolean fullscreen = Build.VERSION.SDK_INT < Build.VERSION_CODES.N
+							|| !AndroidLauncher.instance.isInMultiWindowMode();
 
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-					android.view.WindowInsetsController insetsController = AndroidLauncher.instance.getWindow().getInsetsController();
-					if (insetsController != null) {
-						if (SPDSettings.fullscreen()) {
-							insetsController.hide(android.view.WindowInsets.Type.statusBars() | android.view.WindowInsets.Type.navigationBars());
-							insetsController.setSystemBarsBehavior(android.view.WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
-						} else {
-							insetsController.show(android.view.WindowInsets.Type.statusBars() | android.view.WindowInsets.Type.navigationBars());
+					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+						AndroidLauncher.instance.getWindow().getAttributes().layoutInDisplayCutoutMode =
+								WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+					}
+
+					if (fullscreen){
+						AndroidLauncher.instance.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+								WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+					} else {
+						AndroidLauncher.instance.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN,
+								WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+					}
+
+					View decorView = AndroidLauncher.instance.getWindow().peekDecorView();
+					if (decorView == null) {
+						decorView = AndroidLauncher.instance.getWindow().getDecorView();
+					}
+
+					if (decorView != null) {
+						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+							android.view.WindowInsetsController insetsController = decorView.getWindowInsetsController();
+							if (insetsController != null) {
+								if (SPDSettings.fullscreen()) {
+									insetsController.hide(android.view.WindowInsets.Type.statusBars() | android.view.WindowInsets.Type.navigationBars());
+									insetsController.setSystemBarsBehavior(android.view.WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+								} else {
+									insetsController.show(android.view.WindowInsets.Type.statusBars() | android.view.WindowInsets.Type.navigationBars());
+								}
+							}
+						}
+
+						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+							if (SPDSettings.fullscreen()) {
+								decorView.setSystemUiVisibility(
+										View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+												| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN
+												| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY );
+							} else {
+								decorView.setSystemUiVisibility(
+										View.SYSTEM_UI_FLAG_LAYOUT_STABLE );
+							}
 						}
 					}
-				}
-
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
-					if (SPDSettings.fullscreen()) {
-						AndroidLauncher.instance.getWindow().getDecorView().setSystemUiVisibility(
-								View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-										| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN
-										| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY );
-					} else {
-						AndroidLauncher.instance.getWindow().getDecorView().setSystemUiVisibility(
-								View.SYSTEM_UI_FLAG_LAYOUT_STABLE );
-					}
+				} catch (Throwable ignored) {
+					// Fallback if window decor or insets controller is not yet available
 				}
 			}
 		});
-		
+
 	}
 	
 	@Override

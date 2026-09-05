@@ -145,14 +145,13 @@ public class AndroidLauncher extends AndroidApplication {
         if (support == null) support = new AndroidPlatformSupport();
         else                 support.reloadGenerators();
 
-        support.updateSystemUI();
-
         com.shatteredpixel.shatteredpixeldungeon.services.platform.PlatformManager.setService(new AndroidPlatformServices(this));
 
         Button.longClick = ViewConfiguration.getLongPressTimeout()/1000f;
 
         initialize(new ShatteredPixelDungeon(support), config);
 
+        support.updateSystemUI();
     }
 
     @Override
