@@ -27,8 +27,11 @@ package com.shatteredpixel.shatteredpixeldungeon.levels;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndDemoVictory;
+import com.watabou.utils.Callback;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
@@ -594,6 +597,17 @@ public abstract class Level implements Bundlable {
 	//returns true if we immediately transition, false otherwise
 	public boolean activateTransition(Hero hero, LevelTransition transition){
 		if (locked){
+			return false;
+		}
+
+		if (SPDSettings.isDemo() && Dungeon.depth >= 5 &&
+				(transition.type == LevelTransition.Type.REGULAR_EXIT || transition.type == LevelTransition.Type.BRANCH_EXIT)) {
+			Game.runOnRenderThread(new Callback() {
+				@Override
+				public void call() {
+					com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene.show(new WndDemoVictory());
+				}
+			});
 			return false;
 		}
 

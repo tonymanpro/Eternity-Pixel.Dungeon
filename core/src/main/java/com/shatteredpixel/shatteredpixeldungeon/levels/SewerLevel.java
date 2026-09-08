@@ -132,6 +132,22 @@ public class SewerLevel extends RegularLevel {
 		Ghost.Quest.spawn( this, roomExit );
 		super.createMobs();
 	}
+
+	@Override
+	protected void createItems() {
+		super.createItems();
+		if (Dungeon.depth == 2) {
+			int cell = randomDropCell();
+			if (cell != -1) {
+				com.shatteredpixel.shatteredpixeldungeon.items.pets.PetEgg egg =
+						new com.shatteredpixel.shatteredpixeldungeon.items.pets.PetEgg();
+				if (SPDSettings.isDemo()) {
+					egg.advanceIncubation(25);
+				}
+				drop(egg, cell).type = com.shatteredpixel.shatteredpixeldungeon.items.Heap.Type.CHEST;
+			}
+		}
+	}
 	
 	@Override
 	public boolean activateTransition(Hero hero, LevelTransition transition) {

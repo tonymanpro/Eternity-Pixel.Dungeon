@@ -563,7 +563,11 @@ public class HeroSelectScene extends PixelScene {
 
 			if( !cl.isUnlocked() ){
 				if (cl == HeroClass.BARBARIAN) {
-					ShatteredPixelDungeon.scene().addToFront( new com.shatteredpixel.shatteredpixeldungeon.windows.WndSupporterUnlock() );
+					if (SPDSettings.isDemo()) {
+						ShatteredPixelDungeon.scene().addToFront(new WndTitledMessage(HeroSprite.avatar(cl, 1), cl.title(), cl.unlockMsg()));
+					} else {
+						ShatteredPixelDungeon.scene().addToFront( new com.shatteredpixel.shatteredpixeldungeon.windows.WndSupporterUnlock() );
+					}
 				} else {
 					ShatteredPixelDungeon.scene().addToFront( new WndMessage(cl.unlockMsg()));
 				}

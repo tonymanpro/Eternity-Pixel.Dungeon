@@ -7,6 +7,9 @@ plugins {
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 java.sourceCompatibility = java.targetCompatibility = appJavaCompatibility
 
+ext.isDemo = project.hasProperty('demo') || (project.hasProperty('target') && project.property('target') == 'demo')
+ext.desktopAppName = isDemo ? "${appName} Demo" : appName
+
 ext.appMainClass = "com.shatteredpixel.shatteredpixeldungeon.desktop.DesktopLauncher"
 application.mainClass = appMainClass
 processResources {
@@ -21,10 +24,13 @@ tasks.register('debug', JavaExec) {
     ignoreExitValue = true
 
     mainClass = appMainClass
-    systemProperty 'Specification-Title', appName
+    systemProperty 'Specification-Title', desktopAppName
     systemProperty 'Implementation-Title', appPackageName
-    systemProperty 'Specification-Version', appVersionName + "-INDEV"
+    systemProperty 'Specification-Version', appVersionName + (isDemo ? "-DEMO" : "-INDEV")
     systemProperty 'Implementation-Version', appVersionCode
+    if (isDemo) {
+        systemProperty 'eternity.demo', 'true'
+    }
 
     if (osName.contains('mac')) {
         jvmArgs '-XstartOnFirstThread'
@@ -40,10 +46,11 @@ tasks.register('release', Jar) {
 
     manifest {
         attributes 'Main-Class': appMainClass
-        attributes 'Specification-Title': appName
+        attributes 'Specification-Title': desktopAppName
         attributes 'Implementation-Title': appPackageName
-        attributes 'Specification-Version': appVersionName
+        attributes 'Specification-Version': appVersionName + (isDemo ? " Demo" : "")
         attributes 'Implementation-Version': appVersionCode
+        attributes 'Is-Demo': isDemo ? 'true' : 'false'
     }
 }
 installDist.dependsOn release
@@ -69,7 +76,7 @@ runtime {
     jpackage {
         mainClass = appMainClass
         appVersion = (appVersionName =~ /\d+\.\d+\.\d+/)[0]
-        imageName = appName
+        imageName = desktopAppName
     }
 
     if (osName.contains('windows')) {
@@ -80,7 +87,7 @@ runtime {
             jpackage {
                 jpackageHome = file("./build/jdks/win/jdk-17.0.17+10")
                 imageOptions = ["--icon", file("./src/main/assets/icons/windows.ico"),
-                                "--java-options", "-XX:+IgnoreUnrecognizedVMOptions"]
+                                "--java-options", "-XX:+IgnoreUnrecognizedVMOptions" + (isDemo ? " -Deternity.demo=true" : "")]
             }
         }
     } else if (osName.contains('linux')) {
@@ -149,5 +156,14 @@ tasks.register('exportMaps', JavaExec) {
     systemProperty 'Implementation-Title', appPackageName
     systemProperty 'Specification-Version', appVersionName
     systemProperty 'Implementation-Version', appVersionCode
+}
+
+tasks.register('packageDemoZip', Zip) {
+    dependsOn jpackageImage
+    archiveFileName = "Eternity-Pixel-Dungeon-Demo-${appVersionName}-Windows.zip"
+    destinationDirectory = file("$buildDir/distributions")
+    from("$buildDir/jpackage/${desktopAppName}") {
+        into("${desktopAppName}")
+    }
 }
 

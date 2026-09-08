@@ -51,6 +51,33 @@ public class SPDSettings extends GameSettings {
 		return getInt( KEY_VERSION, 0 );
 	}
 
+	//Demo Mode detection
+	private static Boolean isDemoCached = null;
+
+	public static boolean isDemo() {
+		if (isDemoCached != null) return isDemoCached;
+		String demoProp = System.getProperty("eternity.demo");
+		if ("true".equalsIgnoreCase(demoProp)) {
+			return isDemoCached = true;
+		}
+		String title = System.getProperty("Specification-Title");
+		if (title != null && title.toLowerCase(Locale.ROOT).contains("demo")) {
+			return isDemoCached = true;
+		}
+		Package pkg = SPDSettings.class.getPackage();
+		if (pkg != null) {
+			String specTitle = pkg.getSpecificationTitle();
+			if (specTitle != null && specTitle.toLowerCase(Locale.ROOT).contains("demo")) {
+				return isDemoCached = true;
+			}
+		}
+		return isDemoCached = false;
+	}
+
+	public static void setDemo( boolean demo ) {
+		isDemoCached = demo;
+	}
+
 	//Seedfinder
 
 	public static final String KEY_FLOORS	= "number_of_floors";

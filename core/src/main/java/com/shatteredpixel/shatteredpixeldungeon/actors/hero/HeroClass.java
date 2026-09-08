@@ -118,6 +118,11 @@ public enum HeroClass {
 
 		new ScrollOfIdentify().identify();
 
+		if (SPDSettings.isDemo()) {
+			i = new PotionOfHealing().identify();
+			i.collect();
+		}
+
        if (Challenges.activeChallenges() > 0) {
            int itemQ = 0;
            for (int j = 0; j < Challenges.activeChallenges(); j++) {
@@ -436,13 +441,18 @@ public enum HeroClass {
 
 	public boolean isUnlocked(){
 		if (this == BARBARIAN) {
-			// TEMPORAL: Desbloqueando siempre al Bárbaro para simplificar testeo/uso
+			if (SPDSettings.isDemo()) {
+				return false;
+			}
 			return true;
 		}
 		return true;
 	}
 	
 	public String unlockMsg() {
+		if (this == BARBARIAN && SPDSettings.isDemo()) {
+			return shortDesc() + "\n\n" + Messages.get(HeroClass.class, "barbarian_demo_locked");
+		}
 		return shortDesc() + "\n\n" + Messages.get(HeroClass.class, name()+"_unlock");
 	}
 

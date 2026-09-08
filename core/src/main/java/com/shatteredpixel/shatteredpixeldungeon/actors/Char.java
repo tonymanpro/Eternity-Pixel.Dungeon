@@ -28,6 +28,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Electricity;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.StormCloud;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.ToxicGas;
@@ -823,6 +824,11 @@ public abstract class Char extends Actor {
 			LolEffect lol = Buff.affect(this, LolEffect.class);
 			lol.stacks++;
 			dmg = (long) Math.ceil(dmg * Math.pow(1.005, lol.stacks));
+		}
+
+		// Slightly lower difficulty in demo mode
+		if (this instanceof Hero && SPDSettings.isDemo()){
+			dmg = (long) Math.ceil(dmg * 0.85f);
 		}
 
 		Class<?> srcClass = src.getClass();

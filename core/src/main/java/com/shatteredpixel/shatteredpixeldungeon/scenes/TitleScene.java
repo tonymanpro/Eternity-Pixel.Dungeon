@@ -191,12 +191,34 @@ public class TitleScene extends PixelScene {
 			btnAbout.setRect(btnSettings.right()+2, btnSettings.top(), btnSettings.width(), BTN_HEIGHT);
 		}
 
-		BitmapText version = new BitmapText( "v" + Game.version, pixelFont);
+		String verStr = "v" + Game.version;
+		if (SPDSettings.isDemo()) {
+			verStr += " DEMO";
+		}
+		BitmapText version = new BitmapText( verStr, pixelFont);
 		version.measure();
-		version.hardlight( 0x888888 );
+		if (SPDSettings.isDemo()) {
+			version.hardlight( 0xFFD700 );
+		} else {
+			version.hardlight( 0x888888 );
+		}
 		version.x = w - version.width() - 4;
 		version.y = h - version.height() - 2;
 		add( version );
+
+		if (SPDSettings.isDemo()) {
+			StyledButton btnWishlist = new StyledButton(Chrome.Type.RED_BUTTON, Messages.get(this, "wishlist")) {
+				@Override
+				public void onClick() {
+					ShatteredPixelDungeon.platform.openURI(com.shatteredpixel.shatteredpixeldungeon.windows.WndDemoVictory.STEAM_STORE_URL);
+				}
+			};
+			btnWishlist.icon(Icons.get(Icons.PREFS));
+			btnWishlist.textColor(0xFFD700);
+			btnWishlist.setSize(btnWishlist.reqWidth() + 12, 18);
+			btnWishlist.setPos(4, h - btnWishlist.height() - 4);
+			add(btnWishlist);
+		}
 
 		if (DeviceCompat.isDesktop()) {
 			ExitButton btnExit = new ExitButton();
