@@ -27,7 +27,6 @@ package com.shatteredpixel.shatteredpixeldungeon.sprites;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.darts.ParalyticDart;
-import com.watabou.noosa.MovieClip;
 import com.watabou.noosa.TextureFilm;
 import com.watabou.utils.Callback;
 
@@ -42,19 +41,21 @@ public class GnollTricksterSprite extends MobSprite {
 
 		TextureFilm frames = new TextureFilm( texture, 12, 15 );
 
-		idle = new MovieClip.Animation( 2, true );
-		idle.frames( frames, 21, 21, 21, 22, 21, 21, 22, 22 );
+		int c = 42;
 
-		run = new MovieClip.Animation( 12, true );
-		run.frames( frames, 25, 26, 27, 28 );
+		idle = new Animation( 2, true );
+		idle.frames( frames, 0+c, 0+c, 0+c, 1+c, 0+c, 0+c, 1+c, 1+c );
 
-		attack = new MovieClip.Animation( 12, false );
-		attack.frames( frames, 23, 24, 21 );
+		run = new Animation( 12, true );
+		run.frames( frames, 4+c, 5+c, 6+c, 7+c );
+
+		attack = new Animation( 12, false );
+		attack.frames( frames, 2+c, 3+c, 0+c );
 
 		cast = attack.clone();
 
-		die = new MovieClip.Animation( 12, false );
-		die.frames( frames, 29, 30, 31 );
+		die = new Animation( 12, false );
+		die.frames( frames, 8+c, 9+c, 10+c );
 
 		play( idle );
 	}
