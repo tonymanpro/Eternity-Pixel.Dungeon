@@ -29,7 +29,9 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.watabou.input.PointerEvent;
+import com.watabou.noosa.Game;
 import com.watabou.noosa.TextInput;
+import com.watabou.utils.DeviceCompat;
 
 public class WndTextInput extends Window {
 
@@ -47,11 +49,10 @@ public class WndTextInput extends Window {
 	                           final boolean multiLine, final String posTxt, final String negTxt) {
 		super();
 
-		//need to offset to give space for the soft keyboard
-		if (PixelScene.landscape()) {
-			offset(0, -45);
-		} else {
-			offset(0, multiLine ? -60 : -45);
+		//offset 50% up to give space for the soft keyboard
+		if (!DeviceCompat.hasHardKeyboard()) {
+			offset(0, -(int)(Game.height/(4*camera.zoom)));
+			boundOffsetWithMargin(0);
 		}
 
 		final int width;

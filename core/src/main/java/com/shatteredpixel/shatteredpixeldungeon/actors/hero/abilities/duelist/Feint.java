@@ -51,7 +51,7 @@ import com.watabou.utils.Callback;
 public class Feint extends ArmorAbility {
 
 	{
-		baseChargeUse = 50;
+		baseChargeUse = 35;
 	}
 
 	@Override

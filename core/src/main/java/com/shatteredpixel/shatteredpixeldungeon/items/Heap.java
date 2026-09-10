@@ -106,6 +106,7 @@ Heap implements Bundlable {
 	public boolean seen = false;
 	public boolean haunted = false;
 	public boolean autoExplored = false; //used to determine if this heap should count for exploration bonus
+	public boolean hidden = false;
 
 	public LinkedList<Item> items = new LinkedList<>();
 	
@@ -654,6 +655,7 @@ Heap implements Bundlable {
 	private static final String ITEMS	= "items";
 	private static final String HAUNTED	= "haunted";
 	private static final String AUTO_EXPLORED	= "auto_explored";
+	private static final String HIDDEN	= "hidden";
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -679,6 +681,7 @@ Heap implements Bundlable {
 		
 		haunted = bundle.getBoolean( HAUNTED );
 		autoExplored = bundle.getBoolean( AUTO_EXPLORED );
+		hidden = bundle.getBoolean( HIDDEN );
 	}
 
 	@Override
@@ -689,6 +692,7 @@ Heap implements Bundlable {
 		bundle.put( ITEMS, items );
 		bundle.put( HAUNTED, haunted );
 		bundle.put( AUTO_EXPLORED, autoExplored );
+		bundle.put( HIDDEN, hidden );
 	}
 	
 }

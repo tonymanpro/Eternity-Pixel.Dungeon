@@ -513,6 +513,9 @@ public enum Talent {
 			if (hero.belongings.weapon() != null && !ShardOfOblivion.passiveIDDisabled()){
 				hero.belongings.weapon().identify();
 			}
+			if (hero.belongings.secondWep() != null && !ShardOfOblivion.passiveIDDisabled()){
+				hero.belongings.secondWep().identify();
+			}
 		}
 
 //		if (talent == LIGHT_CLOAK && hero.heroClass == HeroClass.ROGUE){
@@ -815,8 +818,18 @@ public enum Talent {
 			identify = true;
 		}
 
-		if (identify && !ShardOfOblivion.passiveIDDisabled()){
-			item.identify();
+		if (identify) {
+			if (ShardOfOblivion.passiveIDDisabled()) {
+				if (item instanceof Weapon){
+					((Weapon) item).setIDReady();
+				} else if (item instanceof Armor){
+					((Armor) item).setIDReady();
+				} else if (item instanceof Ring){
+					((Ring) item).setIDReady();
+				}
+			} else {
+				item.identify();
+			}
 		}
 	}
 

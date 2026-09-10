@@ -3,10 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2024 Evan Debenham
- *
- * Experienced Pixel Dungeon
- * Copyright (C) 2019-2024 Trashbox Bobylev
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,61 +23,51 @@ package com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments;
 
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Bleeding;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite.Glowing;
+import com.watabou.utils.Random;
 
-public class Grim extends Weapon.Enchantment {
-	
-	private static ItemSprite.Glowing BLACK = new ItemSprite.Glowing( 0x000000 );
-	
+public class Vorpal extends Weapon.Enchantment {
+
+	private static ItemSprite.Glowing RED = new ItemSprite.Glowing( 0xAA6666 );
+
 	@Override
-	public long proc( Weapon weapon, Char attacker, Char defender, long damage ) {
-
-		if (defender.isImmune(Grim.class)) {
+	public long proc(Weapon weapon, Char attacker, Char defender, long damage) {
+		if (defender.isImmune(Bleeding.class)){
 			return damage;
 		}
 
-		long level = Math.max( 0, weapon.buffedLvl() );
+		//flat 25% proc chance, effect scales with damage dealt
+		float procChance = 1/4f * procChanceMultiplier(attacker);
+		if (Random.Float() < procChance) {
 
-		//scales from 0 - 50% based on how low hp the enemy is, plus 0-5% per level
-		float maxChance = 0.5f + .05f*level;
-		maxChance *= procChanceMultiplier(attacker);
+			float powerMulti = Math.max(1f, procChance);
 
-		//we defer logic using a buff here so we can know the true final damage
-		//see Char.damage
-		Buff.affect(attacker, GrimTracker.class).maxChance = maxChance;
-
-		if (attacker.buff(GrimTracker.class) != null
-				&& attacker instanceof Hero
-				&& weapon.hasEnchant(Grim.class, attacker)){
-			attacker.buff(GrimTracker.class).qualifiesForBadge = true;
+			//we use a buff to track so we can know the final dmg
+			Buff.affect(attacker, VorpalTracker.class).powerMulti = powerMulti;
 		}
 
 		return damage;
 	}
-	
-	@Override
-	public Glowing glowing() {
-		return BLACK;
-	}
 
-	public static class GrimTracker extends Buff {
-
+	public static class VorpalTracker extends Buff {
 		{
 			actPriority = Actor.VFX_PRIO;
 		}
 
-		public float maxChance;
-		public boolean qualifiesForBadge;
+		public float powerMulti;
 
 		@Override
 		public boolean act() {
 			detach();
 			return true;
 		}
-	};
+	}
 
+	@Override
+	public ItemSprite.Glowing glowing() {
+		return RED;
+	}
 }
