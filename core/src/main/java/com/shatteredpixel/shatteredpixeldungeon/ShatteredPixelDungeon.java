@@ -152,6 +152,7 @@ public class ShatteredPixelDungeon extends Game {
 		Sample.INSTANCE.enable( SPDSettings.soundFx() );
 		Sample.INSTANCE.volume( SPDSettings.SFXVol()*SPDSettings.SFXVol()/100f );
 
+		com.watabou.noosa.PostProcessing.bloomEnabled = SPDSettings.bloomEnabled();
 		Sample.INSTANCE.load( Assets.Sounds.all );
 		
 	}

@@ -57,16 +57,16 @@ public class WndDemoVictory extends Window {
 
 		pos = txtFeatures.bottom() + 8;
 
-		// Wishlist on Steam button (Golden highlight)
+		// Wishlist on Steam button (Golden highlight CTA)
 		StyledButton btnWishlist = new StyledButton(Chrome.Type.RED_BUTTON, Messages.get(this, "wishlist")) {
 			@Override
 			public void onClick() {
 				ShatteredPixelDungeon.platform.openURI(STEAM_STORE_URL);
 			}
 		};
-		btnWishlist.icon(Icons.get(Icons.PREFS));
-		btnWishlist.textColor(0xFFD700);
-		btnWishlist.setRect(0, pos, width, 20);
+		btnWishlist.icon(Icons.get(Icons.GOLD));
+		btnWishlist.textColor(0xFFFF00);
+		btnWishlist.setRect(0, pos, width, 22);
 		add(btnWishlist);
 
 		pos = btnWishlist.bottom() + 4;

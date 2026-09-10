@@ -143,6 +143,39 @@ public class PetEgg extends Item {
 		return Messages.get(this, "desc_" + eggType.name().toLowerCase(), percent);
 	}
 
+	@Override
+	public com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite.Glowing glowing() {
+		int glowColor;
+		switch (eggType) {
+			case DRAGON:
+				glowColor = 0xFF4500; // Fire Orange
+				break;
+			case WOLF:
+				glowColor = 0x00E5FF; // Frost Cyan
+				break;
+			case FAIRY:
+				glowColor = 0x00FF88; // Emerald Fairy Glow
+				break;
+			case MANTICORE:
+				glowColor = 0xFFD700; // Mythic Gold
+				break;
+			default:
+				glowColor = 0x9932CC; // Mystic Purple
+				break;
+		}
+		return new com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite.Glowing(glowColor, 1.2f);
+	}
+
+	@Override
+	public com.watabou.noosa.particles.Emitter emitter() {
+		com.watabou.noosa.particles.Emitter emitter = new com.watabou.noosa.particles.Emitter();
+		emitter.pos(0, 0);
+		emitter.autoKill = false;
+		int speckType = (eggType == Pet.PetType.DRAGON) ? Speck.LIGHT : Speck.STAR;
+		emitter.pour(Speck.factory(speckType), 0.6f);
+		return emitter;
+	}
+
 	private static final String TYPE = "egg_type";
 	private static final String INCUBATION = "incubation";
 

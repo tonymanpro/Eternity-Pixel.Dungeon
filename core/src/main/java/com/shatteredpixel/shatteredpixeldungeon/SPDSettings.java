@@ -241,7 +241,7 @@ public class SPDSettings extends GameSettings {
 	}
 
 	public static boolean bloomEnabled() {
-		return getBoolean( KEY_BLOOM_ENABLED, false );
+		return getBoolean( KEY_BLOOM_ENABLED, true );
 	}
 
 	public static void vignetteEnabled( boolean value ) {
@@ -685,8 +685,8 @@ public static void playMusicInBackground( boolean value ){
 
 	public static Point windowResolution(){
 		return new Point(
-				getInt( KEY_WINDOW_WIDTH, 800, 720, Integer.MAX_VALUE ),
-				getInt( KEY_WINDOW_HEIGHT, 600, 400, Integer.MAX_VALUE )
+				getInt( KEY_WINDOW_WIDTH, 1920, 720, Integer.MAX_VALUE ),
+				getInt( KEY_WINDOW_HEIGHT, 1080, 400, Integer.MAX_VALUE )
 		);
 	}
 

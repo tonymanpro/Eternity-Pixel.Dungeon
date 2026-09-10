@@ -302,6 +302,7 @@ public class GameScene extends PixelScene {
 
 		add( emitters );
 		add( effects );
+		add( DynamicLightingEngine.get() );
 
 		gases = new Group();
 		add( gases );
@@ -1416,6 +1417,14 @@ private static float waterOfs = 0;
 		scene.add(menu);
 	}
 	
+	public static void bossIntro(String title, String subtitle, int titleColor, int bossCell) {
+		if (scene != null) {
+			BossSplashBanner.show(title, subtitle, titleColor, bossCell);
+			flash(0x330022, true);
+			PixelScene.shake(4.5f, 0.45f);
+		}
+	}
+
 	public static void bossSlain() {
 		if (Dungeon.hero.isAlive()) {
 			if (scene != null) {

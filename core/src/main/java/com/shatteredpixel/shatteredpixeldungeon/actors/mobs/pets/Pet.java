@@ -218,6 +218,30 @@ public abstract class Pet extends DirectableAlly {
 			hunger--;
 		}
 
+		// Aura elemental radiante según la mascota
+		if (sprite != null) {
+			int auraColor;
+			switch (petType) {
+				case DRAGON:
+					auraColor = 0xFF4500; // Fuego radiante
+					break;
+				case WOLF:
+					auraColor = 0x00E5FF; // Escarcha gélida
+					break;
+				case FAIRY:
+					auraColor = 0x00FF88; // Esmeralda feérico
+					break;
+				case MANTICORE:
+					auraColor = 0xFFD700; // Oro mítico
+					break;
+				case SPIDER:
+				default:
+					auraColor = 0x9932CC; // Púrpura sombrío
+					break;
+			}
+			sprite.aura(auraColor);
+		}
+
 		return super.act();
 	}
 
@@ -253,6 +277,9 @@ public abstract class Pet extends DirectableAlly {
 
 	@Override
 	public void die(Object cause) {
+		if (sprite != null) {
+			sprite.clearAura();
+		}
 		super.die(cause);
 		if (Dungeon.hero != null && Dungeon.hero.pet == this) {
 			Dungeon.hero.pet = null;
