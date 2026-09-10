@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2024 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * Experienced Pixel Dungeon
  * Copyright (C) 2019-2024 Trashbox Bobylev
@@ -28,15 +28,16 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.effects.FloatingText;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
+import com.watabou.utils.Bundle;
 
-public class Corruption extends AllyBuff {
+public class Corruption extends AllyBuff implements Buff.DOTbuff {
 
 	{
 		type = buffType.NEGATIVE;
 		announced = true;
 	}
 
-	private double buildToDamage = 0f;
+	private float partialDamage = 0f;
 
 	//corrupted enemies are usually fully healed and cleansed of most debuffs
 	public static void corruptionHeal(Char target){
@@ -49,26 +50,34 @@ public class Corruption extends AllyBuff {
 			}
 		}
 	}
-	
+
 	@Override
-	public boolean act() {
-		buildToDamage += target.HT/100f;
-
-		long damage = (long) buildToDamage;
-		buildToDamage -= damage;
-
-		if (damage > 0)
-			target.damage(damage, this);
-
-		spend(TICK);
-
-		return true;
+	public boolean attachTo(Char target) {
+		if (super.attachTo(target)){
+			target.needsIncomingDOTUpdate = true;
+			return true;
+		}
+		return false;
 	}
 
 	@Override
-	public void fx(boolean on) {
-		if (on) target.sprite.add( CharSprite.State.DARKENED );
-		else if (target.invisible == 0) target.sprite.remove( CharSprite.State.DARKENED );
+	public boolean act() {
+		partialDamage += target.HT/100f;
+
+		long damage = (long)partialDamage;
+		partialDamage -= damage;
+
+		if (damage > 0) {
+			target.damage(damage, this);
+		}
+
+		spend(TICK);
+
+		if (target.HP <= 0){
+			detach();
+		}
+
+		return true;
 	}
 
 	@Override
@@ -76,4 +85,22 @@ public class Corruption extends AllyBuff {
 		return BuffIndicator.CORRUPT;
 	}
 
+	@Override
+	public int totalIncomingDMG() {
+		return (int)Math.min(Integer.MAX_VALUE, target.HT);
+	}
+
+	public static final String PARTIAL_DAMAGE = "partial_damage";
+
+	@Override
+	public void storeInBundle(Bundle bundle) {
+		super.storeInBundle(bundle);
+		bundle.put(PARTIAL_DAMAGE, partialDamage);
+	}
+
+	@Override
+	public void restoreFromBundle(Bundle bundle) {
+		super.restoreFromBundle(bundle);
+		partialDamage = bundle.getFloat(PARTIAL_DAMAGE);
+	}
 }

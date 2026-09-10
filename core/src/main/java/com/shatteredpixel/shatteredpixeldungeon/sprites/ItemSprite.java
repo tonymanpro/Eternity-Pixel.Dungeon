@@ -219,22 +219,26 @@ public class ItemSprite extends MovieClip {
 		
 		switch (heap.type) {
 			case HEAP: case FOR_SALE: case FOR_ARENA_SALE:
-				return view( heap.peek() );
+				view( heap.peek() ); break;
 			case CHEST:
-				return view( ItemSpriteSheet.CHEST, null );
+				view( ItemSpriteSheet.CHEST, null ); break;
 			case LOCKED_CHEST:
-				return view( ItemSpriteSheet.LOCKED_CHEST, null );
+				view( ItemSpriteSheet.LOCKED_CHEST, null ); break;
 			case CRYSTAL_CHEST:
-				return view( ItemSpriteSheet.CRYSTAL_CHEST, null );
+				view( ItemSpriteSheet.CRYSTAL_CHEST, null ); break;
 			case TOMB:
-				return view( ItemSpriteSheet.TOMB, null );
+				view( ItemSpriteSheet.TOMB, null ); break;
 			case SKELETON:
-				return view( ItemSpriteSheet.BONES, null );
+				view( ItemSpriteSheet.BONES, null ); break;
 			case REMAINS:
-				return view( ItemSpriteSheet.REMAINS, null );
+				view( ItemSpriteSheet.REMAINS, null ); break;
 			default:
-				return view( 0, null );
+				view( 0, null ); break;
 		}
+
+		alpha( heap.hidden ? 0.1f : 1f);
+
+		return this;
 	}
 	
 	public ItemSprite view( int image, Glowing glowing ) {

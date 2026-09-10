@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2024 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * Experienced Pixel Dungeon
  * Copyright (C) 2019-2024 Trashbox Bobylev
@@ -24,14 +24,14 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 
+import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
-import com.watabou.utils.Random;
 
-public class Ooze extends Buff {
+public class Ooze extends Buff implements Buff.DOTbuff {
 
 	public static final float DURATION = 20f;
 
@@ -40,34 +40,29 @@ public class Ooze extends Buff {
 		announced = true;
 	}
 
-	private float left;
-	private boolean acted = false; //whether the debuff has done any damage at all yet
+	protected float left;
+	private boolean acted = false;
 
 	private static final String LEFT	= "left";
-	private static final String ACTED   = "acted";
-	
+	private static final String ACTED	= "acted";
+
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 		super.storeInBundle( bundle );
 		bundle.put( LEFT, left );
 		bundle.put( ACTED, acted );
 	}
-	
+
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
-		super.restoreFromBundle(bundle);
-		left = bundle.getFloat(LEFT);
-		acted = bundle.getBoolean(ACTED);
-	}
-	
-	@Override
-	public int icon() {
-		return BuffIndicator.OOZE;
+		super.restoreFromBundle( bundle );
+		left = bundle.getFloat( LEFT );
+		acted = bundle.getBoolean( ACTED );
 	}
 
 	@Override
-	public float iconFadePercent() {
-		return Math.max(0, (DURATION - left) / DURATION);
+	public int icon() {
+		return BuffIndicator.OOZE;
 	}
 
 	@Override
@@ -76,52 +71,77 @@ public class Ooze extends Buff {
 	}
 
 	@Override
+	public float iconFadePercent() {
+		return Math.max(0, (DURATION - left) / DURATION);
+	}
+
+	@Override
 	public String desc() {
 		return Messages.get(this, "desc", dispTurns(left));
 	}
-	
+
 	public void set(float left){
 		this.left = left;
 		acted = false;
+		if (target != null) target.needsIncomingDOTUpdate = true;
 	}
 
 	public void extend( float duration ) {
 		left += duration;
+		if (target != null) target.needsIncomingDOTUpdate = true;
 	}
 
 	@Override
 	public boolean act() {
-		//washing away happens before debuff effects if debuff has gotten to act
 		if (acted && Dungeon.level.water[target.pos] && !target.flying){
 			detach();
 		} else if (target.isAlive()) {
 
+			acted = true;
 			if (Dungeon.scalingDepth() > 5) {
 				target.damage(1 + Dungeon.scalingDepth() / 5, this);
-				acted = true;
 			} else if (Dungeon.scalingDepth() == 5){
 				target.damage(1, this); //1 dmg per turn vs Goo
-				acted = true;
-			} else if (Random.Int(2) == 0) {
+			} else if ((int)left % 2 == 0) {
 				target.damage(1, this); //0.5 dmg per turn in sewers
-				acted = true;
 			}
 
 			if (!target.isAlive() && target == Dungeon.hero) {
 				Dungeon.fail( this );
 				GLog.n( Messages.get(this, "ondeath") );
 			}
+
 			spend( TICK );
-			left -= TICK;
-			if (left <= 0){
+			if ((left -= TICK) <= 0) {
 				detach();
 			}
+
 		} else {
 			detach();
 		}
+
 		if (Dungeon.level.water[target.pos] && !target.flying){
 			detach();
 		}
+		target.needsIncomingDOTUpdate = true;
 		return true;
+	}
+
+	@Override
+	public void detach() {
+		if (target != null) target.needsIncomingDOTUpdate = true;
+		super.detach();
+	}
+
+	@Override
+	public int totalIncomingDMG() {
+		if (Dungeon.scalingDepth() > 5) {
+			int dmg = (int)(1 + Dungeon.scalingDepth() / 5);
+			return (int)(Math.ceil(left)*dmg);
+		} else if (Dungeon.scalingDepth() == 5){
+			return (int)(Math.ceil(left));
+		} else {
+			return (int)(Math.ceil(left)/2);
+		}
 	}
 }

@@ -43,13 +43,24 @@ public class ElixirOfIcyTouch extends Elixir {
 		hero.sprite.emitter().burst(SnowParticle.FACTORY, 5);
 	}
 
+	//lower values, as it's cheaper to make
+	@Override
+	public long value() {
+		return quantity * 40L;
+	}
+
+	@Override
+	public long energyVal() {
+		return quantity * 8L;
+	}
+
 	public static class Recipe extends com.shatteredpixel.shatteredpixeldungeon.items.Recipe.SimpleRecipe {
 		
 		{
 			inputs =  new Class[]{PotionOfSnapFreeze.class};
 			inQuantity = new int[]{1};
 			
-			cost = 6;
+			cost = 2;
 			
 			output = ElixirOfIcyTouch.class;
 			outQuantity = 1;

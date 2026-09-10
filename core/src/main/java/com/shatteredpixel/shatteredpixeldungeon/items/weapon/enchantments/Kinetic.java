@@ -44,7 +44,6 @@ public class Kinetic extends Weapon.Enchantment {
 		long conservedDamage = 0;
 		if (attacker.buff(ConservedDamage.class) != null) {
 			conservedDamage = attacker.buff(ConservedDamage.class).damageBonus();
-			attacker.buff(ConservedDamage.class).detach();
 		}
 
 		//use a tracker so that we can know the true final damage
@@ -107,7 +106,7 @@ public class Kinetic extends Weapon.Enchantment {
 		}
 
 		public void delay( float value ){
-			postpone(value);
+			spend(value);
 		}
 		
 		public long damageBonus(){
