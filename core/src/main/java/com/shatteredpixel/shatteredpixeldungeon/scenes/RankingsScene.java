@@ -26,6 +26,7 @@ package com.shatteredpixel.shatteredpixeldungeon.scenes;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
+import com.shatteredpixel.shatteredpixeldungeon.Chrome;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Rankings;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
@@ -88,13 +89,29 @@ public class RankingsScene extends PixelScene {
 		align(title);
 		add(title);
 		
+		StyledButton btnOnlineLeaderboard = new StyledButton(Chrome.Type.GREY_BUTTON_TR, Messages.get(this, "online_leaderboard"), 8) {
+			@Override
+			public void onClick() {
+				String langCode = (Messages.lang() != null && Messages.lang().code() != null) ? Messages.lang().code() : "en";
+				ShatteredPixelDungeon.platform.openURI("https://eternity-pixel-dungeon.web.app/leaderboard?lang=" + langCode);
+			}
+		};
+		btnOnlineLeaderboard.icon(Icons.get(Icons.RANKINGS));
+		btnOnlineLeaderboard.setSize(Math.min(w - 20, Math.max(140, btnOnlineLeaderboard.reqWidth())), 18);
+		btnOnlineLeaderboard.setPos(
+				(w - btnOnlineLeaderboard.width()) / 2f,
+				h - btnOnlineLeaderboard.height() - 3
+		);
+		align(btnOnlineLeaderboard);
+		add(btnOnlineLeaderboard);
+
 		if (Rankings.INSTANCE.records.size() > 0) {
 
-			//attempts to give each record as much space as possible, ideally as much space as portrait mode
-			float rowHeight = GameMath.gate(ROW_HEIGHT_MIN, (uiCamera.height - 26)/Rankings.INSTANCE.records.size(), ROW_HEIGHT_MAX);
+			float bottomSpace = btnOnlineLeaderboard.height() + 4 + (Rankings.INSTANCE.totalNumber >= Rankings.TABLE_SIZE ? 12 : 0);
+			float rowHeight = GameMath.gate(ROW_HEIGHT_MIN, (h - 24 - bottomSpace)/Rankings.INSTANCE.records.size(), ROW_HEIGHT_MAX);
 
 			float left = (w - Math.min( MAX_ROW_WIDTH, w )) / 2 + GAP;
-			float top = (h - rowHeight  * Rankings.INSTANCE.records.size()) / 2;
+			float top = 22 + (h - 22 - bottomSpace - rowHeight * Rankings.INSTANCE.records.size()) / 2f;
 			
 			int pos = 0;
 			
@@ -120,7 +137,7 @@ public class RankingsScene extends PixelScene {
 				
 				label.setPos(
 						(w - label.width()) / 2,
-						h - label.height() - 2*GAP
+						btnOnlineLeaderboard.top() - label.height() - 2
 				);
 				align(label);
 
@@ -132,7 +149,7 @@ public class RankingsScene extends PixelScene {
 			noRec.hardlight( 0xCCCCCC );
 			noRec.setPos(
 					(w - noRec.width()) / 2,
-					(h - noRec.height()) / 2
+					(h - noRec.height()) / 2 - 10
 			);
 			align(noRec);
 			add(noRec);
