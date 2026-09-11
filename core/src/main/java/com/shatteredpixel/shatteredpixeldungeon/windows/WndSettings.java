@@ -34,12 +34,15 @@ import com.shatteredpixel.shatteredpixeldungeon.services.updates.Updates;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.*;
 import com.watabou.input.ControllerHandler;
+import com.watabou.input.PointerEvent;
 import com.watabou.noosa.ColorBlock;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Image;
+import com.watabou.noosa.PointerArea;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.ui.Component;
 import com.watabou.utils.DeviceCompat;
+import com.watabou.utils.Point;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
@@ -63,6 +66,8 @@ public class WndSettings extends WndTabbed {
 	private LangsTab    langs;
 
 	public static int last_index = 0;
+	public static Point lastOffset = new Point(0, 0);
+	private PointerArea dragHeader;
 
 	public WndSettings() {
 		super();
@@ -183,6 +188,45 @@ public class WndSettings extends WndTabbed {
 
 		layoutTabs();
 
+		if (lastOffset.x != 0 || lastOffset.y != 0) {
+			offset(lastOffset.x, lastOffset.y);
+			boundOffsetWithMargin( 8 );
+		}
+
+		if (DeviceCompat.isDesktop()) {
+			dragHeader = new PointerArea( -chrome.marginLeft(), -chrome.marginTop(), chrome.width(), chrome.marginTop() + 18 ) {
+				private boolean dragging = false;
+				private float lastX, lastY;
+
+				@Override
+				protected void onPointerDown( PointerEvent event ) {
+					dragging = true;
+					lastX = event.current.x;
+					lastY = event.current.y;
+				}
+
+				@Override
+				protected void onDrag( PointerEvent event ) {
+					if (dragging) {
+						float dx = (event.current.x - lastX) / camera.zoom;
+						float dy = (event.current.y - lastY) / camera.zoom;
+						lastX = event.current.x;
+						lastY = event.current.y;
+						offset( Math.round(xOffset + dx), Math.round(yOffset + dy) );
+						boundOffsetWithMargin( 8 );
+						lastOffset.set( xOffset, yOffset );
+					}
+				}
+
+				@Override
+				protected void onPointerUp( PointerEvent event ) {
+					dragging = false;
+				}
+			};
+			dragHeader.camera = camera;
+			add( dragHeader );
+		}
+
 		if (tabs.size() == 5 && last_index >= 3){
 			//input tab isn't visible
 			select(last_index-1);
@@ -200,6 +244,9 @@ public class WndSettings extends WndTabbed {
 			@Override
 			public void beforeCreate() {
 				Game.platform.resetGenerators();
+				com.watabou.gltextures.TextureCache.clear();
+				com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet.reload();
+				com.shatteredpixel.shatteredpixeldungeon.sprites.HeroSprite.tiers = null;
 			}
 			@Override
 			public void afterCreate() {
@@ -218,6 +265,8 @@ public class WndSettings extends WndTabbed {
 		CheckBox chkDynamicLighting;
 		CheckBox chkBloom;
 		CheckBox chkVignette;
+		CheckBox chkSmoothPixels;
+		CheckBox chkHDTextures;
 		OptionSlider optScale;
 		ColorBlock sep2;
 		OptionSlider optBrightness;
@@ -362,6 +411,37 @@ public class WndSettings extends WndTabbed {
 			chkVignette.checked(SPDSettings.vignetteEnabled());
 			add(chkVignette);
 
+			chkSmoothPixels = new CheckBox(Messages.get(this, "smooth_pixels")) {
+				@Override
+				public void onClick() {
+					super.onClick();
+					SPDSettings.smoothPixels(checked());
+				}
+			};
+			chkSmoothPixels.checked(SPDSettings.smoothPixels());
+			add(chkSmoothPixels);
+
+			chkHDTextures = new CheckBox(Messages.get(this, "hd_textures")) {
+				@Override
+				public void onClick() {
+					super.onClick();
+					SPDSettings.hdTextures(checked());
+					ShatteredPixelDungeon.seamlessResetScene(new Game.SceneChangeCallback() {
+						@Override
+						public void beforeCreate() {
+							com.watabou.gltextures.TextureCache.clear();
+							com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet.reload();
+							com.shatteredpixel.shatteredpixeldungeon.sprites.HeroSprite.tiers = null;
+						}
+						@Override
+						public void afterCreate() {
+						}
+					});
+				}
+			};
+			chkHDTextures.checked(SPDSettings.hdTextures());
+			add(chkHDTextures);
+
 			sep2 = new ColorBlock(1, 1, 0xFF000000);
 			add(sep2);
 
@@ -445,6 +525,12 @@ public class WndSettings extends WndTabbed {
 
 			chkVignette.setRect(0, bottom + GAP, width, BTN_HEIGHT);
 			bottom = chkVignette.bottom();
+
+			chkSmoothPixels.setRect(0, bottom + GAP, width, BTN_HEIGHT);
+			bottom = chkSmoothPixels.bottom();
+
+			chkHDTextures.setRect(0, bottom + GAP, width, BTN_HEIGHT);
+			bottom = chkHDTextures.bottom();
 
 			sep2.size(width, 1);
 			sep2.y = bottom + GAP;

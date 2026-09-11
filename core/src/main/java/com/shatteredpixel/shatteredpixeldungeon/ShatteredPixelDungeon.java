@@ -152,6 +152,12 @@ public class ShatteredPixelDungeon extends Game {
 		Sample.INSTANCE.enable( SPDSettings.soundFx() );
 		Sample.INSTANCE.volume( SPDSettings.SFXVol()*SPDSettings.SFXVol()/100f );
 
+		com.watabou.noosa.PostProcessing.smoothFilterEnabled = SPDSettings.smoothPixels();
+		com.watabou.noosa.PostProcessing.bloomEnabled = SPDSettings.bloomEnabled();
+		com.watabou.noosa.PostProcessing.vignetteEnabled = SPDSettings.vignetteEnabled();
+		com.watabou.utils.AssetPackResolver.hdTexturesEnabled = SPDSettings.hdTextures();
+		com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet.reload();
+
 		Sample.INSTANCE.load( Assets.Sounds.all );
 		
 	}

@@ -34,10 +34,16 @@ public class ItemSpriteSheet {
 
 	public static TextureFilm film = createFilm();
 
-	private static TextureFilm createFilm() {
+	public static TextureFilm createFilm() {
 		com.watabou.gltextures.SmartTexture tx = com.watabou.gltextures.TextureCache.get( Assets.Sprites.ITEMS );
-		int scale = (tx.width >= 500) ? 2 : 1;
-		return new TextureFilm( tx, SIZE * scale, SIZE * scale );
+		int scale = (tx.width >= 1000) ? 4 : ((tx.width >= 500) ? 2 : 1);
+		TextureFilm film = new TextureFilm( tx, SIZE * scale, SIZE * scale );
+		film.densityScale( scale );
+		return film;
+	}
+
+	public static void reload() {
+		film = createFilm();
 	}
 
 	private static int xy(int x, int y){
@@ -47,7 +53,7 @@ public class ItemSpriteSheet {
 
 	private static void assignItemRect( int item, int width, int height ){
 		com.watabou.gltextures.SmartTexture tx = com.watabou.gltextures.TextureCache.get( Assets.Sprites.ITEMS );
-		int scale = (tx.width >= 500) ? 2 : 1;
+		int scale = (tx.width >= 1000) ? 4 : ((tx.width >= 500) ? 2 : 1);
 		int x = (item % WIDTH) * SIZE * scale;
 		int y = (item / WIDTH) * SIZE * scale;
 		film.add( item, x, y, x + width * scale, y + height * scale );

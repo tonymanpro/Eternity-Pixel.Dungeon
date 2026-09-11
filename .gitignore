@@ -1,10 +1,12 @@
-# Built application files
+
+# Built application files
 *.apk
 *.aab
 *.keystore
 *.jks
 *.dex
 *.class
+*.py
 
 # Gradle build files
 .gradle/

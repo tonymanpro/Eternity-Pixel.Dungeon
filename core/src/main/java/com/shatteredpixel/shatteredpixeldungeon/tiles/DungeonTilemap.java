@@ -41,7 +41,7 @@ public abstract class DungeonTilemap extends Tilemap {
 	protected int[] map;
 
 	public DungeonTilemap(String tex) {
-		super(tex, new TextureFilm( tex, SIZE, SIZE ) );
+		super(tex, TextureFilm.createTileset( tex, SIZE, SIZE ) );
 	}
 
 	@Override

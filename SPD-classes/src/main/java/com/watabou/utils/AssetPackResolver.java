@@ -44,6 +44,7 @@ public class AssetPackResolver {
 	private static final Map<String, String> directOverrides = new HashMap<>();
 
 	public static boolean musicOverrideEnabled = true;
+	public static boolean hdTexturesEnabled = true;
 
 	static {
 		// Paquete propietario por defecto de Eternity Pixel Dungeon
@@ -99,6 +100,34 @@ public class AssetPackResolver {
 
 		if (Gdx.files == null) {
 			return path;
+		}
+
+		if (hdTexturesEnabled && path.endsWith(".png")) {
+			for (String pack : activePacks) {
+				String hdCandidate = pack + "hd/" + path;
+				try {
+					FileHandle handle = Gdx.files.internal(hdCandidate);
+					if (handle != null && handle.exists()) {
+						return hdCandidate;
+					}
+				} catch (Exception ignored) {
+				}
+				String hdAlt = pack + path.replace(".png", "_hd.png");
+				try {
+					FileHandle handle = Gdx.files.internal(hdAlt);
+					if (handle != null && handle.exists()) {
+						return hdAlt;
+					}
+				} catch (Exception ignored) {
+				}
+			}
+			try {
+				FileHandle handle = Gdx.files.internal("hd/" + path);
+				if (handle != null && handle.exists()) {
+					return "hd/" + path;
+				}
+			} catch (Exception ignored) {
+			}
 		}
 
 		for (String pack : activePacks) {

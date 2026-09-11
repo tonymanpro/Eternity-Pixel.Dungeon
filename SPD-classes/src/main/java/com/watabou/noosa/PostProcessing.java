@@ -1,6 +1,6 @@
 /*
  * Eternity Pixel Dungeon
- * Post-Processing System (Bloom, Vignette & LUT Shaders)
+ * Post-Processing System (Smooth Pixel, Bloom, Vignette & LUT Shaders)
  */
 
 package com.watabou.noosa;
@@ -9,6 +9,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.watabou.glscripts.BloomShader;
+import com.watabou.glscripts.SmoothPixelShader;
 import com.watabou.glscripts.VignetteLutShader;
 import com.watabou.glwrap.Quad;
 
@@ -23,6 +24,7 @@ public class PostProcessing {
 	private static int lastW = 0;
 	private static int lastH = 0;
 
+	public static boolean smoothFilterEnabled = true;
 	public static boolean bloomEnabled = false;
 	public static boolean vignetteEnabled = false;
 
@@ -33,7 +35,7 @@ public class PostProcessing {
 	public static float tintA = 0f; // 0 = default, no tint
 
 	public static boolean isEnabled() {
-		return bloomEnabled || vignetteEnabled;
+		return smoothFilterEnabled || bloomEnabled || vignetteEnabled;
 	}
 
 	public static void begin() {
@@ -81,6 +83,17 @@ public class PostProcessing {
 
 		fbo.getColorBufferTexture().bind(0);
 
+		// Render Base Pass (Smooth Pixel Anti-Aliased or Standard Quad)
+		if (smoothFilterEnabled) {
+			SmoothPixelShader smooth = SmoothPixelShader.get();
+			smooth.uTex.value1i(0);
+			smooth.drawQuad(vertices, (float)lastW, (float)lastH);
+		} else if (!bloomEnabled && !vignetteEnabled) {
+			NoosaScriptNoLighting script = NoosaScriptNoLighting.get();
+			script.uTex.value1i(0);
+			script.drawQuad(vertices);
+		}
+
 		// Render Bloom pass if enabled
 		if (bloomEnabled) {
 			BloomShader bloom = BloomShader.get();
@@ -97,12 +110,9 @@ public class PostProcessing {
 			shader.uVignetteIntensity.value1f(0.85f);
 			shader.uColorTint.value4f(tintR, tintG, tintB, tintA);
 			shader.drawQuad(vertices);
-		} else if (!bloomEnabled) {
-			// Fallback if shaders fail or unhandled
-			NoosaScriptNoLighting script = NoosaScriptNoLighting.get();
-			script.uTex.value1i(0);
-			script.drawQuad(vertices);
 		}
+
+		NoosaScript.get().resetCamera();
 	}
 
 	public static void setBiomeTint(float r, float g, float b, float a) {

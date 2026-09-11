@@ -243,9 +243,36 @@ public class PixelScene extends Scene {
 
 	private Image cursor = null;
 
+	protected boolean isUI(Gizmo g) {
+		if (g == null) return false;
+		if (g instanceof Window) return true;
+		if (uiCamera != null && uiCamera.visible) {
+			return g.camera() == uiCamera;
+		}
+		return false;
+	}
+
 	@Override
 	public synchronized void draw() {
-		super.draw();
+		if (PostProcessing.isEnabled()) {
+			PostProcessing.begin();
+			for (int i = 0; i < length; i++) {
+				Gizmo g = members.get( i );
+				if (g != null && g.exists && g.isVisible() && !isUI(g)) {
+					g.draw();
+				}
+			}
+			PostProcessing.end();
+
+			for (int i = 0; i < length; i++) {
+				Gizmo g = members.get( i );
+				if (g != null && g.exists && g.isVisible() && isUI(g)) {
+					g.draw();
+				}
+			}
+		} else {
+			super.draw();
+		}
 
 		//cursor is separate from the rest of the scene, always appears above
 		if (ControllerHandler.controllerPointerActive()){

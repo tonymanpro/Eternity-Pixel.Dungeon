@@ -199,6 +199,8 @@ public class SPDSettings extends GameSettings {
 	public static final String KEY_DYNAMIC_LIGHTING = "dynamic_lighting";
 	public static final String KEY_BLOOM_ENABLED    = "bloom_enabled";
 	public static final String KEY_VIGNETTE_ENABLED = "vignette_enabled";
+	public static final String KEY_SMOOTH_PIXELS    = "smooth_pixels";
+	public static final String KEY_HD_TEXTURES      = "hd_textures";
 
 	public static void dynamicLighting( boolean value ) {
 		put( KEY_DYNAMIC_LIGHTING, value );
@@ -206,6 +208,24 @@ public class SPDSettings extends GameSettings {
 
 	public static boolean dynamicLighting() {
 		return getBoolean( KEY_DYNAMIC_LIGHTING, true );
+	}
+
+	public static void smoothPixels( boolean value ) {
+		put( KEY_SMOOTH_PIXELS, value );
+		com.watabou.noosa.PostProcessing.smoothFilterEnabled = value;
+	}
+
+	public static boolean smoothPixels() {
+		return getBoolean( KEY_SMOOTH_PIXELS, true );
+	}
+
+	public static void hdTextures( boolean value ) {
+		put( KEY_HD_TEXTURES, value );
+		com.watabou.utils.AssetPackResolver.hdTexturesEnabled = value;
+	}
+
+	public static boolean hdTextures() {
+		return getBoolean( KEY_HD_TEXTURES, true );
 	}
 
 	public static void bloomEnabled( boolean value ) {
