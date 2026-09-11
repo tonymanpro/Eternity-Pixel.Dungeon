@@ -290,11 +290,25 @@ public class SPDSettings extends GameSettings {
 	
 	public static void brightness( int value ) {
 		put( KEY_BRIGHTNESS, value );
+		updateBrightnessFactor( value );
 		GameScene.updateFog();
 	}
 	
 	public static int brightness() {
-		return getInt( KEY_BRIGHTNESS, 0, -1, 1 );
+		return getInt( KEY_BRIGHTNESS, 0, -2, 2 );
+	}
+
+	public static void updateBrightnessFactor( int val ) {
+		float b;
+		switch (val) {
+			case -2: b = 0.65f; break;
+			case -1: b = 0.82f; break;
+			default:
+			case  0: b = 1.00f; break;
+			case  1: b = 1.25f; break;
+			case  2: b = 1.50f; break;
+		}
+		com.watabou.noosa.PostProcessing.brightness = b;
 	}
 	
 	public static void visualGrid( int value ){

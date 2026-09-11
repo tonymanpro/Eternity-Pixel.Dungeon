@@ -26,6 +26,7 @@ package com.watabou.noosa;
 
 import com.watabou.gltextures.SmartTexture;
 import com.watabou.gltextures.TextureCache;
+import com.watabou.utils.AssetPackResolver;
 import com.watabou.utils.RectF;
 
 import java.util.HashMap;
@@ -120,9 +121,11 @@ public class TextureFilm {
 	public static TextureFilm createTileset( Object tx, int baseTileW, int baseTileH ) {
 		SmartTexture texture = TextureCache.get( tx );
 		int scale = 1;
-		if (texture.width >= 1000) {
+		String p = texture != null && texture.path != null ? texture.path : (tx != null ? tx.toString() : "");
+		String resolved = AssetPackResolver.resolvePath( p );
+		if (resolved.contains("/hd/") || resolved.contains("\\hd\\") || (texture != null && texture.width >= 1000)) {
 			scale = 4; // 64x64 HD
-		} else if (texture.width >= 500) {
+		} else if (texture != null && texture.width >= 500) {
 			scale = 2; // 32x32 HD
 		}
 		TextureFilm film = new TextureFilm( texture, baseTileW * scale, baseTileH * scale );

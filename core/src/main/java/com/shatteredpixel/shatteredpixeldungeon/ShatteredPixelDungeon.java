@@ -155,6 +155,7 @@ public class ShatteredPixelDungeon extends Game {
 		com.watabou.noosa.PostProcessing.smoothFilterEnabled = SPDSettings.smoothPixels();
 		com.watabou.noosa.PostProcessing.bloomEnabled = SPDSettings.bloomEnabled();
 		com.watabou.noosa.PostProcessing.vignetteEnabled = SPDSettings.vignetteEnabled();
+		SPDSettings.updateBrightnessFactor( SPDSettings.brightness() );
 		com.watabou.utils.AssetPackResolver.hdTexturesEnabled = SPDSettings.hdTextures();
 		com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet.reload();
 

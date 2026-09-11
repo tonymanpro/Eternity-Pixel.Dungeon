@@ -114,6 +114,12 @@ public abstract class OptionSlider extends Component {
 				PointF p = camera().screenToCamera((int) event.current.x, (int) event.current.y);
 				sliderNode.x = GameMath.gate(sliderBG.x-2, p.x - sliderNode.width()/2, sliderBG.x+sliderBG.width()-2);
 				sliderNode.brightness(1.5f);
+				int newVal = minVal + Math.round((sliderNode.x - x) / tickDist);
+				newVal = (int)GameMath.gate(minVal, newVal, maxVal);
+				if (newVal != selectedVal) {
+					selectedVal = newVal;
+					onChange();
+				}
 			}
 
 			@Override
@@ -125,6 +131,7 @@ public abstract class OptionSlider extends Component {
 					
 					//sets the selected value
 					selectedVal = minVal + Math.round((sliderNode.x - x) / tickDist);
+					selectedVal = (int)GameMath.gate(minVal, selectedVal, maxVal);
 					sliderNode.x = x + tickDist * (selectedVal - minVal) + 0.5f;
 					PixelScene.align(sliderNode);
 					onChange();
@@ -137,6 +144,12 @@ public abstract class OptionSlider extends Component {
 				if (pressed) {
 					PointF p = camera().screenToCamera((int) event.current.x, (int) event.current.y);
 					sliderNode.x = GameMath.gate(sliderBG.x - 2, p.x - sliderNode.width()/2, sliderBG.x + sliderBG.width() - 2);
+					int newVal = minVal + Math.round((sliderNode.x - x) / tickDist);
+					newVal = (int)GameMath.gate(minVal, newVal, maxVal);
+					if (newVal != selectedVal) {
+						selectedVal = newVal;
+						onChange();
+					}
 				}
 			}
 		};

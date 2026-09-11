@@ -34,6 +34,7 @@ import com.watabou.noosa.Game;
 import com.watabou.noosa.TextureFilm;
 import com.watabou.noosa.tweeners.AlphaTweener;
 import com.watabou.noosa.tweeners.ScaleTweener;
+import com.watabou.utils.AssetPackResolver;
 import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
 
@@ -104,10 +105,18 @@ public class MobSprite extends CharSprite {
 	public TextureFilm createFilm( int baseWidth, int baseHeight ) {
 		try {
 			int scaleFactor = 1;
-			if (texture != null && texture.width >= 1000) {
-				scaleFactor = 4;
-			} else if (texture != null && texture.width >= 500) {
-				scaleFactor = 2;
+			if (texture != null && texture.path != null) {
+				String resolved = AssetPackResolver.resolvePath( texture.path );
+				if (resolved.contains("/hd/") || resolved.contains("\\hd\\")) {
+					scaleFactor = 4;
+				}
+			}
+			if (scaleFactor == 1 && texture != null) {
+				if (texture.width >= 1000) {
+					scaleFactor = 4;
+				} else if (texture.width >= 500) {
+					scaleFactor = 2;
+				}
 			}
 
 			if (scaleFactor == 4) {

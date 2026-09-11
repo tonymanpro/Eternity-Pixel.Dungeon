@@ -176,7 +176,7 @@ public class FogOfWar extends Image {
 		this.visible = visible;
 		this.visited = visited;
 		this.mapped = mapped;
-		this.brightness = SPDSettings.brightness() + 1;
+		this.brightness = Math.max(0, Math.min(2, SPDSettings.brightness() + 1));
 
 		moveToUpdating();
 		

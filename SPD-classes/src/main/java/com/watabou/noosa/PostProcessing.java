@@ -27,6 +27,7 @@ public class PostProcessing {
 	public static boolean smoothFilterEnabled = true;
 	public static boolean bloomEnabled = false;
 	public static boolean vignetteEnabled = false;
+	public static float brightness = 1.0f;
 
 	// Color tint for biomes / LUT (R, G, B, Intensity/Blend)
 	public static float tintR = 1f;
@@ -35,7 +36,7 @@ public class PostProcessing {
 	public static float tintA = 0f; // 0 = default, no tint
 
 	public static boolean isEnabled() {
-		return smoothFilterEnabled || bloomEnabled || vignetteEnabled;
+		return smoothFilterEnabled || bloomEnabled || vignetteEnabled || (brightness != 1.0f) || (tintA > 0f);
 	}
 
 	public static void begin() {
@@ -83,34 +84,17 @@ public class PostProcessing {
 
 		fbo.getColorBufferTexture().bind(0);
 
-		// Render Base Pass (Smooth Pixel Anti-Aliased or Standard Quad)
-		if (smoothFilterEnabled) {
-			SmoothPixelShader smooth = SmoothPixelShader.get();
-			smooth.uTex.value1i(0);
-			smooth.drawQuad(vertices, (float)lastW, (float)lastH);
-		} else if (!bloomEnabled && !vignetteEnabled) {
-			NoosaScriptNoLighting script = NoosaScriptNoLighting.get();
-			script.uTex.value1i(0);
-			script.drawQuad(vertices);
-		}
-
-		// Render Bloom pass if enabled
-		if (bloomEnabled) {
-			BloomShader bloom = BloomShader.get();
-			bloom.uTex.value1i(0);
-			bloom.uThreshold.value1f(0.55f);
-			bloom.uIntensity.value1f(0.65f);
-			bloom.drawQuad(vertices);
-		}
-
-		// Render Vignette & Color Grading LUT pass if enabled
-		if (vignetteEnabled) {
-			VignetteLutShader shader = VignetteLutShader.get();
-			shader.uTex.value1i(0);
-			shader.uVignetteIntensity.value1f(0.85f);
-			shader.uColorTint.value4f(tintR, tintG, tintB, tintA);
-			shader.drawQuad(vertices);
-		}
+		// Unified single-pass composite post-processing
+		SmoothPixelShader shader = SmoothPixelShader.get();
+		shader.uTex.value1i(0);
+		shader.drawQuad(
+			vertices, (float)lastW, (float)lastH,
+			brightness,
+			vignetteEnabled ? 0.85f : 0.0f,
+			tintR, tintG, tintB, tintA,
+			bloomEnabled,
+			smoothFilterEnabled
+		);
 
 		NoosaScript.get().resetCamera();
 	}
