@@ -34,7 +34,7 @@ public class ExpGenSprite extends MobSprite {
 		
 		texture( Assets.Sprites.EXP_GEN );
 		
-		TextureFilm frames = new TextureFilm( texture, 14, 12 );
+		TextureFilm frames = createFilm( 14, 12 );
 		
 		run = new Animation( 10, true );
 		run.frames( frames, 0, 2, 3, 3, 2, 0 );

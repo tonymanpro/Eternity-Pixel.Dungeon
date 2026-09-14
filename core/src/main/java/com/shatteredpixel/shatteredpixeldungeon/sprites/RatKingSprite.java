@@ -67,7 +67,7 @@ public class RatKingSprite extends MobSprite {
 
 		texture( Assets.Sprites.RATKING );
 
-		TextureFilm frames = new TextureFilm( texture, 16, height );
+		TextureFilm frames = createFilm( 16, height );
 
 		idle = new Animation( 2, true );
 		idle.frames( frames, c+0, c+0, c+0, c+1 );

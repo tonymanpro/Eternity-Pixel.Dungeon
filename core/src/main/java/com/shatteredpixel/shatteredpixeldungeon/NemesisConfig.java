@@ -20,15 +20,15 @@ public class NemesisConfig {
 	public String duelLabelKey = "windows.wndfallenheroghost.duel";
 	public String prayDoneKey = "windows.wndfallenheroghost.pray_done";
 	public String duelStartKey = "windows.wndfallenheroghost.duel_start";
-	public String purifiedKey = "actors.fallenheromob.purified";
+	public String purifiedKey = "actors.mobs.fallenheromob.purified";
 
 	public float healRatio = 1.0f;
-	public int mobHpBase = 45;
-	public int mobHpPerDepth = 8;
-	public int mobDefBase = 10;
-	public int mobDefPerDepth = 2;
-	public int goldRewardMin = 50;
-	public int goldRewardMax = 150;
+	public int mobHpBase = 16;
+	public int mobHpPerDepth = 3;
+	public int mobDefBase = 3;
+	public int mobDefPerDepth = 1;
+	public int goldRewardMin = 30;
+	public int goldRewardMax = 80;
 
 	private static NemesisConfig cachedConfig = null;
 

@@ -221,6 +221,7 @@ public class Hero extends Char {
     }
 
 	public static final int STARTING_STR = 10;
+	public static final int STARTING_HT  = 25;
 	
 	private static final float TIME_TO_REST		    = 1f;
 	private static final float TIME_TO_SEARCH	    = 2f;
@@ -311,7 +312,7 @@ public class Hero extends Char {
 	public Hero() {
 		super();
 
-		HP = HT = 20;
+		HP = HT = STARTING_HT;
 		STR = STARTING_STR;
 		
 		belongings = new Belongings( this );
@@ -322,7 +323,7 @@ public class Hero extends Char {
 	public void updateHT( boolean boostHP ){
 		long curHT = HT;
 		
-		HT = 20 + 5L*(lvl-1) + HTBoost;
+		HT = STARTING_HT + 5L*(lvl-1) + HTBoost;
 		HT += RingOfMight.HTMultiplier(this);
 		
 		if (buff(ElixirOfMight.HTBoost.class) != null){

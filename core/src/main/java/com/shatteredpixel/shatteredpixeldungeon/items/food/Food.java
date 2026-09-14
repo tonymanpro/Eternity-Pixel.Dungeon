@@ -118,6 +118,8 @@ public class Food extends Item {
 		float foodVal = energy;
 		if (Dungeon.isChallenged(Challenges.NO_FOOD)){
 			foodVal /= 7f;
+		} else if (Dungeon.depth <= 5){
+			foodVal *= 1.25f;
 		}
 
 		Artifact.ArtifactBuff buff = hero.buff( HornOfPlenty.hornRecharge.class );

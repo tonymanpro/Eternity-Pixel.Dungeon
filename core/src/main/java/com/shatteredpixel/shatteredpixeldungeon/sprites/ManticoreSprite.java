@@ -20,7 +20,7 @@ public class ManticoreSprite extends MobSprite {
 
 		texture( Assets.Sprites.MANTICORE );
 
-		TextureFilm frames = new TextureFilm( texture, 16, 16 );
+		TextureFilm frames = createFilm( 16, 16 );
 
 		idle = new Animation( 10, true );
 		idle.frames( frames, 0, 1, 2, 1 );

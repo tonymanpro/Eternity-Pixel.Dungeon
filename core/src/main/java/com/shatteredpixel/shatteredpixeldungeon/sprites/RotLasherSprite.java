@@ -34,7 +34,7 @@ public class RotLasherSprite extends MobSprite {
 
 		texture( Assets.Sprites.ROT_LASH );
 
-		TextureFilm frames = new TextureFilm( texture, 12, 16 );
+		TextureFilm frames = createFilm( 12, 16 );
 
 		idle = new Animation( 0, true );
 		idle.frames( frames, 0);

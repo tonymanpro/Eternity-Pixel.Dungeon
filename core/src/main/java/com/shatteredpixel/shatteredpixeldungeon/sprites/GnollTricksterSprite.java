@@ -39,7 +39,7 @@ public class GnollTricksterSprite extends MobSprite {
 
 		texture( Assets.Sprites.GNOLL );
 
-		TextureFilm frames = new TextureFilm( texture, 12, 15 );
+		TextureFilm frames = createFilm( 12, 15 );
 
 		int c = 42;
 

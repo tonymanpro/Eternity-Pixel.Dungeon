@@ -262,7 +262,7 @@ public class BattlePassScene extends PixelScene {
                 }
             };
             btnReset.setRect( MARGIN, row3Y, w - MARGIN*2, rowH );
-            btnReset.active = BattlePass.isBattlePassFinished();
+            btnReset.active = true;
             add( btnReset );
         } else {
             btnBack.setRect( MARGIN, h - FOOTER_H + 4, w - MARGIN*2, FOOTER_H - 8 );
@@ -336,21 +336,15 @@ public class BattlePassScene extends PixelScene {
     }
 
     private void resetPass(){
-        if (!BattlePass.isBattlePassFinished()) {
-            ShatteredPixelDungeon.scene().addToFront( new WndMessage(
-                    Messages.get( this, "reset_not_finished" ) ) );
-            return;
-        }
-        if (!BattlePass.canAffordReset()) {
-            ShatteredPixelDungeon.scene().addToFront( new WndMessage(
-                    Messages.get( this, "reset_cant_afford", BattlePass.RESET_ENERGY_COST ) ) );
-            return;
-        }
+        boolean finished = BattlePass.isBattlePassFinished();
+        String confirmBody = finished
+                ? Messages.get( this, "reset_confirm_body" )
+                : Messages.get( this, "reset_confirm_body_unfinished" );
 
         ShatteredPixelDungeon.scene().addToFront( new WndOptions(
                 new ItemSprite(),
                 Messages.get( this, "reset_confirm_title" ),
-                Messages.get( this, "reset_confirm_body", BattlePass.RESET_ENERGY_COST ),
+                confirmBody,
                 Messages.get( this, "reset_confirm_yes" ),
                 Messages.get( this, "reset_confirm_no" ) ){
             @Override
