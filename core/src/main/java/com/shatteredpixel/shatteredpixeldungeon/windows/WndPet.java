@@ -36,13 +36,21 @@ public class WndPet extends Window {
 	private static final float GAP = 2;
 
 	private Pet pet;
+	private boolean isStored = false;
 
 	public WndPet(final Pet pet) {
+		this(pet, false);
+	}
+
+	public WndPet(final Pet pet, final boolean isStored) {
 		super();
 		this.pet = pet;
+		this.isStored = isStored;
 
 		IconTitle titlebar = new IconTitle();
-		titlebar.label(pet.name() + " (" + pet.getStageName() + ")");
+		String stageName = pet.getStageName();
+		String titleText = pet.name() + " (" + stageName + ")" + (isStored ? " [Zzz]" : "");
+		titlebar.label(titleText);
 		titlebar.setRect(0, 0, WIDTH, 0);
 		add(titlebar);
 
@@ -93,6 +101,9 @@ public class WndPet extends Window {
 							if (pet.feed(item)) {
 								item.detach(Dungeon.hero.belongings.backpack);
 								Dungeon.hero.spendAndNext(1f);
+								if (isStored && Dungeon.hero.storedPet != null) {
+									pet.storeInBundle(Dungeon.hero.storedPet);
+								}
 							}
 						}
 					}
@@ -103,25 +114,51 @@ public class WndPet extends Window {
 		add(btnFeed);
 		pos += BTN_HEIGHT + GAP;
 
-		// Botón de Orden Táctica (Cambia entre Seguir / Defender)
-		String orderText = pet.currentOrder == Pet.PetOrder.FOLLOW ?
-				Messages.get(this, "order_follow") : Messages.get(this, "order_defend");
+		if (!isStored) {
+			// Botón de Orden Táctica (Cambia entre Seguir / Defender)
+			String orderText = pet.currentOrder == Pet.PetOrder.FOLLOW ?
+					Messages.get(this, "order_follow") : Messages.get(this, "order_defend");
 
-		RedButton btnOrder = new RedButton(Messages.get(this, "btn_order", orderText)) {
-			@Override
-			public void onClick() {
-				if (pet.currentOrder == Pet.PetOrder.FOLLOW) {
-					pet.setOrder(Pet.PetOrder.DEFEND);
-				} else {
-					pet.setOrder(Pet.PetOrder.FOLLOW);
+			RedButton btnOrder = new RedButton(Messages.get(this, "btn_order", orderText)) {
+				@Override
+				public void onClick() {
+					if (pet.currentOrder == Pet.PetOrder.FOLLOW) {
+						pet.setOrder(Pet.PetOrder.DEFEND);
+					} else {
+						pet.setOrder(Pet.PetOrder.FOLLOW);
+					}
+					hide();
+					GameScene.show(new WndPet(pet, false));
 				}
-				hide();
-				GameScene.show(new WndPet(pet));
-			}
-		};
-		btnOrder.setRect(0, pos, WIDTH, BTN_HEIGHT);
-		add(btnOrder);
-		pos += BTN_HEIGHT + GAP;
+			};
+			btnOrder.setRect(0, pos, WIDTH, BTN_HEIGHT);
+			add(btnOrder);
+			pos += BTN_HEIGHT + GAP;
+
+			// Botón de Guardar Mascota
+			RedButton btnRecall = new RedButton(Messages.get(this, "btn_recall")) {
+				@Override
+				public void onClick() {
+					hide();
+					pet.recall();
+				}
+			};
+			btnRecall.setRect(0, pos, WIDTH, BTN_HEIGHT);
+			add(btnRecall);
+			pos += BTN_HEIGHT + GAP;
+		} else {
+			// Botón de Sacar Mascota
+			RedButton btnSummon = new RedButton(Messages.get(this, "btn_summon")) {
+				@Override
+				public void onClick() {
+					hide();
+					Pet.summon(Dungeon.hero);
+				}
+			};
+			btnSummon.setRect(0, pos, WIDTH, BTN_HEIGHT);
+			add(btnSummon);
+			pos += BTN_HEIGHT + GAP;
+		}
 
 		// Botón de Renombrar
 		RedButton btnRename = new RedButton(Messages.get(this, "btn_rename")) {
@@ -140,8 +177,11 @@ public class WndPet extends Window {
 					public void onSelect(boolean positive, String text) {
 						if (positive && text != null && !text.trim().isEmpty()) {
 							pet.customName = text.trim();
+							if (isStored && Dungeon.hero.storedPet != null) {
+								pet.storeInBundle(Dungeon.hero.storedPet);
+							}
 						}
-						GameScene.show(new WndPet(pet));
+						GameScene.show(new WndPet(pet, isStored));
 					}
 				});
 			}

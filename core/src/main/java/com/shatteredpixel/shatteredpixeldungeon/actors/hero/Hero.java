@@ -240,6 +240,7 @@ public class Hero extends Char {
 	public LinkedHashMap<Talent, Talent> metamorphedTalents = new LinkedHashMap<>();
 
 	public com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet pet = null;
+	public Bundle storedPet = null;
 
 	public boolean isSubclass(HeroSubClass subClass) {
 		if (this.subClass == HeroSubClass.KING) return true;
@@ -400,6 +401,9 @@ public class Hero extends Char {
 		bundle.put( HTBOOST, HTBoost );
 
 		bundle.put(GRINDING, grinding);
+		if (storedPet != null) {
+			bundle.put("stored_pet", storedPet);
+		}
 
 		belongings.storeInBundle( bundle );
         if (!customHeroName.equals("")) {
@@ -434,6 +438,9 @@ public class Hero extends Char {
 		totalExp = bundle.getLong(TOTAL_EXPERIENCE);
         totalExp_Transmutation = bundle.getLong(TOTAL_EXPERIENCE_TRANSMUTATION);
 		grinding = bundle.getBoolean(GRINDING);
+		if (bundle.contains("stored_pet")) {
+			storedPet = bundle.getBundle("stored_pet");
+		}
 
 
 		belongings.restoreFromBundle( bundle );

@@ -227,6 +227,12 @@ public abstract class Pet extends DirectableAlly {
 			if (Dungeon.hero != null && Dungeon.hero.pet == null) {
 				Dungeon.hero.pet = this;
 			}
+			if (Dungeon.hero != null && Dungeon.hero.belongings.getItem(com.shatteredpixel.shatteredpixeldungeon.items.pets.PetWhistle.class) == null) {
+				com.shatteredpixel.shatteredpixeldungeon.items.pets.PetWhistle whistle = new com.shatteredpixel.shatteredpixeldungeon.items.pets.PetWhistle();
+				if (!whistle.collect(Dungeon.hero.belongings.backpack)) {
+					Dungeon.level.drop(whistle, Dungeon.hero.pos);
+				}
+			}
 			com.watabou.noosa.Game.runOnRenderThread(new com.watabou.utils.Callback() {
 				@Override
 				public void call() {
@@ -249,6 +255,63 @@ public abstract class Pet extends DirectableAlly {
 	@Override
 	public String description() {
 		return Messages.get(this, "desc");
+	}
+
+	public void recall() {
+		if (Dungeon.hero == null) return;
+		Bundle bundle = new Bundle();
+		storeInBundle(bundle);
+		Dungeon.hero.storedPet = bundle;
+		Dungeon.hero.pet = null;
+
+		if (sprite != null) {
+			CellEmitter.get(pos).burst(Speck.factory(Speck.LIGHT), 8);
+			sprite.killAndErase();
+		}
+		if (Dungeon.level != null && Dungeon.level.mobs != null) {
+			Dungeon.level.mobs.remove(this);
+		}
+		Actor.remove(this);
+		Sample.INSTANCE.play(Assets.Sounds.TELEPORT);
+		GLog.i(Messages.get(Pet.class, "recalled", name()));
+	}
+
+	public static Pet createFromBundle(Bundle bundle) {
+		if (bundle == null) return null;
+		PetType type = PetType.WOLF;
+		if (bundle.contains(TYPE)) {
+			try {
+				type = PetType.valueOf(bundle.getString(TYPE));
+			} catch (Exception ignored) {}
+		}
+		Pet pet = Pet.create(type);
+		pet.restoreFromBundle(bundle);
+		if (pet.HP <= 0) pet.HP = 1;
+		pet.HP = Math.min(pet.HT, pet.HP);
+		return pet;
+	}
+
+	public static Pet summon(com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero hero) {
+		if (hero == null || hero.storedPet == null) return null;
+		Bundle bundle = hero.storedPet;
+		Pet pet = createFromBundle(bundle);
+
+		int spawnCell = getEmptyCellNear(hero.pos);
+		if (Actor.findChar(spawnCell) != null) {
+			spawnCell = hero.pos;
+		}
+		pet.pos = spawnCell;
+		hero.pet = pet;
+		hero.storedPet = null;
+
+		if (Dungeon.level != null) {
+			GameScene.add(pet);
+			CellEmitter.get(spawnCell).burst(Speck.factory(Speck.STAR), 8);
+		}
+		pet.playVoice();
+		Sample.INSTANCE.play(Assets.Sounds.TELEPORT);
+		GLog.p(Messages.get(Pet.class, "summoned", pet.name()));
+		return pet;
 	}
 
 	@Override

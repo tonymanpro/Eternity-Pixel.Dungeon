@@ -119,7 +119,7 @@ public class ItemSpriteSheet {
 		assignItemRect(GOLD,        15, 13);
 		assignItemRect(ENERGY,      16, 16);
 
-		assignItemRect(DEWDROP,     10,  9);
+		assignItemRect(DEWDROP,     10, 10);
 		assignItemRect(PETAL,       8,  8);
 		assignItemRect(SANDBAG,     10, 10);
 		assignItemRect(SPIRIT_ARROW,11, 11);

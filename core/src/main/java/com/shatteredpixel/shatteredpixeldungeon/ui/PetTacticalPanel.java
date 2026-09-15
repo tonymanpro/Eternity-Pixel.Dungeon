@@ -63,6 +63,8 @@ public class PetTacticalPanel extends Component {
 						pet.setOrder(Pet.PetOrder.FOLLOW);
 					}
 					updatePetData(pet);
+				} else if (Dungeon.hero != null && Dungeon.hero.storedPet != null) {
+					Pet.summon(Dungeon.hero);
 				}
 			}
 		};
@@ -102,6 +104,40 @@ public class PetTacticalPanel extends Component {
 							}
 						}
 					});
+				} else if (Dungeon.hero != null && Dungeon.hero.storedPet != null) {
+					final Pet stored = Pet.createFromBundle(Dungeon.hero.storedPet);
+					if (stored != null) {
+						GameScene.selectItem(new WndBag.ItemSelector() {
+							@Override
+							public String textPrompt() {
+								return Messages.get(WndPet.class, "feed_prompt");
+							}
+
+							@Override
+							public Class<? extends Bag> preferredBag() {
+								return null;
+							}
+
+							@Override
+							public boolean itemSelectable(Item item) {
+								return item instanceof Food || item instanceof PotionOfHealing
+										|| item.name().toLowerCase().contains("meat")
+										|| item.name().toLowerCase().contains("berry");
+							}
+
+							@Override
+							public void onSelect(Item item) {
+								if (item != null) {
+									if (stored.feed(item)) {
+										item.detach(Dungeon.hero.belongings.backpack);
+										stored.storeInBundle(Dungeon.hero.storedPet);
+										Dungeon.hero.spendAndNext(1f);
+										updateStoredPetData();
+									}
+								}
+							}
+						});
+					}
 				}
 			}
 		};
@@ -112,7 +148,12 @@ public class PetTacticalPanel extends Component {
 			public void onClick() {
 				Pet pet = getActivePet();
 				if (pet != null) {
-					GameScene.show(new WndPet(pet));
+					GameScene.show(new WndPet(pet, false));
+				} else if (Dungeon.hero != null && Dungeon.hero.storedPet != null) {
+					Pet stored = Pet.createFromBundle(Dungeon.hero.storedPet);
+					if (stored != null) {
+						GameScene.show(new WndPet(stored, true));
+					}
 				}
 			}
 		};
@@ -158,12 +199,35 @@ public class PetTacticalPanel extends Component {
 				currentPet = pet;
 			}
 			updatePetData(pet);
+		} else if (Dungeon.hero != null && Dungeon.hero.storedPet != null) {
+			if (!visible || currentPet != null) {
+				visible = true;
+				currentPet = null;
+			}
+			updateStoredPetData();
 		} else {
 			if (visible) {
 				visible = false;
 				currentPet = null;
 			}
 		}
+	}
+
+	public void updateStoredPetData() {
+		if (Dungeon.hero == null || Dungeon.hero.storedPet == null) return;
+
+		Pet stored = Pet.createFromBundle(Dungeon.hero.storedPet);
+		if (stored == null) return;
+
+		nameText.text(stored.name() + " (" + Messages.get(PetTacticalPanel.class, "resting") + ")");
+		btnOrder.text.text(Messages.get(PetTacticalPanel.class, "btn_summon"));
+
+		float leftRegionW = Math.max(20, width - (BTN_WIDTH * 3 + 10));
+		float hpRatio = Math.max(0f, Math.min(1f, (float) stored.HP / (float) stored.HT));
+		hpBar.size(Math.max(1, leftRegionW * hpRatio), 2);
+		hpBg.size(leftRegionW, 2);
+
+		layout();
 	}
 
 	public void updatePetData(Pet pet) {
