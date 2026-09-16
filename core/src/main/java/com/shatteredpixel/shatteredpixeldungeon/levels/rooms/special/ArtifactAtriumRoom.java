@@ -54,6 +54,6 @@ public class ArtifactAtriumRoom extends SpecialRoom {
 
         level.addItemToSpawn( new IronKey( Dungeon.depth ) );
         entrance().set(Door.Type.LOCKED);
-        Painter.drawInside(level, this, entrance(), 2, Terrain.EMPTY_SP);
+        Painter.drawInside(level, this, entrance(), 3, Terrain.EMPTY_SP);
     }
 }

@@ -3,10 +3,21 @@ package com.shatteredpixel.shatteredpixeldungeon.levels.rooms.standard;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
+import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.watabou.utils.Point;
 import com.watabou.utils.Random;
 
 public class SpiralRoom extends StandardRoom {
+
+    @Override
+    public boolean canConnect(Point p) {
+        return super.canConnect(p) && ((p.x > left + 1 && p.x < right - 1) || (p.y > top + 1 && p.y < bottom - 1));
+    }
+
+    @Override
+    public boolean canMerge(Level l, Room other, Point p, int mergeTerrain) {
+        return false;
+    }
 
     @Override
     public void paint(Level level) {
@@ -40,7 +51,7 @@ public class SpiralRoom extends StandardRoom {
 
         for (Door door : connected.values()) {
             door.set(Door.Type.REGULAR);
-            Painter.drawInside(level, this, door, 2, Terrain.EMPTY_SP);
+            Painter.drawInside(level, this, door, Math.max(width(), height()) / 2 + 1, Terrain.EMPTY_SP);
         }
     }
 }

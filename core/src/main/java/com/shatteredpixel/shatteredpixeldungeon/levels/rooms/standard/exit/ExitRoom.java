@@ -60,9 +60,68 @@ public class ExitRoom extends StandardRoom {
 			door.set( Room.Door.Type.REGULAR );
 		}
 		
-		int exit = level.pointToCell(random( 2 ));
+		int exit = level.pointToCell(getExitPoint(this, level));
 		Painter.set( level, exit, Terrain.EXIT );
 		level.transitions.add(new LevelTransition(level, exit, LevelTransition.Type.REGULAR_EXIT));
+	}
+
+	public interface PointValidator {
+		boolean isValid(Point p, int cell);
+	}
+
+	public static Point getExitPoint(Room room, Level level) {
+		return getExitPoint(room, level, 2, null);
+	}
+
+	public static Point getExitPoint(Room room, Level level, int margin) {
+		return getExitPoint(room, level, margin, null);
+	}
+
+	public static Point getExitPoint(Room room, Level level, int margin, PointValidator validator) {
+		Room.Door entrance = null;
+		if (!room.connected.isEmpty()) {
+			entrance = room.connected.values().iterator().next();
+		}
+
+		Point target = new Point(room.center());
+		if (entrance != null) {
+			if (entrance.y <= room.top || entrance.y >= room.bottom) {
+				int minX = Math.min(room.left + margin, room.center().x);
+				int maxX = Math.max(room.right - margin, room.center().x);
+				target.x = Math.max(minX, Math.min(maxX, entrance.x));
+				target.y = room.center().y;
+			} else {
+				target.x = room.center().x;
+				int minY = Math.min(room.top + margin, room.center().y);
+				int maxY = Math.max(room.bottom - margin, room.center().y);
+				target.y = Math.max(minY, Math.min(maxY, entrance.y));
+			}
+		}
+
+		int targetCell = level.pointToCell(target);
+		if (validator == null || validator.isValid(target, targetCell)) {
+			return target;
+		}
+
+		// Find the closest valid point inside the room
+		Point best = null;
+		int bestDist = Integer.MAX_VALUE;
+
+		for (int y = room.top + margin; y <= room.bottom - margin; y++) {
+			for (int x = room.left + margin; x <= room.right - margin; x++) {
+				Point p = new Point(x, y);
+				int c = level.pointToCell(p);
+				if (validator.isValid(p, c)) {
+					int dist = Math.abs(x - target.x) + Math.abs(y - target.y);
+					if (dist < bestDist) {
+						bestDist = dist;
+						best = p;
+					}
+				}
+			}
+		}
+
+		return best != null ? best : target;
 	}
 	
 	@Override

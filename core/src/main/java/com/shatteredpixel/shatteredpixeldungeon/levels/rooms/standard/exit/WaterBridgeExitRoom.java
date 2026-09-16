@@ -50,11 +50,9 @@ public class WaterBridgeExitRoom extends WaterBridgeRoom {
 	public void paint(Level level) {
 		super.paint(level);
 
-		int exit;
-		do {
-			exit = level.pointToCell(random(2));
-
-		} while (spaceRect.inside(level.cellToPoint(exit)) || level.findMob(exit) != null);
+		Point p = ExitRoom.getExitPoint(this, level, 2, (pt, cell) ->
+				!spaceRect.inside(pt) && level.findMob(cell) == null);
+		int exit = level.pointToCell(p);
 
 		for (int i : PathFinder.NEIGHBOURS8){
 			Painter.set(level, exit + i, Terrain.EMPTY);

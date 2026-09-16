@@ -50,23 +50,14 @@ public class RegionDecoBridgeExitRoom extends RegionDecoBridgeRoom {
     public void paint(Level level) {
         super.paint(level);
 
-        int exit;
-        boolean valid;
-        do {
-            valid = true;
-            exit = level.pointToCell(random(2));
-
-            if (spaceRect.inside(level.cellToPoint(exit))){
-                valid = false;
-            } else {
-                for (int i : PathFinder.NEIGHBOURS8){
-                    if (level.map[exit+i] == Terrain.REGION_DECO_ALT){
-                        valid = false;
-                    }
-                }
+        Point p = ExitRoom.getExitPoint(this, level, 2, (pt, cell) -> {
+            if (spaceRect.inside(pt)) return false;
+            for (int i : PathFinder.NEIGHBOURS8){
+                if (level.map[cell+i] == Terrain.REGION_DECO_ALT) return false;
             }
-
-        } while (!valid);
+            return true;
+        });
+        int exit = level.pointToCell(p);
 
         Painter.set( level, exit, Terrain.EXIT );
         level.transitions.add(new LevelTransition(level, exit, LevelTransition.Type.REGULAR_EXIT));

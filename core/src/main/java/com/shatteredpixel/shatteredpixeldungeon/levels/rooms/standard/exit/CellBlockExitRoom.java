@@ -45,27 +45,17 @@ public class CellBlockExitRoom extends CellBlockRoom {
     public void paint(Level level) {
         super.paint(level);
 
-        while (true){
-            Point p = random(3);
-
-            if (level.map[level.pointToCell(p)] == Terrain.EMPTY_SP){
-                boolean valid = true;
-                for (int i : PathFinder.NEIGHBOURS8){
-                    if (level.map[level.pointToCell(p)+i] == Terrain.DOOR){
-                        valid = false;
-                    }
-                }
-
-                if (valid){
-                    int entrance = level.pointToCell(p);
-                    Painter.set( level, entrance, Terrain.EXIT );
-
-                    level.transitions.add(new LevelTransition(level, entrance, LevelTransition.Type.REGULAR_EXIT));
-                    return;
-                }
+        Point p = ExitRoom.getExitPoint(this, level, 3, (pt, cell) -> {
+            if (level.map[cell] != Terrain.EMPTY_SP) return false;
+            for (int i : PathFinder.NEIGHBOURS8){
+                if (level.map[cell+i] == Terrain.DOOR) return false;
             }
-        }
+            return true;
+        });
+        int entrance = level.pointToCell(p);
+        Painter.set( level, entrance, Terrain.EXIT );
 
+        level.transitions.add(new LevelTransition(level, entrance, LevelTransition.Type.REGULAR_EXIT));
     }
 
     @Override

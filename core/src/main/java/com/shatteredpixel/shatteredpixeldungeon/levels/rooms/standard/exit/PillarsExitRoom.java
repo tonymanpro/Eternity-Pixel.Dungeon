@@ -45,20 +45,15 @@ public class PillarsExitRoom extends PillarsRoom {
 	public void paint(Level level) {
 		super.paint(level);
 
-		int exit;
-		boolean valid;
-		do {
-			exit = level.pointToCell(random(2));
-			valid = true;
-
+		Point p = ExitRoom.getExitPoint(this, level, 2, (pt, cell) -> {
+			if (level.findMob(cell) != null || level.map[cell] == Terrain.WALL) return false;
 			for (int i : PathFinder.NEIGHBOURS4){
 				if (i == -level.width()) continue;
-				if (level.map[exit+i] == Terrain.WALL){
-					valid = false;
-				}
+				if (level.map[cell+i] == Terrain.WALL) return false;
 			}
-
-		} while (level.findMob(exit) != null || level.map[exit] == Terrain.WALL || !valid);
+			return true;
+		});
+		int exit = level.pointToCell(p);
 		Painter.set( level, exit, Terrain.EXIT );
 
 		level.transitions.add(new LevelTransition(level, exit, LevelTransition.Type.REGULAR_EXIT));

@@ -45,14 +45,11 @@ public class CavesFissureExitRoom extends CavesFissureRoom {
 	public void paint(Level level) {
 		super.paint(level);
 
-		int exit;
-		do {
-			exit = level.pointToCell(random(2));
-
-		} while (level.map[exit] == Terrain.CHASM
-				|| level.map[exit] == Terrain.EMPTY_SP
-				|| level.findMob(exit) != null);
-
+		Point p = ExitRoom.getExitPoint(this, level, 2, (pt, cell) ->
+				level.map[cell] != Terrain.CHASM
+				&& level.map[cell] != Terrain.EMPTY_SP
+				&& level.findMob(cell) == null);
+		int exit = level.pointToCell(p);
 
 		for (int i : PathFinder.NEIGHBOURS4){
 			if (level.map[exit+i] == Terrain.CHASM) {
@@ -62,7 +59,6 @@ public class CavesFissureExitRoom extends CavesFissureRoom {
 
 		Painter.set( level, exit, Terrain.EXIT );
 		level.transitions.add(new LevelTransition(level, exit, LevelTransition.Type.REGULAR_EXIT));
-
 	}
 
     @Override

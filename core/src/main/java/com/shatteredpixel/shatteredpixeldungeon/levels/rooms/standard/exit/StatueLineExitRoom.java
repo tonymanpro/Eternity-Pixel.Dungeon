@@ -49,10 +49,8 @@ public class StatueLineExitRoom extends StatueLineRoom {
     public void paint(Level level) {
         super.paint(level);
 
-        int exit;
-        do {
-            exit = level.pointToCell(random(3));
-        } while (level.findMob(exit) != null);
+        Point p = ExitRoom.getExitPoint(this, level, 3, (pt, cell) -> level.findMob(cell) == null);
+        int exit = level.pointToCell(p);
 
         Painter.set(level, exit, Terrain.EXIT);
         level.transitions.add(new LevelTransition(level, exit, LevelTransition.Type.REGULAR_EXIT));

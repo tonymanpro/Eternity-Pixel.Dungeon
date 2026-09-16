@@ -9,6 +9,11 @@ import com.watabou.utils.Random;
 public class CrystalMazeRoom extends SpecialRoom {
 
     @Override
+    public boolean canConnect(Point p) {
+        return super.canConnect(p) && ((p.x > left + 1 && p.x < right - 1) || (p.y > top + 1 && p.y < bottom - 1));
+    }
+
+    @Override
     public void paint(Level level) {
         Painter.fill(level, this, Terrain.WALL);
         Painter.fill(level, this, 1, Terrain.EMPTY_SP);
@@ -37,9 +42,15 @@ public class CrystalMazeRoom extends SpecialRoom {
             inset += 2;
         }
 
+        Door entrance = entrance();
+        if (entrance != null) {
+            entrance.set(Door.Type.UNLOCKED);
+            Painter.drawInside(level, this, entrance, Math.max(width(), height()) / 2 + 1, Terrain.EMPTY_SP);
+        }
+
         for (Door door : connected.values()) {
             door.set(Door.Type.UNLOCKED);
-            Painter.drawInside(level, this, door, 2, Terrain.EMPTY_SP);
+            Painter.drawInside(level, this, door, Math.max(width(), height()) / 2 + 1, Terrain.EMPTY_SP);
         }
     }
 }

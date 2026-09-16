@@ -31,6 +31,7 @@ public class RuinedGardenRoom extends StandardRoom {
 
         for (Door door : connected.values()) {
             door.set(Door.Type.REGULAR);
+            Painter.drawInside(level, this, door, 2, Terrain.GRASS);
         }
     }
 }
