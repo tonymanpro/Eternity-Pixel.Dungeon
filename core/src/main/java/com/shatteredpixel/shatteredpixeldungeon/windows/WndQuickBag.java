@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.windows;
 
 import com.shatteredpixel.shatteredpixeldungeon.Chrome;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
@@ -152,8 +153,20 @@ public class WndQuickBag extends Window {
 
 		int bottom = GameScene.uiCamera.height;
 
-		//offset to be above the toolbar
-		offset(0, (int) (bottom/2 - 30 - height/2));
+		if (SPDSettings.interfaceSize() == 1) {
+			float toolbarTop = PixelScene.uiCamera.height - 28;
+			int targetRight = PixelScene.uiCamera.width - 2;
+			int targetBottom = (int)toolbarTop - 1;
+			int targetX = targetRight - camera.width;
+			int targetY = targetBottom - camera.height;
+			int defX = targetX - (PixelScene.uiCamera.width - camera.width) / 2;
+			int defY = targetY - (PixelScene.uiCamera.height - camera.height) / 2;
+			offset(defX, defY);
+			boundOffsetWithMargin(2);
+		} else {
+			//offset to be above the toolbar
+			offset(0, (int) (bottom/2 - 30 - height/2));
+		}
 
 	}
 

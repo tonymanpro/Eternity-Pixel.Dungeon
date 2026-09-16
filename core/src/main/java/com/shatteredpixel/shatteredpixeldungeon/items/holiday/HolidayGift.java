@@ -70,7 +70,9 @@ public class HolidayGift extends Item {
 
 			if (reward != null) {
 				reward.identify();
-				if (!reward.collect(hero.belongings.backpack)) {
+				if (reward instanceof Gold) {
+					reward.doPickUp(hero, hero.pos, 0f);
+				} else if (!reward.collect(hero.belongings.backpack)) {
 					Dungeon.level.drop(reward, hero.pos);
 				}
 			}

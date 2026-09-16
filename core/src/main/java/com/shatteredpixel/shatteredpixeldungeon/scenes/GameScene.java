@@ -184,6 +184,10 @@ public class GameScene extends PixelScene {
 
 		SPDSettings.lastClass(Dungeon.hero.heroClass.ordinal());
 		
+		if (Dungeon.hero != null && Dungeon.hero.belongings != null) {
+			Dungeon.hero.belongings.purgeGold();
+		}
+
 		super.create();
 		Camera.main.zoom( GameMath.gate(minZoom, defaultZoom + SPDSettings.zoom(), maxZoom));
 		Camera.main.edgeScroll.set(1);

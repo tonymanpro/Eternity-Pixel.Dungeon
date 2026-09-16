@@ -36,12 +36,24 @@ import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 
 public class Gold extends Item {
+
+	@Override
+	public boolean collect(Bag container) {
+		Hero hero = Dungeon.hero;
+		if (hero != null) {
+			return doPickUp(hero, hero.pos, 0f);
+		} else {
+			Dungeon.gold += quantity;
+			return true;
+		}
+	}
 
 	{
 		image = ItemSpriteSheet.GOLD;
