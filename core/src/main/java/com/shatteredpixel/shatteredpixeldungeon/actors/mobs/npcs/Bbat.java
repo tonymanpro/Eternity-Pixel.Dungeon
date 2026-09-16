@@ -181,6 +181,15 @@ public class Bbat extends Mob {
                     }
                     return moveSprite( oldPos, pos );
                 } else {
+                    if (Dungeon.hero != null && Dungeon.hero.isAlive() && Dungeon.level != null && Dungeon.level.distance(pos, Dungeon.hero.pos) > 2) {
+                        int nearCell = com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet.getEmptyCellNear(Dungeon.hero.pos);
+                        if (nearCell != Dungeon.hero.pos && Actor.findChar(nearCell) == null) {
+                            move(nearCell);
+                            if (sprite != null) sprite.place(pos);
+                            spend(1 / 25f);
+                            return true;
+                        }
+                    }
                     spend( TICK );
                 }
 

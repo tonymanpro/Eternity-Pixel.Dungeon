@@ -395,7 +395,7 @@ public class AboutScene extends PixelScene {
 
 				if (avatar != null){
 					avatar.x = x;
-					body.maxWidth((int)(width() - avatar.width - 1));
+					body.maxWidth((int)(width() - avatar.width() - 1));
 
 					float fullAvHeight = Math.max(avatar.height(), 16);
 					if (fullAvHeight > body.height()){

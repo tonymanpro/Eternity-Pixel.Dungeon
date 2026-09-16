@@ -88,7 +88,7 @@ public class DM300 extends Mob {
 	{
 		spriteClass = DM300Sprite.class;
 
-		HP = HT = (long) ((bossMaxHPMulti + 1) * (Dungeon.getCycleMultiplier(300)));
+		HP = HT = (long) ((bossMaxHPMulti + 1) * (Dungeon.getCycleMultiplier(300) / 2));
 		EXP = Dungeon.getCycleMultiplier(30);
 		defenseSkill = Dungeon.getCycleMultiplier(15);
 

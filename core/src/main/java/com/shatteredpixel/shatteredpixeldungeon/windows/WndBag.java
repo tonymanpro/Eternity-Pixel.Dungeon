@@ -36,6 +36,7 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.*;
+import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.watabou.input.GameAction;
 import com.watabou.input.KeyBindings;
 import com.watabou.input.KeyEvent;
@@ -43,6 +44,9 @@ import com.watabou.input.PointerEvent;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Image;
+import com.watabou.noosa.PointerArea;
+import com.watabou.utils.DeviceCompat;
+import com.watabou.utils.Point;
 import com.watabou.utils.PointF;
 
 import java.util.ArrayList;
@@ -91,6 +95,13 @@ public class WndBag extends WndTabbed {
 
 	private static Bag lastBag;
 
+	public static Point lastOffset = null;
+	private static boolean dragged = false;
+	private static int lastInterfaceSize = -1;
+
+	private PointerArea dragHeader;
+	private IconButton btnFilter;
+
 	public WndBag( Bag bag ) {
 		this(bag, null, 0);
 	}
@@ -114,6 +125,10 @@ public class WndBag extends WndTabbed {
 		slotWidth  = PixelScene.landscape() ? SLOT_WIDTH_L  : SLOT_WIDTH_P;
 		slotHeight = PixelScene.landscape() ? SLOT_HEIGHT_L : SLOT_HEIGHT_P;
 		nCols      = PixelScene.landscape() ? COLS_L : COLS_P;
+
+		if (Dungeon.hero != null && Dungeon.hero.belongings != null) {
+			Dungeon.hero.belongings.purgeGold();
+		}
 
 		capacitySlots = buildAllSlots( bag );
 		int slotCount = capacitySlots.size();
@@ -163,6 +178,75 @@ public class WndBag extends WndTabbed {
 			}
 		}
 		layoutTabs();
+
+		int curInterfaceSize = SPDSettings.interfaceSize();
+		if (curInterfaceSize != lastInterfaceSize) {
+			lastInterfaceSize = curInterfaceSize;
+			lastOffset = null;
+			dragged = false;
+		}
+
+		if (curInterfaceSize == 1) {
+			if (dragged && lastOffset != null) {
+				offset(lastOffset.x, lastOffset.y);
+				boundOffsetWithMargin(2);
+			} else {
+				float toolbarTop = PixelScene.uiCamera.height - 28;
+				int targetRight = PixelScene.uiCamera.width - 2;
+				int targetBottom = (int)toolbarTop - 1;
+				int targetX = targetRight - camera.width;
+				int targetY = targetBottom - camera.height;
+				int defX = targetX - (PixelScene.uiCamera.width - camera.width) / 2;
+				int defY = targetY - (PixelScene.uiCamera.height - camera.height) / 2;
+				offset(defX, defY);
+				boundOffsetWithMargin(2);
+				lastOffset = new Point(xOffset, yOffset);
+			}
+		} else if (dragged && lastOffset != null) {
+			offset(lastOffset.x, lastOffset.y);
+			boundOffsetWithMargin(2);
+		}
+
+		if (DeviceCompat.isDesktop()) {
+			dragHeader = new PointerArea( -chrome.marginLeft(), -chrome.marginTop(), chrome.width(), chrome.marginTop() + TITLE_HEIGHT ) {
+				private boolean dragging = false;
+				private float lastX, lastY;
+
+				@Override
+				protected void onPointerDown( PointerEvent event ) {
+					dragging = true;
+					lastX = event.current.x;
+					lastY = event.current.y;
+				}
+
+				@Override
+				protected void onDrag( PointerEvent event ) {
+					if (dragging) {
+						float dx = (event.current.x - lastX) / camera.zoom;
+						float dy = (event.current.y - lastY) / camera.zoom;
+						lastX = event.current.x;
+						lastY = event.current.y;
+						offset( Math.round(xOffset + dx), Math.round(yOffset + dy) );
+						boundOffsetWithMargin( 2 );
+						dragged = true;
+						if (lastOffset == null) {
+							lastOffset = new Point();
+						}
+						lastOffset.set( xOffset, yOffset );
+					}
+				}
+
+				@Override
+				protected void onPointerUp( PointerEvent event ) {
+					dragging = false;
+				}
+			};
+			dragHeader.camera = camera;
+			add( dragHeader );
+			if (btnFilter != null) {
+				btnFilter.givePointerPriority();
+			}
+		}
 	}
 
 	public static WndBag lastBag( ItemSelector selector ) {
@@ -238,7 +322,7 @@ public class WndBag extends WndTabbed {
 			titleWidth = Math.min(titleWidth, amt.x);
 		}
 
-		IconButton btnFilter = new IconButton(Icons.get(Icons.TARGET)) {
+		btnFilter = new IconButton(Icons.get(Icons.TARGET)) {
 			@Override
 			public void onClick() {
 				GameScene.show(new WndLootFilter());

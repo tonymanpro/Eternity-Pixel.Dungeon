@@ -113,6 +113,9 @@ public class Hunger extends Buff implements Hero.Doom {
 			}
 
 			float hungerDelay = STEP;
+			if (Dungeon.depth <= 5) {
+				hungerDelay *= 1.35f;
+			}
 			if (target.buff(Shadows.class) != null){
 				hungerDelay *= 1.5f;
 			}

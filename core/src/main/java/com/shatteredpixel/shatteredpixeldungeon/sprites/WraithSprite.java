@@ -34,7 +34,7 @@ public class WraithSprite extends MobSprite {
 		
 		texture( Assets.Sprites.WRAITH );
 		
-		TextureFilm frames = new TextureFilm( texture, 14, 15 );
+		TextureFilm frames = createFilm( 14, 15 );
 		
 		idle = new Animation( 5, true );
 		idle.frames( frames, 0, 1 );

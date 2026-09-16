@@ -226,6 +226,8 @@ public class SPDSettings extends GameSettings {
 	public static final String KEY_DYNAMIC_LIGHTING = "dynamic_lighting";
 	public static final String KEY_BLOOM_ENABLED    = "bloom_enabled";
 	public static final String KEY_VIGNETTE_ENABLED = "vignette_enabled";
+	public static final String KEY_SMOOTH_PIXELS    = "smooth_pixels";
+	public static final String KEY_HD_TEXTURES      = "hd_textures";
 
 	public static void dynamicLighting( boolean value ) {
 		put( KEY_DYNAMIC_LIGHTING, value );
@@ -233,6 +235,24 @@ public class SPDSettings extends GameSettings {
 
 	public static boolean dynamicLighting() {
 		return getBoolean( KEY_DYNAMIC_LIGHTING, true );
+	}
+
+	public static void smoothPixels( boolean value ) {
+		put( KEY_SMOOTH_PIXELS, value );
+		com.watabou.noosa.PostProcessing.smoothFilterEnabled = value;
+	}
+
+	public static boolean smoothPixels() {
+		return getBoolean( KEY_SMOOTH_PIXELS, true );
+	}
+
+	public static void hdTextures( boolean value ) {
+		put( KEY_HD_TEXTURES, value );
+		com.watabou.utils.AssetPackResolver.hdTexturesEnabled = value;
+	}
+
+	public static boolean hdTextures() {
+		return getBoolean( KEY_HD_TEXTURES, true );
 	}
 
 	public static void bloomEnabled( boolean value ) {
@@ -297,11 +317,25 @@ public class SPDSettings extends GameSettings {
 	
 	public static void brightness( int value ) {
 		put( KEY_BRIGHTNESS, value );
+		updateBrightnessFactor( value );
 		GameScene.updateFog();
 	}
 	
 	public static int brightness() {
-		return getInt( KEY_BRIGHTNESS, 0, -1, 1 );
+		return getInt( KEY_BRIGHTNESS, 0, -2, 2 );
+	}
+
+	public static void updateBrightnessFactor( int val ) {
+		float b;
+		switch (val) {
+			case -2: b = 0.65f; break;
+			case -1: b = 0.82f; break;
+			default:
+			case  0: b = 1.00f; break;
+			case  1: b = 1.25f; break;
+			case  2: b = 1.50f; break;
+		}
+		com.watabou.noosa.PostProcessing.brightness = b;
 	}
 	
 	public static void visualGrid( int value ){
@@ -389,7 +423,7 @@ public class SPDSettings extends GameSettings {
 		put("show_pet_panel", value );
 	}
 
-	public static boolean showPetPanel(){ return getBoolean("show_pet_panel", true); }
+	public static boolean showPetPanel(){ return getBoolean("show_pet_panel", false); }
 	
 	public static void toolbarMode( String value ) {
 		put( KEY_BARMODE, value );

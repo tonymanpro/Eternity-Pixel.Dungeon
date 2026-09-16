@@ -221,6 +221,7 @@ public class Hero extends Char {
     }
 
 	public static final int STARTING_STR = 10;
+	public static final int STARTING_HT  = 25;
 	
 	private static final float TIME_TO_REST		    = 1f;
 	private static final float TIME_TO_SEARCH	    = 2f;
@@ -239,6 +240,7 @@ public class Hero extends Char {
 	public LinkedHashMap<Talent, Talent> metamorphedTalents = new LinkedHashMap<>();
 
 	public com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet pet = null;
+	public Bundle storedPet = null;
 
 	public boolean isSubclass(HeroSubClass subClass) {
 		if (this.subClass == HeroSubClass.KING) return true;
@@ -311,7 +313,7 @@ public class Hero extends Char {
 	public Hero() {
 		super();
 
-		HP = HT = 20;
+		HP = HT = STARTING_HT;
 		STR = STARTING_STR;
 		
 		belongings = new Belongings( this );
@@ -322,7 +324,7 @@ public class Hero extends Char {
 	public void updateHT( boolean boostHP ){
 		long curHT = HT;
 		
-		HT = 20 + 5L*(lvl-1) + HTBoost;
+		HT = STARTING_HT + 5L*(lvl-1) + HTBoost;
 		HT += RingOfMight.HTMultiplier(this);
 		
 		if (buff(ElixirOfMight.HTBoost.class) != null){
@@ -399,6 +401,9 @@ public class Hero extends Char {
 		bundle.put( HTBOOST, HTBoost );
 
 		bundle.put(GRINDING, grinding);
+		if (storedPet != null) {
+			bundle.put("stored_pet", storedPet);
+		}
 
 		belongings.storeInBundle( bundle );
         if (!customHeroName.equals("")) {
@@ -433,6 +438,9 @@ public class Hero extends Char {
 		totalExp = bundle.getLong(TOTAL_EXPERIENCE);
         totalExp_Transmutation = bundle.getLong(TOTAL_EXPERIENCE_TRANSMUTATION);
 		grinding = bundle.getBoolean(GRINDING);
+		if (bundle.contains("stored_pet")) {
+			storedPet = bundle.getBundle("stored_pet");
+		}
 
 
 		belongings.restoreFromBundle( bundle );
@@ -2101,12 +2109,13 @@ if (!Dungeon.level.visited[cell] && !Dungeon.level.mapped[cell]
 			}
 
 		//TODO perhaps only trigger this if hero is already adjacent? reducing mistaps
-		} else if (Dungeon.level instanceof MiningLevel &&
-					belongings.getItem(Pickaxe.class) != null &&
-				(Dungeon.level.map[cell] == Terrain.WALL
-						|| Dungeon.level.map[cell] == Terrain.WALL_DECO
-						|| Dungeon.level.map[cell] == Terrain.MINE_CRYSTAL
-						|| Dungeon.level.map[cell] == Terrain.MINE_BOULDER)){
+		} else if (belongings.getItem(Pickaxe.class) != null &&
+				((Dungeon.level instanceof MiningLevel &&
+					(Dungeon.level.map[cell] == Terrain.WALL
+							|| Dungeon.level.map[cell] == Terrain.WALL_DECO
+							|| Dungeon.level.map[cell] == Terrain.MINE_CRYSTAL
+							|| Dungeon.level.map[cell] == Terrain.MINE_BOULDER))
+				|| (Dungeon.depth >= 11 && Dungeon.depth <= 15 && Dungeon.level.map[cell] == Terrain.WALL_DECO))){
 
 			curAction = new HeroAction.Mine( cell );
 

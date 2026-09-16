@@ -34,7 +34,7 @@ public class SwarmSprite extends MobSprite {
 		
 		texture( Assets.Sprites.SWARM );
 		
-		TextureFilm frames = new TextureFilm( texture, 16, 16 );
+		TextureFilm frames = createFilm( 16, 16 );
 		
 		idle = new Animation( 15, true );
 		idle.frames( frames, 0, 1, 2, 3, 4, 5 );

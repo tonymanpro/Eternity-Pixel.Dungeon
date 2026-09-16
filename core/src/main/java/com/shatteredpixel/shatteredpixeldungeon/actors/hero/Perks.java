@@ -136,6 +136,15 @@ public class Perks {
         return num;
     }
 
+    public static int prevPerkLevel(){
+        if (Dungeon.hero == null || Dungeon.hero.perks.isEmpty()) return 1;
+        int num = 5;
+        for (int i = 0; i < Dungeon.hero.perks.size() - 1; i++){
+            num += 5 + i;
+        }
+        return num;
+    }
+
     public static void debugEarnPerk(String string){
         Perk perk = Perk.valueOf(string);
         Dungeon.hero.perks.add(perk);
@@ -145,7 +154,7 @@ public class Perks {
     }
 
     public static void earnPerk(Hero hero){
-        if (hero.perks.size() < Perk.values().length && hero.lvl == nextPerkLevel()){
+        while (hero.perks.size() < Perk.values().length && hero.lvl >= nextPerkLevel()){
             Perk perk;
             do {
                 perk = Random.element(Perk.values());
@@ -153,7 +162,7 @@ public class Perks {
             hero.perks.add(perk);
             GLog.p(Messages.get(Perks.class, "perk_obtain", perk.toString()));
             if (hero.sprite != null)
-            hero.sprite.emitter().burst(Speck.factory(Speck.STAR), 20);
+                hero.sprite.emitter().burst(Speck.factory(Speck.STAR), 20);
         }
     }
 

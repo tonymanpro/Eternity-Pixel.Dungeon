@@ -46,6 +46,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
 import com.shatteredpixel.shatteredpixeldungeon.items.journal.Guidebook;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
+import com.shatteredpixel.shatteredpixeldungeon.items.quest.Pickaxe;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.DimensionalSundial;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.TrinketCatalyst;
@@ -55,6 +56,7 @@ import com.shatteredpixel.shatteredpixeldungeon.journal.Document;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Journal;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
+import com.shatteredpixel.shatteredpixeldungeon.levels.MiningLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.RegularLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
@@ -184,6 +186,10 @@ public class GameScene extends PixelScene {
 
 		SPDSettings.lastClass(Dungeon.hero.heroClass.ordinal());
 		
+		if (Dungeon.hero != null && Dungeon.hero.belongings != null) {
+			Dungeon.hero.belongings.purgeGold();
+		}
+
 		super.create();
 		Camera.main.zoom( GameMath.gate(minZoom, defaultZoom + SPDSettings.zoom(), maxZoom));
 		Camera.main.edgeScroll.set(1);
@@ -466,7 +472,9 @@ public class GameScene extends PixelScene {
 							petCell = Dungeon.hero.pos;
 						}
 						Dungeon.hero.pet.pos = petCell;
+						Dungeon.hero.pet.clearTime();
 						GameScene.add(Dungeon.hero.pet);
+						Dungeon.hero.pet.setOrder(Dungeon.hero.pet.currentOrder != null ? Dungeon.hero.pet.currentOrder : com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet.PetOrder.FOLLOW);
 					}
 				}
 
@@ -864,11 +872,10 @@ private static float waterOfs = 0;
 		}
 
 		if (scene.petPanel != null) {
-			float panelWidth = Math.min(168, uiCamera.width - 10);
-			float panelX = (uiCamera.width - panelWidth) / 2f;
-			float panelY = (SPDSettings.interfaceSize() == 0 && scene.status != null) ? scene.status.bottom() + 2 : 4;
-			scene.petPanel.setRect(panelX, panelY, panelWidth, PetTacticalPanel.PANEL_HEIGHT);
-			scene.bringToFront(scene.petPanel);
+			scene.petPanel.layout();
+			if (scene.petPanel.visible) {
+				scene.bringToFront(scene.petPanel);
+			}
 		}
 	}
 	
@@ -1652,7 +1659,17 @@ private static float waterOfs = 0;
 
 			//determine first text line
 			if (objects.isEmpty()) {
-				textLines.add(0, Messages.get(GameScene.class, "go_here"));
+				if (Dungeon.hero != null && Dungeon.hero.belongings.getItem(Pickaxe.class) != null
+						&& ((Dungeon.level instanceof MiningLevel &&
+								(Dungeon.level.map[cell] == Terrain.WALL
+										|| Dungeon.level.map[cell] == Terrain.WALL_DECO
+										|| Dungeon.level.map[cell] == Terrain.MINE_CRYSTAL
+										|| Dungeon.level.map[cell] == Terrain.MINE_BOULDER))
+							|| (Dungeon.depth >= 11 && Dungeon.depth <= 15 && Dungeon.level.map[cell] == Terrain.WALL_DECO))) {
+					textLines.add(0, Messages.get(Pickaxe.class, "ac_mine"));
+				} else {
+					textLines.add(0, Messages.get(GameScene.class, "go_here"));
+				}
 			} else if (objects.get(0) instanceof Hero) {
 				textLines.add(0, Messages.get(GameScene.class, "go_here"));
 			} else if (objects.get(0) instanceof Mob) {

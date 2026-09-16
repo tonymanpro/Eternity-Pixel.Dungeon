@@ -35,7 +35,7 @@ public class Crab extends Mob {
 		spriteClass = CrabSprite.class;
 		
 		HP = HT = Dungeon.getCycleMultiplier(15);
-		defenseSkill = Dungeon.getCycleMultiplier(5);
+		defenseSkill = Dungeon.getCycleMultiplier(3);
 		baseSpeed = 2f;
 		
 		EXP = Dungeon.getCycleMultiplier(4);

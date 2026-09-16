@@ -114,6 +114,12 @@ public abstract class OptionSlider extends Component {
 				PointF p = camera().screenToCamera((int) event.current.x, (int) event.current.y);
 				sliderNode.x = GameMath.gate(sliderBG.x-2, p.x - sliderNode.width()/2, sliderBG.x+sliderBG.width()-2);
 				sliderNode.brightness(1.5f);
+				int newVal = minVal + Math.round((sliderNode.x - x) / tickDist);
+				newVal = (int)GameMath.gate(minVal, newVal, maxVal);
+				if (newVal != selectedVal) {
+					selectedVal = newVal;
+					onChange();
+				}
 			}
 
 			@Override
@@ -125,6 +131,7 @@ public abstract class OptionSlider extends Component {
 					
 					//sets the selected value
 					selectedVal = minVal + Math.round((sliderNode.x - x) / tickDist);
+					selectedVal = (int)GameMath.gate(minVal, selectedVal, maxVal);
 					sliderNode.x = x + tickDist * (selectedVal - minVal) + 0.5f;
 					PixelScene.align(sliderNode);
 					onChange();
@@ -137,6 +144,12 @@ public abstract class OptionSlider extends Component {
 				if (pressed) {
 					PointF p = camera().screenToCamera((int) event.current.x, (int) event.current.y);
 					sliderNode.x = GameMath.gate(sliderBG.x - 2, p.x - sliderNode.width()/2, sliderBG.x + sliderBG.width() - 2);
+					int newVal = minVal + Math.round((sliderNode.x - x) / tickDist);
+					newVal = (int)GameMath.gate(minVal, newVal, maxVal);
+					if (newVal != selectedVal) {
+						selectedVal = newVal;
+						onChange();
+					}
 				}
 			}
 		};
@@ -147,19 +160,27 @@ public abstract class OptionSlider extends Component {
 	@Override
 	protected void layout() {
 
-		if (title.width() > 0.7f*width){
-			String titleText = title.text;
-			remove(title);
-			title = PixelScene.renderTextBlock(6);
-			add(title);
-			title.text(titleText);
-		}
+		if (title != null) {
+			float availSpace = width - minTxt.width() - maxTxt.width() - 8;
+			if (title.width() > availSpace) {
+				String titleText = title.text;
+				remove(title);
+				title = PixelScene.renderTextBlock(titleText, 7);
+				add(title);
 
-		title.setPos(
-				x + (width-title.width())/2,
-				y+2
-		);
-		PixelScene.align(title);
+				if (title.width() > availSpace) {
+					remove(title);
+					title = PixelScene.renderTextBlock(titleText, 6);
+					add(title);
+				}
+			}
+
+			title.setPos(
+					x + (width - title.width()) / 2,
+					y + 2
+			);
+			PixelScene.align(title);
+		}
 		sliderBG.y = y + height() - 7;
 		sliderBG.x = x+2;
 		sliderBG.size(width-5, 1);

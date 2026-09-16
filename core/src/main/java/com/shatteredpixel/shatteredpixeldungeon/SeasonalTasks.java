@@ -50,6 +50,19 @@ public class SeasonalTasks {
     public static ArrayList<Task> tasks = new ArrayList<>();
     private static boolean allBonusClaimed = false;
 
+    public static void resetProgress(){
+        if (tasks == null || tasks.isEmpty()){
+            rollForNewSeason();
+            return;
+        }
+        allBonusClaimed = false;
+        for (Task t : tasks){
+            t.progress = 0;
+            t.completed = false;
+            t.claimed = false;
+        }
+    }
+
     public static void rollForNewSeason(){
         tasks = new ArrayList<>();
         allBonusClaimed = false;

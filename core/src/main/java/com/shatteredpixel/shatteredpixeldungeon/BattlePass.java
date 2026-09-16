@@ -71,7 +71,7 @@ public class BattlePass {
 
     public static final int REPEATABLE_TIER = TIER_XP.length + 1; // 101
     public static final int REPEATABLE_TIER_XP = 100 + TIER_XP.length * 100; // 3100, continues the same cost curve
-    public static final int RESET_ENERGY_COST = 600000;
+    public static final int RESET_ENERGY_COST = 0;
     public static final int HISTORY_CLAIM_ENERGY_COST = 100;
 
     public static int totalXP;
@@ -104,7 +104,11 @@ public class BattlePass {
             monthKey = now;
             return;
         }
-        if (monthKey.equals(now) || monthKey.startsWith(now + "-r"))
+        if (monthKey.startsWith(now + "-r")) {
+            monthKey = now;
+            return;
+        }
+        if (monthKey.equals(now))
             return;
 
         history.add(0, new MonthRecord(monthKey, totalXP, new ArrayList<>(claimedTiers), repeatableTiersClaimed,
@@ -129,8 +133,7 @@ public class BattlePass {
     }
 
     public static boolean canAffordReset() {
-        ensureLoaded();
-        return Dungeon.energy >= RESET_ENERGY_COST && isBattlePassFinished();
+        return true;
     }
 
     public static boolean isBattlePassFinished() {
@@ -140,30 +143,24 @@ public class BattlePass {
 
     public static boolean resetImmediately() {
         ensureLoaded();
-        if (!canAffordReset())
-            return false;
 
-        Dungeon.energy -= RESET_ENERGY_COST;
-
-        history.add(0, new MonthRecord(monthKey, totalXP, new ArrayList<>(claimedTiers), repeatableTiersClaimed,
-                BattlePassTiers.rewardSnapshot(), seasonName(monthKey), premium,
-                new ArrayList<>(premiumClaimedTiers), BattlePassTiers.premiumRewardSnapshot(),
-                premiumRepeatableTiersClaimed, BattlePassTiers.rewardExtraSnapshot(),
-                BattlePassTiers.premiumRewardExtraSnapshot()));
-        while (history.size() > MAX_HISTORY_MONTHS) {
-            history.remove(history.size() - 1);
+        if (Dungeon.energy >= RESET_ENERGY_COST && RESET_ENERGY_COST > 0) {
+            Dungeon.energy -= RESET_ENERGY_COST;
         }
 
-        monthKey = monthKey + "-r" + System.currentTimeMillis();
+        String now = MONTH_KEY_FORMAT.format(new Date());
+        monthKey = now;
+
         totalXP = 0;
         claimedTiers = new ArrayList<>();
         repeatableTiersClaimed = 0;
         premiumClaimedTiers = new ArrayList<>();
         premiumRepeatableTiersClaimed = 0;
-        premium = false;
-        BattlePassTiers.resetRewards();
-        SeasonalTasks.rollForNewSeason();
 
+        // Reset progress on the same tasks
+        SeasonalTasks.resetProgress();
+
+        // The month's pass and its deterministic rewards remain identical
         saveGlobal();
         return true;
     }

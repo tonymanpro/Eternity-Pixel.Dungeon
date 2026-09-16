@@ -252,14 +252,14 @@ public class ItemSprite extends MovieClip {
 	public void frame( int image ){
 		frame( ItemSpriteSheet.film.get( image ));
 
-		float scale = (texture != null && texture.width >= 500) ? 2f : 1f;
+		float scale = (texture != null && texture.width >= 1000) ? 4f : ((texture != null && texture.width >= 500) ? 2f : 1f);
 		if (scale > 1f) {
 			width /= scale;
 			height /= scale;
 			updateVertices();
 		}
 
-		float itemHeight = ItemSpriteSheet.film.height( image ) / scale;
+		float itemHeight = ItemSpriteSheet.film.height( image );
 		//adds extra raise to very short items, so they are visible
 		if (itemHeight < 8f){
 			perspectiveRaise =  (5 + 8 - itemHeight) / 16f;

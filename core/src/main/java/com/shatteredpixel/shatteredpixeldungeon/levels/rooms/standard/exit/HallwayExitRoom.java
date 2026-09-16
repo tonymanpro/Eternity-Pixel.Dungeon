@@ -39,14 +39,20 @@ public class HallwayExitRoom extends HallwayRoom {
 	public void paint(Level level) {
 		super.paint(level);
 
-		int exit = -1;
+		Point target = ExitRoom.getExitPoint(this, level);
+		Point best = null;
+		int bestDist = Integer.MAX_VALUE;
 		for ( Point p : getPoints()){
             if (level.map[level.pointToCell(p)] == Terrain.STATUE_SP
                     || level.map[level.pointToCell(p)] == Terrain.REGION_DECO_ALT){
-				exit = level.pointToCell(p);
-				break;
+				int dist = Math.abs(p.x - target.x) + Math.abs(p.y - target.y);
+				if (dist < bestDist) {
+					bestDist = dist;
+					best = p;
+				}
 			}
 		}
+		int exit = best != null ? level.pointToCell(best) : level.pointToCell(target);
 		Painter.set( level, exit, Terrain.EXIT );
 		level.transitions.add(new LevelTransition(level, exit, LevelTransition.Type.REGULAR_EXIT));
 

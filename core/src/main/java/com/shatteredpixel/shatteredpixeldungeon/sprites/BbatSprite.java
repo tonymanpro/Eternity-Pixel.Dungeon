@@ -34,7 +34,7 @@ public class BbatSprite extends MobSprite {
 		
 		texture( Assets.Sprites.BBAT );
 		
-		TextureFilm frames = new TextureFilm( texture, 15, 15 );
+		TextureFilm frames = createFilm( 15, 15 );
 		
 		idle = new Animation( 16, true );
 		idle.frames( frames, 0, 1 );

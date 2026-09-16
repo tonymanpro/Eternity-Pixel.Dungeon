@@ -29,6 +29,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LostInventory;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.items.Gold;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndQuickBag;
@@ -181,6 +182,10 @@ public class Bag extends Item implements Iterable<Item> {
 	}
 
 	public boolean canHold( Item item ){
+		if (item instanceof Gold) {
+			return false;
+		}
+
 		if (!loading && owner != null && owner.buff(LostInventory.class) != null
 			&& !item.keptThroughLostInventory()){
 			return false;

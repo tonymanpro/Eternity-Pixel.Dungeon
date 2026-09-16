@@ -41,7 +41,7 @@ public class DM200Sprite extends MobSprite {
 
 		texture( Assets.Sprites.DM200 );
 
-		TextureFilm frames = new TextureFilm( texture, 21, 18 );
+		TextureFilm frames = createFilm( 21, 18 );
 
 		int c = texOffset();
 

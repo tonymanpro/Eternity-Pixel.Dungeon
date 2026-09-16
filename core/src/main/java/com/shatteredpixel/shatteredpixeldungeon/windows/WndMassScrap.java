@@ -217,8 +217,7 @@ public class WndMassScrap extends Window {
 		}
 
 		if (totalGold > 0) {
-			Gold gold = new Gold(totalGold);
-			gold.collect(hero.belongings.backpack);
+			new Gold(totalGold).doPickUp(hero, hero.pos, 0f);
 		}
 
 		Sample.INSTANCE.play(Assets.Sounds.GOLD);

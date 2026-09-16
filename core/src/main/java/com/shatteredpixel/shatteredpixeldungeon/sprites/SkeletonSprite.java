@@ -42,7 +42,7 @@ public class SkeletonSprite extends MobSprite {
 			texture( Assets.Sprites.SKELETON );
 		}
 		
-		TextureFilm frames = new TextureFilm( texture, 12, holiday ? 19 : texHeight() );
+		TextureFilm frames = createFilm( 12, holiday ? 19 : texHeight() );
 
 		int c = texOffset();
 		

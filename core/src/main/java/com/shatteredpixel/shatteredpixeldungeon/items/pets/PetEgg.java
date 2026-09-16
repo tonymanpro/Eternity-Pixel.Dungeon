@@ -92,18 +92,12 @@ public class PetEgg extends Item {
 			hero.spendAndNext(1f);
 
 		} else if (action.equals(AC_HATCH)) {
-			if (eggType == Pet.PetType.MANTICORE && !com.shatteredpixel.shatteredpixeldungeon.services.platform.SupporterManager.isSupporter()) {
-				GLog.w(Messages.get(this, "manticore_supporter_locked"));
-				GameScene.show(new com.shatteredpixel.shatteredpixeldungeon.windows.WndSupporterUnlock());
-				return;
-			}
-
 			if (!isReadyToHatch()) {
 				GLog.w(Messages.get(this, "not_ready"));
 				return;
 			}
 
-			if (hero.pet != null && hero.pet.isAlive()) {
+			if ((hero.pet != null && hero.pet.isAlive()) || hero.storedPet != null) {
 				GLog.w(Messages.get(this, "already_has_pet"));
 				return;
 			}
@@ -119,6 +113,13 @@ public class PetEgg extends Item {
 			hero.pet = newPet;
 
 			detach(hero.belongings.backpack);
+
+			if (hero.belongings.getItem(PetWhistle.class) == null) {
+				PetWhistle whistle = new PetWhistle();
+				if (!whistle.collect(hero.belongings.backpack)) {
+					Dungeon.level.drop(whistle, hero.pos);
+				}
+			}
 
 			if (hero.sprite != null) {
 				hero.sprite.operate(hero.pos);

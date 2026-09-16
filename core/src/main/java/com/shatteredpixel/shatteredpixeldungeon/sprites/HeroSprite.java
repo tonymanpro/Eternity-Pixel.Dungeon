@@ -76,7 +76,11 @@ public class HeroSprite extends CharSprite {
 
 		int frameWidth = FRAME_WIDTH;
 		int frameHeight = FRAME_HEIGHT;
-		if (texture != null && texture.width >= 500) {
+		if (texture != null && texture.width >= 1000) {
+			frameWidth = FRAME_WIDTH * 4;
+			frameHeight = FRAME_HEIGHT * 4;
+			scale.set(0.25f, 0.25f);
+		} else if (texture != null && texture.width >= 500) {
 			frameWidth = FRAME_WIDTH * 2;
 			frameHeight = FRAME_HEIGHT * 2;
 			scale.set(0.5f, 0.5f);
@@ -188,7 +192,9 @@ public class HeroSprite extends CharSprite {
 		String sheet = Dungeon.hero != null ? Dungeon.hero.heroClass.spritesheet() : Assets.Sprites.ROGUE;
 		SmartTexture tex = TextureCache.get( sheet );
 		int frameH = FRAME_HEIGHT;
-		if (tex != null && tex.width >= 500) {
+		if (tex != null && tex.width >= 1000) {
+			frameH = FRAME_HEIGHT * 4;
+		} else if (tex != null && tex.width >= 500) {
 			frameH = FRAME_HEIGHT * 2;
 		}
 		return tiers(sheet, frameH);
@@ -201,25 +207,33 @@ public class HeroSprite extends CharSprite {
 
 	public static Image avatar( HeroClass cl, int armorTier ) {
 		SmartTexture texture = TextureCache.get( cl.spritesheet() );
+		boolean isHD4 = texture != null && texture.width >= 1000;
+		boolean isHD2 = texture != null && texture.width >= 500 && !isHD4;
 		int frameHeight = FRAME_HEIGHT;
 		int frameWidth = FRAME_WIDTH;
-		boolean isHD = texture != null && texture.width >= 500;
-		if (isHD) {
+		if (isHD4) {
+			frameHeight = FRAME_HEIGHT * 4;
+			frameWidth = FRAME_WIDTH * 4;
+		} else if (isHD2) {
 			frameHeight = FRAME_HEIGHT * 2;
 			frameWidth = FRAME_WIDTH * 2;
 		}
+		int xOffset = isHD4 ? 4 : (isHD2 ? 2 : 1);
 		if(cl == HeroClass.RAT_KING) {
 			frameHeight = 17;
 			frameWidth = 16;
 			armorTier = 0;
-		};
+			xOffset = 0;
+		}
 		RectF patch = tiers(cl.spritesheet(), frameHeight).get( armorTier );
 		Image avatar = new Image( cl.spritesheet() );
-		RectF frame = avatar.texture.uvRect( 1, 0, frameWidth, frameHeight );
+		RectF frame = avatar.texture.uvRect( xOffset, 0, frameWidth, frameHeight );
 		if (patch != null)
 			frame.shift( patch.left, patch.top );
 		avatar.frame( frame );
-		if (isHD) {
+		if (isHD4) {
+			avatar.scale.set(0.25f, 0.25f);
+		} else if (isHD2) {
 			avatar.scale.set(0.5f, 0.5f);
 		}
 
