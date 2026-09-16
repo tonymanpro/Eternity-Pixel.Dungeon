@@ -13,3 +13,4 @@ dependencies {
     compileOnly "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
     compileOnly "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
 }
+

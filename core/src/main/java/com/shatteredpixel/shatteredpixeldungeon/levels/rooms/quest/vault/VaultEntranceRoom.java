@@ -57,6 +57,7 @@ public class VaultEntranceRoom extends StandardRoom {
 				Dungeon.depth,
 				0,
 				LevelTransition.Type.BRANCH_EXIT));
+		Painter.set(level, entrance, Terrain.ENTRANCE);
 	}
 
 	@Override

@@ -796,4 +796,34 @@ public static void playMusicInBackground( boolean value ){
 	public static void supporterTier( int value ) {
 		put( KEY_SUPPORTER_TIER, value );
 	}
+
+	// Unique Username & Multi-Device Account Key
+	public static final String KEY_CUSTOM_USERNAME = "custom_username";
+	public static final String KEY_ACCOUNT_KEY      = "account_link_key";
+	public static final String KEY_INSTALLATION_ID  = "installation_id";
+
+	public static String customUsername() {
+		return getString( KEY_CUSTOM_USERNAME, "" );
+	}
+
+	public static void customUsername( String value ) {
+		put( KEY_CUSTOM_USERNAME, value != null ? value.trim() : "" );
+	}
+
+	public static String accountKey() {
+		return getString( KEY_ACCOUNT_KEY, "" );
+	}
+
+	public static void accountKey( String value ) {
+		put( KEY_ACCOUNT_KEY, value != null ? value.trim().toUpperCase(Locale.ROOT) : "" );
+	}
+
+	public static String installationId() {
+		String id = getString( KEY_INSTALLATION_ID, "" );
+		if (id == null || id.isEmpty()) {
+			id = java.util.UUID.randomUUID().toString();
+			put( KEY_INSTALLATION_ID, id );
+		}
+		return id;
+	}
 }

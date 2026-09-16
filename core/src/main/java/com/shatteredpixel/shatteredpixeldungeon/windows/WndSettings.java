@@ -1026,6 +1026,7 @@ public class WndSettings extends WndTabbed {
 		CheckBox chkUpdates;
 		CheckBox chkBetas;
 		CheckBox chkWifi;
+		RedButton btnUsername;
 		RedButton btnSupporter;
 
 		@Override
@@ -1086,6 +1087,14 @@ public class WndSettings extends WndTabbed {
 				add(chkWifi);
 			}
 
+			btnUsername = new RedButton(Messages.get(this, "username_btn")) {
+				@Override
+				public void onClick() {
+					ShatteredPixelDungeon.scene().addToFront(new WndUsername());
+				}
+			};
+			add(btnUsername);
+
 			btnSupporter = new RedButton(Messages.get(this, "supporter_btn")) {
 				@Override
 				public void onClick() {
@@ -1125,8 +1134,15 @@ public class WndSettings extends WndTabbed {
 				pos = chkWifi.bottom();
 			}
 
-			btnSupporter.setRect(0, pos + GAP * 2, width, BTN_HEIGHT);
-			pos = btnSupporter.bottom();
+			if (width > 200) {
+				btnUsername.setRect(0, pos + GAP * 2, width/2 - 1, BTN_HEIGHT);
+				btnSupporter.setRect(width/2 + 1, pos + GAP * 2, width/2 - 1, BTN_HEIGHT);
+				pos = btnSupporter.bottom();
+			} else {
+				btnUsername.setRect(0, pos + GAP * 2, width, BTN_HEIGHT);
+				btnSupporter.setRect(0, btnUsername.bottom() + GAP, width, BTN_HEIGHT);
+				pos = btnSupporter.bottom();
+			}
 
 			height = pos;
 
