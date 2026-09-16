@@ -129,7 +129,7 @@ public class MassGraveRoom extends SpecialRoom {
 	public static class Bones extends CustomTilemap {
 
 		private static final int WALL_OVERLAP   = 3;
-		private static final int FLOOR          = 7;
+		private static final int FLOOR          = 19;
 
 		{
 			texture = Assets.Environment.PRISON_QUEST;

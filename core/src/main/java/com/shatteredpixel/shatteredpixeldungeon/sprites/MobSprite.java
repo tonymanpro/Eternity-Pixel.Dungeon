@@ -111,13 +111,6 @@ public class MobSprite extends CharSprite {
 					scaleFactor = 4;
 				}
 			}
-			if (scaleFactor == 1 && texture != null) {
-				if (texture.width >= 1000) {
-					scaleFactor = 4;
-				} else if (texture.width >= 500) {
-					scaleFactor = 2;
-				}
-			}
 
 			if (scaleFactor == 4) {
 				scale.set( 0.25f, 0.25f );

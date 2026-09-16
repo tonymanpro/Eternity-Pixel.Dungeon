@@ -396,7 +396,7 @@ public class SPDSettings extends GameSettings {
 		put("show_pet_panel", value );
 	}
 
-	public static boolean showPetPanel(){ return getBoolean("show_pet_panel", true); }
+	public static boolean showPetPanel(){ return getBoolean("show_pet_panel", false); }
 	
 	public static void toolbarMode( String value ) {
 		put( KEY_BARMODE, value );

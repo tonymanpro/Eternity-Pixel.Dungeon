@@ -160,19 +160,27 @@ public abstract class OptionSlider extends Component {
 	@Override
 	protected void layout() {
 
-		if (title.width() > 0.7f*width){
-			String titleText = title.text;
-			remove(title);
-			title = PixelScene.renderTextBlock(6);
-			add(title);
-			title.text(titleText);
-		}
+		if (title != null) {
+			float availSpace = width - minTxt.width() - maxTxt.width() - 8;
+			if (title.width() > availSpace) {
+				String titleText = title.text;
+				remove(title);
+				title = PixelScene.renderTextBlock(titleText, 7);
+				add(title);
 
-		title.setPos(
-				x + (width-title.width())/2,
-				y+2
-		);
-		PixelScene.align(title);
+				if (title.width() > availSpace) {
+					remove(title);
+					title = PixelScene.renderTextBlock(titleText, 6);
+					add(title);
+				}
+			}
+
+			title.setPos(
+					x + (width - title.width()) / 2,
+					y + 2
+			);
+			PixelScene.align(title);
+		}
 		sliderBG.y = y + height() - 7;
 		sliderBG.x = x+2;
 		sliderBG.size(width-5, 1);

@@ -202,7 +202,7 @@ public abstract class Pet extends DirectableAlly {
 	public boolean act() {
 		// Teletransporte si se aleja demasiado del héroe en modo FOLLOW
 		if (currentOrder == PetOrder.FOLLOW && Dungeon.hero != null && Dungeon.hero.isAlive()) {
-			if (Dungeon.level.distance(pos, Dungeon.hero.pos) > 12) {
+			if (Dungeon.level.distance(pos, Dungeon.hero.pos) > 6) {
 				int nearCell = getEmptyCellNear(Dungeon.hero.pos);
 				if (nearCell != Dungeon.hero.pos && Actor.findChar(nearCell) == null) {
 					CellEmitter.get(pos).burst(Speck.factory(Speck.LIGHT), 4);
@@ -286,6 +286,7 @@ public abstract class Pet extends DirectableAlly {
 		}
 		Pet pet = Pet.create(type);
 		pet.restoreFromBundle(bundle);
+		pet.clearTime();
 		if (pet.HP <= 0) pet.HP = 1;
 		pet.HP = Math.min(pet.HT, pet.HP);
 		return pet;
@@ -295,6 +296,7 @@ public abstract class Pet extends DirectableAlly {
 		if (hero == null || hero.storedPet == null) return null;
 		Bundle bundle = hero.storedPet;
 		Pet pet = createFromBundle(bundle);
+		pet.clearTime();
 
 		int spawnCell = getEmptyCellNear(hero.pos);
 		if (Actor.findChar(spawnCell) != null) {
@@ -311,6 +313,7 @@ public abstract class Pet extends DirectableAlly {
 		pet.playVoice();
 		Sample.INSTANCE.play(Assets.Sounds.TELEPORT);
 		GLog.p(Messages.get(Pet.class, "summoned", pet.name()));
+		pet.setOrder(pet.currentOrder != null ? pet.currentOrder : PetOrder.FOLLOW);
 		return pet;
 	}
 

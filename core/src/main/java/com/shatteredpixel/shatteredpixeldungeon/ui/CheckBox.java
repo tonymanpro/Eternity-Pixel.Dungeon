@@ -40,16 +40,31 @@ public class CheckBox extends RedButton {
 	protected void layout() {
 		super.layout();
 		
-		float margin = (height - text.height()) / 2;
-		
-		text.setPos( x + margin, y + margin);
-		PixelScene.align(text);
-
-		margin = (height - icon.height) / 2;
-
-		icon.x = x + width - margin - icon.width;
-		icon.y = y + margin;
+		float iconMargin = (height - icon.height) / 2;
+		icon.x = x + width - iconMargin - icon.width;
+		icon.y = y + iconMargin;
 		PixelScene.align(icon);
+
+		float textMarginX = 4;
+		float availWidth = width - icon.width - iconMargin - textMarginX - 2;
+		if (text != null) {
+			if (text.width() > availWidth) {
+				String label = text.text;
+				remove(text);
+				text = PixelScene.renderTextBlock(label, 7);
+				add(text);
+
+				if (text.width() > availWidth) {
+					remove(text);
+					text = PixelScene.renderTextBlock(label, 6);
+					add(text);
+				}
+			}
+
+			float textMarginY = (height - text.height()) / 2;
+			text.setPos(x + textMarginX, y + textMarginY);
+			PixelScene.align(text);
+		}
 	}
 	
 	public boolean checked() {

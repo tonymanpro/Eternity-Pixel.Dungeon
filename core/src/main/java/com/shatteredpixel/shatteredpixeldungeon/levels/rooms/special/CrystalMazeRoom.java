@@ -13,7 +13,7 @@ public class CrystalMazeRoom extends SpecialRoom {
         Painter.fill(level, this, Terrain.WALL);
         Painter.fill(level, this, 1, Terrain.EMPTY_SP);
 
-        int inset = 1;
+        int inset = 2;
         boolean gapOnLeft = Random.Int(2) == 0;
         while (left + inset + 1 < right - inset - 1 && top + inset + 1 < bottom - inset - 1) {
 
@@ -39,6 +39,7 @@ public class CrystalMazeRoom extends SpecialRoom {
 
         for (Door door : connected.values()) {
             door.set(Door.Type.UNLOCKED);
+            Painter.drawInside(level, this, door, 2, Terrain.EMPTY_SP);
         }
     }
 }

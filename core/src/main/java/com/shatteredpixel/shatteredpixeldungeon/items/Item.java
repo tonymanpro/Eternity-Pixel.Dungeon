@@ -327,7 +327,7 @@ public class Item implements Bundlable {
 				if (SPDSettings.lootFilterAutoScrap()) {
 					long goldVal = Math.max(1, value());
 					Gold g = new Gold(goldVal);
-					g.collect(hero.belongings.backpack);
+					g.doPickUp(hero, pos, 0);
 					GameScene.pickUp(this, pos);
 					Sample.INSTANCE.play(Assets.Sounds.GOLD);
 					CellEmitter.get(pos).burst(Speck.factory(Speck.COIN), 6);

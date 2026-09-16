@@ -13,7 +13,7 @@ public class SpiralRoom extends StandardRoom {
         Painter.fill(level, this, Terrain.WALL);
         Painter.fill(level, this, 1, Terrain.EMPTY_SP);
 
-        int inset = 1;
+        int inset = 2;
         boolean gapOnLeft = Random.Int(2) == 0;
         while (left + inset < right - inset && top + inset < bottom - inset) {
             int ringLeft = left + inset;
@@ -40,6 +40,7 @@ public class SpiralRoom extends StandardRoom {
 
         for (Door door : connected.values()) {
             door.set(Door.Type.REGULAR);
+            Painter.drawInside(level, this, door, 2, Terrain.EMPTY_SP);
         }
     }
 }

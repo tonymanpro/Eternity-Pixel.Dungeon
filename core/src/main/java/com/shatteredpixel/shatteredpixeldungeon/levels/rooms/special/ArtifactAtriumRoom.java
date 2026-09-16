@@ -17,22 +17,24 @@ public class ArtifactAtriumRoom extends SpecialRoom {
         Painter.fill(level, this, Terrain.WALL);
         Painter.fill(level, this, 1, Terrain.EMPTY_SP);
 
-        int innerLeft = left + 1;
-        int innerTop = top + 1;
-        int innerRight = right - 1;
-        int innerBottom = bottom - 1;
-        for (int x = innerLeft; x <= innerRight; x++) {
-            Painter.set(level, new Point(x, innerTop), Random.Int(3) == 0 ? Terrain.REGION_DECO : Terrain.CHASM);
-            Painter.set(level, new Point(x, innerBottom), Random.Int(3) == 0 ? Terrain.REGION_DECO : Terrain.CHASM);
-        }
-        for (int y = innerTop; y <= innerBottom; y++) {
-            Painter.set(level, new Point(innerLeft, y), Random.Int(3) == 0 ? Terrain.REGION_DECO : Terrain.CHASM);
-            Painter.set(level, new Point(innerRight, y), Random.Int(3) == 0 ? Terrain.REGION_DECO : Terrain.CHASM);
-        }
+        int innerLeft = left + 2;
+        int innerTop = top + 2;
+        int innerRight = right - 2;
+        int innerBottom = bottom - 2;
+        if (innerRight > innerLeft && innerBottom > innerTop) {
+            for (int x = innerLeft; x <= innerRight; x++) {
+                Painter.set(level, new Point(x, innerTop), Random.Int(3) == 0 ? Terrain.REGION_DECO : Terrain.CHASM);
+                Painter.set(level, new Point(x, innerBottom), Random.Int(3) == 0 ? Terrain.REGION_DECO : Terrain.CHASM);
+            }
+            for (int y = innerTop; y <= innerBottom; y++) {
+                Painter.set(level, new Point(innerLeft, y), Random.Int(3) == 0 ? Terrain.REGION_DECO : Terrain.CHASM);
+                Painter.set(level, new Point(innerRight, y), Random.Int(3) == 0 ? Terrain.REGION_DECO : Terrain.CHASM);
+            }
 
-        if (innerRight - innerLeft > 2 && innerBottom - innerTop > 2) {
-            Painter.fill(level, innerLeft + 1, innerTop + 1,
-                    innerRight - innerLeft - 1, innerBottom - innerTop - 1, Terrain.EMPTY_SP);
+            if (innerRight - innerLeft > 2 && innerBottom - innerTop > 2) {
+                Painter.fill(level, innerLeft + 1, innerTop + 1,
+                        innerRight - innerLeft - 1, innerBottom - innerTop - 1, Terrain.EMPTY_SP);
+            }
         }
 
         int count = Random.IntRange(1, 3);
@@ -52,5 +54,6 @@ public class ArtifactAtriumRoom extends SpecialRoom {
 
         level.addItemToSpawn( new IronKey( Dungeon.depth ) );
         entrance().set(Door.Type.LOCKED);
+        Painter.drawInside(level, this, entrance(), 2, Terrain.EMPTY_SP);
     }
 }

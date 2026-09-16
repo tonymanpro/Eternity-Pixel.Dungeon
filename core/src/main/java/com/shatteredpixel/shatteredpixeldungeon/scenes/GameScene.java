@@ -465,7 +465,9 @@ public class GameScene extends PixelScene {
 							petCell = Dungeon.hero.pos;
 						}
 						Dungeon.hero.pet.pos = petCell;
+						Dungeon.hero.pet.clearTime();
 						GameScene.add(Dungeon.hero.pet);
+						Dungeon.hero.pet.setOrder(Dungeon.hero.pet.currentOrder != null ? Dungeon.hero.pet.currentOrder : com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet.PetOrder.FOLLOW);
 					}
 				}
 
@@ -863,11 +865,10 @@ private static float waterOfs = 0;
 		}
 
 		if (scene.petPanel != null) {
-			float panelWidth = Math.min(168, uiCamera.width - 10);
-			float panelX = (uiCamera.width - panelWidth) / 2f;
-			float panelY = (SPDSettings.interfaceSize() == 0 && scene.status != null) ? scene.status.bottom() + 2 : 4;
-			scene.petPanel.setRect(panelX, panelY, panelWidth, PetTacticalPanel.PANEL_HEIGHT);
-			scene.bringToFront(scene.petPanel);
+			scene.petPanel.layout();
+			if (scene.petPanel.visible) {
+				scene.bringToFront(scene.petPanel);
+			}
 		}
 	}
 	
