@@ -46,6 +46,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
 import com.shatteredpixel.shatteredpixeldungeon.items.journal.Guidebook;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
+import com.shatteredpixel.shatteredpixeldungeon.items.quest.Pickaxe;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.DimensionalSundial;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.TrinketCatalyst;
@@ -55,6 +56,7 @@ import com.shatteredpixel.shatteredpixeldungeon.journal.Document;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Journal;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
+import com.shatteredpixel.shatteredpixeldungeon.levels.MiningLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.RegularLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
@@ -1648,7 +1650,17 @@ private static float waterOfs = 0;
 
 			//determine first text line
 			if (objects.isEmpty()) {
-				textLines.add(0, Messages.get(GameScene.class, "go_here"));
+				if (Dungeon.hero != null && Dungeon.hero.belongings.getItem(Pickaxe.class) != null
+						&& ((Dungeon.level instanceof MiningLevel &&
+								(Dungeon.level.map[cell] == Terrain.WALL
+										|| Dungeon.level.map[cell] == Terrain.WALL_DECO
+										|| Dungeon.level.map[cell] == Terrain.MINE_CRYSTAL
+										|| Dungeon.level.map[cell] == Terrain.MINE_BOULDER))
+							|| (Dungeon.depth >= 11 && Dungeon.depth <= 15 && Dungeon.level.map[cell] == Terrain.WALL_DECO))) {
+					textLines.add(0, Messages.get(Pickaxe.class, "ac_mine"));
+				} else {
+					textLines.add(0, Messages.get(GameScene.class, "go_here"));
+				}
 			} else if (objects.get(0) instanceof Hero) {
 				textLines.add(0, Messages.get(GameScene.class, "go_here"));
 			} else if (objects.get(0) instanceof Mob) {

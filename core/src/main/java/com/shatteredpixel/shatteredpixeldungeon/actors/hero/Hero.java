@@ -2109,12 +2109,13 @@ if (!Dungeon.level.visited[cell] && !Dungeon.level.mapped[cell]
 			}
 
 		//TODO perhaps only trigger this if hero is already adjacent? reducing mistaps
-		} else if (Dungeon.level instanceof MiningLevel &&
-					belongings.getItem(Pickaxe.class) != null &&
-				(Dungeon.level.map[cell] == Terrain.WALL
-						|| Dungeon.level.map[cell] == Terrain.WALL_DECO
-						|| Dungeon.level.map[cell] == Terrain.MINE_CRYSTAL
-						|| Dungeon.level.map[cell] == Terrain.MINE_BOULDER)){
+		} else if (belongings.getItem(Pickaxe.class) != null &&
+				((Dungeon.level instanceof MiningLevel &&
+					(Dungeon.level.map[cell] == Terrain.WALL
+							|| Dungeon.level.map[cell] == Terrain.WALL_DECO
+							|| Dungeon.level.map[cell] == Terrain.MINE_CRYSTAL
+							|| Dungeon.level.map[cell] == Terrain.MINE_BOULDER))
+				|| (Dungeon.depth >= 11 && Dungeon.depth <= 15 && Dungeon.level.map[cell] == Terrain.WALL_DECO))){
 
 			curAction = new HeroAction.Mine( cell );
 
