@@ -327,6 +327,11 @@ public class ArenaLevel extends Level {
 		return visuals;
 	}
 
+	@Override
+	public float respawnCooldown() {
+		return 1f;
+	}
+
 	public static class ArenaRespawner extends MobSpawner {
 
 		{
@@ -344,7 +349,7 @@ public class ArenaLevel extends Level {
 			}
 
 			ArenaCounter counter = Dungeon.hero.buff(ArenaCounter.class);
-			float timerBasis = 6.5f;
+			int power = 0;
 
 			if (count < 100) {
 
@@ -357,8 +362,7 @@ public class ArenaLevel extends Level {
 					Buff.affect(mob, ArenaBuff.class);
 					if (counter != null){
 						counter.countUp(Actor.TICK);
-						int power = (int) counter.count();
-						timerBasis = 6.5f + power / 40f;
+						power = (int) counter.count();
 						if (power >= 5){
 							Buff.affect(mob, Stamina.class, power * 3);
 							mob.aggro(Dungeon.hero);
@@ -381,8 +385,10 @@ public class ArenaLevel extends Level {
 						}
 					}
 				}
+			} else if (counter != null) {
+				power = (int) counter.count();
 			}
-			spend(Dungeon.level.respawnCooldown() / timerBasis);
+			spend(Math.max(6f, 10f - power / 50f));
 			return true;
 		}
 	}

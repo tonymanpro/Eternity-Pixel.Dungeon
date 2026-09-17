@@ -359,9 +359,14 @@ public class WaveArenaLevel extends Level {
         return visuals;
     }
 
+    @Override
+    public float respawnCooldown() {
+        return 1f;
+    }
+
     //--- wave logic ---
 
-    private static final float WAVE_INTERMISSION = 8f; //seconds of downtime between waves
+    private static final float WAVE_INTERMISSION = 15f; //seconds of downtime between waves
 
     private void startNextWave() {
         waveNumber++;
@@ -457,7 +462,9 @@ public class WaveArenaLevel extends Level {
                     countdown = Buff.affect( Dungeon.hero, WaveCountdown.class );
                 }
 
-                if (countdown.count() >= WAVE_INTERMISSION) {
+                float targetIntermission = level.waveNumber == 0 ? 4f : WAVE_INTERMISSION;
+
+                if (countdown.count() >= targetIntermission) {
                     countdown.detach();
                     level.startNextWave();
                 } else {
