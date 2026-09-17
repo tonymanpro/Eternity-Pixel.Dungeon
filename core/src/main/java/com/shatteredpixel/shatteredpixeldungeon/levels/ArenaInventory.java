@@ -26,10 +26,10 @@ import java.util.Collections;
 
 public class ArenaInventory {
 
-    private static Bundle stashedBelongings = null;
-    private static Bundle savedQuickslot = null;
-    private static boolean active = false;
-    private static Hero stashOwner = null;
+    public static Bundle stashedBelongings = null;
+    public static Bundle savedQuickslot = null;
+    public static boolean active = false;
+    public static Hero stashOwner = null;
 
     public static boolean isActive(){
         return active;
@@ -101,7 +101,10 @@ public class ArenaInventory {
             return;
         }
 
-        Dungeon.hero.belongings.getItem(EtherealChains.WaveEternalChains.class).detach(Dungeon.hero.belongings.backpack);
+        Item chains = Dungeon.hero.belongings.getItem(EtherealChains.WaveEternalChains.class);
+        if (chains != null) {
+            chains.detach(Dungeon.hero.belongings.backpack);
+        }
         forceUnequipAll( hero );
 
         ArrayList<Item> earned = new ArrayList<>( hero.belongings.backpack.items );

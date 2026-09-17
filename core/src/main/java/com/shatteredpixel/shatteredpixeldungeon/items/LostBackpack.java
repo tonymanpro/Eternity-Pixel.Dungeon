@@ -25,14 +25,17 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LostInventory;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
+import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CloakOfShadows;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.MagicalHolster;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.HeroSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.noosa.audio.Sample;
+import com.watabou.noosa.particles.Emitter;
 
 public class LostBackpack extends Item {
 
@@ -40,6 +43,19 @@ public class LostBackpack extends Item {
 		image = ItemSpriteSheet.BACKPACK;
 
 		unique = true;
+	}
+
+	@Override
+	public ItemSprite.Glowing glowing() {
+		return new ItemSprite.Glowing( 0xDD2222, 0.6f );
+	}
+
+	@Override
+	public Emitter emitter() {
+		Emitter emitter = new Emitter();
+		emitter.pos( 8, 8 );
+		emitter.pour( Speck.factory( Speck.RATTLE ), 0.6f );
+		return emitter;
 	}
 
 	@Override

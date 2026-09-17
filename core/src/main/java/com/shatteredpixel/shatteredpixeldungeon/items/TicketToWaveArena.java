@@ -98,6 +98,10 @@ public class TicketToWaveArena extends Item{
     private static final String BRANCH	= "branch";
     private static final String POS		= "pos";
 
+    private static final String STASHED_BELONGINGS = "stashed_belongings";
+    private static final String SAVED_QUICKSLOT     = "saved_quickslot";
+    private static final String ARENA_ACTIVE        = "arena_active";
+
     @Override
     public void storeInBundle( Bundle bundle ) {
         super.storeInBundle( bundle );
@@ -106,6 +110,13 @@ public class TicketToWaveArena extends Item{
         if (ArenaInventory.depth != -1) {
             bundle.put( POS, ArenaInventory.pos);
         }
+        if (ArenaInventory.stashedBelongings != null) {
+            bundle.put( STASHED_BELONGINGS, ArenaInventory.stashedBelongings );
+        }
+        if (ArenaInventory.savedQuickslot != null) {
+            bundle.put( SAVED_QUICKSLOT, ArenaInventory.savedQuickslot );
+        }
+        bundle.put( ARENA_ACTIVE, ArenaInventory.active );
     }
 
     @Override
@@ -117,6 +128,12 @@ public class TicketToWaveArena extends Item{
         else
             ArenaInventory.branch = Dungeon.BRANCH_NORMAL;
         ArenaInventory.pos	= bundle.getInt( POS );
+        if (bundle.contains( STASHED_BELONGINGS )) {
+            ArenaInventory.stashedBelongings = bundle.getBundle( STASHED_BELONGINGS );
+            ArenaInventory.savedQuickslot = bundle.contains( SAVED_QUICKSLOT ) ? bundle.getBundle( SAVED_QUICKSLOT ) : null;
+            ArenaInventory.active = bundle.getBoolean( ARENA_ACTIVE );
+            ArenaInventory.stashOwner = Dungeon.hero;
+        }
     }
 
     @Override

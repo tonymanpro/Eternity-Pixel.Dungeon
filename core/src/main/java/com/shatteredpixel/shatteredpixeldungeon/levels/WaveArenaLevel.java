@@ -225,27 +225,62 @@ public class WaveArenaLevel extends Level {
     }
 
     public void generateItems() {
+        ArrayList<Integer> freeCells = new ArrayList<>();
+        for (int x = ROOM_LEFT; x <= ROOM_RIGHT; x++) {
+            for (int y = ROOM_TOP; y <= ROOM_BOTTOM; y++) {
+                int cell = pointToCell(new Point(x, y));
+                if (cell != entrance && cell != arenaDoor && map[cell] != Terrain.PEDESTAL
+                        && heaps.get(cell) == null && findMob(cell) == null && passable[cell]) {
+                    freeCells.add(cell);
+                }
+            }
+        }
+
+        if (freeCells.isEmpty()) {
+            return;
+        }
+
+        Random.shuffle(freeCells);
 
         itemsToSpawn = new ArrayList<>();
-        itemsToSpawn.add(new SmallRation().quantity(Random.IntRange(2, 4)));
-        itemsToSpawn.add(new PotionOfHealing().quantity(Random.IntRange(2, 4)));
+        itemsToSpawn.add(new SmallRation().quantity(Random.IntRange(1, 2)));
+        itemsToSpawn.add(new PotionOfHealing().quantity(1));
 
         for (Item item : itemsToSpawn) {
-
-            //TODO possible infinite loop here, needs fix
-            //     and we need a gold effect when spawning
-            //     the items.
-            int cell;
-            do {
-                cell = pointToCell(new Point(
-                        Random.IntRange( ROOM_LEFT, ROOM_RIGHT ),
-                        Random.IntRange( ROOM_TOP, ROOM_BOTTOM )
-                ));
-            } while (cell == entrance || cell == arenaDoor
-                    || heaps.get( cell ) != null || findMob( cell ) != null);
-
+            if (freeCells.isEmpty()) break;
+            int cell = freeCells.remove(0);
             drop( item, cell ).type = Heap.Type.FOR_SALE;
         }
+    }
+
+    private boolean insideShop(int cell) {
+        Point p = cellToPoint(cell);
+        return p.x >= ROOM_LEFT - 1 && p.x <= ROOM_RIGHT + 1 && p.y >= ROOM_TOP - 1 && p.y <= ROOM_BOTTOM + 1;
+    }
+
+    @Override
+    public int randomRespawnCell( Char ch ) {
+        int cell;
+        int count = 0;
+        do {
+            if (++count > 50) {
+                ArrayList<Integer> candidates = new ArrayList<>();
+                for (int i = 0; i < length(); i++) {
+                    if (passable[i] && map[i] != Terrain.DOOR && map[i] != Terrain.PEDESTAL && !insideShop(i)
+                            && (!Char.hasProp(ch, Char.Property.LARGE) || openSpace[i])
+                            && Actor.findChar(i) == null) {
+                        candidates.add(i);
+                    }
+                }
+                return candidates.isEmpty() ? -1 : Random.element(candidates);
+            }
+            cell = Random.Int( length() );
+        } while (!passable[cell]
+                || insideShop(cell)
+                || (Dungeon.hero != null && distance(Dungeon.hero.pos, cell) < 3)
+                || (Char.hasProp(ch, Char.Property.LARGE) && !openSpace[cell])
+                || Actor.findChar( cell ) != null);
+        return cell;
     }
 
     @Override
@@ -270,12 +305,16 @@ public class WaveArenaLevel extends Level {
         Random.pushGenerator(Random.Long());
         ArrayList<Item> bonesItems = Bones.get();
         if (bonesItems != null) {
-            int pos;
+            int pos = -1;
+            int attempts = 0;
             do {
                 pos = randomRespawnCell(null);
-            } while (pos == entrance());
-            for (Item i : bonesItems) {
-                drop(i, pos).setHauntedIfCursed().type = Heap.Type.REMAINS;
+                if (++attempts > 30) break;
+            } while (pos == entrance() || pos == -1);
+            if (pos != -1) {
+                for (Item i : bonesItems) {
+                    drop(i, pos).setHauntedIfCursed().type = Heap.Type.REMAINS;
+                }
             }
         }
         Random.popGenerator();
@@ -394,10 +433,14 @@ public class WaveArenaLevel extends Level {
         @Override
         protected boolean act() {
             WaveArenaLevel level = (WaveArenaLevel) Dungeon.level;
+            if (level == null) {
+                spend( Actor.TICK );
+                return true;
+            }
 
             int aliveWaveMobs = 0;
             for (Mob mob : level.mobs.toArray(new Mob[0])) {
-                if (mob.alignment == Char.Alignment.ENEMY && mob.buff( WaveMob.class ) != null) {
+                if (mob.isAlive() && mob.alignment == Char.Alignment.ENEMY && mob.buff( WaveMob.class ) != null) {
                     aliveWaveMobs++;
                 }
             }

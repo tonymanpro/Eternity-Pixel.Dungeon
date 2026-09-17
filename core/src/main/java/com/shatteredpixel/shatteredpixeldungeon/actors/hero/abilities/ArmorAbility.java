@@ -21,8 +21,10 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities;
 
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClassArmor;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
@@ -84,11 +86,33 @@ public abstract class ArmorAbility implements Bundlable {
 	}
 
 	public String shortDesc(){
-		return Messages.get(this, "short_desc");
+		String text = Messages.get(this, "short_desc");
+		if (Dungeon.hero != null && Dungeon.hero.heroClass == HeroClass.BARBARIAN) {
+			text = text.replace("El Guerrero", "El Bárbaro")
+			           .replace("el Guerrero", "el Bárbaro")
+			           .replace("del Guerrero", "del Bárbaro")
+			           .replace("al Guerrero", "al Bárbaro")
+			           .replace("The Warrior", "The Barbarian")
+			           .replace("the Warrior", "the Barbarian")
+			           .replace("the warrior's", "the barbarian's")
+			           .replace("the warrior", "the barbarian");
+		}
+		return text;
 	}
 
 	public String desc(){
-		return Messages.get(this, "desc") + "\n\n" + Messages.get(this, "cost", (int)baseChargeUse);
+		String text = Messages.get(this, "desc");
+		if (Dungeon.hero != null && Dungeon.hero.heroClass == HeroClass.BARBARIAN) {
+			text = text.replace("El Guerrero", "El Bárbaro")
+			           .replace("el Guerrero", "el Bárbaro")
+			           .replace("del Guerrero", "del Bárbaro")
+			           .replace("al Guerrero", "al Bárbaro")
+			           .replace("The Warrior", "The Barbarian")
+			           .replace("the Warrior", "the Barbarian")
+			           .replace("the warrior's", "the barbarian's")
+			           .replace("the warrior", "the barbarian");
+		}
+		return text + "\n\n" + Messages.get(this, "cost", (int)baseChargeUse);
 	}
 
 	public int icon(){
