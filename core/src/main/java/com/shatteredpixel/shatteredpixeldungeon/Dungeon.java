@@ -62,6 +62,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.test_tubes.Tubes;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfRegrowth;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfWarding;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
+import com.shatteredpixel.shatteredpixeldungeon.levels.ArenaInventory;
 import com.shatteredpixel.shatteredpixeldungeon.levels.ArenaLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.BlackMimicLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.CavesBossLevel;
@@ -328,6 +329,7 @@ public class Dungeon {
 		quickslot.reset();
 		QuickSlotButton.reset();
 		Toolbar.swappedQuickslots = false;
+		ArenaInventory.reset();
 
 		depth = 1;
 		branch = 0;
@@ -846,6 +848,7 @@ public class Dungeon {
 	private static final String CHAPTERS	= "chapters";
 	private static final String QUESTS		= "quests";
 	private static final String BADGES		= "badges";
+	private static final String ARENA_INVENTORY = "arena_inventory";
 	
 	public static void saveGame( int save ) {
 		try {
@@ -928,6 +931,10 @@ public class Dungeon {
 			Bundle badges = new Bundle();
 			Badges.saveLocal( badges );
 			bundle.put( BADGES, badges );
+
+			Bundle arenaInv = new Bundle();
+			ArenaInventory.storeInBundle( arenaInv );
+			bundle.put( ARENA_INVENTORY, arenaInv );
 			
 			FileUtils.bundleToFile( GamesInProgress.gameFile(save), bundle);
 			
@@ -1102,6 +1109,12 @@ public class Dungeon {
 				droppedItems.put( i, items );
 			}
 
+		}
+
+		if (bundle.contains( ARENA_INVENTORY )) {
+			ArenaInventory.restoreFromBundle( bundle.getBundle( ARENA_INVENTORY ) );
+		} else {
+			ArenaInventory.reset();
 		}
 	}
 	

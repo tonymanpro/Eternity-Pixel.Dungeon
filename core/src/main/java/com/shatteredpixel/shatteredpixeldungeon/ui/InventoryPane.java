@@ -150,7 +150,7 @@ public class InventoryPane extends Component {
 		};
 
 		equipped = new ArrayList<>();
-		for (int i = 0; i < 5; i++){
+		for (int i = 0; i < 10; i++){
 			InventorySlot btn = new InventoryPaneSlot(null);
 			equipped.add(btn);
 			add(btn);
@@ -212,20 +212,27 @@ public class InventoryPane extends Component {
 
 		float left = x+4;
 		for (InventorySlot i : equipped){
-			i.setRect(left, y+4, SLOT_WIDTH, SLOT_HEIGHT);
-			left = i.right()+1;
+			if (i.item != null) {
+				i.visible = i.active = true;
+				i.setRect(left, y+4, SLOT_WIDTH, SLOT_HEIGHT);
+				left = i.right()+1;
+			} else {
+				i.visible = i.active = false;
+			}
 		}
 
-		promptTxt.maxWidth((int) (width - (left - x) - bg.marginRight()));
+		float bagRight = x + width - 4;
+		for (int bIdx = bags.size() - 1; bIdx >= 0; bIdx--) {
+			BagButton b = bags.get(bIdx);
+			b.setRect(bagRight - SLOT_WIDTH, y + 5, SLOT_WIDTH, 14);
+			bagRight = b.left() - 1;
+		}
+
+		promptTxt.maxWidth((int) Math.max(10, (bagRight - left - bg.marginRight())));
 		if (promptTxt.height() > 10){
 			promptTxt.setPos(left, y + 2 + (12 - promptTxt.height()) / 2);
 		} else {
 			promptTxt.setPos(left, y + 4 + (10 - promptTxt.height()) / 2);
-		}
-
-		for (BagButton b : bags){
-			b.setRect(left+15, y + 6, SLOT_WIDTH, 14);
-			left = b.right()-14;
 		}
 
 		left = x+4;
@@ -296,22 +303,27 @@ public class InventoryPane extends Component {
 			lastBag = stuff.backpack;
 		}
 
-		equipped.get(0).item(stuff.weapon == null ? new WndBag.Placeholder( ItemSpriteSheet.WEAPON_HOLDER ) : stuff.weapon);
-		equipped.get(1).item(stuff.armor == null ? new WndBag.Placeholder( ItemSpriteSheet.ARMOR_HOLDER ) : stuff.armor);
-		for (int i = 0; i < Dungeon.hero.belongings.artifactSlots(); i++) {
-			if (stuff.artifacts.size() > i) {
-				equipped.get(2+i).item(stuff.artifacts.get(i) == null ? new WndBag.Placeholder( ItemSpriteSheet.ARTIFACT_HOLDER ) : stuff.artifacts.get(i));
-			};
+		int eqIdx = 0;
+		if (eqIdx < equipped.size()) {
+			equipped.get(eqIdx++).item(stuff.weapon == null ? new WndBag.Placeholder( ItemSpriteSheet.WEAPON_HOLDER ) : stuff.weapon);
 		}
-		for (int i = 0; i < Dungeon.hero.belongings.miscSlots(); i++) {
-			if (stuff.miscs.size() > i) {
-				equipped.get(2+Dungeon.hero.belongings.artifactSlots()+i).item(stuff.miscs.get(i) == null ? new WndBag.Placeholder( ItemSpriteSheet.SOMETHING ) : stuff.miscs.get(i));
-			}
+		if (eqIdx < equipped.size()) {
+			equipped.get(eqIdx++).item(stuff.armor == null ? new WndBag.Placeholder( ItemSpriteSheet.ARMOR_HOLDER ) : stuff.armor);
 		}
-		for (int i = 0; i < Dungeon.hero.belongings.ringSlots(); i++) {
-			if (stuff.rings.size() > i) {
-				equipped.get(2+Dungeon.hero.belongings.artifactSlots()+Dungeon.hero.belongings.miscSlots()+i).item(stuff.rings.get(i) == null ? new WndBag.Placeholder( ItemSpriteSheet.RING_HOLDER ) : stuff.rings.get(i));
-			}
+		for (int i = 0; i < stuff.artifactSlots() && eqIdx < equipped.size(); i++) {
+			Item item = stuff.artifacts.size() > i ? stuff.artifacts.get(i) : null;
+			equipped.get(eqIdx++).item(item == null ? new WndBag.Placeholder( ItemSpriteSheet.ARTIFACT_HOLDER ) : item);
+		}
+		for (int i = 0; i < stuff.miscSlots() && eqIdx < equipped.size(); i++) {
+			Item item = stuff.miscs.size() > i ? stuff.miscs.get(i) : null;
+			equipped.get(eqIdx++).item(item == null ? new WndBag.Placeholder( ItemSpriteSheet.SOMETHING ) : item);
+		}
+		for (int i = 0; i < stuff.ringSlots() && eqIdx < equipped.size(); i++) {
+			Item item = stuff.rings.size() > i ? stuff.rings.get(i) : null;
+			equipped.get(eqIdx++).item(item == null ? new WndBag.Placeholder( ItemSpriteSheet.RING_HOLDER ) : item);
+		}
+		while (eqIdx < equipped.size()) {
+			equipped.get(eqIdx++).item(null);
 		}
 
 		ArrayList<Item> items = (ArrayList<Item>) lastBag.items.clone();
@@ -460,6 +472,7 @@ public class InventoryPane extends Component {
 			boolean lostInvent = Dungeon.hero.belongings.lostInventory();
 			for (InventorySlot b : equipped){
 				b.enable(lastEnabled
+						&& b.item() != null
 						&& !(b.item() instanceof WndBag.Placeholder)
 						&& (selector == null || selector.itemSelectable(b.item()))
 						&& (!lostInvent || b.item().keptThroughLostInventory()));
@@ -510,6 +523,7 @@ public class InventoryPane extends Component {
 
 		@Override
         public void onClick() {
+			if (item == null) return;
 			if (lastBag != item && !lastBag.contains(item) && !item.isEquipped(Dungeon.hero)){
 				updateInventory();
 				return;
@@ -546,6 +560,7 @@ public class InventoryPane extends Component {
 
 		@Override
 		protected boolean onLongClick() {
+			if (item == null) return false;
 			if (selector == null && item.defaultAction() != null) {
 				QuickSlotButton.set( item );
 				return true;

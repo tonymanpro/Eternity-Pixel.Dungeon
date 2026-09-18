@@ -439,9 +439,10 @@ public class WndUpgrade extends Window {
             public void onClick() {
 				super.onClick();
 
-				ScrollOfUpgrade.upgrade(Dungeon.hero);
+				if (Dungeon.hero != null) {
+					ScrollOfUpgrade.upgrade(Dungeon.hero);
+				}
 
-				//Item upgraded = toUpgrade;
 				if (upgrader instanceof ScrollOfUpgrade){
 					((ScrollOfUpgrade) upgrader).readAnimation();
 					((ScrollOfUpgrade) upgrader).upgradeItem(toUpgrade, amount);
@@ -451,19 +452,18 @@ public class WndUpgrade extends Window {
 					((MagicalInfusion) upgrader).upgradeItem(toUpgrade);
 				}
 
-				if (!force) {
-					if (upgrader.quantity() <= amount)
-						upgrader.detach(Dungeon.hero.belongings.backpack);
-					else
-						upgrader.quantity(upgrader.quantity()-amount);
+				if (Dungeon.hero != null && Dungeon.hero.belongings != null) {
+					if (!force) {
+						if (upgrader.quantity() <= amount) {
+							upgrader.detach(Dungeon.hero.belongings.backpack);
+						} else {
+							upgrader.quantity(upgrader.quantity() - amount);
+							upgrader.updateQuickslot();
+						}
+					}
 				}
-				//Item moreUpgradeItem = Dungeon.hero.belongings.getItem(upgrader.getClass());
 
 				hide();
-
-				//if (moreUpgradeItem != null && toUpgrade.isUpgradable()){
-				//	GameScene.show(new WndUpgrade(moreUpgradeItem, upgraded, false, Math.min(moreUpgradeItem.quantity(), amount)));
-				//}
 			}
 		};
 		btnUpgrade.setRect(0, bottom+2*GAP, WIDTH/2f, 16);
@@ -485,7 +485,7 @@ public class WndUpgrade extends Window {
 		btnCancel.setRect(btnUpgrade.right()+1, bottom+2*GAP, WIDTH/2f, 16);
 		add(btnCancel);
 
-		btnUpgrade.enable(Dungeon.hero.ready);
+		btnUpgrade.enable(true);
 
 		btnUpgrade.icon(new ItemSprite(upgrader));
 		btnCancel.icon(Icons.EXIT.get());
@@ -499,9 +499,6 @@ public class WndUpgrade extends Window {
 	@Override
 	public synchronized void update() {
 		super.update();
-		if (!btnUpgrade.active && Dungeon.hero.ready){
-			btnUpgrade.enable(true);
-		}
 	}
 
 	@Override

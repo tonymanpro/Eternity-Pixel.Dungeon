@@ -29,18 +29,55 @@ public class ArenaInventory {
     public static Bundle stashedBelongings = null;
     public static Bundle savedQuickslot = null;
     public static boolean active = false;
-    public static Hero stashOwner = null;
 
     public static boolean isActive(){
         return active;
     }
 
-    public static int depth;
-    public static int branch;
-    public static int pos;
+    public static int depth = 1;
+    public static int branch = 0;
+    public static int pos = 0;
+
+    private static final String ACTIVE             = "active";
+    private static final String DEPTH              = "depth";
+    private static final String BRANCH             = "branch";
+    private static final String POS                = "pos";
+    private static final String STASHED_BELONGINGS = "stashed_belongings";
+    private static final String SAVED_QUICKSLOT    = "saved_quickslot";
+
+    public static void storeInBundle( Bundle bundle ){
+        bundle.put( ACTIVE, active );
+        bundle.put( DEPTH, depth );
+        bundle.put( BRANCH, branch );
+        bundle.put( POS, pos );
+        if (stashedBelongings != null) {
+            bundle.put( STASHED_BELONGINGS, stashedBelongings );
+        }
+        if (savedQuickslot != null) {
+            bundle.put( SAVED_QUICKSLOT, savedQuickslot );
+        }
+    }
+
+    public static void restoreFromBundle( Bundle bundle ){
+        if (bundle == null) return;
+        active = bundle.getBoolean( ACTIVE );
+        depth = bundle.getInt( DEPTH );
+        branch = bundle.getInt( BRANCH );
+        pos = bundle.getInt( POS );
+        if (bundle.contains( STASHED_BELONGINGS )) {
+            stashedBelongings = bundle.getBundle( STASHED_BELONGINGS );
+        } else {
+            stashedBelongings = null;
+        }
+        if (bundle.contains( SAVED_QUICKSLOT )) {
+            savedQuickslot = bundle.getBundle( SAVED_QUICKSLOT );
+        } else {
+            savedQuickslot = null;
+        }
+    }
 
     public static void stashAndStart( Hero hero ){
-        if (active && stashOwner == hero) return;
+        if (hero == null) return;
 
         if (active) {
             stashedBelongings = null;
@@ -55,7 +92,6 @@ public class ArenaInventory {
         Dungeon.quickslot.storePlaceholders( bq );
         stashedBelongings = b;
         savedQuickslot = bq;
-        stashOwner = hero;
         active = true;
 
         forceUnequipAll( hero );
@@ -90,23 +126,10 @@ public class ArenaInventory {
     }
 
     public static void restoreAndMerge( Hero hero ){
+        if (hero == null) return;
         if (!active || stashedBelongings == null) return;
 
-        if (stashOwner != hero) {
-            GLog.n( Messages.get( ArenaInventory.class, "stash_mismatch" ) );
-            stashedBelongings = null;
-            savedQuickslot = null;
-            stashOwner = null;
-            active = false;
-            return;
-        }
-
-        Item chains = Dungeon.hero.belongings.getItem(EtherealChains.WaveEternalChains.class);
-        if (chains != null) {
-            chains.detach(Dungeon.hero.belongings.backpack);
-        }
-        forceUnequipAll( hero );
-
+        // Gather all earned items from arena before un-equipping and restoring
         ArrayList<Item> earned = new ArrayList<>( hero.belongings.backpack.items );
         if (hero.belongings.weapon != null)    earned.add( hero.belongings.weapon );
         if (hero.belongings.armor != null)     earned.add( hero.belongings.armor );
@@ -114,6 +137,11 @@ public class ArenaInventory {
         earned.addAll( hero.belongings.rings );
         earned.addAll( hero.belongings.artifacts );
         earned.addAll( hero.belongings.miscs );
+
+        // Remove temporary arena items from earned list
+        earned.removeIf(item -> item == null || item instanceof EtherealChains.WaveEternalChains || item instanceof TicketToWaveArena);
+
+        forceUnequipAll( hero );
 
         hero.belongings.backpack.clear();
         hero.belongings.weapon = null;
@@ -123,27 +151,34 @@ public class ArenaInventory {
         hero.belongings.artifacts = new ArrayList<>();
         hero.belongings.miscs = new ArrayList<>();
 
+        // Restore original belongings
         hero.belongings.restoreFromBundle( stashedBelongings );
 
         Dungeon.quickslot.reset();
-        Dungeon.quickslot.restorePlaceholders( savedQuickslot );
+        if (savedQuickslot != null) {
+            Dungeon.quickslot.restorePlaceholders( savedQuickslot );
+        }
         QuickSlotButton.reset();
 
         for (Item item : earned) {
             if (item == null) continue;
             if (!item.collect( hero.belongings.backpack )) {
-                Dungeon.level.drop( item, hero.pos ).sprite.drop();
+                if (Dungeon.level != null) {
+                    Dungeon.level.drop( item, hero.pos ).sprite.drop();
+                }
             }
         }
 
         stashedBelongings = null;
         savedQuickslot = null;
-        stashOwner = null;
         active = false;
 
         GLog.p( Messages.get( ArenaInventory.class, "restored" ) );
     }
+
     private static void forceUnequipAll( Hero hero ){
+        if (hero == null || hero.belongings == null) return;
+
         boolean addedImmunity = hero.buff( MagicImmune.class ) == null;
         MagicImmune immune = addedImmunity ? Buff.affect( hero, MagicImmune.class, 1f ) : null;
 
@@ -167,7 +202,9 @@ public class ArenaInventory {
     public static void reset(){
         stashedBelongings = null;
         savedQuickslot = null;
-        stashOwner = null;
         active = false;
+        depth = 1;
+        branch = 0;
+        pos = 0;
     }
 }

@@ -105,35 +105,13 @@ public class TicketToWaveArena extends Item{
     @Override
     public void storeInBundle( Bundle bundle ) {
         super.storeInBundle( bundle );
-        bundle.put( DEPTH, ArenaInventory.depth );
-        bundle.put( BRANCH, ArenaInventory.branch );
-        if (ArenaInventory.depth != -1) {
-            bundle.put( POS, ArenaInventory.pos);
-        }
-        if (ArenaInventory.stashedBelongings != null) {
-            bundle.put( STASHED_BELONGINGS, ArenaInventory.stashedBelongings );
-        }
-        if (ArenaInventory.savedQuickslot != null) {
-            bundle.put( SAVED_QUICKSLOT, ArenaInventory.savedQuickslot );
-        }
-        bundle.put( ARENA_ACTIVE, ArenaInventory.active );
+        ArenaInventory.storeInBundle( bundle );
     }
 
     @Override
     public void restoreFromBundle( Bundle bundle ) {
         super.restoreFromBundle(bundle);
-        ArenaInventory.depth	= bundle.getInt( DEPTH );
-        if (bundle.contains(BRANCH))
-            ArenaInventory.branch	= bundle.getInt( BRANCH );
-        else
-            ArenaInventory.branch = Dungeon.BRANCH_NORMAL;
-        ArenaInventory.pos	= bundle.getInt( POS );
-        if (bundle.contains( STASHED_BELONGINGS )) {
-            ArenaInventory.stashedBelongings = bundle.getBundle( STASHED_BELONGINGS );
-            ArenaInventory.savedQuickslot = bundle.contains( SAVED_QUICKSLOT ) ? bundle.getBundle( SAVED_QUICKSLOT ) : null;
-            ArenaInventory.active = bundle.getBoolean( ARENA_ACTIVE );
-            ArenaInventory.stashOwner = Dungeon.hero;
-        }
+        ArenaInventory.restoreFromBundle( bundle );
     }
 
     @Override

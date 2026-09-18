@@ -96,12 +96,12 @@ public class Image extends Visual {
 	}
 	
 	public RectF frame() {
-		return new RectF( frame );
+		return frame == null ? null : new RectF( frame );
 	}
 
 	public void copy( Image other ) {
 		texture = other.texture;
-		frame = new RectF( other.frame );
+		frame = other.frame == null ? null : new RectF( other.frame );
 		
 		width = other.width;
 		height = other.height;

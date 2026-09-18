@@ -107,7 +107,7 @@ public class MobSprite extends CharSprite {
 			int scaleFactor = 1;
 			if (texture != null && texture.path != null) {
 				String resolved = AssetPackResolver.resolvePath( texture.path );
-				if (resolved.contains("/hd/") || resolved.contains("\\hd\\")) {
+				if (resolved.contains("/hd/") || resolved.contains("\\hd\\") || resolved.endsWith("_hd.png")) {
 					scaleFactor = 4;
 				}
 			}

@@ -462,7 +462,14 @@ public class WaveArenaLevel extends Level {
                     countdown = Buff.affect( Dungeon.hero, WaveCountdown.class );
                 }
 
-                float targetIntermission = level.waveNumber == 0 ? 4f : WAVE_INTERMISSION;
+                float targetIntermission;
+                if (level.waveNumber == 0) {
+                    targetIntermission = 4f;
+                } else if (level.waveNumber <= 5) {
+                    targetIntermission = 8f;
+                } else {
+                    targetIntermission = 14f;
+                }
 
                 if (countdown.count() >= targetIntermission) {
                     countdown.detach();

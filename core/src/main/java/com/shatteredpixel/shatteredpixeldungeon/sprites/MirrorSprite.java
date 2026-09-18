@@ -64,6 +64,8 @@ public class MirrorSprite extends MobSprite {
 		if (Dungeon.hero != null) {
 			CharSprite ref = Dungeon.hero.sprite;
 
+			scale.set(ref.scale.x, ref.scale.y);
+
 			idle = ref.idle.clone();
 
 			run = ref.run.clone();
@@ -78,7 +80,20 @@ public class MirrorSprite extends MobSprite {
 			die.delay = ref.die.delay;
 			die.looped = ref.die.looped;
 		} else {
-			TextureFilm film = new TextureFilm( HeroSprite.tiers(Assets.Sprites.ROGUE, FRAME_HEIGHT), tier, FRAME_WIDTH, FRAME_HEIGHT );
+			int frameWidth = FRAME_WIDTH;
+			int frameHeight = FRAME_HEIGHT;
+			if (texture != null && texture.width >= 1000) {
+				frameWidth = FRAME_WIDTH * 4;
+				frameHeight = FRAME_HEIGHT * 4;
+				scale.set(0.25f, 0.25f);
+			} else if (texture != null && texture.width >= 500) {
+				frameWidth = FRAME_WIDTH * 2;
+				frameHeight = FRAME_HEIGHT * 2;
+				scale.set(0.5f, 0.5f);
+			} else {
+				scale.set(1f, 1f);
+			}
+			TextureFilm film = new TextureFilm( HeroSprite.tiers(Assets.Sprites.ROGUE, frameHeight), tier, frameWidth, frameHeight );
 
 			idle = new Animation( 1, true );
 			idle.frames( film, 0, 0, 0, 1, 0, 0, 1, 1 );

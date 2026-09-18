@@ -945,7 +945,9 @@ public abstract class Mob extends Char {
 							// Buff speed/damage
 							Buff.affect(c, com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Light.class, 10f); // Temporarily give them Light instead of unfitting Fury which acts differently
 							c.HP = Math.min(c.HT, c.HP + Math.max(1, c.HT / 20));
-							c.sprite.emitter().burst(com.shatteredpixel.shatteredpixeldungeon.effects.particles.SparkParticle.FACTORY, 3);
+							if (c.sprite != null && c.sprite.emitter() != null) {
+								c.sprite.emitter().burst(com.shatteredpixel.shatteredpixeldungeon.effects.particles.SparkParticle.FACTORY, 3);
+							}
 						}
 					}
 				}
