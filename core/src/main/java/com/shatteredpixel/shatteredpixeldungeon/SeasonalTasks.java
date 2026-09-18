@@ -197,5 +197,8 @@ public class SeasonalTasks {
             }
         }
         allBonusClaimed = bundle.contains( ALL_CLAIMED ) && bundle.getBoolean( ALL_CLAIMED );
+        if (tasks.isEmpty()){
+            rollForNewSeason();
+        }
     }
 }

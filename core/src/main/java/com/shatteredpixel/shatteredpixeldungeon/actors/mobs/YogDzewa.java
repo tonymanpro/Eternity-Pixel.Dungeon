@@ -71,7 +71,7 @@ public class YogDzewa extends Mob {
 	{
 		spriteClass = YogSprite.class;
 
-		HP = HT = (long) ((bossMaxHPMulti + 1) * (Dungeon.getCycleMultiplier(500)));
+		HP = HT = (long) ((bossMaxHPMulti + 1) * (Dungeon.getCycleMultiplier(300)));
 		defenseSkill = 0;
 
 		EXP = Dungeon.getCycleMultiplier(50);
