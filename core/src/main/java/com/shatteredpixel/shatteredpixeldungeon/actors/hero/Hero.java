@@ -2493,7 +2493,11 @@ if (!Dungeon.level.visited[cell] && !Dungeon.level.mapped[cell]
 			grinding = true;
 		}
 
-		GLog.w( Messages.get( Hero.class, "arena_defeat" ) );
+		if (Dungeon.branch == Dungeon.BRANCH_BLACK) {
+			GLog.w( Messages.get( Hero.class, "black_arena_defeat", PsycheChest.neededLevel() ) );
+		} else {
+			GLog.w( Messages.get( Hero.class, "arena_defeat" ) );
+		}
 
 		InterlevelScene.mode = InterlevelScene.Mode.RETURN;
 		InterlevelScene.returnDepth = retDepth > 0 ? retDepth : 1;

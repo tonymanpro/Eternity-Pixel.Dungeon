@@ -455,7 +455,10 @@ public class WndUpgrade extends Window {
 				if (Dungeon.hero != null && Dungeon.hero.belongings != null) {
 					if (!force) {
 						if (upgrader.quantity() <= amount) {
-							upgrader.detach(Dungeon.hero.belongings.backpack);
+							if (upgrader.stackable) {
+								Dungeon.quickslot.convertToPlaceholder(upgrader);
+							}
+							upgrader.detachAll(Dungeon.hero.belongings.backpack);
 						} else {
 							upgrader.quantity(upgrader.quantity() - amount);
 							upgrader.updateQuickslot();
