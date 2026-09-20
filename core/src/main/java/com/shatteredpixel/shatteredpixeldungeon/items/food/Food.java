@@ -133,18 +133,26 @@ public class Food extends Item {
 			Buff.affect(hero, ArtifactRecharge.class).prolong(6);
 		}
 		if (hero.perks.contains(Perks.Perk.COLLECT_EVERYTHING) && this instanceof SmallRation){
-			for (Heap h : Dungeon.level.heaps.valueList()){
-                PathFinder.buildDistanceMap(h.pos, BArray.or(Dungeon.level.passable, Dungeon.level.avoid, null));
-				if (h.type == Heap.Type.HEAP) {
+			collectAllHeaps(hero);
+		}
+	}
+
+	public static void collectAllHeaps(Hero hero) {
+		ArrayList<Heap> list = new ArrayList<>(Dungeon.level.heaps.valueList());
+		for (Heap h : list) {
+			if (h.type == Heap.Type.HEAP) {
+				while (!h.isEmpty()) {
 					Item item = h.peek();
-					if (item.doPickUp(hero, h.pos) && !(PathFinder.distance[h.pos] == Integer.MAX_VALUE)) {
+					if (item == null) break;
+					if (item.doPickUp(hero, h.pos)) {
 						h.pickUp();
-						hero.spend(-Item.TIME_TO_PICK_UP); //casting the spell already takes a turn
-						GLog.i( Messages.capitalize(Messages.get(hero, "you_now_have", item.name())) );
+						hero.spend(-Item.TIME_TO_PICK_UP);
+						GLog.i(Messages.capitalize(Messages.get(hero, "you_now_have", item.name())));
 					} else {
-						GLog.w( Messages.capitalize(Messages.get(hero, "you_cant_have", item.name())) );
-						h.sprite.drop();
-                    }
+						GLog.w(Messages.capitalize(Messages.get(hero, "you_cant_have", item.name())));
+						if (h.sprite != null) h.sprite.drop();
+						break;
+					}
 				}
 			}
 		}

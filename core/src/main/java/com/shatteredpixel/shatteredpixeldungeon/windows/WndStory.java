@@ -35,9 +35,9 @@ import com.watabou.noosa.PointerArea;
 
 public class WndStory extends Window {
 
-	private static final int WIDTH_P = 125;
-	private static final int WIDTH_L = 180;
-	private static final int MARGIN = 2;
+	private static final int WIDTH_P = 135;
+	private static final int WIDTH_L = 195;
+	private static final int MARGIN = 4;
 
 	private IconTitle ttl;
 	private RenderedTextBlock tf;
@@ -57,8 +57,8 @@ public class WndStory extends Window {
 		float y = MARGIN;
 		if (icon != null && title != null){
 			ttl = new IconTitle(icon, title);
-			ttl.setRect(MARGIN, y, width-2*MARGIN, 0);
-			y = ttl.bottom()+MARGIN;
+			ttl.setRect(MARGIN, y, width, 0);
+			y = ttl.bottom() + MARGIN + 2;
 			add(ttl);
 			ttl.tfLabel.invert();
 		}
@@ -78,7 +78,7 @@ public class WndStory extends Window {
 		blocker.camera = PixelScene.uiCamera;
 		add(blocker);
 		
-		resize( width + 2*MARGIN, (int)(tf.bottom()+MARGIN) );
+		resize( width + 2*MARGIN, (int)(tf.bottom() + MARGIN + 2) );
 	}
 
 	public WndStory setDelays(float appearDelay, float disappearDelay){

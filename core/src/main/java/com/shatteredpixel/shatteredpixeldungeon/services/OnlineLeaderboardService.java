@@ -74,6 +74,9 @@ public class OnlineLeaderboardService {
 			username = heroClass;
 		}
 
+		String ringsStr = (build != null && build.rings != null && !build.rings.isEmpty()) ? String.join(", ", build.rings) : "";
+		String artifactsStr = (build != null && build.artifacts != null && !build.artifacts.isEmpty()) ? String.join(", ", build.artifacts) : "";
+
 		StringBuilder json = new StringBuilder();
 		json.append("{\n");
 		json.append("  \"fields\": {\n");
@@ -89,6 +92,8 @@ public class OnlineLeaderboardService {
 		json.append("    \"win\": {\"booleanValue\": ").append(record.win).append("},\n");
 		json.append("    \"weapon\": {\"stringValue\": \"").append(escapeJson(weapon)).append("\"},\n");
 		json.append("    \"armor\": {\"stringValue\": \"").append(escapeJson(armor)).append("\"},\n");
+		json.append("    \"rings\": {\"stringValue\": \"").append(escapeJson(ringsStr)).append("\"},\n");
+		json.append("    \"artifacts\": {\"stringValue\": \"").append(escapeJson(artifactsStr)).append("\"},\n");
 		json.append("    \"pet\": {\"stringValue\": \"").append(escapeJson(pet)).append("\"},\n");
 		json.append("    \"game_id\": {\"stringValue\": \"").append(escapeJson(record.gameID)).append("\"},\n");
 		json.append("    \"created_at\": {\"timestampValue\": \"").append(timestamp).append("\"}\n");

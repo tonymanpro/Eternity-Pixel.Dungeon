@@ -76,6 +76,11 @@ public class VaultFinalRoom extends SpecialRoom {
 				0,
 				LevelTransition.Type.BRANCH_EXIT));
 		Painter.set(level, exit, Terrain.EXIT);
+
+		com.shatteredpixel.shatteredpixeldungeon.actors.mobs.VaultBossElemental boss = new com.shatteredpixel.shatteredpixeldungeon.actors.mobs.VaultBossElemental();
+		boss.pos = level.pointToCell(new Point(center().x, center().y + 2));
+		boss.state = boss.WANDERING;
+		level.mobs.add(boss);
 	}
 
 	@Override

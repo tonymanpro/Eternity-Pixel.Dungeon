@@ -9,6 +9,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Belongings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet;
+import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.Artifact;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
 import com.shatteredpixel.shatteredpixeldungeon.utils.DungeonSeed;
@@ -33,6 +34,12 @@ public class VictoryBuild implements Bundlable {
 	public ArrayList<String> rings = new ArrayList<>();
 	public ArrayList<String> artifacts = new ArrayList<>();
 
+	public Item weaponItem = null;
+	public Item armorItem = null;
+	public ArrayList<Item> ringItems = new ArrayList<>();
+	public ArrayList<Item> artifactItems = new ArrayList<>();
+	public ArrayList<Item> quickslotItems = new ArrayList<>();
+
 	public String petSpecies = "";
 	public int petLevel = 1;
 	public int petStage = 0;
@@ -56,20 +63,39 @@ public class VictoryBuild implements Bundlable {
 		Belongings belongings = hero.belongings;
 		if (belongings.weapon != null) {
 			vb.weaponName = belongings.weapon.name();
+			vb.weaponItem = belongings.weapon;
 		}
 		if (belongings.armor != null) {
 			vb.armorName = belongings.armor.name();
+			vb.armorItem = belongings.armor;
 		}
 
 		if (belongings.rings != null) {
 			for (Ring ring : belongings.rings) {
-				if (ring != null) vb.rings.add(ring.name());
+				if (ring != null) {
+					vb.rings.add(ring.name());
+					vb.ringItems.add(ring);
+				}
 			}
 		}
 
 		if (belongings.artifacts != null) {
 			for (Artifact art : belongings.artifacts) {
-				if (art != null) vb.artifacts.add(art.name());
+				if (art != null) {
+					vb.artifacts.add(art.name());
+					vb.artifactItems.add(art);
+				}
+			}
+		}
+
+		if (Dungeon.quickslot != null) {
+			for (int i = 0; i < QuickSlot.SIZE; i++) {
+				if (Dungeon.quickslot.isNonePlaceholder(i)) {
+					Item qsItem = Dungeon.quickslot.getItem(i);
+					if (qsItem != null && !vb.quickslotItems.contains(qsItem)) {
+						vb.quickslotItems.add(qsItem);
+					}
+				}
 			}
 		}
 
@@ -100,6 +126,11 @@ public class VictoryBuild implements Bundlable {
 	private static final String ARMOR        = "armor";
 	private static final String RINGS        = "rings";
 	private static final String ARTIFACTS    = "artifacts";
+	private static final String WEAPON_ITEM  = "weapon_item";
+	private static final String ARMOR_ITEM   = "armor_item";
+	private static final String RING_ITEMS   = "ring_items";
+	private static final String ART_ITEMS    = "art_items";
+	private static final String QS_ITEMS     = "qs_items";
 	private static final String PET_SPECIES  = "pet_species";
 	private static final String PET_LEVEL    = "pet_level";
 	private static final String PET_STAGE    = "pet_stage";
@@ -130,6 +161,34 @@ public class VictoryBuild implements Bundlable {
 			for (String a : artArray) artifacts.add(a);
 		}
 
+		if (bundle.contains(WEAPON_ITEM)) {
+			weaponItem = (Item) bundle.get(WEAPON_ITEM);
+		}
+		if (bundle.contains(ARMOR_ITEM)) {
+			armorItem = (Item) bundle.get(ARMOR_ITEM);
+		}
+
+		ringItems.clear();
+		if (bundle.contains(RING_ITEMS)) {
+			for (Bundlable b : bundle.getCollection(RING_ITEMS)) {
+				if (b instanceof Item) ringItems.add((Item) b);
+			}
+		}
+
+		artifactItems.clear();
+		if (bundle.contains(ART_ITEMS)) {
+			for (Bundlable b : bundle.getCollection(ART_ITEMS)) {
+				if (b instanceof Item) artifactItems.add((Item) b);
+			}
+		}
+
+		quickslotItems.clear();
+		if (bundle.contains(QS_ITEMS)) {
+			for (Bundlable b : bundle.getCollection(QS_ITEMS)) {
+				if (b instanceof Item) quickslotItems.add((Item) b);
+			}
+		}
+
 		petSpecies   = bundle.getString(PET_SPECIES);
 		petLevel     = bundle.getInt(PET_LEVEL);
 		petStage     = bundle.getInt(PET_STAGE);
@@ -151,6 +210,13 @@ public class VictoryBuild implements Bundlable {
 
 		bundle.put(RINGS, rings.toArray(new String[0]));
 		bundle.put(ARTIFACTS, artifacts.toArray(new String[0]));
+
+		if (weaponItem != null) bundle.put(WEAPON_ITEM, weaponItem);
+		if (armorItem != null) bundle.put(ARMOR_ITEM, armorItem);
+
+		if (!ringItems.isEmpty()) bundle.put(RING_ITEMS, ringItems);
+		if (!artifactItems.isEmpty()) bundle.put(ART_ITEMS, artifactItems);
+		if (!quickslotItems.isEmpty()) bundle.put(QS_ITEMS, quickslotItems);
 
 		bundle.put(PET_SPECIES, petSpecies);
 		bundle.put(PET_LEVEL, petLevel);

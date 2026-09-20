@@ -106,11 +106,14 @@ public class ItemSprite extends MovieClip {
 		link(heap);
 	}
 	
+	private boolean lastHeapSeen = false;
+
 	public void link( Heap heap ) {
 		this.heap = heap;
 		view(heap);
 		renderShadow = true;
 		visible = heap.seen;
+		lastHeapSeen = heap.seen;
 		place(heap.pos);
 	}
 	
@@ -337,6 +340,15 @@ public class ItemSprite extends MovieClip {
 
 		if (emitter != null){
 			emitter.visible = visible;
+		}
+
+		if (heap != null) {
+			if (heap.seen != lastHeapSeen) {
+				lastHeapSeen = heap.seen;
+				heap.updateSubicon();
+			} else if (!heap.seen) {
+				heap.updateSubiconsVisibility(false);
+			}
 		}
 
 		if (dropInterval > 0){
