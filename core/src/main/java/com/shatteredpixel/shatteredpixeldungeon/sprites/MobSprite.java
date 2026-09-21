@@ -46,12 +46,6 @@ public class MobSprite extends CharSprite {
 	@Override
 	public void link( Char ch ) {
 		super.link( ch );
-		if (com.shatteredpixel.shatteredpixeldungeon.HolidayEventConfig.get().isWinterEventActive()
-				&& com.shatteredpixel.shatteredpixeldungeon.HolidayEventConfig.get().santaHatEnabled) {
-			if (ch instanceof Rat || ch instanceof Skeleton || ch instanceof Gnoll || ch instanceof com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Thief) {
-				this.hardlight(0xff7777);
-			}
-		}
 	}
 
 	@Override

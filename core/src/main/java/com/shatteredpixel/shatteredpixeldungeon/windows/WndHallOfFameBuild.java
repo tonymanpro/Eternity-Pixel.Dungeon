@@ -33,10 +33,26 @@ public class WndHallOfFameBuild extends Window {
 		super();
 		resize(WIDTH, HEIGHT);
 
+		if (build == null && Dungeon.hero != null) {
+			build = VictoryBuild.captureCurrentRun(rec);
+			rec.victoryBuild = build;
+		}
+
 		IconTitle title = new IconTitle();
 		title.icon(HeroSprite.avatar(rec.heroClass, rec.armorTier));
-		String titleText = build != null && !build.heroSubclass.isEmpty() ?
-				build.heroSubclass + " (" + rec.heroClass.title() + ")" : rec.heroClass.title();
+		String heroClassTitle = rec.heroClass != null ? rec.heroClass.title() : "";
+		String subclassTitle = "";
+		if (build != null && !build.heroSubclass.isEmpty()) {
+			try {
+				com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass sc =
+						com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass.valueOf(build.heroSubclass);
+				subclassTitle = sc.title();
+			} catch (Exception e) {
+				subclassTitle = build.heroSubclass;
+			}
+		}
+		String titleText = !subclassTitle.isEmpty() ?
+				subclassTitle + " (" + heroClassTitle + ")" : heroClassTitle;
 		title.label(titleText.toUpperCase(Locale.ENGLISH));
 		title.color(TITLE_COLOR);
 		title.setRect(0, 0, WIDTH, 0);
@@ -44,7 +60,12 @@ public class WndHallOfFameBuild extends Window {
 
 		float pos = title.bottom() + 2;
 
-		String runStatus = rec.win ? Messages.get(this, "victory") : (Messages.get(WndRanking.class, "depth") + " " + (build != null ? build.depth : rec.depth));
+		String runStatus;
+		if (rec.win) {
+			runStatus = rec.ascending ? Messages.get(this, "ascent") : Messages.get(this, "victory");
+		} else {
+			runStatus = Messages.get(this, "depth") + " " + (build != null ? build.depth : rec.depth);
+		}
 		RenderedTextBlock date = PixelScene.renderTextBlock(runStatus + " - " + (rec.date != null ? rec.date : ""), 7);
 		date.hardlight(0xFFD700); // Gold
 		date.setPos(0, pos);
@@ -52,10 +73,10 @@ public class WndHallOfFameBuild extends Window {
 		pos += date.height() + 3;
 
 		NumberFormat num = NumberFormat.getInstance(Locale.US);
-		pos = addLine(Messages.get(WndRanking.class, "score"), num.format(rec.score), pos);
+		pos = addLine(Messages.get(this, "score"), num.format(rec.score), pos);
 
 		if (build != null && !build.seed.isEmpty()) {
-			pos = addLine(Messages.get(WndRanking.class, "seed"), build.seed, pos);
+			pos = addLine(Messages.get(this, "seed"), build.seed, pos);
 		}
 
 		pos += 3;
@@ -102,7 +123,7 @@ public class WndHallOfFameBuild extends Window {
 				slotX += slotSize + slotGap;
 			}
 			pos = slotY + slotSize + 4;
-		} else if (build != null) {
+		} else if (build != null && (!build.weaponName.isEmpty() || !build.armorName.isEmpty() || !build.rings.isEmpty() || !build.artifacts.isEmpty())) {
 			// Fallback text rendering if items weren't bundled
 			if (!build.weaponName.isEmpty()) {
 				pos = addLine(Messages.get(this, "weapon_label"), build.weaponName, pos);
@@ -116,6 +137,13 @@ public class WndHallOfFameBuild extends Window {
 			if (!build.artifacts.isEmpty()) {
 				pos = addLine(Messages.get(this, "artifacts_label"), String.join(", ", build.artifacts), pos);
 			}
+		} else {
+			RenderedTextBlock noData = PixelScene.renderTextBlock(Messages.get(this, "no_data"), 6);
+			noData.hardlight(0x888888);
+			noData.maxWidth(WIDTH);
+			noData.setPos(0, pos);
+			add(noData);
+			pos += noData.height() + 4;
 		}
 
 		// Companion / Pet section
@@ -127,10 +155,11 @@ public class WndHallOfFameBuild extends Window {
 		// Action Buttons
 		float btnY = HEIGHT - 18;
 		if (build != null && !build.seed.isEmpty()) {
+			final String finalSeed = build.seed;
 			RedButton btnCopySeed = new RedButton(Messages.get(this, "btn_copy_seed")) {
 				@Override
 				public void onClick() {
-					SPDSettings.customSeed(build.seed);
+					SPDSettings.customSeed(finalSeed);
 					text.text(Messages.get(WndHallOfFameBuild.this, "seed_copied"));
 				}
 			};

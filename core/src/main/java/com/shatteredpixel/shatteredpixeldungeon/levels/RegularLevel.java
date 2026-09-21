@@ -67,8 +67,10 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.builders.Builder;
 import com.shatteredpixel.shatteredpixeldungeon.levels.builders.FigureEightBuilder;
 import com.shatteredpixel.shatteredpixeldungeon.levels.builders.LoopBuilder;
 import com.shatteredpixel.shatteredpixeldungeon.levels.builders.RegularBuilder;
+import com.shatteredpixel.shatteredpixeldungeon.HolidayEventConfig;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
+import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.secret.HolidayImpRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.secret.SecretRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.MagicalFireRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.PitRoom;
@@ -170,6 +172,10 @@ public abstract class RegularLevel extends Level {
 		secrets = Math.round(secrets * Dungeon.hero.getSecretRoomMultiplier());
 		for (int i = 0; i < secrets; i++) {
 			initRooms.add(SecretRoom.createRoom());
+		}
+
+		if (Dungeon.depth == 11 && HolidayEventConfig.get().isWinterEventActive()) {
+			initRooms.add(new HolidayImpRoom());
 		}
 		return initRooms;
 	}

@@ -186,7 +186,7 @@ public class WndBag extends WndTabbed {
 			dragged = false;
 		}
 
-		if (curInterfaceSize == 1) {
+		if (curInterfaceSize >= 1) {
 			if (dragged && lastOffset != null) {
 				offset(lastOffset.x, lastOffset.y);
 				boundOffsetWithMargin(2);

@@ -153,7 +153,7 @@ public class WndQuickBag extends Window {
 
 		int bottom = GameScene.uiCamera.height;
 
-		if (SPDSettings.interfaceSize() == 1) {
+		if (SPDSettings.interfaceSize() >= 1) {
 			float toolbarTop = PixelScene.uiCamera.height - 28;
 			int targetRight = PixelScene.uiCamera.width - 2;
 			int targetBottom = (int)toolbarTop - 1;

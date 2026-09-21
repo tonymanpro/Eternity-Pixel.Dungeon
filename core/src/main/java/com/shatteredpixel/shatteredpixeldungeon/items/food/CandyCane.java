@@ -18,7 +18,7 @@ import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 public class CandyCane extends Food {
 
 	{
-		image = ItemSpriteSheet.PASTY;
+		image = ItemSpriteSheet.CANDY_CANE;
 		energy = 100;
 	}
 

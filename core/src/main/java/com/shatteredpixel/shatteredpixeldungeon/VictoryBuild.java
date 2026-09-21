@@ -90,11 +90,9 @@ public class VictoryBuild implements Bundlable {
 
 		if (Dungeon.quickslot != null) {
 			for (int i = 0; i < QuickSlot.SIZE; i++) {
-				if (Dungeon.quickslot.isNonePlaceholder(i)) {
-					Item qsItem = Dungeon.quickslot.getItem(i);
-					if (qsItem != null && !vb.quickslotItems.contains(qsItem)) {
-						vb.quickslotItems.add(qsItem);
-					}
+				Item qsItem = Dungeon.quickslot.getItem(i);
+				if (qsItem != null && !vb.quickslotItems.contains(qsItem)) {
+					vb.quickslotItems.add(qsItem);
 				}
 			}
 		}
