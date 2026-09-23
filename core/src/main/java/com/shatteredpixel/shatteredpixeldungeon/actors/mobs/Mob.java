@@ -72,6 +72,7 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ShadowParticle
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Gold;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.KindOfWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.PsycheChest;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.Artifact;
@@ -155,7 +156,30 @@ public abstract class Mob extends Char {
 
 	public long EXP = 1;
 	public int maxLvl = Integer.MAX_VALUE;
-	public double bossMaxHPMulti = (Dungeon.escalatingDepth() * 0.025d) + bossMulti();
+	public double bossMaxHPMulti = calculateBossMaxHPMulti();
+
+	public double calculateBossMaxHPMulti() {
+		double multi = (Dungeon.escalatingDepth() * 0.025d) + bossMulti();
+		try {
+			if (Dungeon.hero != null && Dungeon.hero.lvl > 30) {
+				long weaponMax = 0;
+				if (Dungeon.hero.belongings != null && Dungeon.hero.belongings.weapon() != null) {
+					KindOfWeapon wep = Dungeon.hero.belongings.weapon();
+					weaponMax = wep.max();
+					if (wep instanceof Weapon && ((Weapon) wep).augment != null) {
+						weaponMax = ((Weapon) wep).augment.damageFactor(weaponMax);
+					}
+				}
+				if (weaponMax > 200) {
+					return multi;
+				}
+				return ((multi + 1) / 2.0d) - 1;
+			}
+		} catch (Exception e) {
+			return multi;
+		}
+		return multi;
+	}
 
 	protected Char enemy;
 	protected int enemyID = -1; // used for save/restore
@@ -1198,8 +1222,8 @@ public abstract class Mob extends Char {
 		return false;
 	}
 
-	public long bossMulti() {
-		long multi = 0;
+	public double bossMulti() {
+		double multi = 0;
 		if (Dungeon.hero != null) {
 			multi += Dungeon.hero.lvl;
 		}

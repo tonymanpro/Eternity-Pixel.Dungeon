@@ -23,15 +23,22 @@ import com.watabou.utils.Random;
 
 public class HolidayImp extends Mob {
 
+	@Override
+	public double bossMulti() {
+		return 0.25d;
+	}
+
 	{
 		spriteClass = HolidayImpSprite.class;
 
-		HP = HT = Dungeon.getCycleMultiplier(70);
-		defenseSkill = Dungeon.getCycleMultiplier(16);
+		int powerLevel = Dungeon.hero != null ? Dungeon.hero.lvl : 12;
+
+		HP = HT = (long) ((bossMaxHPMulti + 1) * (Dungeon.getCycleMultiplier(70) + Math.round(powerLevel * 6 * Math.pow(1.8, Dungeon.cycle))));
+		defenseSkill = 16 + powerLevel / 3;
 		baseSpeed = 1.2f;
 
-		EXP = Dungeon.getCycleMultiplier(20);
-		maxLvl = 20;
+		EXP = Dungeon.getCycleMultiplier(20 + powerLevel * 2);
+		maxLvl = Integer.MAX_VALUE;
 
 		flying = true;
 
@@ -41,17 +48,26 @@ public class HolidayImp extends Mob {
 
 	@Override
 	public long damageRoll() {
-		return Dungeon.getCycleMultiplier(Dungeon.NormalLongRange(7, 15));
+		int powerLevel = Dungeon.hero != null ? Dungeon.hero.lvl : 12;
+		return Dungeon.getCycleMultiplier(Dungeon.NormalLongRange(
+				Math.round(7 + powerLevel * 0.5f),
+				Math.round(15 + powerLevel * 1.0f)
+		));
 	}
 
 	@Override
 	public long attackSkill(Char target) {
-		return Dungeon.getCycleMultiplier(18);
+		int powerLevel = Dungeon.hero != null ? Dungeon.hero.lvl : 12;
+		return Dungeon.getCycleMultiplier(18 + powerLevel / 2);
 	}
 
 	@Override
-	public long cycledDrRoll() {
-		return Dungeon.NormalLongRange(Dungeon.getCycleMultiplier(1), Dungeon.getCycleMultiplier(4));
+	public long drRoll() {
+		int powerLevel = Dungeon.hero != null ? Dungeon.hero.lvl : 12;
+		return Dungeon.NormalLongRange(
+				Dungeon.getCycleMultiplier(1 + powerLevel / 10),
+				Dungeon.getCycleMultiplier(4 + powerLevel / 7)
+		);
 	}
 
 	@Override

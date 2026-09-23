@@ -307,7 +307,7 @@ public class Item implements Bundlable {
 	}
 
 	public boolean doPickUp(Hero hero, int pos, float time) {
-		if (!unique && !(this instanceof Gold)) {
+		if (!unique && !(this instanceof Gold) && (this instanceof EquipableItem || this instanceof com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand)) {
 			boolean filtered = false;
 			if (SPDSettings.lootFilterIgnoreCommon() && (this instanceof com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon || this instanceof com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor) && level() <= 0 && (rarity == Rarity.NONE || rarity == Rarity.COMMON)) {
 				filtered = true;

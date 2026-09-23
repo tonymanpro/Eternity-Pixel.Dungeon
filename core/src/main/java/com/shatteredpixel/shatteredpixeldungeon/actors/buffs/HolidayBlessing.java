@@ -63,9 +63,6 @@ public class HolidayBlessing extends Buff {
 		return true;
 	}
 
-	public int defenseBonus() {
-		return 2;
-	}
 
 	@Override
 	public int icon() {
