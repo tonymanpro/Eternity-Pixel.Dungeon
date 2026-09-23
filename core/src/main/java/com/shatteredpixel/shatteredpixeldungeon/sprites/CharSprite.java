@@ -241,8 +241,13 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	}
 	
 	public void interruptMotion() {
-		if (motion != null) {
-			motion.stop(false);
+		synchronized (this) {
+			if (motion != null) {
+				motion.killAndErase();
+				motion = null;
+			}
+			isMoving = false;
+			notifyAll();
 		}
 	}
 
@@ -319,6 +324,14 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	}
 
 	public void die() {
+		synchronized (this) {
+			if (motion != null) {
+				motion.killAndErase();
+				motion = null;
+			}
+			isMoving = false;
+			notifyAll();
+		}
 		sleeping = false;
 		remove( State.PARALYSED );
 		play( die );

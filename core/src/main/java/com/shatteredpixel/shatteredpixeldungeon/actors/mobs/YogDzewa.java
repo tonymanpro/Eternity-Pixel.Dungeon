@@ -71,12 +71,12 @@ public class YogDzewa extends Mob {
 	{
 		spriteClass = YogSprite.class;
 
-		HP = HT = (long) ((bossMaxHPMulti + 1) * (Dungeon.getCycleMultiplier(1000)));
+		HP = HT = (long) ((bossMaxHPMulti + 1) * (Dungeon.getCycleMultiplier(300)));
 		defenseSkill = 0;
 
 		EXP = Dungeon.getCycleMultiplier(50);
 
-		//so that allies can attack it. States are never actually used.
+		// so that allies can attack it. States are never actually used.
 		state = HUNTING;
 
 		viewDistance = 12;
@@ -99,53 +99,60 @@ public class YogDzewa extends Mob {
 
 	public long takenDamage;
 
-	private static Class getPairedFist(Class fist){
-		if (fist == YogFist.BurningFist.class) return YogFist.SoiledFist.class;
-		if (fist == YogFist.SoiledFist.class) return YogFist.BurningFist.class;
-		if (fist == YogFist.RottingFist.class) return YogFist.RustedFist.class;
-		if (fist == YogFist.RustedFist.class) return YogFist.RottingFist.class;
-		if (fist == YogFist.BrightFist.class) return YogFist.DarkFist.class;
-		if (fist == YogFist.DarkFist.class) return YogFist.BrightFist.class;
+	private static Class getPairedFist(Class fist) {
+		if (fist == YogFist.BurningFist.class)
+			return YogFist.SoiledFist.class;
+		if (fist == YogFist.SoiledFist.class)
+			return YogFist.BurningFist.class;
+		if (fist == YogFist.RottingFist.class)
+			return YogFist.RustedFist.class;
+		if (fist == YogFist.RustedFist.class)
+			return YogFist.RottingFist.class;
+		if (fist == YogFist.BrightFist.class)
+			return YogFist.DarkFist.class;
+		if (fist == YogFist.DarkFist.class)
+			return YogFist.BrightFist.class;
 		return null;
 	}
 
 	private ArrayList<Class> fistSummons = new ArrayList<>();
 	private ArrayList<Class> challengeSummons = new ArrayList<>();
 	{
-		//offset seed slightly to avoid output patterns
-		Random.pushGenerator(Dungeon.seedCurDepth()+1);
-			fistSummons.add(Random.Int(2) == 0 ? YogFist.BurningFist.class : YogFist.SoiledFist.class);
-			fistSummons.add(Random.Int(2) == 0 ? YogFist.RottingFist.class : YogFist.RustedFist.class);
-			fistSummons.add(Random.Int(2) == 0 ? YogFist.BrightFist.class : YogFist.DarkFist.class);
-			Random.shuffle(fistSummons);
-			//randomly place challenge summons so that two fists of a pair can never spawn together
-			if (Random.Int(2) == 0){
-				challengeSummons.add(getPairedFist(fistSummons.get(1)));
-				challengeSummons.add(getPairedFist(fistSummons.get(2)));
-				challengeSummons.add(getPairedFist(fistSummons.get(0)));
-			} else {
-				challengeSummons.add(getPairedFist(fistSummons.get(2)));
-				challengeSummons.add(getPairedFist(fistSummons.get(0)));
-				challengeSummons.add(getPairedFist(fistSummons.get(1)));
-			}
+		// offset seed slightly to avoid output patterns
+		Random.pushGenerator(Dungeon.seedCurDepth() + 1);
+		fistSummons.add(Random.Int(2) == 0 ? YogFist.BurningFist.class : YogFist.SoiledFist.class);
+		fistSummons.add(Random.Int(2) == 0 ? YogFist.RottingFist.class : YogFist.RustedFist.class);
+		fistSummons.add(Random.Int(2) == 0 ? YogFist.BrightFist.class : YogFist.DarkFist.class);
+		Random.shuffle(fistSummons);
+		// randomly place challenge summons so that two fists of a pair can never spawn
+		// together
+		if (Random.Int(2) == 0) {
+			challengeSummons.add(getPairedFist(fistSummons.get(1)));
+			challengeSummons.add(getPairedFist(fistSummons.get(2)));
+			challengeSummons.add(getPairedFist(fistSummons.get(0)));
+		} else {
+			challengeSummons.add(getPairedFist(fistSummons.get(2)));
+			challengeSummons.add(getPairedFist(fistSummons.get(0)));
+			challengeSummons.add(getPairedFist(fistSummons.get(1)));
+		}
 		Random.popGenerator();
 	}
 
 	private ArrayList<Class> regularSummons = new ArrayList<>();
 	{
-		if (Dungeon.isChallenged(Challenges.STRONGER_BOSSES)){
-			for (int i = 0; i < 6; i++){
-				if (i >= 4){
+		if (Dungeon.isChallenged(Challenges.STRONGER_BOSSES)) {
+			for (int i = 0; i < 6; i++) {
+				if (i >= 4) {
 					regularSummons.add(YogRipper.class);
-				} else if (i >= Statistics.spawnersAlive){
+				} else if (i >= Statistics.spawnersAlive) {
 					regularSummons.add(Larva.class);
 				} else {
-					regularSummons.add( i % 2 == 0 ? YogEye.class : YogScorpio.class);
+					regularSummons.add(i % 2 == 0 ? YogEye.class : YogScorpio.class);
 				}
 			}
 		} else {
-			for (int i = 0; i < 4; i++){
-				if (i >= Statistics.spawnersAlive){
+			for (int i = 0; i < 4; i++) {
+				if (i >= Statistics.spawnersAlive) {
 					regularSummons.add(Larva.class);
 				} else {
 					regularSummons.add(YogRipper.class);
@@ -162,33 +169,33 @@ public class YogDzewa extends Mob {
 		return INFINITE_ACCURACY;
 	}
 
-	public long phaseLife(int phase){
+	public long phaseLife(int phase) {
 		if (phase == 4)
-			return HT/10;
+			return HT / 10;
 		else
-			return HT - HT/10*3*phase;
+			return HT - HT / 10 * 3 * phase;
 	}
 
 	@Override
 	protected boolean act() {
-		//char logic
-		if (fieldOfView == null || fieldOfView.length != Dungeon.level.length()){
+		// char logic
+		if (fieldOfView == null || fieldOfView.length != Dungeon.level.length()) {
 			fieldOfView = new boolean[Dungeon.level.length()];
 		}
-		Dungeon.level.updateFieldOfView( this, fieldOfView );
+		Dungeon.level.updateFieldOfView(this, fieldOfView);
 
 		throwItems();
 
 		sprite.hideAlert();
 		sprite.hideLost();
 
-		//mob logic
+		// mob logic
 		enemy = chooseEnemy();
 
 		enemySeen = enemy != null && enemy.isAlive() && fieldOfView[enemy.pos] && enemy.invisible <= 0;
-		//end of char/mob logic
+		// end of char/mob logic
 
-		if (phase == 0){
+		if (phase == 0) {
 			if (Dungeon.hero.viewDistance >= Dungeon.level.distance(pos, Dungeon.hero.pos)) {
 				Dungeon.observe();
 			}
@@ -201,25 +208,26 @@ public class YogDzewa extends Mob {
 		if (YogFist.isNearYog(Dungeon.hero.pos))
 			healingTarget *= 2;
 
-		if (takenDamage >= healingTarget && Dungeon.level.heroFOV[pos]){
+		if (takenDamage >= healingTarget && Dungeon.level.heroFOV[pos]) {
 			takenDamage -= healingTarget;
 			Dungeon.hero.damage(healingTarget, new Eye.DeathGaze());
 			stealLife(Dungeon.hero, healingTarget);
 		}
 
-		if (phase == 0){
+		if (phase == 0) {
 			spend(TICK);
 			return true;
 		} else {
 
 			boolean terrainAffected = false;
 			HashSet<Char> affected = new HashSet<>();
-			//delay fire on a rooted hero
+			// delay fire on a rooted hero
 			if (!Dungeon.hero.rooted) {
 				for (int i : targetedCells) {
 					Ballistica b = new Ballistica(pos, i, Ballistica.WONT_STOP);
-					//shoot beams
-					sprite.parent.add(new Beam.DeathRay(sprite.center(), DungeonTilemap.raisedTileCenterToWorld(b.collisionPos)));
+					// shoot beams
+					sprite.parent.add(
+							new Beam.DeathRay(sprite.center(), DungeonTilemap.raisedTileCenterToWorld(b.collisionPos)));
 					for (int p : b.path) {
 						Char ch = Actor.findChar(p);
 						if (ch != null && (ch.alignment != alignment || ch instanceof Bee)) {
@@ -242,11 +250,11 @@ public class YogDzewa extends Mob {
 						Statistics.bossScores[4] -= 500;
 					}
 
-					if (hit( this, ch, true )) {
-						long dmg = Dungeon.NormalLongRange(20, 30);
+					if (hit(this, ch, true)) {
+						long dmg = Dungeon.NormalLongRange(16, 24);
 						dmg = Dungeon.getCycleMultiplier(dmg);
 						if (Dungeon.isChallenged(Challenges.STRONGER_BOSSES)) {
-							ch.damage(dmg*25000L, new Eye.DeathGaze());
+							ch.damage(dmg * 25000L, new Eye.DeathGaze());
 						} else {
 							ch.damage(dmg, new Eye.DeathGaze());
 						}
@@ -260,51 +268,52 @@ public class YogDzewa extends Mob {
 							GLog.n(Messages.get(Char.class, "kill", name()));
 						}
 					} else {
-						ch.sprite.showStatus( CharSprite.NEUTRAL,  ch.defenseVerb() );
+						ch.sprite.showStatus(CharSprite.NEUTRAL, ch.defenseVerb());
 					}
 				}
 				targetedCells.clear();
 			}
 
-			if (abilityCooldown <= 0){
+			if (abilityCooldown <= 0) {
 
-				long beams = 1 + (HT - HP)/(HT / 5 * 2);
+				long beams = 1 + (HT - HP) / (HT / 5 * 2);
 				HashSet<Integer> affectedCells = new HashSet<>();
-				for (int i = 0; i < beams; i++){
+				for (int i = 0; i < beams; i++) {
 
 					int targetPos = Dungeon.hero.pos;
-					if (i != 0){
+					if (i != 0) {
 						do {
 							targetPos = Dungeon.hero.pos + PathFinder.NEIGHBOURS8[Random.Int(8)];
-						} while (Dungeon.level.trueDistance(pos, Dungeon.hero.pos)
-								> Dungeon.level.trueDistance(pos, targetPos));
+						} while (Dungeon.level.trueDistance(pos, Dungeon.hero.pos) > Dungeon.level.trueDistance(pos,
+								targetPos));
 					}
 					targetedCells.add(targetPos);
 					Ballistica b = new Ballistica(pos, targetPos, Ballistica.WONT_STOP);
 					affectedCells.addAll(b.path);
 				}
 
-				//remove one beam if multiple shots would cause every cell next to the hero to be targeted
+				// remove one beam if multiple shots would cause every cell next to the hero to
+				// be targeted
 				boolean allAdjTargeted = true;
-				for (int i : PathFinder.NEIGHBOURS9){
-					if (!affectedCells.contains(Dungeon.hero.pos + i) && Dungeon.level.passable[Dungeon.hero.pos + i]){
+				for (int i : PathFinder.NEIGHBOURS9) {
+					if (!affectedCells.contains(Dungeon.hero.pos + i) && Dungeon.level.passable[Dungeon.hero.pos + i]) {
 						allAdjTargeted = false;
 						break;
 					}
 				}
-				if (allAdjTargeted){
-					targetedCells.remove(targetedCells.size()-1);
+				if (allAdjTargeted) {
+					targetedCells.remove(targetedCells.size() - 1);
 				}
-				for (int i : targetedCells){
+				for (int i : targetedCells) {
 					Ballistica b = new Ballistica(pos, i, Ballistica.WONT_STOP);
-					for (int p : b.path){
+					for (int p : b.path) {
 						sprite.parent.add(new TargetedCell(p, 0xFF0000));
 						affectedCells.add(p);
 					}
 				}
 
-				//don't want to overly punish players with slow move or attack speed
-				spend(GameMath.gate(TICK, (int)Math.ceil(Dungeon.hero.cooldown()), 3*TICK));
+				// don't want to overly punish players with slow move or attack speed
+				spend(GameMath.gate(TICK, (int) Math.ceil(Dungeon.hero.cooldown()), 3 * TICK));
 				Dungeon.hero.interrupt();
 
 				abilityCooldown += Random.NormalFloat(MIN_ABILITY_CD, MAX_ABILITY_CD);
@@ -314,45 +323,48 @@ public class YogDzewa extends Mob {
 				spend(TICK);
 			}
 
-			while (summonCooldown <= 0){
+			while (summonCooldown <= 0) {
 
-				Class<?extends Mob> cls = regularSummons.remove(0);
+				Class<? extends Mob> cls = regularSummons.remove(0);
 				Mob summon = Reflection.newInstance(cls);
 				regularSummons.add(cls);
 
 				int spawnPos = -1;
-				for (int i : PathFinder.NEIGHBOURS8){
-					if (Actor.findChar(pos+i) == null){
-						if (spawnPos == -1 || Dungeon.level.trueDistance(Dungeon.hero.pos, spawnPos) > Dungeon.level.trueDistance(Dungeon.hero.pos, pos+i)){
+				for (int i : PathFinder.NEIGHBOURS8) {
+					if (Actor.findChar(pos + i) == null) {
+						if (spawnPos == -1 || Dungeon.level.trueDistance(Dungeon.hero.pos, spawnPos) > Dungeon.level
+								.trueDistance(Dungeon.hero.pos, pos + i)) {
 							spawnPos = pos + i;
 						}
 					}
 				}
 
-				//if no other valid spawn spots exist, try to kill an adjacent sheep to spawn anyway
-				if (spawnPos == -1){
-					for (int i : PathFinder.NEIGHBOURS8){
-						if (Actor.findChar(pos+i) instanceof Sheep){
-							if (spawnPos == -1 || Dungeon.level.trueDistance(Dungeon.hero.pos, spawnPos) > Dungeon.level.trueDistance(Dungeon.hero.pos, pos+i)){
+				// if no other valid spawn spots exist, try to kill an adjacent sheep to spawn
+				// anyway
+				if (spawnPos == -1) {
+					for (int i : PathFinder.NEIGHBOURS8) {
+						if (Actor.findChar(pos + i) instanceof Sheep) {
+							if (spawnPos == -1 || Dungeon.level.trueDistance(Dungeon.hero.pos, spawnPos) > Dungeon.level
+									.trueDistance(Dungeon.hero.pos, pos + i)) {
 								spawnPos = pos + i;
 							}
 						}
 					}
-					if (spawnPos != -1){
+					if (spawnPos != -1) {
 						Actor.findChar(spawnPos).die(null);
 					}
 				}
 
 				if (spawnPos != -1) {
 					summon.pos = spawnPos;
-					GameScene.add( summon );
-					Actor.add( new Pushing( summon, pos, summon.pos ) );
+					GameScene.add(summon);
+					Actor.add(new Pushing(summon, pos, summon.pos));
 					summon.beckon(Dungeon.hero.pos);
 					Dungeon.level.occupyCell(summon);
 
 					summonCooldown += Random.NormalFloat(MIN_SUMMON_CD, MAX_SUMMON_CD);
 					summonCooldown -= (phase - 1);
-					if (findFist() != null){
+					if (findFist() != null) {
 						summonCooldown += MIN_SUMMON_CD - (phase - 1);
 					}
 				} else {
@@ -362,26 +374,28 @@ public class YogDzewa extends Mob {
 
 		}
 
-		if (summonCooldown > 0) summonCooldown--;
-		if (abilityCooldown > 0) abilityCooldown--;
+		if (summonCooldown > 0)
+			summonCooldown--;
+		if (abilityCooldown > 0)
+			abilityCooldown--;
 
-		//extra fast abilities and summons at the final 100 HP
-		if (phase == 5 && abilityCooldown > 2){
+		// extra fast abilities and summons at the final 100 HP
+		if (phase == 5 && abilityCooldown > 2) {
 			abilityCooldown = 2;
 		}
-		if (phase == 5 && summonCooldown > 3){
+		if (phase == 5 && summonCooldown > 3) {
 			summonCooldown = 3;
 		}
 
 		return true;
 	}
 
-	public void processFistDeath(){
-		//normally Yog has no logic when a fist dies specifically
-		//but the very last fist to die does trigger the final phase
-		if (phase == 4 && findFist() == null){
+	public void processFistDeath() {
+		// normally Yog has no logic when a fist dies specifically
+		// but the very last fist to die does trigger the final phase
+		if (phase == 4 && findFist() == null) {
 			yell(Messages.get(this, "hope"));
-			summonCooldown = -15; //summon a burst of minions!
+			summonCooldown = -15; // summon a burst of minions!
 			phase = 5;
 			BossHealthBar.bleed(true);
 			Game.runOnRenderThread(new Callback() {
@@ -408,8 +422,8 @@ public class YogDzewa extends Mob {
 		return phase == 0 || findFist() != null || super.isInvulnerable(effect);
 	}
 
-	private void phaseTransition(){
-		if (phase < 4 && HP <= phaseLife(phase)){
+	private void phaseTransition() {
+		if (phase < 4 && HP <= phaseLife(phase)) {
 
 			phase++;
 
@@ -417,28 +431,31 @@ public class YogDzewa extends Mob {
 			GLog.n(Messages.get(this, "darkness"));
 			sprite.showStatus(CharSprite.POSITIVE, Messages.get(this, "invulnerable"));
 
-			addFist((YogFist)Reflection.newInstance(fistSummons.remove(0)));
+			addFist((YogFist) Reflection.newInstance(fistSummons.remove(0)));
 
-			if (Dungeon.isChallenged(Challenges.STRONGER_BOSSES)){
-				addFist((YogFist)Reflection.newInstance(challengeSummons.remove(0)));
+			if (Dungeon.isChallenged(Challenges.STRONGER_BOSSES)) {
+				addFist((YogFist) Reflection.newInstance(challengeSummons.remove(0)));
 			}
 
-			CellEmitter.get(Dungeon.level.exit()-1).burst(ShadowParticle.UP, 25);
+			CellEmitter.get(Dungeon.level.exit() - 1).burst(ShadowParticle.UP, 25);
 			CellEmitter.get(Dungeon.level.exit()).burst(ShadowParticle.UP, 100);
-			CellEmitter.get(Dungeon.level.exit()+1).burst(ShadowParticle.UP, 25);
+			CellEmitter.get(Dungeon.level.exit() + 1).burst(ShadowParticle.UP, 25);
 
-			if (abilityCooldown < 5) abilityCooldown = 5;
-			if (summonCooldown < 5) summonCooldown = 5;
+			if (abilityCooldown < 5)
+				abilityCooldown = 5;
+			if (summonCooldown < 5)
+				summonCooldown = 5;
 
 		}
 	}
 
 	@Override
-	public void damage( long dmg, Object src ) {
+	public void damage(long dmg, Object src) {
 		long preHP = HP;
-		super.damage( dmg, src );
+		super.damage(dmg, src);
 
-		if (phase == 0 || findFist() != null) return;
+		if (phase == 0 || findFist() != null)
+			return;
 
 		HP = Math.max(HP, phaseLife(phase));
 		long dmgTaken = preHP - HP;
@@ -452,49 +469,53 @@ public class YogDzewa extends Mob {
 		phaseTransition();
 
 		LockedFloor lock = Dungeon.hero.buff(LockedFloor.class);
-		if (lock != null && !isImmune(src.getClass()) && !isInvulnerable(src.getClass())){
-			if (Dungeon.isChallenged(Challenges.STRONGER_BOSSES))   lock.addTime(dmgTaken/3f);
-			else                                                    lock.addTime(dmgTaken/2f);
+		if (lock != null && !isImmune(src.getClass()) && !isInvulnerable(src.getClass())) {
+			if (Dungeon.isChallenged(Challenges.STRONGER_BOSSES))
+				lock.addTime(dmgTaken / 3f);
+			else
+				lock.addTime(dmgTaken / 2f);
 		}
 
 	}
 
-	public void addFist(YogFist fist){
+	public void addFist(YogFist fist) {
 		fist.pos = Dungeon.level.exit();
 
-		CellEmitter.get(Dungeon.level.exit()-1).burst(ShadowParticle.UP, 25);
+		CellEmitter.get(Dungeon.level.exit() - 1).burst(ShadowParticle.UP, 25);
 		CellEmitter.get(Dungeon.level.exit()).burst(ShadowParticle.UP, 100);
-		CellEmitter.get(Dungeon.level.exit()+1).burst(ShadowParticle.UP, 25);
+		CellEmitter.get(Dungeon.level.exit() + 1).burst(ShadowParticle.UP, 25);
 
-		if (abilityCooldown < 5) abilityCooldown = 5;
-		if (summonCooldown < 5) summonCooldown = 5;
+		if (abilityCooldown < 5)
+			abilityCooldown = 5;
+		if (summonCooldown < 5)
+			summonCooldown = 5;
 
 		int targetPos = Dungeon.level.exit() + Dungeon.level.width();
 
 		if (!Dungeon.isChallenged(Challenges.STRONGER_BOSSES)
-				&& (Actor.findChar(targetPos) == null || Actor.findChar(targetPos) instanceof Sheep)){
+				&& (Actor.findChar(targetPos) == null || Actor.findChar(targetPos) instanceof Sheep)) {
 			fist.pos = targetPos;
-		} else if (Actor.findChar(targetPos-1) == null || Actor.findChar(targetPos-1) instanceof Sheep){
-			fist.pos = targetPos-1;
-		} else if (Actor.findChar(targetPos+1) == null || Actor.findChar(targetPos+1) instanceof Sheep){
-			fist.pos = targetPos+1;
-		} else if (Actor.findChar(targetPos) == null || Actor.findChar(targetPos) instanceof Sheep){
+		} else if (Actor.findChar(targetPos - 1) == null || Actor.findChar(targetPos - 1) instanceof Sheep) {
+			fist.pos = targetPos - 1;
+		} else if (Actor.findChar(targetPos + 1) == null || Actor.findChar(targetPos + 1) instanceof Sheep) {
+			fist.pos = targetPos + 1;
+		} else if (Actor.findChar(targetPos) == null || Actor.findChar(targetPos) instanceof Sheep) {
 			fist.pos = targetPos;
 		}
 
-		if (Actor.findChar(fist.pos) instanceof Sheep){
+		if (Actor.findChar(fist.pos) instanceof Sheep) {
 			Actor.findChar(fist.pos).die(null);
 		}
 
 		GameScene.add(fist, 4);
-		Actor.add( new Pushing( fist, Dungeon.level.exit(), fist.pos ) );
+		Actor.add(new Pushing(fist, Dungeon.level.exit(), fist.pos));
 		Dungeon.level.occupyCell(fist);
 	}
 
-	public void updateVisibility( Level level ){
+	public void updateVisibility(Level level) {
 		int viewDistance = 4;
-		if (phase > 1 && isAlive()){
-			viewDistance = Math.max(4 - (phase-1), 1);
+		if (phase > 1 && isAlive()) {
+			viewDistance = Math.max(4 - (phase - 1), 1);
 		}
 		if (Dungeon.isChallenged(Challenges.DARKNESS)) {
 			viewDistance = Math.min(viewDistance, 2);
@@ -508,9 +529,9 @@ public class YogDzewa extends Mob {
 		}
 	}
 
-	private YogFist findFist(){
-		for ( Char c : Actor.chars() ){
-			if (c instanceof YogFist){
+	private YogFist findFist() {
+		for (Char c : Actor.chars()) {
+			if (c instanceof YogFist) {
 				return (YogFist) c;
 			}
 		}
@@ -518,28 +539,29 @@ public class YogDzewa extends Mob {
 	}
 
 	@Override
-	public void beckon( int cell ) {
+	public void beckon(int cell) {
 	}
 
 	@Override
 	public void clearEnemy() {
-		//do nothing
+		// do nothing
 	}
 
 	@Override
 	public void aggro(Char ch) {
-		for (Mob mob : (Iterable<Mob>)Dungeon.level.mobs.clone()) {
+		for (Mob mob : (Iterable<Mob>) Dungeon.level.mobs.clone()) {
 			if (mob != ch && Dungeon.level.distance(pos, mob.pos) <= 4 &&
-					(mob instanceof Larva || mob instanceof YogRipper || mob instanceof YogEye || mob instanceof YogScorpio)) {
+					(mob instanceof Larva || mob instanceof YogRipper || mob instanceof YogEye
+							|| mob instanceof YogScorpio)) {
 				mob.aggro(ch);
 			}
 		}
 	}
 
-	public void stealLife(Char target, long amount){
+	public void stealLife(Char target, long amount) {
 		phaseTransition();
 
-		long healCap = phaseLife(phase-1);
+		long healCap = phaseLife(phase - 1);
 		if (HP + amount > healCap)
 			amount -= HP + amount - healCap;
 		if (amount <= 0)
@@ -549,7 +571,7 @@ public class YogDzewa extends Mob {
 
 		HP += amount;
 
-		if (sprite.visible){
+		if (sprite.visible) {
 			sprite.showStatus(CharSprite.POSITIVE, "+%dHP", amount);
 			sprite.emitter().burst(Speck.factory(Speck.HEALING), 50);
 		}
@@ -557,19 +579,20 @@ public class YogDzewa extends Mob {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void die( Object cause ) {
+	public void die(Object cause) {
 
 		Bestiary.skipCountingEncounters = true;
-		for (Mob mob : (Iterable<Mob>)Dungeon.level.mobs.clone()) {
-			if (mob instanceof Larva || mob instanceof YogRipper || mob instanceof YogEye || mob instanceof YogScorpio) {
-				mob.die( cause );
+		for (Mob mob : (Iterable<Mob>) Dungeon.level.mobs.clone()) {
+			if (mob instanceof Larva || mob instanceof YogRipper || mob instanceof YogEye
+					|| mob instanceof YogScorpio) {
+				mob.die(cause);
 			}
 		}
 		Bestiary.skipCountingEncounters = false;
 
 		updateVisibility(Dungeon.level);
 
-		if (Dungeon.hero.belongings.weapon instanceof CreativeGloves){
+		if (Dungeon.hero.belongings.weapon instanceof CreativeGloves) {
 			Dungeon.hero.belongings.weapon = null;
 			Dungeon.level.drop(new Clayball(), pos).sprite.drop();
 			Badges.validateClay();
@@ -577,18 +600,18 @@ public class YogDzewa extends Mob {
 
 		GameScene.bossSlain();
 
-		if (Dungeon.isChallenged(Challenges.STRONGER_BOSSES) && Statistics.spawnersAlive == 4){
+		if (Dungeon.isChallenged(Challenges.STRONGER_BOSSES) && Statistics.spawnersAlive == 4) {
 			Badges.validateBossChallengeCompleted();
 		} else {
 			Statistics.qualifiedForBossChallengeBadge = false;
 		}
-		Statistics.bossScores[4] += 5000 + 1250*Statistics.spawnersAlive;
+		Statistics.bossScores[4] += 5000 + 1250 * Statistics.spawnersAlive;
 
-        Badges.validateTakingTheMick(cause);
+		Badges.validateTakingTheMick(cause);
 		Dungeon.level.unseal();
-		super.die( cause );
+		super.die(cause);
 
-		yell( Messages.get(this, "defeated") );
+		yell(Messages.get(this, "defeated"));
 	}
 
 	@Override
@@ -596,8 +619,8 @@ public class YogDzewa extends Mob {
 		if (!BossHealthBar.isAssigned()) {
 			BossHealthBar.assignBoss(this);
 			yell(Messages.get(this, "notice"));
-			for (Char ch : Actor.chars()){
-				if (ch instanceof DriedRose.GhostHero){
+			for (Char ch : Actor.chars()) {
+				if (ch instanceof DriedRose.GhostHero) {
 					((DriedRose.GhostHero) ch).sayBoss();
 				}
 			}
@@ -619,7 +642,7 @@ public class YogDzewa extends Mob {
 	public String description() {
 		String desc = super.description();
 
-		if (Statistics.spawnersAlive > 0){
+		if (Statistics.spawnersAlive > 0) {
 			desc += "\n\n" + Messages.get(this, "desc_spawners");
 		}
 
@@ -652,7 +675,7 @@ public class YogDzewa extends Mob {
 		bundle.put(REGULAR_SUMMONS, regularSummons.toArray(new Class[0]));
 
 		int[] bundleArr = new int[targetedCells.size()];
-		for (int i = 0; i < targetedCells.size(); i++){
+		for (int i = 0; i < targetedCells.size(); i++) {
 			bundleArr[i] = targetedCells.get(i);
 		}
 		bundle.put(TARGETED_CELLS, bundleArr);
@@ -664,7 +687,8 @@ public class YogDzewa extends Mob {
 		phase = bundle.getInt(PHASE);
 		if (phase != 0) {
 			BossHealthBar.assignBoss(this);
-			if (phase == 5) BossHealthBar.bleed(true);
+			if (phase == 5)
+				BossHealthBar.bleed(true);
 		}
 
 		abilityCooldown = bundle.getFloat(ABILITY_CD);
@@ -677,7 +701,7 @@ public class YogDzewa extends Mob {
 		regularSummons.clear();
 		Collections.addAll(regularSummons, bundle.getClassArray(REGULAR_SUMMONS));
 
-		for (int i : bundle.getIntArray(TARGETED_CELLS)){
+		for (int i : bundle.getIntArray(TARGETED_CELLS)) {
 			targetedCells.add(i);
 		}
 
@@ -690,7 +714,7 @@ public class YogDzewa extends Mob {
 		{
 			spriteClass = LarvaSprite.class;
 
-			HP = HT = Dungeon.getCycleMultiplier(20);
+			HP = HT = Dungeon.getCycleMultiplier(12);
 			defenseSkill = Dungeon.getCycleMultiplier(12);
 			viewDistance = Light.DISTANCE;
 
@@ -702,13 +726,13 @@ public class YogDzewa extends Mob {
 		}
 
 		@Override
-		public long attackSkill(Char target ) {
+		public long attackSkill(Char target) {
 			return Dungeon.getCycleMultiplier(30);
 		}
 
 		@Override
 		public long damageRoll() {
-			return Dungeon.NormalLongRange( Dungeon.getCycleMultiplier(15), Dungeon.getCycleMultiplier(25) );
+			return Dungeon.NormalLongRange(Dungeon.getCycleMultiplier(12), Dungeon.getCycleMultiplier(20));
 		}
 
 		@Override
@@ -718,8 +742,8 @@ public class YogDzewa extends Mob {
 
 		@Override
 		public long attackProc(Char enemy, long damage) {
-			for (Mob mob : (Iterable<Mob>)Dungeon.level.mobs.clone()){
-				if (mob instanceof YogDzewa && mob.isAlive()){
+			for (Mob mob : (Iterable<Mob>) Dungeon.level.mobs.clone()) {
+				if (mob instanceof YogDzewa && mob.isAlive()) {
 					((YogDzewa) mob).stealLife(enemy, damage / 2);
 				}
 			}
@@ -727,7 +751,7 @@ public class YogDzewa extends Mob {
 		}
 	}
 
-	//used so death to yog's ripper demons have their own rankings description
+	// used so death to yog's ripper demons have their own rankings description
 	public static class YogRipper extends RipperDemon {
 		{
 			maxLvl = -2;
@@ -736,14 +760,15 @@ public class YogDzewa extends Mob {
 
 		@Override
 		public long attackProc(Char enemy, long damage) {
-			for (Mob mob : (Iterable<Mob>)Dungeon.level.mobs.clone()){
-				if (mob instanceof YogDzewa && mob.isAlive()){
+			for (Mob mob : (Iterable<Mob>) Dungeon.level.mobs.clone()) {
+				if (mob instanceof YogDzewa && mob.isAlive()) {
 					((YogDzewa) mob).stealLife(enemy, damage / 2);
 				}
 			}
 			return super.attackProc(enemy, damage);
 		}
 	}
+
 	public static class YogEye extends Eye {
 		{
 			maxLvl = -2;
@@ -752,14 +777,15 @@ public class YogDzewa extends Mob {
 
 		@Override
 		public long attackProc(Char enemy, long damage) {
-			for (Mob mob : (Iterable<Mob>)Dungeon.level.mobs.clone()){
-				if (mob instanceof YogDzewa && mob.isAlive()){
+			for (Mob mob : (Iterable<Mob>) Dungeon.level.mobs.clone()) {
+				if (mob instanceof YogDzewa && mob.isAlive()) {
 					((YogDzewa) mob).stealLife(enemy, damage / 2);
 				}
 			}
 			return super.attackProc(enemy, damage);
 		}
 	}
+
 	public static class YogScorpio extends Scorpio {
 		{
 			maxLvl = -2;
@@ -768,8 +794,8 @@ public class YogDzewa extends Mob {
 
 		@Override
 		public long attackProc(Char enemy, long damage) {
-			for (Mob mob : (Iterable<Mob>)Dungeon.level.mobs.clone()){
-				if (mob instanceof YogDzewa && mob.isAlive()){
+			for (Mob mob : (Iterable<Mob>) Dungeon.level.mobs.clone()) {
+				if (mob instanceof YogDzewa && mob.isAlive()) {
 					((YogDzewa) mob).stealLife(enemy, damage / 2);
 				}
 			}

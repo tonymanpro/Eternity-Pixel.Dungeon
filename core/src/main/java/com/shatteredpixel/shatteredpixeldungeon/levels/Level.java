@@ -744,7 +744,7 @@ public abstract class Level implements Bundlable {
 		return null;
 	}
 
-	private MobSpawner respawner;
+	protected MobSpawner respawner;
 
 	public MobSpawner spawner(){
 		return new MobSpawner();

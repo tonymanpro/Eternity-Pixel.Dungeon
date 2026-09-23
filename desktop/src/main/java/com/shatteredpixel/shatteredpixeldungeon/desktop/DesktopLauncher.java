@@ -121,7 +121,7 @@ public class DesktopLauncher {
 			Game.version = System.getProperty("Specification-Version");
 		}
 		if (Game.version == null || Game.version.trim().isEmpty()) {
-			Game.version = "v0.2.2";
+			Game.version = "v2.1.0";
 		}
 		
 		String vCodeStr = DesktopLauncher.class.getPackage().getImplementationVersion();
@@ -132,10 +132,10 @@ public class DesktopLauncher {
 			try {
 				Game.versionCode = Integer.parseInt(vCodeStr.trim());
 			} catch (NumberFormatException e) {
-				Game.versionCode = 701;
+				Game.versionCode = 2100;
 			}
 		} else {
-			Game.versionCode = 701;
+			Game.versionCode = 2100;
 		}
 
 		if (UpdateImpl.supportsUpdates()){

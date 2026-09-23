@@ -186,7 +186,7 @@ public class WndBag extends WndTabbed {
 			dragged = false;
 		}
 
-		if (curInterfaceSize == 1) {
+		if (curInterfaceSize >= 1) {
 			if (dragged && lastOffset != null) {
 				offset(lastOffset.x, lastOffset.y);
 				boundOffsetWithMargin(2);
@@ -357,7 +357,7 @@ public class WndBag extends WndTabbed {
 		slots.add( stuff.weapon != null ? stuff.weapon : new Placeholder( ItemSpriteSheet.WEAPON_HOLDER ) );
 		slots.add( stuff.armor != null ? stuff.armor : new Placeholder( ItemSpriteSheet.ARMOR_HOLDER ) );
 
-		if (container.getClass() == EquipmentBag.class) {
+		if (container == stuff.backpack || container.getClass() == EquipmentBag.class) {
 			for (int i = 0; i < stuff.artifactSlots(); i++) {
 				slots.add( stuff.artifacts.size() > i ? stuff.artifacts.get(i) : new Placeholder( ItemSpriteSheet.ARTIFACT_HOLDER ) );
 			}

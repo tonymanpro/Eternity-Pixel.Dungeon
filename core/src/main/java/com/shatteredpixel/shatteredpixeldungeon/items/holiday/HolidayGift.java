@@ -27,7 +27,7 @@ public class HolidayGift extends Item {
 	private static final String AC_OPEN = "OPEN";
 
 	{
-		image = ItemSpriteSheet.CHEST;
+		image = ItemSpriteSheet.HOLIDAY_GIFT;
 		stackable = true;
 		defaultAction = AC_OPEN;
 	}
@@ -48,7 +48,6 @@ public class HolidayGift extends Item {
 			hero.spend(TIME_TO_PICK_UP);
 
 			CellEmitter.get(hero.pos).burst(Speck.factory(Speck.STAR), 10);
-			GLog.p(Messages.get(this, "opened"));
 
 			// Gift contents: Gold, CandyCane, WinterJoyPotion or random Potion/Scroll
 			int rewardType = Random.Int(4);
@@ -70,6 +69,12 @@ public class HolidayGift extends Item {
 
 			if (reward != null) {
 				reward.identify();
+
+				String rewardName = (reward instanceof Gold)
+						? reward.quantity() + " " + Messages.get(Gold.class, "name")
+						: reward.title();
+				GLog.p(Messages.get(this, "opened", rewardName));
+
 				if (reward instanceof Gold) {
 					reward.doPickUp(hero, hero.pos, 0f);
 				} else if (!reward.collect(hero.belongings.backpack)) {

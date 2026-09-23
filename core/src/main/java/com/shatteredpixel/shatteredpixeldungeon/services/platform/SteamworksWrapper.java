@@ -189,4 +189,19 @@ public class SteamworksWrapper implements PlatformServices {
 	public void restorePurchases(com.watabou.utils.Callback callback) {
 		if (callback != null) callback.call();
 	}
+
+	@Override
+	public String getPlatformUserId() {
+		if (!initialized) return "";
+		try {
+			Class<?> steamUserClass = Class.forName("com.codedisaster.steamworks.SteamUser");
+			Class<?> callbackClass = Class.forName("com.codedisaster.steamworks.SteamUserCallback");
+			Object user = steamUserClass.getConstructor(callbackClass).newInstance(new Object[]{null});
+			Object steamIdObj = steamUserClass.getMethod("getSteamID").invoke(user);
+			if (steamIdObj != null) {
+				return steamIdObj.toString();
+			}
+		} catch (Throwable ignored) {}
+		return "";
+	}
 }

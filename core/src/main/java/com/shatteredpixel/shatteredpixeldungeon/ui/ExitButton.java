@@ -24,20 +24,53 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.ui;
 
+import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.TitleScene;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndKeyBindings;
 import com.watabou.input.GameAction;
 import com.watabou.noosa.Game;
+import com.watabou.noosa.audio.Sample;
 
 public class ExitButton extends IconButton {
+
+	private static final float NORMAL_BRIGHTNESS = 1.45f;
+	private static final float PRESSED_BRIGHTNESS = 2.2f;
 
 	public ExitButton() {
 		super(Icons.EXIT.get());
 
 		width = 20;
 		height = 20;
+		if (icon != null) {
+			icon.brightness(NORMAL_BRIGHTNESS);
+		}
+	}
+
+	@Override
+	protected void onPointerDown() {
+		if (icon != null) icon.brightness(PRESSED_BRIGHTNESS);
+		Sample.INSTANCE.play(Assets.Sounds.CLICK);
+	}
+
+	@Override
+	protected void onPointerUp() {
+		if (icon != null) icon.brightness(NORMAL_BRIGHTNESS);
+	}
+
+	@Override
+	public void enable(boolean value) {
+		active = value;
+		if (icon != null) {
+			if (value) {
+				icon.brightness(NORMAL_BRIGHTNESS);
+				icon.alpha(1.0f);
+			} else {
+				icon.resetColor();
+				icon.alpha(0.3f);
+			}
+		}
 	}
 
 	@Override

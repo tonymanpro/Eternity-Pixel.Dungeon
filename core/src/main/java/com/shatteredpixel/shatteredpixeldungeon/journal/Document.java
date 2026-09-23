@@ -48,7 +48,10 @@ public enum Document {
 	CAVES_EXPLORER(ItemSpriteSheet.CAVES_PAGE, true),
 	CITY_WARLOCK(ItemSpriteSheet.CITY_PAGE, true),
 	HALLS_KING(ItemSpriteSheet.HALLS_PAGE, true),
-	INFINITY(ItemSpriteSheet.INFO_PAGE, true);
+	INFINITY(ItemSpriteSheet.INFO_PAGE, true),
+	BARBARIAN_SAGA(ItemSpriteSheet.CAVES_PAGE, true),
+	RAT_KING_MEMOIRS(ItemSpriteSheet.SEWER_PAGE, true),
+	HERO_CHRONICLES(ItemSpriteSheet.CITY_PAGE, true);
 	Document( int sprite, boolean lore ){
 		pageIcon = null;
 		pageSprite = sprite;
@@ -330,7 +333,22 @@ public enum Document {
 		HALLS_KING.pagesStates.put(KING_ATTRITION,              debug ? NOT_FOUND : NOT_FOUND);
 
         INFINITY.pagesStates.put("all_that_matters",                     debug ? READ : NOT_FOUND);
-        INFINITY.pagesStates.put("it_was_all_a_dream",                     debug ? READ : NOT_FOUND);
+        INFINITY.pagesStates.put("it_was_all_a_dream",                   debug ? READ : NOT_FOUND);
+
+		BARBARIAN_SAGA.pagesStates.put("frozen_north",                   debug ? READ : NOT_FOUND);
+		BARBARIAN_SAGA.pagesStates.put("path_of_fury",                   debug ? READ : NOT_FOUND);
+		BARBARIAN_SAGA.pagesStates.put("ancestral_horn",                 debug ? READ : NOT_FOUND);
+		BARBARIAN_SAGA.pagesStates.put("dungeon_challenge",              debug ? READ : NOT_FOUND);
+
+		RAT_KING_MEMOIRS.pagesStates.put("shadow_throne",                debug ? READ : NOT_FOUND);
+		RAT_KING_MEMOIRS.pagesStates.put("golden_cheese",                debug ? READ : NOT_FOUND);
+		RAT_KING_MEMOIRS.pagesStates.put("sewer_secrets",                debug ? READ : NOT_FOUND);
+		RAT_KING_MEMOIRS.pagesStates.put("great_plague",                 debug ? READ : NOT_FOUND);
+
+		HERO_CHRONICLES.pagesStates.put("warrior_oath",                  debug ? READ : NOT_FOUND);
+		HERO_CHRONICLES.pagesStates.put("mage_codex",                    debug ? READ : NOT_FOUND);
+		HERO_CHRONICLES.pagesStates.put("rogue_shadow",                  debug ? READ : NOT_FOUND);
+		HERO_CHRONICLES.pagesStates.put("cleric_vow",                    debug ? READ : NOT_FOUND);
 
 	}
 	

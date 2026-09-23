@@ -331,6 +331,11 @@ public class DimensionalLevel extends Level {
         return visuals;
     }
 
+    @Override
+    public float respawnCooldown() {
+        return 1f;
+    }
+
     public static class DimensionalSpawner extends MobSpawner {
 
         {
@@ -405,7 +410,7 @@ public class DimensionalLevel extends Level {
                     }
                 }
             }
-            spend(3f);
+            spend(7f);
             return true;
         }
     }

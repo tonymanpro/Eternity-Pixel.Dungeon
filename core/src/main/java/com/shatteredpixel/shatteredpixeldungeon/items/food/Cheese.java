@@ -58,20 +58,7 @@ public class Cheese extends Food {
 		Buff.affect(hero, BlobImmunity.class, BlobImmunity.DURATION * 0.66f);
 		Buff.affect(hero, Recharging.class, Recharging.DURATION * 0.66f);
 		Buff.affect(hero, ToxicImbue.class).set(ToxicImbue.DURATION * 0.66f);
-		for (Heap h : Dungeon.level.heaps.valueList()){
-            PathFinder.buildDistanceMap(h.pos, BArray.or(Dungeon.level.passable, Dungeon.level.avoid, null));
-			if (h.type == Heap.Type.HEAP) {
-				Item item = h.peek();
-				if (item.doPickUp(hero, h.pos) && !(PathFinder.distance[h.pos] == Integer.MAX_VALUE)) {
-					h.pickUp();
-					hero.spend(-Item.TIME_TO_PICK_UP); //casting the spell already takes a turn
-					GLog.i( Messages.capitalize(Messages.get(hero, "you_now_have", item.name())) );
-				} else {
-					GLog.w(Messages.get(this, "cant_grab"));
-					h.sprite.drop();
-				}
-			}
-		}
+		collectAllHeaps(hero);
 	}
 	
 	@Override

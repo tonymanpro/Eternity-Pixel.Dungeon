@@ -405,7 +405,7 @@ Heap implements Bundlable {
 	public void destroy() {
 		Dungeon.level.heaps.remove( this.pos );
 		if (sprite != null) {
-			sprite.kill();
+			sprite.killAndErase();
 		}
 		killSubicons();
 		items.clear();
@@ -481,21 +481,21 @@ Heap implements Bundlable {
 	}
 
 	public void killSubicons() {
-		subicon.kill();
-		quantityDisplay.kill();
-		heapSize.kill();
-		itemLvl.kill();
-		keyLevel.kill();
-		rarity.kill();
+		if (subicon != null) { subicon.visible = false; subicon.killAndErase(); }
+		if (quantityDisplay != null) { quantityDisplay.text(null); quantityDisplay.visible = false; quantityDisplay.killAndErase(); }
+		if (heapSize != null) { heapSize.text(null); heapSize.visible = false; heapSize.killAndErase(); }
+		if (itemLvl != null) { itemLvl.text(null); itemLvl.visible = false; itemLvl.killAndErase(); }
+		if (keyLevel != null) { keyLevel.text(null); keyLevel.visible = false; keyLevel.killAndErase(); }
+		if (rarity != null) { rarity.text(null); rarity.visible = false; rarity.killAndErase(); }
 	}
 
 	public void destroySubicons() {
-		subicon.destroy();
-		quantityDisplay.destroy();
-		heapSize.destroy();
-		itemLvl.destroy();
-		keyLevel.destroy();
-		rarity.destroy();
+		if (subicon != null) { subicon.visible = false; subicon.destroy(); }
+		if (quantityDisplay != null) { quantityDisplay.text(null); quantityDisplay.visible = false; quantityDisplay.destroy(); }
+		if (heapSize != null) { heapSize.text(null); heapSize.visible = false; heapSize.destroy(); }
+		if (itemLvl != null) { itemLvl.text(null); itemLvl.visible = false; itemLvl.destroy(); }
+		if (keyLevel != null) { keyLevel.text(null); keyLevel.visible = false; keyLevel.destroy(); }
+		if (rarity != null) { rarity.text(null); rarity.visible = false; rarity.destroy(); }
 	}
 
 	public void addHeapComponents(Group addTo) {
@@ -513,8 +513,24 @@ Heap implements Bundlable {
 		updateSubicon();
 	}
 
+	public void updateSubiconsVisibility(boolean heapVisible) {
+		if (!heapVisible) {
+			if (subicon != null) subicon.visible = false;
+			if (quantityDisplay != null) quantityDisplay.visible = false;
+			if (heapSize != null) heapSize.visible = false;
+			if (itemLvl != null) itemLvl.visible = false;
+			if (keyLevel != null) keyLevel.visible = false;
+			if (rarity != null) rarity.visible = false;
+		}
+	}
+
 	public void updateSubicon() {
-		Item i = items.peek();
+		if (!seen) {
+			updateSubiconsVisibility(false);
+			return;
+		}
+
+		Item i = items != null ? items.peek() : null;
 
 		if (i != null) {
 			Image copy = Utility.createSubIcon(i);

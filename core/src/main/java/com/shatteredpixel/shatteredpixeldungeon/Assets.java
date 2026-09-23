@@ -334,6 +334,7 @@ public class Assets {
 		public static final String MAKER    = "sprites/wandmaker.png";
 		public static final String TROLL    = "sprites/blacksmith.png";
 		public static final String IMP      = "sprites/demon.png";
+		public static final String IMP_HOLIDAY = "sprites/imp_holiday.png";
 		public static final String RATKING  = "sprites/ratking.png";
 		public static final String BEE      = "sprites/bee.png";
 		public static final String MIMIC    = "sprites/mimic.png";

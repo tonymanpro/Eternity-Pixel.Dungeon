@@ -89,6 +89,24 @@ public class RankingsScene extends PixelScene {
 		align(title);
 		add(title);
 		
+		String currentName = SPDSettings.customUsername();
+		String userBtnLabel = (currentName != null && !currentName.isEmpty())
+				? "@" + currentName
+				: Messages.get(this, "btn_username");
+
+		StyledButton btnUsername = new StyledButton(Chrome.Type.GREY_BUTTON_TR, userBtnLabel, 8) {
+			@Override
+			public void onClick() {
+				RankingsScene.this.addToFront(new com.shatteredpixel.shatteredpixeldungeon.windows.WndUsername(new Runnable() {
+					@Override
+					public void run() {
+						ShatteredPixelDungeon.switchNoFade(RankingsScene.class);
+					}
+				}));
+			}
+		};
+		btnUsername.icon(Icons.get(Icons.PREFS));
+
 		StyledButton btnOnlineLeaderboard = new StyledButton(Chrome.Type.GREY_BUTTON_TR, Messages.get(this, "online_leaderboard"), 8) {
 			@Override
 			public void onClick() {
@@ -97,17 +115,38 @@ public class RankingsScene extends PixelScene {
 			}
 		};
 		btnOnlineLeaderboard.icon(Icons.get(Icons.RANKINGS));
-		btnOnlineLeaderboard.setSize(Math.min(w - 20, Math.max(140, btnOnlineLeaderboard.reqWidth())), 18);
-		btnOnlineLeaderboard.setPos(
-				(w - btnOnlineLeaderboard.width()) / 2f,
-				h - btnOnlineLeaderboard.height() - 3
-		);
+
+		boolean wide = w >= 260;
+		float bottomSpace;
+
+		if (wide) {
+			float btnW = Math.min((w - 30) / 2f, 130);
+			btnUsername.setSize(btnW, 16);
+			btnOnlineLeaderboard.setSize(btnW, 16);
+
+			float totalW = btnW * 2 + 6;
+			float startX = (w - totalW) / 2f;
+			btnUsername.setPos(startX, h - 19);
+			btnOnlineLeaderboard.setPos(startX + btnW + 6, h - 19);
+
+			bottomSpace = 22 + (Rankings.INSTANCE.totalNumber >= Rankings.TABLE_SIZE ? 12 : 0);
+		} else {
+			float btnW = Math.min(w - 20, 150);
+			btnOnlineLeaderboard.setSize(btnW, 15);
+			btnUsername.setSize(btnW, 15);
+
+			btnOnlineLeaderboard.setPos((w - btnW) / 2f, h - 17);
+			btnUsername.setPos((w - btnW) / 2f, h - 34);
+
+			bottomSpace = 38 + (Rankings.INSTANCE.totalNumber >= Rankings.TABLE_SIZE ? 12 : 0);
+		}
+
+		align(btnUsername);
 		align(btnOnlineLeaderboard);
+		add(btnUsername);
 		add(btnOnlineLeaderboard);
 
 		if (Rankings.INSTANCE.records.size() > 0) {
-
-			float bottomSpace = btnOnlineLeaderboard.height() + 4 + (Rankings.INSTANCE.totalNumber >= Rankings.TABLE_SIZE ? 12 : 0);
 			float rowHeight = GameMath.gate(ROW_HEIGHT_MIN, (h - 24 - bottomSpace)/Rankings.INSTANCE.records.size(), ROW_HEIGHT_MAX);
 
 			float left = (w - Math.min( MAX_ROW_WIDTH, w )) / 2 + GAP;

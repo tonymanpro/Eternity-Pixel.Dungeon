@@ -144,8 +144,15 @@ public class VaultLevel extends CityLevel {
 
 	@Override
 	public boolean activateTransition(Hero hero, LevelTransition transition) {
-		//walking onto transitions does nothing, need to use crystal
-		return false;
+		return super.activateTransition(hero, transition);
+	}
+
+	@Override
+	public void restoreFromBundle(com.watabou.utils.Bundle bundle) {
+		super.restoreFromBundle(bundle);
+		if (entrance() != -1 && map[entrance()] != Terrain.ENTRANCE) {
+			map[entrance()] = Terrain.ENTRANCE;
+		}
 	}
 
 	@Override

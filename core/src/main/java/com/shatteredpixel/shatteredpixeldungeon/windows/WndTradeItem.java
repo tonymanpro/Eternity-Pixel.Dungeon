@@ -24,6 +24,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.windows;
 
+import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
@@ -49,6 +50,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.watabou.noosa.audio.Sample;
 
 public class WndTradeItem extends WndInfoItem {
 
@@ -341,8 +343,11 @@ public class WndTradeItem extends WndInfoItem {
 		Catalog.countUses(Gold.class, price);
 		item.wereOofed = false;
 
-		if (!item.doPickUp( Dungeon.hero )) {
+		if (!item.collect( Dungeon.hero.belongings.backpack )) {
 			Dungeon.level.drop( item, heap.pos ).sprite.drop();
+		} else {
+			GameScene.pickUp( item, heap.pos );
+			Sample.INSTANCE.play( Assets.Sounds.ITEM );
 		}
 	}
 }

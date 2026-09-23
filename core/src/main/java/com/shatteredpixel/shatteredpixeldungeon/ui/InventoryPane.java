@@ -36,6 +36,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndInfoItem;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndLootFilter;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndUseItem;
 import com.watabou.gltextures.TextureCache;
 import com.watabou.input.GameAction;
@@ -73,10 +74,22 @@ public class InventoryPane extends Component {
 	private ArrayList<BagButton> bags;
 
 	public static final int WIDTH = 210;
-	public static final int HEIGHT = 108;
+	public static final int HEIGHT = 90;
 
 	private static final int SLOT_WIDTH = 16;
 	private static final int SLOT_HEIGHT = 16;
+
+	public static final int COLS = 11;
+	public static final int ROWS = 3;
+	public static final int SLOTS_PER_PAGE = COLS * ROWS; // 33 slots per page
+
+	private int page = 0;
+	private int totalPages = 1;
+
+	private RedButton btnPrevPage;
+	private RedButton btnNextPage;
+	private BitmapText pageLabel;
+	private IconButton btnFilter;
 
 	private WndBag.ItemSelector selector;
 
@@ -150,7 +163,7 @@ public class InventoryPane extends Component {
 		};
 
 		equipped = new ArrayList<>();
-		for (int i = 0; i < 5; i++){
+		for (int i = 0; i < 10; i++){
 			InventorySlot btn = new InventoryPaneSlot(null);
 			equipped.add(btn);
 			add(btn);
@@ -173,18 +186,56 @@ public class InventoryPane extends Component {
 		add(promptTxt);
 
 		bagItems = new ArrayList<>();
-		for (int i = 0; i < 55; i++){
+		for (int i = 0; i < SLOTS_PER_PAGE; i++){
 			InventorySlot btn = new InventoryPaneSlot(null);
 			bagItems.add(btn);
 			add(btn);
 		}
 
 		bags = new ArrayList<>();
-		for (int i = 0; i < 7; i++){
+		for (int i = 0; i < 9; i++){
 			BagButton btn = new BagButton(null, i+1);
 			bags.add(btn);
 			add(btn);
 		}
+
+		btnPrevPage = new RedButton( "<" ) {
+			@Override
+			public void onClick() {
+				if (page > 0) {
+					page--;
+					updateInventory();
+				}
+			}
+		};
+		add( btnPrevPage );
+
+		btnNextPage = new RedButton( ">" ) {
+			@Override
+			public void onClick() {
+				if (page < totalPages - 1) {
+					page++;
+					updateInventory();
+				}
+			}
+		};
+		add( btnNextPage );
+
+		pageLabel = new BitmapText(PixelScene.pixelFont);
+		pageLabel.hardlight( Window.TITLE_COLOR );
+		add( pageLabel );
+
+		btnFilter = new IconButton( Icons.get( Icons.TARGET ) ) {
+			@Override
+			public void onClick() {
+				GameScene.show( new WndLootFilter() );
+			}
+			@Override
+			protected String hoverText() {
+				return Messages.get( WndLootFilter.class, "title" );
+			}
+		};
+		add( btnFilter );
 
 		crossB = Icons.TARGET.get();
 		crossB.visible = false;
@@ -212,20 +263,29 @@ public class InventoryPane extends Component {
 
 		float left = x+4;
 		for (InventorySlot i : equipped){
-			i.setRect(left, y+4, SLOT_WIDTH, SLOT_HEIGHT);
-			left = i.right()+1;
+			if (i.item != null) {
+				i.visible = i.active = true;
+				i.setRect(left, y+4, SLOT_WIDTH, SLOT_HEIGHT);
+				left = i.right()+1;
+			} else {
+				i.visible = i.active = false;
+			}
 		}
 
-		promptTxt.maxWidth((int) (width - (left - x) - bg.marginRight()));
+		float bagRight = x + width - 4;
+		for (int bIdx = bags.size() - 1; bIdx >= 0; bIdx--) {
+			BagButton b = bags.get(bIdx);
+			if (b.visible) {
+				b.setRect(bagRight - SLOT_WIDTH, y + 5, SLOT_WIDTH, 14);
+				bagRight = b.left() - 1;
+			}
+		}
+
+		promptTxt.maxWidth((int) Math.max(10, (bagRight - left - bg.marginRight())));
 		if (promptTxt.height() > 10){
 			promptTxt.setPos(left, y + 2 + (12 - promptTxt.height()) / 2);
 		} else {
 			promptTxt.setPos(left, y + 4 + (10 - promptTxt.height()) / 2);
-		}
-
-		for (BagButton b : bags){
-			b.setRect(left+15, y + 6, SLOT_WIDTH, 14);
-			left = b.right()-14;
 		}
 
 		left = x+4;
@@ -239,19 +299,65 @@ public class InventoryPane extends Component {
 			}
 		}
 
-		goldTxt.x = left;
-		goldTxt.y = top+1.5f;
-		PixelScene.align(goldTxt);
+		float navY = y + height - 16;
+		float navH = 13;
 
-		gold.x = goldTxt.x + goldTxt.width() + 1;
-		gold.y = goldTxt.y;
+		if (totalPages > 1) {
+			btnPrevPage.setRect( x + 4, navY, 16, navH );
+			btnPrevPage.visible = true;
+			btnPrevPage.active = (page > 0);
 
-		energyTxt.x = left;
-		energyTxt.y = goldTxt.height()-0.5f+goldTxt.y;
-		PixelScene.align(energyTxt);
+			pageLabel.text( (page + 1) + "/" + totalPages );
+			pageLabel.measure();
+			pageLabel.x = x + 23;
+			pageLabel.y = navY + (navH - pageLabel.baseLine()) / 2f;
+			PixelScene.align( pageLabel );
+			pageLabel.visible = true;
 
-		energy.x = energyTxt.x + energyTxt.width();
-		energy.y = energyTxt.y;
+			btnNextPage.setRect( pageLabel.x + pageLabel.width() + 3, navY, 16, navH );
+			btnNextPage.visible = true;
+			btnNextPage.active = (page < totalPages - 1);
+		} else {
+			btnPrevPage.visible = false;
+			btnNextPage.visible = false;
+			pageLabel.visible = false;
+		}
+
+		float filterX = (totalPages > 1) ? (btnNextPage.right() + 4) : (x + 4);
+		btnFilter.setRect( filterX, navY, 13, navH );
+		btnFilter.visible = (selector == null);
+
+		float rightEdge = x + width - 5;
+		if (selector == null) {
+			if (Dungeon.energy > 0) {
+				energy.visible = energyTxt.visible = true;
+				energy.x = rightEdge - energy.width();
+				energy.y = navY + (navH - energy.height()) / 2f;
+				PixelScene.align(energy);
+
+				energyTxt.measure();
+				energyTxt.x = energy.x - energyTxt.width() - 2;
+				energyTxt.y = navY + (navH - energyTxt.baseLine()) / 2f;
+				PixelScene.align(energyTxt);
+
+				rightEdge = energyTxt.x - 5;
+			} else {
+				energy.visible = energyTxt.visible = false;
+			}
+
+			gold.visible = goldTxt.visible = true;
+			gold.x = rightEdge - gold.width();
+			gold.y = navY + (navH - gold.height()) / 2f;
+			PixelScene.align(gold);
+
+			goldTxt.measure();
+			goldTxt.x = gold.x - goldTxt.width() - 2;
+			goldTxt.y = navY + (navH - goldTxt.baseLine()) / 2f;
+			PixelScene.align(goldTxt);
+		} else {
+			gold.visible = goldTxt.visible = false;
+			energy.visible = energyTxt.visible = false;
+		}
 
 		super.layout();
 	}
@@ -275,6 +381,11 @@ public class InventoryPane extends Component {
 		for (BagButton bag : bags){
 			bag.alpha( value );
 		}
+
+		btnPrevPage.alpha( value );
+		btnNextPage.alpha( value );
+		pageLabel.alpha( value );
+		if (btnFilter.icon() != null) btnFilter.icon().alpha( value );
 	}
 
 	public static void refresh(){
@@ -282,6 +393,8 @@ public class InventoryPane extends Component {
 	}
 
 	public void updateInventory(){
+		if (Dungeon.hero == null) return;
+
 		if (selector == null){
 			blocker.target = bg;
 			KeyEvent.removeKeyListener(keyBlocker);
@@ -296,44 +409,66 @@ public class InventoryPane extends Component {
 			lastBag = stuff.backpack;
 		}
 
-		equipped.get(0).item(stuff.weapon == null ? new WndBag.Placeholder( ItemSpriteSheet.WEAPON_HOLDER ) : stuff.weapon);
-		equipped.get(1).item(stuff.armor == null ? new WndBag.Placeholder( ItemSpriteSheet.ARMOR_HOLDER ) : stuff.armor);
-		for (int i = 0; i < Dungeon.hero.belongings.artifactSlots(); i++) {
-			if (stuff.artifacts.size() > i) {
-				equipped.get(2+i).item(stuff.artifacts.get(i) == null ? new WndBag.Placeholder( ItemSpriteSheet.ARTIFACT_HOLDER ) : stuff.artifacts.get(i));
-			};
+		int eqIdx = 0;
+		if (eqIdx < equipped.size()) {
+			equipped.get(eqIdx++).item(stuff.weapon == null ? new WndBag.Placeholder( ItemSpriteSheet.WEAPON_HOLDER ) : stuff.weapon);
 		}
-		for (int i = 0; i < Dungeon.hero.belongings.miscSlots(); i++) {
-			if (stuff.miscs.size() > i) {
-				equipped.get(2+Dungeon.hero.belongings.artifactSlots()+i).item(stuff.miscs.get(i) == null ? new WndBag.Placeholder( ItemSpriteSheet.SOMETHING ) : stuff.miscs.get(i));
-			}
+		if (eqIdx < equipped.size()) {
+			equipped.get(eqIdx++).item(stuff.armor == null ? new WndBag.Placeholder( ItemSpriteSheet.ARMOR_HOLDER ) : stuff.armor);
 		}
-		for (int i = 0; i < Dungeon.hero.belongings.ringSlots(); i++) {
-			if (stuff.rings.size() > i) {
-				equipped.get(2+Dungeon.hero.belongings.artifactSlots()+Dungeon.hero.belongings.miscSlots()+i).item(stuff.rings.get(i) == null ? new WndBag.Placeholder( ItemSpriteSheet.RING_HOLDER ) : stuff.rings.get(i));
-			}
+		for (int i = 0; i < stuff.artifactSlots() && eqIdx < equipped.size(); i++) {
+			Item item = stuff.artifacts.size() > i ? stuff.artifacts.get(i) : null;
+			equipped.get(eqIdx++).item(item == null ? new WndBag.Placeholder( ItemSpriteSheet.ARTIFACT_HOLDER ) : item);
+		}
+		for (int i = 0; i < stuff.miscSlots() && eqIdx < equipped.size(); i++) {
+			Item item = stuff.miscs.size() > i ? stuff.miscs.get(i) : null;
+			equipped.get(eqIdx++).item(item == null ? new WndBag.Placeholder( ItemSpriteSheet.SOMETHING ) : item);
+		}
+		for (int i = 0; i < stuff.ringSlots() && eqIdx < equipped.size(); i++) {
+			Item item = stuff.rings.size() > i ? stuff.rings.get(i) : null;
+			equipped.get(eqIdx++).item(item == null ? new WndBag.Placeholder( ItemSpriteSheet.RING_HOLDER ) : item);
+		}
+		while (eqIdx < equipped.size()) {
+			equipped.get(eqIdx++).item(null);
 		}
 
-		ArrayList<Item> items = (ArrayList<Item>) lastBag.items.clone();
-
-		if (lastBag == stuff.backpack && stuff.secondWep != null){
-			items.add(0, stuff.secondWep);
+		ArrayList<Item> allItems = new ArrayList<>();
+		if (lastBag != stuff.backpack && lastBag.getClass() != EquipmentBag.class) {
+			allItems.add(lastBag);
+		} else if (lastBag == stuff.backpack && stuff.secondWep != null) {
+			allItems.add(stuff.secondWep);
 		}
 
-		int j = 0;
-		for (int i = 0; i < 55; i++){
-			if (i == 0 && lastBag != stuff.backpack){
-				bagItems.get(i).item(lastBag);
-				continue;
-			}
-			if (items.size() > j){
-				if (items.get(j) instanceof Bag){
-					j++;
-					i--;
-					continue;
+		ArrayList<Item> pinnedHere = new ArrayList<>();
+		ArrayList<Item> others = new ArrayList<>();
+		int used = 0;
+		for (Item item : lastBag.items.toArray(new Item[0])) {
+			used++;
+			if (!(item instanceof Bag)) {
+				if (item != null && item.pinned) {
+					pinnedHere.add(item);
+				} else {
+					others.add(item);
 				}
-				bagItems.get(i).item(items.get(j));
-				j++;
+			}
+		}
+		allItems.addAll(pinnedHere);
+		allItems.addAll(others);
+
+		int free = lastBag.capacity() - used;
+		for (int i = 0; i < free; i++) {
+			allItems.add(null);
+		}
+
+		int totalSlots = allItems.size();
+		totalPages = Math.max(1, (int) Math.ceil(totalSlots / (float) SLOTS_PER_PAGE));
+		page = Math.max(0, Math.min(page, totalPages - 1));
+
+		int pageStart = page * SLOTS_PER_PAGE;
+		for (int i = 0; i < SLOTS_PER_PAGE; i++) {
+			int slotIdx = pageStart + i;
+			if (slotIdx < allItems.size()) {
+				bagItems.get(i).item(allItems.get(slotIdx));
 			} else {
 				bagItems.get(i).item(null);
 			}
@@ -344,17 +479,12 @@ public class InventoryPane extends Component {
 
 			goldTxt.text(Long.toString(Dungeon.gold));
 			goldTxt.measure();
-			goldTxt.visible = gold.visible = true;
 
 			energyTxt.text(Long.toString(Dungeon.energy));
 			energyTxt.measure();
-			energyTxt.visible = energy.visible = Dungeon.energy > 0;
 		} else {
 			promptTxt.text(selector.textPrompt());
 			promptTxt.visible = true;
-
-			goldTxt.visible = gold.visible = false;
-			energyTxt.visible = energy.visible = false;
 		}
 
 		ArrayList<Bag> inventBags = stuff.getBags();
@@ -389,18 +519,25 @@ public class InventoryPane extends Component {
 		energyTxt.alpha( lastEnabled ? 1f : 0.3f );
 		energy.alpha( lastEnabled ? 1f : 0.3f );
 
+		btnPrevPage.alpha( lastEnabled ? 1f : 0.3f );
+		btnNextPage.alpha( lastEnabled ? 1f : 0.3f );
+		pageLabel.alpha( lastEnabled ? 1f : 0.3f );
+		btnFilter.enable( lastEnabled );
+
 		layout();
 	}
 
 	public void setSelector(WndBag.ItemSelector selector){
 		this.selector = selector;
-		if (selector.preferredBag() == Belongings.Backpack.class){
-			lastBag = Dungeon.hero.belongings.backpack;
-		} else if (selector.preferredBag() != null) {
-			Bag preferred = Dungeon.hero.belongings.getItem(selector.preferredBag());
-			if (preferred != null)  lastBag = preferred;
-			//if a specific preferred bag isn't present, then the relevant items will be in backpack
-			else                    lastBag = Dungeon.hero.belongings.backpack;
+		if (selector != null) {
+			if (selector.preferredBag() == Belongings.Backpack.class){
+				lastBag = Dungeon.hero.belongings.backpack;
+			} else if (selector.preferredBag() != null) {
+				Bag preferred = Dungeon.hero.belongings.getItem(selector.preferredBag());
+				if (preferred != null)  lastBag = preferred;
+				else                    lastBag = Dungeon.hero.belongings.backpack;
+			}
+			page = 0;
 		}
 		updateInventory();
 	}
@@ -460,6 +597,7 @@ public class InventoryPane extends Component {
 			boolean lostInvent = Dungeon.hero.belongings.lostInventory();
 			for (InventorySlot b : equipped){
 				b.enable(lastEnabled
+						&& b.item() != null
 						&& !(b.item() instanceof WndBag.Placeholder)
 						&& (selector == null || selector.itemSelectable(b.item()))
 						&& (!lostInvent || b.item().keptThroughLostInventory()));
@@ -497,6 +635,8 @@ public class InventoryPane extends Component {
 			return Icons.get( Icons.POTION_BANDOLIER );
 		} else if (bag instanceof CheeseCheest){
 			return Icons.get( Icons.CHEESY_CHEEST );
+		} else if (bag instanceof SackOfHolding){
+			return Icons.get( Icons.BACKPACK );
 		} else {
 			return Icons.get( Icons.BACKPACK );
 		}
@@ -510,6 +650,13 @@ public class InventoryPane extends Component {
 
 		@Override
         public void onClick() {
+			if (item == null) return;
+			if (item == lastBag && lastBag != Dungeon.hero.belongings.backpack) {
+				lastBag = Dungeon.hero.belongings.backpack;
+				page = 0;
+				updateInventory();
+				return;
+			}
 			if (lastBag != item && !lastBag.contains(item) && !item.isEquipped(Dungeon.hero)){
 				updateInventory();
 				return;
@@ -546,6 +693,7 @@ public class InventoryPane extends Component {
 
 		@Override
 		protected boolean onLongClick() {
+			if (item == null) return false;
 			if (selector == null && item.defaultAction() != null) {
 				QuickSlotButton.set( item );
 				return true;
@@ -683,7 +831,10 @@ public class InventoryPane extends Component {
         public void onClick() {
 			super.onClick();
 			GameScene.cancel();
-			lastBag = bag;
+			if (lastBag != bag) {
+				lastBag = bag;
+				page = 0;
+			}
 			refresh();
 		}
 

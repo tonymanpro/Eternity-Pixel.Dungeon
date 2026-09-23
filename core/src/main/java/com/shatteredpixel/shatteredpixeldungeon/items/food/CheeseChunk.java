@@ -50,19 +50,7 @@ public class CheeseChunk extends Food {
 		Buff.affect(hero, Bless.class, Bless.DURATION * 0.25f);
 		Buff.affect(hero, AdrenalineSurge.class).reset(2, 100);
 		Buff.affect(hero, Adrenaline.class, Adrenaline.DURATION * 0.25f);
-		for (Heap h : Dungeon.level.heaps.valueList()){
-			if (h.type == Heap.Type.HEAP) {
-				Item item = h.peek();
-				if (item.doPickUp(hero, h.pos)) {
-					h.pickUp();
-					hero.spend(-Item.TIME_TO_PICK_UP); //casting the spell already takes a turn
-					GLog.i( Messages.capitalize(Messages.get(hero, "you_now_have", item.name())) );
-				} else {
-					GLog.w(Messages.get(this, "cant_grab"));
-					h.sprite.drop();
-				}
-			}
-		}
+		collectAllHeaps(hero);
 	}
 	
 	@Override

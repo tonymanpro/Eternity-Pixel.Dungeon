@@ -21,9 +21,6 @@ import java.util.TimeZone;
 
 public class OnlineLeaderboardService {
 
-	private static final String FIRESTORE_ENDPOINT =
-			"https://firestore.googleapis.com/v1/projects/eternity-pixel-dungeon/databases/eternitypd/documents/hall_of_fame";
-
 	/**
 	 * Submits a victory record to the online Firestore Hall of Fame.
 	 * Executes strictly on a background daemon thread with full try-catch isolation
@@ -46,7 +43,12 @@ public class OnlineLeaderboardService {
 	}
 
 	private static void syncRecordToFirestore(Rankings.Record record, VictoryBuild build) throws Exception {
-		URL url = new URL(FIRESTORE_ENDPOINT);
+		String endpoint = CloudConfig.getHallOfFameEndpoint();
+		if (endpoint == null) {
+			return;
+		}
+
+		URL url = new URL(endpoint);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setRequestMethod("POST");
 		conn.setRequestProperty("Content-Type", "application/json; utf-8");
@@ -67,9 +69,18 @@ public class OnlineLeaderboardService {
 		isoFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 		String timestamp = isoFormat.format(new Date(Game.realTime));
 
+		String username = com.shatteredpixel.shatteredpixeldungeon.SPDSettings.customUsername();
+		if (username == null || username.trim().isEmpty()) {
+			username = heroClass;
+		}
+
+		String ringsStr = (build != null && build.rings != null && !build.rings.isEmpty()) ? String.join(", ", build.rings) : "";
+		String artifactsStr = (build != null && build.artifacts != null && !build.artifacts.isEmpty()) ? String.join(", ", build.artifacts) : "";
+
 		StringBuilder json = new StringBuilder();
 		json.append("{\n");
 		json.append("  \"fields\": {\n");
+		json.append("    \"username\": {\"stringValue\": \"").append(escapeJson(username)).append("\"},\n");
 		json.append("    \"hero_class\": {\"stringValue\": \"").append(escapeJson(heroClass)).append("\"},\n");
 		json.append("    \"hero_subclass\": {\"stringValue\": \"").append(escapeJson(heroSubclass)).append("\"},\n");
 		json.append("    \"level\": {\"integerValue\": \"").append(record.herolevel).append("\"},\n");
@@ -81,6 +92,8 @@ public class OnlineLeaderboardService {
 		json.append("    \"win\": {\"booleanValue\": ").append(record.win).append("},\n");
 		json.append("    \"weapon\": {\"stringValue\": \"").append(escapeJson(weapon)).append("\"},\n");
 		json.append("    \"armor\": {\"stringValue\": \"").append(escapeJson(armor)).append("\"},\n");
+		json.append("    \"rings\": {\"stringValue\": \"").append(escapeJson(ringsStr)).append("\"},\n");
+		json.append("    \"artifacts\": {\"stringValue\": \"").append(escapeJson(artifactsStr)).append("\"},\n");
 		json.append("    \"pet\": {\"stringValue\": \"").append(escapeJson(pet)).append("\"},\n");
 		json.append("    \"game_id\": {\"stringValue\": \"").append(escapeJson(record.gameID)).append("\"},\n");
 		json.append("    \"created_at\": {\"timestampValue\": \"").append(timestamp).append("\"}\n");

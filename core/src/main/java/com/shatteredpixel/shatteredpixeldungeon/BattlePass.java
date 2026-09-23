@@ -102,14 +102,24 @@ public class BattlePass {
         String now = MONTH_KEY_FORMAT.format(new Date());
         if (monthKey == null) {
             monthKey = now;
+            if (SeasonalTasks.tasks == null || SeasonalTasks.tasks.isEmpty()) {
+                SeasonalTasks.rollForNewSeason();
+            }
             return;
         }
         if (monthKey.startsWith(now + "-r")) {
             monthKey = now;
+            if (SeasonalTasks.tasks == null || SeasonalTasks.tasks.isEmpty()) {
+                SeasonalTasks.rollForNewSeason();
+            }
             return;
         }
-        if (monthKey.equals(now))
+        if (monthKey.equals(now)) {
+            if (SeasonalTasks.tasks == null || SeasonalTasks.tasks.isEmpty()) {
+                SeasonalTasks.rollForNewSeason();
+            }
             return;
+        }
 
         history.add(0, new MonthRecord(monthKey, totalXP, new ArrayList<>(claimedTiers), repeatableTiersClaimed,
                 BattlePassTiers.rewardSnapshot(), seasonName(monthKey), premium,

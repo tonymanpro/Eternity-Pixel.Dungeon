@@ -46,12 +46,6 @@ public class MobSprite extends CharSprite {
 	@Override
 	public void link( Char ch ) {
 		super.link( ch );
-		if (com.shatteredpixel.shatteredpixeldungeon.HolidayEventConfig.get().isWinterEventActive()
-				&& com.shatteredpixel.shatteredpixeldungeon.HolidayEventConfig.get().santaHatEnabled) {
-			if (ch instanceof Rat || ch instanceof Skeleton || ch instanceof Gnoll || ch instanceof com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Thief) {
-				this.hardlight(0xff7777);
-			}
-		}
 	}
 
 	@Override
@@ -107,7 +101,7 @@ public class MobSprite extends CharSprite {
 			int scaleFactor = 1;
 			if (texture != null && texture.path != null) {
 				String resolved = AssetPackResolver.resolvePath( texture.path );
-				if (resolved.contains("/hd/") || resolved.contains("\\hd\\")) {
+				if (resolved.contains("/hd/") || resolved.contains("\\hd\\") || resolved.endsWith("_hd.png")) {
 					scaleFactor = 4;
 				}
 			}

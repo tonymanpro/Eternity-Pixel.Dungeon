@@ -34,6 +34,9 @@ public class RegionLorePage {
 			case CITY_WARLOCK:              return new RegionLorePage.City();
 			case HALLS_KING:                return new RegionLorePage.Halls();
             case INFINITY:                  return new RegionLorePage.Infinity();
+			case BARBARIAN_SAGA:            return new RegionLorePage.Barbarian();
+			case RAT_KING_MEMOIRS:          return new RegionLorePage.RatKing();
+			case HERO_CHRONICLES:           return new RegionLorePage.HeroChronicles();
 		}
 	}
 
@@ -102,5 +105,38 @@ public class RegionLorePage {
             return Document.INFINITY;
         }
     }
+
+	public static class Barbarian extends DocumentPage {
+		{
+			image = ItemSpriteSheet.CAVES_PAGE;
+		}
+
+		@Override
+		public Document document() {
+			return Document.BARBARIAN_SAGA;
+		}
+	}
+
+	public static class RatKing extends DocumentPage {
+		{
+			image = ItemSpriteSheet.SEWER_PAGE;
+		}
+
+		@Override
+		public Document document() {
+			return Document.RAT_KING_MEMOIRS;
+		}
+	}
+
+	public static class HeroChronicles extends DocumentPage {
+		{
+			image = ItemSpriteSheet.CITY_PAGE;
+		}
+
+		@Override
+		public Document document() {
+			return Document.HERO_CHRONICLES;
+		}
+	}
 
 }

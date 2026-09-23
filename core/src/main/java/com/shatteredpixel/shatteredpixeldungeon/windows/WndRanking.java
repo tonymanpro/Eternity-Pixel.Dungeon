@@ -293,6 +293,9 @@ public class WndRanking extends WndTabbed {
 					@Override
 					public void onClick() {
 						super.onClick();
+						if (record.victoryBuild == null && Dungeon.hero != null) {
+							record.victoryBuild = VictoryBuild.captureCurrentRun(record);
+						}
 						ShatteredPixelDungeon.scene().addToFront(new WndHallOfFameBuild(record, record.victoryBuild));
 					}
 				};

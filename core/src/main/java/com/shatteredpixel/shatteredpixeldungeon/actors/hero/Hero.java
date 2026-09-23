@@ -93,6 +93,13 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.CheckedCell;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Flare;
 import com.shatteredpixel.shatteredpixeldungeon.effects.FloatingText;
 import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
+import com.shatteredpixel.shatteredpixeldungeon.items.TicketToArena;
+import com.shatteredpixel.shatteredpixeldungeon.items.TicketToPortableShop;
+import com.shatteredpixel.shatteredpixeldungeon.items.modules.DimensionalRiftModule;
+import com.shatteredpixel.shatteredpixeldungeon.levels.ArenaInventory;
+import com.shatteredpixel.shatteredpixeldungeon.levels.ArenaLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.DimensionalLevel;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.InterlevelScene;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.effects.SpellSprite;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Splash;
@@ -2362,6 +2369,11 @@ if (!Dungeon.level.visited[cell] && !Dungeon.level.mapped[cell]
 		
 		curAction = null;
 
+		if (isArenaLevel()) {
+			evacuateFromArena();
+			return;
+		}
+
 		Ankh ankh = null;
 
 		//look for ankhs in player inventory, prioritize ones which are blessed.
@@ -2426,6 +2438,72 @@ if (!Dungeon.level.visited[cell] && !Dungeon.level.mapped[cell]
 		Actor.fixTime();
 		super.die( cause );
 		reallyDie( cause );
+	}
+
+	public boolean isArenaLevel() {
+		return Dungeon.branch == Dungeon.BRANCH_ARENA
+				|| Dungeon.branch == Dungeon.BRANCH_WAVE_ARENA
+				|| Dungeon.branch == Dungeon.BRANCH_BLACK
+				|| Dungeon.branch == Dungeon.BRANCH_PORTABLE
+				|| Dungeon.branch == 6
+				|| ArenaInventory.isActive();
+	}
+
+	public void evacuateFromArena() {
+		interrupt();
+		HP = Math.max( 1, HT / 2 );
+		PotionOfHealing.cure( this );
+		Buff.prolong( this, Invulnerability.class, 3f );
+
+		int retDepth = 1;
+		int retBranch = Dungeon.BRANCH_NORMAL;
+		int retPos = -1;
+
+		if (Dungeon.branch == Dungeon.BRANCH_WAVE_ARENA || ArenaInventory.isActive()) {
+			retDepth = ArenaInventory.depth;
+			retBranch = ArenaInventory.branch;
+			retPos = ArenaInventory.pos;
+			ArenaInventory.restoreAndMerge( this );
+		} else if (Dungeon.branch == Dungeon.BRANCH_ARENA) {
+			TicketToArena ticket = belongings.getItem( TicketToArena.class );
+			if (ticket != null) {
+				retDepth = ticket.depth;
+				retBranch = ticket.branch;
+				retPos = ticket.pos;
+				ticket.detach( belongings.backpack );
+			}
+			Buff.detach( this, ArenaLevel.ArenaCounter.class );
+		} else if (Dungeon.branch == Dungeon.BRANCH_PORTABLE) {
+			TicketToPortableShop ticket = belongings.getItem( TicketToPortableShop.class );
+			if (ticket != null) {
+				retDepth = ticket.depth;
+				retBranch = ticket.branch;
+				retPos = ticket.pos;
+				ticket.detach( belongings.backpack );
+			}
+		} else if (Dungeon.branch == 6) {
+			DimensionalRiftModule mod = belongings.getItem( DimensionalRiftModule.class );
+			if (mod != null) {
+				retDepth = mod.depth;
+				retBranch = mod.branch;
+				retPos = mod.pos;
+				mod.detach( belongings.backpack );
+			}
+			Buff.detach( this, DimensionalLevel.DimensionalCounter.class );
+			grinding = true;
+		}
+
+		if (Dungeon.branch == Dungeon.BRANCH_BLACK) {
+			GLog.w( Messages.get( Hero.class, "black_arena_defeat", PsycheChest.neededLevel() ) );
+		} else {
+			GLog.w( Messages.get( Hero.class, "arena_defeat" ) );
+		}
+
+		InterlevelScene.mode = InterlevelScene.Mode.RETURN;
+		InterlevelScene.returnDepth = retDepth > 0 ? retDepth : 1;
+		InterlevelScene.returnBranch = retBranch;
+		InterlevelScene.returnPos = retPos;
+		Game.switchScene( InterlevelScene.class );
 	}
 	
 	public static void reallyDie( Object cause ) {

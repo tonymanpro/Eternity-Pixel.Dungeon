@@ -67,8 +67,10 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.builders.Builder;
 import com.shatteredpixel.shatteredpixeldungeon.levels.builders.FigureEightBuilder;
 import com.shatteredpixel.shatteredpixeldungeon.levels.builders.LoopBuilder;
 import com.shatteredpixel.shatteredpixeldungeon.levels.builders.RegularBuilder;
+import com.shatteredpixel.shatteredpixeldungeon.HolidayEventConfig;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
+import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.secret.HolidayImpRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.secret.SecretRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.MagicalFireRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.PitRoom;
@@ -170,6 +172,10 @@ public abstract class RegularLevel extends Level {
 		secrets = Math.round(secrets * Dungeon.hero.getSecretRoomMultiplier());
 		for (int i = 0; i < secrets; i++) {
 			initRooms.add(SecretRoom.createRoom());
+		}
+
+		if (Dungeon.depth == 11 && HolidayEventConfig.get().isWinterEventActive()) {
+			initRooms.add(new HolidayImpRoom());
 		}
 		return initRooms;
 	}
@@ -619,15 +625,49 @@ public abstract class RegularLevel extends Level {
 				if (Dungeon.cycle < 1) {
 					switch( region ){
 						default: regionDoc = null; break;
-						case 1: regionDoc = Document.SEWERS_GUARD; break;
-						case 2: regionDoc = Document.PRISON_WARDEN; break;
-						case 3: regionDoc = Document.CAVES_EXPLORER; break;
-						case 4: regionDoc = Document.CITY_WARLOCK; break;
-						case 5: regionDoc = Document.HALLS_KING; break;
+						case 1:
+							if (!Document.SEWERS_GUARD.allPagesFound()) {
+								regionDoc = Document.SEWERS_GUARD;
+							} else {
+								regionDoc = Document.RAT_KING_MEMOIRS;
+							}
+							break;
+						case 2:
+							regionDoc = Document.PRISON_WARDEN;
+							break;
+						case 3:
+							if (!Document.CAVES_EXPLORER.allPagesFound()) {
+								regionDoc = Document.CAVES_EXPLORER;
+							} else {
+								regionDoc = Document.BARBARIAN_SAGA;
+							}
+							break;
+						case 4:
+							if (!Document.CITY_WARLOCK.allPagesFound()) {
+								regionDoc = Document.CITY_WARLOCK;
+							} else {
+								regionDoc = Document.HERO_CHRONICLES;
+							}
+							break;
+						case 5:
+							if (!Document.HALLS_KING.allPagesFound()) {
+								regionDoc = Document.HALLS_KING;
+							} else if (!Document.HERO_CHRONICLES.allPagesFound()) {
+								regionDoc = Document.HERO_CHRONICLES;
+							} else {
+								regionDoc = Document.BARBARIAN_SAGA;
+							}
+							break;
 					}
 				} else {
-					switch( region ){
-						default: regionDoc = Document.INFINITY; break;
+					if (!Document.INFINITY.allPagesFound()) {
+						regionDoc = Document.INFINITY;
+					} else if (!Document.BARBARIAN_SAGA.allPagesFound()) {
+						regionDoc = Document.BARBARIAN_SAGA;
+					} else if (!Document.RAT_KING_MEMOIRS.allPagesFound()) {
+						regionDoc = Document.RAT_KING_MEMOIRS;
+					} else {
+						regionDoc = Document.HERO_CHRONICLES;
 					}
 				}
 
@@ -715,6 +755,9 @@ public abstract class RegularLevel extends Level {
 		limitedDocs.put(Document.CITY_WARLOCK, Dungeon.LimitedDrops.LORE_CITY);
 		limitedDocs.put(Document.HALLS_KING, Dungeon.LimitedDrops.LORE_HALLS);
 		limitedDocs.put(Document.INFINITY, Dungeon.LimitedDrops.LORE_INFINITY);
+		limitedDocs.put(Document.BARBARIAN_SAGA, Dungeon.LimitedDrops.LORE_BARBARIAN);
+		limitedDocs.put(Document.RAT_KING_MEMOIRS, Dungeon.LimitedDrops.LORE_RAT_KING);
+		limitedDocs.put(Document.HERO_CHRONICLES, Dungeon.LimitedDrops.LORE_HERO_CHRONICLES);
 	}
 	
 	public ArrayList<Room> rooms() {
