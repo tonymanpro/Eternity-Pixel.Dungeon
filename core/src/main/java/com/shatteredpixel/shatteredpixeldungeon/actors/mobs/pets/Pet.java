@@ -94,11 +94,18 @@ public abstract class Pet extends DirectableAlly {
 	public void updateStats() {
 		int stage = evolutionStage();
 		HT = 20L + (petLevel * 6L) + (stage * 15L);
+		if (com.shatteredpixel.shatteredpixeldungeon.SPDSettings.isDemo()) {
+			HT += 15L; // Extra base survivability in Demo
+		}
 		defenseSkill = 4L + (petLevel * 2L) + (stage * 3L);
 	}
 
 	public void gainExp(int amount) {
 		if (petLevel >= 15) return; // Nivel máximo
+
+		if (com.shatteredpixel.shatteredpixeldungeon.SPDSettings.isDemo()) {
+			amount = Math.round(amount * 1.6f); // Accelerated leveling in Demo to reach evolution
+		}
 
 		exp += amount;
 		while (exp >= maxExp && petLevel < 15) {

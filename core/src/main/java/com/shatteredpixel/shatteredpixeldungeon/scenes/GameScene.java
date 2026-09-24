@@ -456,6 +456,9 @@ public class GameScene extends PixelScene {
 					&& (InterlevelScene.mode == InterlevelScene.Mode.DESCEND || InterlevelScene.mode == InterlevelScene.Mode.FALL)) {
 				GLog.h(Messages.get(this, "descend"), Dungeon.depth);
 				Sample.INSTANCE.play(Assets.Sounds.DESCEND);
+				if (Dungeon.depth == 1) {
+					areaIntro(Messages.get(GameScene.class, "sewers_intro_title"), Messages.get(GameScene.class, "sewers_intro_sub"), 0x38B0DE);
+				}
 				Tasks.onDepthReached( Statistics.deepestFloor );
 				SeasonalTasks.onDepthReached( Statistics.deepestFloor );
 				
@@ -1429,6 +1432,53 @@ private static float waterOfs = 0;
 			BossSplashBanner.show(title, subtitle, titleColor, bossCell);
 			flash(0x330022, true);
 			PixelScene.shake(4.5f, 0.45f);
+		}
+	}
+
+	public static void areaIntro(String title, String subtitle, int titleColor) {
+		if (scene != null) {
+			AreaSplashBanner.show(title, subtitle, titleColor);
+		}
+	}
+
+	public static void bossFinisher(int bossPos) {
+		if (scene != null) {
+			Game.timeScale = 0.25f;
+			scene.add(new SlowMotionController(0.75f));
+			flash(0xFFFFFF, true);
+			PixelScene.shake(5.5f, 0.6f);
+			Sample.INSTANCE.play(Assets.Sounds.BLAST);
+			if (bossPos >= 0) {
+				com.shatteredpixel.shatteredpixeldungeon.effects.Splash.at(bossPos, 0x00FF66, 25);
+			}
+		}
+	}
+
+	private static class SlowMotionController extends com.watabou.noosa.Gizmo {
+		private final float duration;
+		private float elapsedReal = 0f;
+
+		public SlowMotionController(float duration) {
+			this.duration = duration;
+		}
+
+		@Override
+		public void update() {
+			float realDelta = com.badlogic.gdx.Gdx.graphics.getDeltaTime();
+			elapsedReal += realDelta;
+
+			if (elapsedReal >= duration) {
+				Game.timeScale = 1.0f;
+				killAndErase();
+			} else if (elapsedReal > duration * 0.5f) {
+				float progress = (elapsedReal - duration * 0.5f) / (duration * 0.5f);
+				Game.timeScale = 0.25f + 0.75f * progress;
+			}
+		}
+
+		@Override
+		public void draw() {
+			// Gizmo-only controller
 		}
 	}
 

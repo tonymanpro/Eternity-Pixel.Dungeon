@@ -118,6 +118,14 @@ public class HeroMechanicsTest {
 				// Test Subclass Talents
 				Talent.initSubclassTalents(barbarian);
 				result.pass("Barbarian subclass talents initialized successfully");
+
+				// Test Strength and Surprise Attack with HandAxe
+				HeroClass.BARBARIAN.initHero(barbarian);
+				if (barbarian.STR() >= 12 && barbarian.canSurpriseAttack()) {
+					result.pass("Barbarian starting STR (" + barbarian.STR() + ") meets HandAxe requirement (12) and can surprise attack");
+				} else {
+					result.fail("Barbarian starting STR (" + barbarian.STR() + ") insufficient for HandAxe surprise attacks", null);
+				}
 			} catch (Exception e) {
 				result.fail("Barbarian Mechanics verification failed", e);
 			}

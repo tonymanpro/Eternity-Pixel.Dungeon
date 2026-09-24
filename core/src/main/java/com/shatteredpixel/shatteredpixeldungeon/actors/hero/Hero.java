@@ -359,8 +359,10 @@ public class Hero extends Char {
 			strBonus += buff.boost();
 		}
 
-		if (heroClass == HeroClass.WARRIOR || heroClass == HeroClass.BARBARIAN){
+		if (heroClass == HeroClass.WARRIOR){
 			strBonus += (int)Math.floor(STR * (0.15f));
+		} else if (heroClass == HeroClass.BARBARIAN){
+			strBonus += (int)Math.floor(STR * (0.20f));
 		}
 
 		return STR + strBonus;

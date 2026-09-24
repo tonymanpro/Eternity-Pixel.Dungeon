@@ -167,9 +167,17 @@ public class SewerLevel extends RegularLevel {
 			}
 		}
 
-		// Guaranteed Pet Egg on Depth 2
-		if (Dungeon.depth == 2) {
-			int cell = randomDropCell();
+		// Guaranteed Pet Egg (Depth 1 in Demo mode, Depth 2 in regular game)
+		int eggDepth = SPDSettings.isDemo() ? 1 : 2;
+		if (Dungeon.depth == eggDepth) {
+			int cell = -1;
+			com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room entranceRoom = room(entrance);
+			if (SPDSettings.isDemo() && entranceRoom != null) {
+				cell = pointToCell(entranceRoom.random(1));
+			}
+			if (cell == -1 || cell == entrance) {
+				cell = randomDropCell();
+			}
 			if (cell != -1) {
 				com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet.PetType[] flashyPets = {
 						com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet.PetType.DRAGON,
@@ -182,9 +190,9 @@ public class SewerLevel extends RegularLevel {
 				com.shatteredpixel.shatteredpixeldungeon.items.pets.PetEgg egg =
 						new com.shatteredpixel.shatteredpixeldungeon.items.pets.PetEgg(selectedType);
 
-				// In Demo mode, incubate to 70/80 so warming it a single time hatches it immediately
+				// In Demo mode, incubate to 78/80 so warming it or moving a step hatches it almost instantly
 				if (SPDSettings.isDemo()) {
-					egg.advanceIncubation(70);
+					egg.advanceIncubation(78);
 				} else {
 					egg.advanceIncubation(30);
 				}

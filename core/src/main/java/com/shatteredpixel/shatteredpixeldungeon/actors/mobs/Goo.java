@@ -295,6 +295,7 @@ public class Goo extends Mob {
 		
 		Dungeon.level.unseal();
 		
+		GameScene.bossFinisher(pos);
 		GameScene.bossSlain();
 		Heap hKey = Dungeon.level.drop( new WornKey( Dungeon.depth ), pos );
 		if (hKey.sprite != null) hKey.sprite.drop();
