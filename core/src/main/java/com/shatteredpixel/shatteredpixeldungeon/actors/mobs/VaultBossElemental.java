@@ -50,6 +50,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ElementalSprite;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.audio.Sample;
@@ -65,7 +66,7 @@ public class VaultBossElemental extends Mob {
 
 		int powerLevel = Dungeon.hero != null ? Dungeon.hero.lvl : 20;
 
-		HP = HT = (long) ((bossMaxHPMulti + 1) * (350 + Math.round(powerLevel * 14 * Math.pow(2.2, Dungeon.cycle))));
+		HP = HT = (long) ((bossMaxHPMulti + 1) * (150 + Math.round(powerLevel * 5.0f * Math.pow(2.2, Dungeon.cycle))));
 		defenseSkill = 16 + powerLevel / 4;
 		EXP = Dungeon.getCycleMultiplier(100);
 
@@ -87,8 +88,8 @@ public class VaultBossElemental extends Mob {
 	@Override
 	public long damageRoll() {
 		return Random.NormalLongRange(
-				Math.round((12 + Dungeon.hero.lvl * 0.8f) * Math.pow(1.5, Dungeon.cycle)),
-				Math.round((28 + Dungeon.hero.lvl * 1.5f) * Math.pow(1.5, Dungeon.cycle)));
+				Math.round((9 + Dungeon.hero.lvl * 0.6f) * Math.pow(1.5, Dungeon.cycle)),
+				Math.round((15 + Dungeon.hero.lvl * 0.8f) * Math.pow(1.5, Dungeon.cycle)));
 	}
 
 	@Override
@@ -103,21 +104,29 @@ public class VaultBossElemental extends Mob {
 
 	@Override
 	protected boolean act() {
-		if (Dungeon.level != null && Dungeon.hero != null && fieldOfView[Dungeon.hero.pos]) {
-			if (!battleAnnounced) {
-				battleAnnounced = true;
-				yell(Messages.get(this, "awakened"));
-				Dungeon.level.seal();
-				Camera.main.shake(3, 0.5f);
-				Sample.INSTANCE.play(Assets.Sounds.ROCKS);
+		if (Dungeon.level != null && Dungeon.hero != null) {
+			if (fieldOfView == null || fieldOfView.length != Dungeon.level.length()) {
+				fieldOfView = new boolean[Dungeon.level.length()];
 			}
+			Dungeon.level.updateFieldOfView(this, fieldOfView);
 
-			turnsSinceAbility++;
-			if (turnsSinceAbility >= 3 && distance(Dungeon.hero) <= 6 && canAttack(Dungeon.hero)) {
-				turnsSinceAbility = 0;
-				useElementalBurst(Dungeon.hero);
-				spend(TICK);
-				return true;
+			if (Dungeon.hero.pos >= 0 && Dungeon.hero.pos < fieldOfView.length && fieldOfView[Dungeon.hero.pos]) {
+				if (!battleAnnounced) {
+					battleAnnounced = true;
+					yell(Messages.get(this, "awakened"));
+					Dungeon.level.seal();
+					Camera.main.shake(3, 0.5f);
+					Sample.INSTANCE.play(Assets.Sounds.ROCKS);
+				}
+
+				turnsSinceAbility++;
+				boolean hasLOS = new Ballistica(pos, Dungeon.hero.pos, Ballistica.MAGIC_BOLT).collisionPos == Dungeon.hero.pos;
+				if (turnsSinceAbility >= 3 && distance(Dungeon.hero) <= 6 && hasLOS) {
+					turnsSinceAbility = 0;
+					useElementalBurst(Dungeon.hero);
+					spend(TICK);
+					return true;
+				}
 			}
 		}
 
@@ -158,7 +167,7 @@ public class VaultBossElemental extends Mob {
 			default:
 				GLog.w(Messages.get(this, "chaos_burst"));
 				Sample.INSTANCE.play(Assets.Sounds.RAY);
-				hero.damage(Math.round(damageRoll() * 1.1f), this);
+				hero.damage(Math.round(damageRoll() * 1.2f), this);
 				CellEmitter.get(hero.pos).burst(RainbowParticle.BURST, 10);
 				break;
 		}

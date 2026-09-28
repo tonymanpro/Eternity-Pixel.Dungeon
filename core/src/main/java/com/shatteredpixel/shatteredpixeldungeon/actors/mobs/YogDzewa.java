@@ -40,6 +40,7 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.TargetedCell;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.PurpleParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ShadowParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.Raritize;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.CreativeGloves;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.Clayball;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Bestiary;
@@ -597,6 +598,10 @@ public class YogDzewa extends Mob {
 			Dungeon.level.drop(new Clayball(), pos).sprite.drop();
 			Badges.validateClay();
 		}
+
+		Raritize raritize = new Raritize();
+		raritize.quantity(2);
+		Dungeon.level.drop(raritize, pos).sprite.drop(pos);
 
 		GameScene.bossFinisher(pos, 0x880022);
 		GameScene.bossSlain();
