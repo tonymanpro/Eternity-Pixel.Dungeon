@@ -594,10 +594,10 @@ public class HeroSelectScene extends PixelScene {
 
 			buttons = new ArrayList<>();
 			spacers = new ArrayList<>();
-            StyledButton btnRenameHero = new StyledButton(Chrome.Type.BLANK, "Rename", 6){
+            StyledButton btnRenameHero = new StyledButton(Chrome.Type.BLANK, Messages.get(HeroSelectScene.class, "rename"), 6){
                 @Override
                 public void onClick() {
-                    ShatteredPixelDungeon.scene().addToFront(new WndTextInput("Rename Hero", Messages.get(HeroSelectScene.class, "rename_hero_desc"), SPDSettings.customName(), 50, false, "Done", "Revert") {
+                    ShatteredPixelDungeon.scene().addToFront(new WndTextInput(Messages.get(HeroSelectScene.class, "rename_hero"), Messages.get(HeroSelectScene.class, "rename_hero_desc"), SPDSettings.customName(), 50, false, Messages.get(HeroSelectScene.class, "done"), Messages.get(HeroSelectScene.class, "revert")) {
                         @Override
                         public void onSelect( boolean positive, String text ) {
                             if (positive) {

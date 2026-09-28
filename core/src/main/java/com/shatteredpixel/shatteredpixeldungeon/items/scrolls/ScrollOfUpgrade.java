@@ -92,15 +92,15 @@ public class ScrollOfUpgrade extends InventoryScroll {
 					customAmount = quantity();
 					GameScene.selectItem(itemSelector2);
 				} else {
-					GameScene.show(new WndTextInput("Enter amount of upgrades to be used:", null, "", 15, false,
-							"Accept", "Cancel") {
+					GameScene.show(new WndTextInput(Messages.get(ScrollOfUpgrade.class, "enter_amount"), null, "", 15, false,
+							Messages.get(ScrollOfUpgrade.class, "accept"), Messages.get(ScrollOfUpgrade.class, "cancel")) {
 						@Override public void onSelect(boolean positive, String text) {
 							if(!positive) return;
 							long number;
 							try {
 								number = Long.parseLong(text);
 							} catch (NumberFormatException e){
-								GLog.w("No valid number was entered.");
+								GLog.w(Messages.get(ScrollOfUpgrade.class, "invalid_number"));
 								return;
 							}
 							if (number > 0){

@@ -421,7 +421,7 @@ public class Item implements Bundlable {
 	}
 
 	private void rename(Item item) {
-		GameScene.show( new WndTextInput( "Rename","", item.customName, 100, false, "Rename", "Revert" ) {
+		GameScene.show( new WndTextInput( Messages.get(Item.class, "rename_title"), "", item.customName, 100, false, Messages.get(Item.class, "rename_btn"), Messages.get(Item.class, "revert_btn") ) {
 			@Override
 			public void onSelect( boolean positive, String text ) {
 				if (text != null && positive && !text.equals(item.trueName())) {
@@ -433,7 +433,7 @@ public class Item implements Bundlable {
 
 			@Override
 			public void onBackPressed() {
-				GLog.w("You didn't set a name for this.");
+				GLog.w(Messages.get(Item.class, "no_name"));
 			}
 		} );
 	}

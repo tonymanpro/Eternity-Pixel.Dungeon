@@ -449,6 +449,11 @@ public class DwarfKing extends Mob {
 		if (!BossHealthBar.isAssigned()) {
 			BossHealthBar.assignBoss(this);
 			yell(Messages.get(this, "notice"));
+
+			String title = Messages.get(this, "cinematic_title");
+			String sub = Messages.get(this, "cinematic_sub");
+			GameScene.bossIntro(title, sub, 0xFFD700, pos);
+
 			for (Char ch : Actor.chars()) {
 				if (ch instanceof DriedRose.GhostHero) {
 					((DriedRose.GhostHero) ch).sayBoss();
@@ -561,6 +566,7 @@ public class DwarfKing extends Mob {
 	@Override
 	public void die(Object cause) {
 
+		GameScene.bossFinisher(pos, 0x9932CC);
 		GameScene.bossSlain();
 
 		super.die(cause);

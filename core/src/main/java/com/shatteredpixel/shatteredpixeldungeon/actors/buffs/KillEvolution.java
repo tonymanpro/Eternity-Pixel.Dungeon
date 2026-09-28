@@ -443,7 +443,7 @@ public class KillEvolution extends Buff implements ActionIndicator.Action {
                 if (Actor.findChar( chain.collisionPos ) != null){
                     chainEnemy( chain, hero, Actor.findChar( chain.collisionPos ));
                 } else {
-                    GLog.w("No target");
+                    GLog.w(Messages.get(MeleeWeapon.class, "ability_no_target"));
                     return;
                 }
 

@@ -34,6 +34,7 @@ public class Chrome {
 		TOAST_WHITE,
 		WINDOW,
 		WINDOW_SILVER,
+		WINDOW_GOLD,
 		RED_BUTTON,
 		GREY_BUTTON,
 		GREY_BUTTON_TR,
@@ -54,6 +55,10 @@ public class Chrome {
 			return new NinePatch( Asset, 0, 0, 20, 20, 6 );
 		case WINDOW_SILVER:
 			return new NinePatch( Asset, 86, 0, 22, 22, 7 );
+		case WINDOW_GOLD:
+			NinePatch goldWindow = new NinePatch( Asset, 86, 0, 22, 22, 7 );
+			goldWindow.hardlight( 1.0f, 0.84f, 0.25f );
+			return goldWindow;
 		case TOAST:
 			return new NinePatch( Asset, 20, 0, 9, 9, 4 );
 		case TOAST_TR:

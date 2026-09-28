@@ -31,6 +31,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.PrismaticGuard;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.effects.FloatingText;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
@@ -48,7 +49,7 @@ public class TubeOfPrismaticSensation extends Tubes {
 		identify();
 
 		Buff.affect(hero, PrismaticGuard.class).set(hero.HT/2);
-		GLog.h( "Are you familiar with this?" );
+		GLog.h( Messages.get(this, "familiar") );
 	}
 
 	@Override

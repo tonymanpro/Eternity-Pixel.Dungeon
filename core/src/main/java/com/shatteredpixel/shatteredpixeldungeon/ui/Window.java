@@ -28,6 +28,8 @@ import com.shatteredpixel.shatteredpixeldungeon.Chrome;
 import com.shatteredpixel.shatteredpixeldungeon.SPDAction;
 import com.shatteredpixel.shatteredpixeldungeon.effects.ShadowBox;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
+import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
+import com.shatteredpixel.shatteredpixeldungeon.services.platform.SupporterManager;
 import com.watabou.input.KeyBindings;
 import com.watabou.input.KeyEvent;
 import com.watabou.input.PointerEvent;
@@ -52,12 +54,23 @@ public class Window extends Group implements Signal.Listener<KeyEvent> {
 	public static final int SHPX_COLOR = 0x33BB33;
 	public static final int BLUE = 0x3d85c6;
 	
+	public static boolean isGoldenUIActive() {
+		return SPDSettings.goldenUI();
+	}
+
+	public static Chrome.Type defaultWindowType() {
+		if (isGoldenUIActive()) {
+			return Chrome.Type.WINDOW_GOLD;
+		}
+		return Chrome.Type.WINDOW;
+	}
+
 	public Window() {
-		this( 0, 0, Chrome.get( Chrome.Type.WINDOW ) );
+		this( 0, 0, Chrome.get( defaultWindowType() ) );
 	}
 	
 	public Window( int width, int height ) {
-		this( width, height, Chrome.get( Chrome.Type.WINDOW ) );
+		this( width, height, Chrome.get( defaultWindowType() ) );
 	}
 
 	public Window( int width, int height, NinePatch chrome ) {
@@ -78,6 +91,9 @@ public class Window extends Group implements Signal.Listener<KeyEvent> {
 		add( blocker );
 		
 		this.chrome = chrome;
+		if (isGoldenUIActive()) {
+			this.chrome.hardlight( 1.0f, 0.84f, 0.25f );
+		}
 
 		this.width = width;
 		this.height = height;

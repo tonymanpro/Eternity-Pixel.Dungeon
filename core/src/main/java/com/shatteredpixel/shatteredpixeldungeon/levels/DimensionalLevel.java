@@ -386,7 +386,7 @@ public class DimensionalLevel extends Level {
                             mob.HP = mob.HT *= 7;
                         }
                         if (power == 200) {
-                            GLog.h("KEEPER: This dimension is about to distort at 50 more mobs. Be ready!");
+                            GLog.h(Messages.get(this, "dimension_distort"));
                         }
                         if (power >= 200) {
                             Class<?extends ChampionEnemy> buffCls;

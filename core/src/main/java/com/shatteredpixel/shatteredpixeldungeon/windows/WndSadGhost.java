@@ -125,6 +125,19 @@ public class WndSadGhost extends Window {
 		} else {
 			Dungeon.level.drop( reward, ghost.pos ).sprite.drop();
 		}
+
+		// Companion Pet introductory gift
+		if (Dungeon.hero != null && Dungeon.hero.pet == null && Dungeon.hero.belongings.getItem(com.shatteredpixel.shatteredpixeldungeon.items.pets.PetEgg.class) == null) {
+			com.shatteredpixel.shatteredpixeldungeon.items.pets.PetEgg egg = new com.shatteredpixel.shatteredpixeldungeon.items.pets.PetEgg();
+			if (com.shatteredpixel.shatteredpixeldungeon.SPDSettings.isDemo()) {
+				egg.advanceIncubation(25);
+			}
+			if (egg.doPickUp(Dungeon.hero)) {
+				GLog.p(Messages.get(this, "pet_egg_reward"));
+			} else {
+				Dungeon.level.drop(egg, ghost.pos).sprite.drop();
+			}
+		}
 		
 		ghost.yell( Messages.get(this, "farewell") );
 		ghost.die( null );

@@ -598,6 +598,7 @@ public class YogDzewa extends Mob {
 			Badges.validateClay();
 		}
 
+		GameScene.bossFinisher(pos, 0x880022);
 		GameScene.bossSlain();
 
 		if (Dungeon.isChallenged(Challenges.STRONGER_BOSSES) && Statistics.spawnersAlive == 4) {
@@ -619,6 +620,11 @@ public class YogDzewa extends Mob {
 		if (!BossHealthBar.isAssigned()) {
 			BossHealthBar.assignBoss(this);
 			yell(Messages.get(this, "notice"));
+
+			String title = Messages.get(this, "cinematic_title");
+			String sub = Messages.get(this, "cinematic_sub");
+			GameScene.bossIntro(title, sub, 0xDD0044, pos);
+
 			for (Char ch : Actor.chars()) {
 				if (ch instanceof DriedRose.GhostHero) {
 					((DriedRose.GhostHero) ch).sayBoss();

@@ -110,9 +110,9 @@ public class Shopkeeper extends NPC {
             if (Badges.isUnlocked(Badges.Badge.WAND_QUEST_4)) {
                 Dungeon.level.drop(new KeyToTruth(), pos).sprite.drop();
                 Badges.validateKey();
-                GLog.w("You are now freed, here's the key of truth.");
+                GLog.w(Messages.get(this, "key_freed"));
             } else {
-                GLog.w("You are not worth it to take this key right now. Try again.");
+                GLog.w(Messages.get(this, "key_not_worthy"));
             }
             flee();
         }

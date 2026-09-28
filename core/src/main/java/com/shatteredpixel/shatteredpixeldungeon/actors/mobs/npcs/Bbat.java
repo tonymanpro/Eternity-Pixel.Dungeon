@@ -98,8 +98,8 @@ public class Bbat extends Mob {
         } else {
             boolean[] passable = BArray.not(Dungeon.level.solid, null);
             for (Char ch : Actor.chars()) {
-                //our own tile is always passable
-                passable[ch.pos] = ch == this;
+                // Allies and hero don't block Bbat from swooping/attacking over them
+                passable[ch.pos] = (ch == this || ch.alignment == Alignment.ALLY || ch == Dungeon.hero);
             }
 
             PathFinder.buildDistanceMap(enemy.pos, passable, 2);
@@ -172,21 +172,24 @@ public class Bbat extends Mob {
 
                 int oldPos = pos;
                 target = Dungeon.hero.pos;
+
+                // If already adjacent to the hero, stay in place next to the hero
+                if (Dungeon.level != null && Dungeon.hero != null && Dungeon.level.adjacent(pos, Dungeon.hero.pos)) {
+                    spend( TICK );
+                    return true;
+                }
+
                 //always move towards the hero when wandering
                 if (getCloser( target )) {
-                    if (target != Dungeon.hero.pos) {
-                        spend(1 / speed());
-                    } else {
-                        spend(1 / 25f);
-                    }
+                    spend( 1 / speed() );
                     return moveSprite( oldPos, pos );
                 } else {
                     if (Dungeon.hero != null && Dungeon.hero.isAlive() && Dungeon.level != null && Dungeon.level.distance(pos, Dungeon.hero.pos) > 2) {
-                        int nearCell = com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet.getEmptyCellNear(Dungeon.hero.pos);
+                        int nearCell = com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet.getEmptyCellNear(Dungeon.hero.pos, pos);
                         if (nearCell != Dungeon.hero.pos && Actor.findChar(nearCell) == null) {
                             move(nearCell);
                             if (sprite != null) sprite.place(pos);
-                            spend(1 / 25f);
+                            spend( 1 / speed() );
                             return true;
                         }
                     }

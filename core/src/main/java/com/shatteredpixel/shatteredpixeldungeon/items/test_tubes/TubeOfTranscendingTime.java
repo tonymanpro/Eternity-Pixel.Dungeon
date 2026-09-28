@@ -30,6 +30,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Overload;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.effects.FloatingText;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
@@ -50,7 +51,7 @@ public class TubeOfTranscendingTime extends Tubes {
 		hero.sprite.showStatusWithIcon(CharSprite.NEUTRAL, Float.toString(time), FloatingText.REVERSE);
 		hero.spend((-1 * time) * Actor.TICK);
 		GameScene.flash(0x4c006699);
-		GLog.h("Show me what you can do, don't be slow!");
+		GLog.h(Messages.get(this, "dont_be_slow"));
 	}
 
 	@Override

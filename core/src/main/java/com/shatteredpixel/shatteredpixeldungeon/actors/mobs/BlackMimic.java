@@ -412,8 +412,13 @@ public class BlackMimic extends Mob {
 		if (!BossHealthBar.isAssigned()) {
 			BossHealthBar.assignBoss(this);
 			turnsSinceLastAbility = 0;
-			if (!isCopy)
+			if (!isCopy) {
 				yell(Messages.get(this, "notice"));
+
+				String title = Messages.get(this, "cinematic_title");
+				String sub = Messages.get(this, "cinematic_sub");
+				GameScene.bossIntro(title, sub, 0x9400D3, pos);
+			}
 			for (Char ch : Actor.chars()){
 				if (ch instanceof DriedRose.GhostHero){
 					((DriedRose.GhostHero) ch).sayBoss();
@@ -608,6 +613,7 @@ public class BlackMimic extends Mob {
 
 		super.die( cause );
 		if (!isCopy) {
+			GameScene.bossFinisher(pos, 0x330044);
 			GameScene.bossSlain();
 			Dungeon.level.unseal();
 

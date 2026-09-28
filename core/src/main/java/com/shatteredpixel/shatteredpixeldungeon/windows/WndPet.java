@@ -141,6 +141,9 @@ public class WndPet extends Window {
 				public void onClick() {
 					hide();
 					pet.recall();
+					if (Dungeon.hero != null) {
+						Dungeon.hero.spendAndNext(1f);
+					}
 				}
 			};
 			btnRecall.setRect(0, pos, WIDTH, BTN_HEIGHT);
@@ -153,6 +156,9 @@ public class WndPet extends Window {
 				public void onClick() {
 					hide();
 					Pet.summon(Dungeon.hero);
+					if (Dungeon.hero != null) {
+						Dungeon.hero.spendAndNext(1f);
+					}
 				}
 			};
 			btnSummon.setRect(0, pos, WIDTH, BTN_HEIGHT);

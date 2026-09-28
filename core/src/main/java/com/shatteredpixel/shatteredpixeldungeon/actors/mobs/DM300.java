@@ -364,6 +364,11 @@ public class DM300 extends Mob {
 			BossHealthBar.assignBoss(this);
 			turnsSinceLastAbility = 0;
 			yell(Messages.get(this, "notice"));
+
+			String title = Messages.get(this, "cinematic_title");
+			String sub = Messages.get(this, "cinematic_sub");
+			GameScene.bossIntro(title, sub, 0xFFA500, pos);
+
 			for (Char ch : Actor.chars()){
 				if (ch instanceof DriedRose.GhostHero){
 					((DriedRose.GhostHero) ch).sayBoss();
@@ -572,6 +577,7 @@ public class DM300 extends Mob {
 
 		super.die( cause );
 
+		GameScene.bossFinisher(pos, 0xFFA500);
 		GameScene.bossSlain();
 		Dungeon.level.unseal();
 

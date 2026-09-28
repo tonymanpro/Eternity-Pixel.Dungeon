@@ -91,6 +91,19 @@ public class PetCollisionExemptionTest {
 				result.fail("Position swap failed: Hero=" + hero.pos + ", Pet=" + pet.pos, null);
 			}
 
+			// 4. Verify Pet and Bbat mutual collision exemption
+			com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Bbat bbat = new com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Bbat();
+			bbat.pos = 12 + 10 * Dungeon.level.width();
+			Actor.add(bbat);
+
+			boolean[] petPassableWithBbat = Dungeon.findPassable(pet, Dungeon.level.passable, vis, true);
+			boolean[] bbatPassableWithPet = Dungeon.findPassable(bbat, Dungeon.level.passable, vis, true);
+			if (petPassableWithBbat[bbat.pos] && bbatPassableWithPet[pet.pos]) {
+				result.pass("Pet and Bbat do NOT block pathfinding for each other");
+			} else {
+				result.fail("Pet and Bbat blocked each other in findPassable", null);
+			}
+
 		} catch (Exception e) {
 			result.fail("Exception during Pet collision exemption test", e);
 		}

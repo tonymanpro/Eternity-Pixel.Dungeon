@@ -132,6 +132,75 @@ public class SewerLevel extends RegularLevel {
 		Ghost.Quest.spawn( this, roomExit );
 		super.createMobs();
 	}
+
+	@Override
+	protected void createItems() {
+		super.createItems();
+
+		// Early exciting loot pacing for Demo & Streaming (Floors 1-3)
+		if (SPDSettings.isDemo() && Dungeon.depth >= 1 && Dungeon.depth <= 3) {
+			int lootCell = randomDropCell();
+			if (lootCell != -1) {
+				com.shatteredpixel.shatteredpixeldungeon.items.Item bonusLoot = null;
+				if (Dungeon.depth == 1) {
+					// Floor 1: Identified Wand or Ring to immediately define run synergy
+					bonusLoot = com.watabou.utils.Random.Int(2) == 0 ?
+							com.shatteredpixel.shatteredpixeldungeon.items.Generator.random(com.shatteredpixel.shatteredpixeldungeon.items.Generator.Category.WAND) :
+							com.shatteredpixel.shatteredpixeldungeon.items.Generator.random(com.shatteredpixel.shatteredpixeldungeon.items.Generator.Category.RING);
+				} else if (Dungeon.depth == 2) {
+					// Floor 2: Identified Artifact or Wand
+					bonusLoot = com.watabou.utils.Random.Int(2) == 0 ?
+							com.shatteredpixel.shatteredpixeldungeon.items.Generator.random(com.shatteredpixel.shatteredpixeldungeon.items.Generator.Category.ARTIFACT) :
+							com.shatteredpixel.shatteredpixeldungeon.items.Generator.random(com.shatteredpixel.shatteredpixeldungeon.items.Generator.Category.WAND);
+				} else if (Dungeon.depth == 3) {
+					// Floor 3: Upgraded Tier-2 Melee Weapon ready for Goo
+					bonusLoot = com.shatteredpixel.shatteredpixeldungeon.items.Generator.random(com.shatteredpixel.shatteredpixeldungeon.items.Generator.Category.WEP_T2);
+					if (bonusLoot != null) {
+						bonusLoot.upgrade();
+					}
+				}
+
+				if (bonusLoot != null) {
+					bonusLoot.identify();
+					drop(bonusLoot, lootCell).type = com.shatteredpixel.shatteredpixeldungeon.items.Heap.Type.CHEST;
+				}
+			}
+		}
+
+		// Guaranteed Pet Egg (Depth 1 in Demo mode, Depth 2 in regular game)
+		int eggDepth = SPDSettings.isDemo() ? 1 : 2;
+		if (Dungeon.depth == eggDepth) {
+			int cell = -1;
+			com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room entranceRoom = room(entrance);
+			if (SPDSettings.isDemo() && entranceRoom != null) {
+				cell = pointToCell(entranceRoom.random(1));
+			}
+			if (cell == -1 || cell == entrance) {
+				cell = randomDropCell();
+			}
+			if (cell != -1) {
+				com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet.PetType[] flashyPets = {
+						com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet.PetType.DRAGON,
+						com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet.PetType.WOLF,
+						com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet.PetType.FAIRY
+				};
+				com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet.PetType selectedType =
+						com.watabou.utils.Random.element(flashyPets);
+
+				com.shatteredpixel.shatteredpixeldungeon.items.pets.PetEgg egg =
+						new com.shatteredpixel.shatteredpixeldungeon.items.pets.PetEgg(selectedType);
+
+				// In Demo mode, incubate to 78/80 so warming it or moving a step hatches it almost instantly
+				if (SPDSettings.isDemo()) {
+					egg.advanceIncubation(78);
+				} else {
+					egg.advanceIncubation(30);
+				}
+
+				drop(egg, cell).type = com.shatteredpixel.shatteredpixeldungeon.items.Heap.Type.CHEST;
+			}
+		}
+	}
 	
 	@Override
 	public boolean activateTransition(Hero hero, LevelTransition transition) {

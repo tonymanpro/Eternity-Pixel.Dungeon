@@ -51,6 +51,37 @@ public class SPDSettings extends GameSettings {
 		return getInt( KEY_VERSION, 0 );
 	}
 
+	//Demo Mode detection
+	private static Boolean isDemoCached = null;
+
+	public static boolean isDemo() {
+		if (isDemoCached != null) return isDemoCached;
+		String demoProp = System.getProperty("eternity.demo");
+		if ("false".equalsIgnoreCase(demoProp)) {
+			return isDemoCached = false;
+		}
+		if ("true".equalsIgnoreCase(demoProp)) {
+			return isDemoCached = true;
+		}
+		String title = System.getProperty("Specification-Title");
+		if (title != null && title.toLowerCase(Locale.ROOT).contains("demo")) {
+			return isDemoCached = true;
+		}
+		Package pkg = SPDSettings.class.getPackage();
+		if (pkg != null) {
+			String specTitle = pkg.getSpecificationTitle();
+			if (specTitle != null && specTitle.toLowerCase(Locale.ROOT).contains("demo")) {
+				return isDemoCached = true;
+			}
+		}
+		// In 2.1.0 (Full Release), the default is false
+		return isDemoCached = false;
+	}
+
+	public static void setDemo( boolean demo ) {
+		isDemoCached = demo;
+	}
+
 	//Seedfinder
 
 	public static final String KEY_FLOORS	= "number_of_floors";
@@ -234,7 +265,7 @@ public class SPDSettings extends GameSettings {
 	}
 
 	public static boolean bloomEnabled() {
-		return getBoolean( KEY_BLOOM_ENABLED, false );
+		return getBoolean( KEY_BLOOM_ENABLED, true );
 	}
 
 	public static void vignetteEnabled( boolean value ) {
@@ -692,8 +723,8 @@ public static void playMusicInBackground( boolean value ){
 
 	public static Point windowResolution(){
 		return new Point(
-				getInt( KEY_WINDOW_WIDTH, 800, 720, Integer.MAX_VALUE ),
-				getInt( KEY_WINDOW_HEIGHT, 600, 400, Integer.MAX_VALUE )
+				getInt( KEY_WINDOW_WIDTH, 1920, 720, Integer.MAX_VALUE ),
+				getInt( KEY_WINDOW_HEIGHT, 1080, 400, Integer.MAX_VALUE )
 		);
 	}
 
@@ -795,6 +826,27 @@ public static void playMusicInBackground( boolean value ){
 
 	public static void supporterTier( int value ) {
 		put( KEY_SUPPORTER_TIER, value );
+	}
+
+	public static final String KEY_GOLDEN_UI = "golden_ui";
+
+	public static boolean goldenUI() {
+		return getBoolean( KEY_GOLDEN_UI, true );
+	}
+
+	public static void goldenUI( boolean value ) {
+		put( KEY_GOLDEN_UI, value );
+	}
+
+	public static final String KEY_MENU_BUTTON_STYLE = "menu_button_style";
+
+	// 0: Default, 1: Silver, 2: Gold, 3: Emerald
+	public static int menuButtonStyle() {
+		return getInt( KEY_MENU_BUTTON_STYLE, 2 );
+	}
+
+	public static void menuButtonStyle( int value ) {
+		put( KEY_MENU_BUTTON_STYLE, value );
 	}
 
 	// Unique Username & Multi-Device Account Key
