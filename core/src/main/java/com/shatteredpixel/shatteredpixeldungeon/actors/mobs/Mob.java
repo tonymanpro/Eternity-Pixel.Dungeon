@@ -556,7 +556,11 @@ public abstract class Mob extends Char {
 		if (Char.hasProp(this, Char.Property.LARGE) && !Dungeon.level.openSpace[cell]) {
 			return false;
 		}
-		if (Actor.findChar(cell) != null) {
+		Char occupant = Actor.findChar(cell);
+		if (occupant != null) {
+			if (alignment == Alignment.ALLY && occupant.alignment == Alignment.ALLY && occupant != Dungeon.hero && !occupant.rooted) {
+				return true;
+			}
 			return false;
 		}
 
@@ -687,6 +691,14 @@ public abstract class Mob extends Char {
 			}
 		}
 		if (step != -1) {
+			Char occupant = Actor.findChar(step);
+			if (occupant != null && occupant != this && alignment == Alignment.ALLY && occupant.alignment == Alignment.ALLY && occupant != Dungeon.hero && !occupant.rooted) {
+				int oldPos = pos;
+				occupant.pos = oldPos;
+				if (occupant.sprite != null) {
+					occupant.sprite.move(step, oldPos);
+				}
+			}
 			move(step);
 			return true;
 		} else {

@@ -2049,7 +2049,7 @@ if (buff(RoundShield.GuardTracker.class) != null){
 			// Smooth tactical position swap: when stepping into a tile occupied by a Pet or Ally,
 			// swap the Pet/Ally into the Hero's previous tile to avoid hallway blockages.
 			Char occupant = Actor.findChar(step);
-			if (occupant != null && occupant != this && (occupant instanceof com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet || occupant.alignment == Alignment.ALLY)) {
+			if (occupant != null && occupant != this && !occupant.rooted && (occupant instanceof com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet || occupant.alignment == Alignment.ALLY)) {
 				int oldHeroPos = pos;
 				occupant.pos = oldHeroPos;
 				if (occupant.sprite != null) {

@@ -57,6 +57,9 @@ public class SPDSettings extends GameSettings {
 	public static boolean isDemo() {
 		if (isDemoCached != null) return isDemoCached;
 		String demoProp = System.getProperty("eternity.demo");
+		if ("false".equalsIgnoreCase(demoProp)) {
+			return isDemoCached = false;
+		}
 		if ("true".equalsIgnoreCase(demoProp)) {
 			return isDemoCached = true;
 		}
@@ -71,7 +74,8 @@ public class SPDSettings extends GameSettings {
 				return isDemoCached = true;
 			}
 		}
-		return isDemoCached = false;
+		// On the SteamDemo branch, the project default is Demo
+		return isDemoCached = true;
 	}
 
 	public static void setDemo( boolean demo ) {
@@ -822,6 +826,27 @@ public static void playMusicInBackground( boolean value ){
 
 	public static void supporterTier( int value ) {
 		put( KEY_SUPPORTER_TIER, value );
+	}
+
+	public static final String KEY_GOLDEN_UI = "golden_ui";
+
+	public static boolean goldenUI() {
+		return getBoolean( KEY_GOLDEN_UI, true );
+	}
+
+	public static void goldenUI( boolean value ) {
+		put( KEY_GOLDEN_UI, value );
+	}
+
+	public static final String KEY_MENU_BUTTON_STYLE = "menu_button_style";
+
+	// 0: Default, 1: Silver, 2: Gold, 3: Emerald
+	public static int menuButtonStyle() {
+		return getInt( KEY_MENU_BUTTON_STYLE, 2 );
+	}
+
+	public static void menuButtonStyle( int value ) {
+		put( KEY_MENU_BUTTON_STYLE, value );
 	}
 
 	// Unique Username & Multi-Device Account Key

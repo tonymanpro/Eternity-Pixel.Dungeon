@@ -246,11 +246,29 @@ public class MenuPane extends Component {
 			return SPDAction.JOURNAL;
 		}
 
+		public static void applySupporterMenuButton( Image img ) {
+			int style = com.shatteredpixel.shatteredpixeldungeon.SPDSettings.menuButtonStyle();
+			switch (style) {
+				case 1: // Silver
+					img.hardlight( 0.82f, 0.82f, 0.88f );
+					break;
+				case 2: // Gold (default)
+					img.hardlight( 1.0f, 0.84f, 0.25f );
+					break;
+				case 3: // Emerald
+					img.hardlight( 0.15f, 0.95f, 0.45f );
+					break;
+				default:
+					break;
+			}
+		}
+
 		@Override
 		protected void createChildren() {
 			super.createChildren();
 
 			bg = new Image( Assets.Interfaces.MENU_BTN, 2, 2, 13, 11 );
+			applySupporterMenuButton( bg );
 			add( bg );
 
 			journalIcon = new Image( Assets.Interfaces.MENU_BTN, 31, 0, 11, 6);
@@ -379,6 +397,7 @@ public class MenuPane extends Component {
 			super.createChildren();
 
 			image = new Image( Assets.Interfaces.MENU_BTN, 17, 2, 12, 11 );
+			JournalButton.applySupporterMenuButton( image );
 			add( image );
 		}
 
@@ -399,6 +418,7 @@ public class MenuPane extends Component {
 		@Override
 		protected void onPointerUp() {
 			image.resetColor();
+			JournalButton.applySupporterMenuButton( image );
 		}
 
 		@Override

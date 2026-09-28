@@ -7,7 +7,7 @@ plugins {
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 java.sourceCompatibility = java.targetCompatibility = appJavaCompatibility
 
-ext.isDemo = project.hasProperty('demo') || (project.hasProperty('target') && project.property('target') == 'demo')
+ext.isDemo = !project.hasProperty('full')
 ext.desktopAppName = isDemo ? "${appName} Demo" : appName
 
 ext.appMainClass = "com.shatteredpixel.shatteredpixeldungeon.desktop.DesktopLauncher"

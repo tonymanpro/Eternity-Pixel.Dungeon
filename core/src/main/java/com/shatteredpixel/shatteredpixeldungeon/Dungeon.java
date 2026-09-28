@@ -1360,8 +1360,13 @@ public class Dungeon {
 					if (ch == Dungeon.hero && (c instanceof com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet || c.alignment == Char.Alignment.ALLY)) {
 						continue;
 					}
-					// Hero does NOT block pathfinding for Pets
-					if (ch instanceof com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet && c == Dungeon.hero) {
+					// Hero does NOT block pathfinding for Pets/Allies
+					if ((ch instanceof com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet || ch.alignment == Char.Alignment.ALLY) && c == Dungeon.hero) {
+						continue;
+					}
+					// Friendly Allies and Pets do NOT block pathfinding for each other
+					if ((ch instanceof com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet || ch.alignment == Char.Alignment.ALLY)
+							&& (c instanceof com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet || c.alignment == Char.Alignment.ALLY)) {
 						continue;
 					}
 					passable[c.pos] = false;

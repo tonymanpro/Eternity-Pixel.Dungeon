@@ -441,18 +441,12 @@ public enum HeroClass {
 
 	public boolean isUnlocked(){
 		if (this == BARBARIAN) {
-			if (SPDSettings.isDemo()) {
-				return false;
-			}
-			return true;
+			return com.shatteredpixel.shatteredpixeldungeon.services.platform.SupporterManager.isSupporter() || SPDSettings.isDemo();
 		}
 		return true;
 	}
 	
 	public String unlockMsg() {
-		if (this == BARBARIAN && SPDSettings.isDemo()) {
-			return shortDesc() + "\n\n" + Messages.get(HeroClass.class, "barbarian_demo_locked");
-		}
 		return shortDesc() + "\n\n" + Messages.get(HeroClass.class, name()+"_unlock");
 	}
 

@@ -569,6 +569,9 @@ public class WndSettings extends WndTabbed {
 		CheckBox chkVibrate;
 		CheckBox chkExtraQuickslotRow;
 		CheckBox chkPetPanel;
+		ColorBlock sep3;
+		CheckBox chkGoldenUI;
+		RedButton btnMenuButton;
 
 		public static boolean isAndroid() {
 			try {
@@ -842,6 +845,45 @@ public class WndSettings extends WndTabbed {
 				chkVibrate.checked(SPDSettings.vibration());
 			}
 			add(chkVibrate);
+
+			sep3 = new ColorBlock(1, 1, 0xFF000000);
+			add(sep3);
+
+			chkGoldenUI = new CheckBox(Messages.get(this, "golden_ui")) {
+				@Override
+				public void onClick() {
+					super.onClick();
+					SPDSettings.goldenUI(checked());
+					ShatteredPixelDungeon.seamlessResetScene();
+				}
+			};
+			chkGoldenUI.checked(SPDSettings.goldenUI());
+			add(chkGoldenUI);
+
+			String[] styleNames = {
+				Messages.get(WndSupporterUnlock.class, "menu_style_default"),
+				Messages.get(WndSupporterUnlock.class, "menu_style_silver"),
+				Messages.get(WndSupporterUnlock.class, "menu_style_gold"),
+				Messages.get(WndSupporterUnlock.class, "menu_style_emerald")
+			};
+			btnMenuButton = new RedButton(Messages.get(this, "menu_style", styleNames[SPDSettings.menuButtonStyle() % 4])) {
+				@Override
+				public void onClick() {
+					int next = (SPDSettings.menuButtonStyle() + 1) % 4;
+					SPDSettings.menuButtonStyle(next);
+					text(Messages.get(WndSettings.UITab.this, "menu_style", styleNames[next]));
+					if (next == 1) textColor(0xC0C0C0);
+					else if (next == 2) textColor(0xFFD700);
+					else if (next == 3) textColor(0x00FF88);
+					else textColor(0xFFFFFF);
+					ShatteredPixelDungeon.seamlessResetScene();
+				}
+			};
+			int curStyle = SPDSettings.menuButtonStyle();
+			if (curStyle == 1) btnMenuButton.textColor(0xC0C0C0);
+			else if (curStyle == 2) btnMenuButton.textColor(0xFFD700);
+			else if (curStyle == 3) btnMenuButton.textColor(0x00FF88);
+			add(btnMenuButton);
 		}
 
 		@Override
@@ -891,6 +933,19 @@ public class WndSettings extends WndTabbed {
 				chkFont.setRect(0, sep2.y + 1 + GAP, width, BTN_HEIGHT);
 				chkVibrate.setRect(0, chkFont.bottom() + GAP, width, BTN_HEIGHT);
 				height = chkVibrate.bottom();
+			}
+
+			sep3.size(width, 1);
+			sep3.y = height + GAP;
+
+			if (width > 200) {
+				chkGoldenUI.setRect(0, sep3.y + 1 + GAP, width/2-1, BTN_HEIGHT);
+				btnMenuButton.setRect(chkGoldenUI.right()+2, chkGoldenUI.top(), width/2-1, BTN_HEIGHT);
+				height = chkGoldenUI.bottom();
+			} else {
+				chkGoldenUI.setRect(0, sep3.y + 1 + GAP, width, BTN_HEIGHT);
+				btnMenuButton.setRect(0, chkGoldenUI.bottom() + GAP, width, BTN_HEIGHT);
+				height = btnMenuButton.bottom();
 			}
 		}
 

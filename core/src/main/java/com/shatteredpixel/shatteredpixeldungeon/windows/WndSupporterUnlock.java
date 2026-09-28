@@ -24,6 +24,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.windows;
 
+import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -50,11 +51,17 @@ public class WndSupporterUnlock extends Window {
 		add(title);
 
 		boolean isSupporter = SupporterManager.isSupporter();
+		boolean isDemo = SPDSettings.isDemo();
 		SupporterManager.SupporterTier tier = SupporterManager.getActiveTier();
 
-		String statusText = isSupporter
-				? Messages.get(this, "status_active", tier.displayName())
-				: Messages.get(this, "status_locked");
+		String statusText;
+		if (isSupporter) {
+			statusText = Messages.get(this, "status_active", tier.displayName());
+		} else if (isDemo) {
+			statusText = Messages.get(this, "status_demo");
+		} else {
+			statusText = Messages.get(this, "status_locked");
+		}
 
 		String introText = Messages.get(this, "intro");
 
@@ -65,7 +72,70 @@ public class WndSupporterUnlock extends Window {
 
 		float pos = text.bottom() + GAP * 2;
 
-		if (!isSupporter) {
+		// Supporter Cosmetic Customizations (Golden UI & Menu Buttons)
+		RedButton btnGoldenUI = new RedButton(Messages.get(this, SPDSettings.goldenUI() ? "btn_golden_ui_on" : "btn_golden_ui_off")) {
+			@Override
+			public void onClick() {
+				SPDSettings.goldenUI(!SPDSettings.goldenUI());
+				hide();
+				ShatteredPixelDungeon.scene().addToFront(new WndSupporterUnlock());
+			}
+		};
+		btnGoldenUI.textColor(0xFFD700);
+		btnGoldenUI.setRect(0, pos, width, 18);
+		add(btnGoldenUI);
+		pos = btnGoldenUI.bottom() + GAP;
+
+		String[] styleNames = {
+			Messages.get(this, "menu_style_default"),
+			Messages.get(this, "menu_style_silver"),
+			Messages.get(this, "menu_style_gold"),
+			Messages.get(this, "menu_style_emerald")
+		};
+		int curStyle = SPDSettings.menuButtonStyle();
+		RedButton btnMenuStyle = new RedButton(Messages.get(this, "btn_menu_style", styleNames[curStyle % styleNames.length])) {
+			@Override
+			public void onClick() {
+				int next = (SPDSettings.menuButtonStyle() + 1) % 4;
+				SPDSettings.menuButtonStyle(next);
+				hide();
+				ShatteredPixelDungeon.scene().addToFront(new WndSupporterUnlock());
+			}
+		};
+		if (curStyle == 1) btnMenuStyle.textColor(0xC0C0C0);
+		else if (curStyle == 2) btnMenuStyle.textColor(0xFFD700);
+		else if (curStyle == 3) btnMenuStyle.textColor(0x00FF88);
+		btnMenuStyle.setRect(0, pos, width, 18);
+		add(btnMenuStyle);
+		pos = btnMenuStyle.bottom() + GAP;
+
+		if (isDemo) {
+			RedButton btnWishlist = new RedButton(Messages.get(this, "btn_wishlist")) {
+				@Override
+				public void onClick() {
+					ShatteredPixelDungeon.platform.openURI(com.shatteredpixel.shatteredpixeldungeon.windows.WndDemoVictory.STEAM_STORE_URL);
+				}
+			};
+			btnWishlist.textColor(0xFFD700);
+			btnWishlist.setRect(0, pos, width, 18);
+			add(btnWishlist);
+			pos = btnWishlist.bottom() + GAP;
+		} else if (isSupporter) {
+			RedButton btnDeactivate = new RedButton(Messages.get(this, "btn_deactivate")) {
+				@Override
+				public void onClick() {
+					SupporterManager.deactivate();
+					hide();
+					ShatteredPixelDungeon.scene().addToFront(new WndSupporterUnlock());
+					if (ShatteredPixelDungeon.scene() instanceof com.shatteredpixel.shatteredpixeldungeon.scenes.HeroSelectScene) {
+						ShatteredPixelDungeon.switchNoFade(com.shatteredpixel.shatteredpixeldungeon.scenes.HeroSelectScene.class);
+					}
+				}
+			};
+			btnDeactivate.setRect(0, pos, width, 16);
+			add(btnDeactivate);
+			pos = btnDeactivate.bottom() + GAP;
+		} else {
 			// Tier Donation Buttons for Google Play / Platform IAP
 			for (final SupporterManager.SupporterTier t : SupporterManager.SupporterTier.values()) {
 				if (t == SupporterManager.SupporterTier.NONE) continue;
@@ -143,21 +213,6 @@ public class WndSupporterUnlock extends Window {
 			btnWeb.setRect(0, pos, width, 18);
 			add(btnWeb);
 			pos = btnWeb.bottom() + GAP;
-		} else {
-			RedButton btnDeactivate = new RedButton(Messages.get(this, "btn_deactivate")) {
-				@Override
-				public void onClick() {
-					SupporterManager.deactivate();
-					hide();
-					ShatteredPixelDungeon.scene().addToFront(new WndSupporterUnlock());
-					if (ShatteredPixelDungeon.scene() instanceof com.shatteredpixel.shatteredpixeldungeon.scenes.HeroSelectScene) {
-						ShatteredPixelDungeon.switchNoFade(com.shatteredpixel.shatteredpixeldungeon.scenes.HeroSelectScene.class);
-					}
-				}
-			};
-			btnDeactivate.setRect(0, pos, width, 16);
-			add(btnDeactivate);
-			pos = btnDeactivate.bottom() + GAP;
 		}
 
 		resize(width, (int) pos);

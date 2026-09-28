@@ -544,10 +544,16 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 		}
 	}
 
+	protected int auraColor = -1;
+
 	public void aura( int color ){
+		if (aura != null && auraColor == color && aura.parent != null){
+			return;
+		}
 		if (aura != null){
 			aura.killAndErase();
 		}
+		auraColor = color;
 		float size = Math.max(width(), height());
 		size = Math.max(size+4, 16);
 		aura = new Flare(5, size);
@@ -564,6 +570,7 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 		if (aura != null){
 			aura.killAndErase();
 			aura = null;
+			auraColor = -1;
 		}
 	}
 

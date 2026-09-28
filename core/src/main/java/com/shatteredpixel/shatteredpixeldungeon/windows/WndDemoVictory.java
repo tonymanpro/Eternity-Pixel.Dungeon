@@ -24,7 +24,7 @@ public class WndDemoVictory extends Window {
 
 	public static final String STEAM_STORE_URL = System.getProperty(
 			"eternity.steam_url",
-			"https://store.steampowered.com/app/3241440/Eternity_Pixel_Dungeon/"
+			"https://store.steampowered.com/app/5314430/Eternity_Pixel_Dungeon/"
 	);
 
 	private Group groupStats;

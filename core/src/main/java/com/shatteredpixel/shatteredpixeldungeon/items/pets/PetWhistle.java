@@ -82,27 +82,23 @@ public class PetWhistle extends Item {
 			if (activePet != null) {
 				Sample.INSTANCE.play(Assets.Sounds.CHALLENGE);
 				activePet.recall();
-				hero.spend(1f);
-				hero.busy();
+				hero.spendAndNext(1f);
 			}
 		} else if (action.equals(AC_SUMMON)) {
 			if (hero.storedPet != null) {
 				Sample.INSTANCE.play(Assets.Sounds.CHALLENGE);
 				Pet.summon(hero);
-				hero.spend(1f);
-				hero.busy();
+				hero.spendAndNext(1f);
 			}
 		} else if (action.equals(AC_USE)) {
 			if (activePet != null) {
 				Sample.INSTANCE.play(Assets.Sounds.CHALLENGE);
 				activePet.recall();
-				hero.spend(1f);
-				hero.busy();
+				hero.spendAndNext(1f);
 			} else if (hero.storedPet != null) {
 				Sample.INSTANCE.play(Assets.Sounds.CHALLENGE);
 				Pet.summon(hero);
-				hero.spend(1f);
-				hero.busy();
+				hero.spendAndNext(1f);
 			} else {
 				GLog.w(Messages.get(PetWhistle.class, "no_pet"));
 			}

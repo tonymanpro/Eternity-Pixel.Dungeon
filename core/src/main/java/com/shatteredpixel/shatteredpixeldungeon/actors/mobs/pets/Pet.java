@@ -127,23 +127,25 @@ public abstract class Pet extends DirectableAlly {
 	}
 
 	public void playVoice() {
-		switch (petType) {
-			case DRAGON:
-				Sample.INSTANCE.play(Assets.Sounds.PET_DRAGON);
-				break;
-			case WOLF:
-				Sample.INSTANCE.play(Assets.Sounds.PET_WOLF);
-				break;
-			case SPIDER:
-				Sample.INSTANCE.play(Assets.Sounds.PET_SPIDER);
-				break;
-			case FAIRY:
-				Sample.INSTANCE.play(Assets.Sounds.PET_SNAKE);
-				break;
-			case MANTICORE:
-				Sample.INSTANCE.play(Assets.Sounds.PET_MANTICORE);
-				break;
-		}
+		try {
+			switch (petType) {
+				case DRAGON:
+					Sample.INSTANCE.play(Assets.Sounds.PET_DRAGON);
+					break;
+				case WOLF:
+					Sample.INSTANCE.play(Assets.Sounds.PET_WOLF);
+					break;
+				case SPIDER:
+					Sample.INSTANCE.play(Assets.Sounds.PET_SPIDER);
+					break;
+				case FAIRY:
+					Sample.INSTANCE.play(Assets.Sounds.PET_SNAKE);
+					break;
+				case MANTICORE:
+					Sample.INSTANCE.play(Assets.Sounds.PET_MANTICORE);
+					break;
+			}
+		} catch (Exception ignored) {}
 	}
 
 	public boolean feed(Item item) {
@@ -196,10 +198,39 @@ public abstract class Pet extends DirectableAlly {
 	}
 
 	public static int getEmptyCellNear(int centerPos) {
+		return getEmptyCellNear(centerPos, centerPos);
+	}
+
+	public static int getEmptyCellNear(int centerPos, int fromPos) {
+		int bestCell = -1;
+		int bestDist = Integer.MAX_VALUE;
 		for (int n : PathFinder.NEIGHBOURS8) {
 			int cell = centerPos + n;
 			if (Dungeon.level != null && Dungeon.level.insideMap(cell) && Dungeon.level.passable[cell] && Actor.findChar(cell) == null) {
-				return cell;
+				int d = Dungeon.level.distance(cell, fromPos);
+				if (d < bestDist) {
+					bestDist = d;
+					bestCell = cell;
+				}
+			}
+		}
+		if (bestCell != -1) {
+			return bestCell;
+		}
+
+		if (Dungeon.level != null) {
+			for (int r = 2; r <= 3; r++) {
+				for (int dx = -r; dx <= r; dx++) {
+					for (int dy = -r; dy <= r; dy++) {
+						if (Math.abs(dx) < r && Math.abs(dy) < r) continue;
+						int cx = (centerPos % Dungeon.level.width()) + dx;
+						int cy = (centerPos / Dungeon.level.width()) + dy;
+						int cell = cx + cy * Dungeon.level.width();
+						if (Dungeon.level.insideMap(cell) && Dungeon.level.passable[cell] && Actor.findChar(cell) == null) {
+							return cell;
+						}
+					}
+				}
 			}
 		}
 		return centerPos;
@@ -210,7 +241,7 @@ public abstract class Pet extends DirectableAlly {
 		// Teletransporte si se aleja demasiado del héroe en modo FOLLOW
 		if (currentOrder == PetOrder.FOLLOW && Dungeon.hero != null && Dungeon.hero.isAlive()) {
 			if (Dungeon.level.distance(pos, Dungeon.hero.pos) > 6) {
-				int nearCell = getEmptyCellNear(Dungeon.hero.pos);
+				int nearCell = getEmptyCellNear(Dungeon.hero.pos, pos);
 				if (nearCell != Dungeon.hero.pos && Actor.findChar(nearCell) == null) {
 					CellEmitter.get(pos).burst(Speck.factory(Speck.LIGHT), 4);
 					move(nearCell);
@@ -296,6 +327,7 @@ public abstract class Pet extends DirectableAlly {
 		Dungeon.hero.pet = null;
 
 		if (sprite != null) {
+			sprite.clearAura();
 			CellEmitter.get(pos).burst(Speck.factory(Speck.LIGHT), 8);
 			sprite.killAndErase();
 		}
@@ -303,7 +335,9 @@ public abstract class Pet extends DirectableAlly {
 			Dungeon.level.mobs.remove(this);
 		}
 		Actor.remove(this);
-		Sample.INSTANCE.play(Assets.Sounds.TELEPORT);
+		try {
+			Sample.INSTANCE.play(Assets.Sounds.TELEPORT);
+		} catch (Exception ignored) {}
 		GLog.i(Messages.get(Pet.class, "recalled", name()));
 	}
 
@@ -327,22 +361,32 @@ public abstract class Pet extends DirectableAlly {
 		if (hero == null || hero.storedPet == null) return null;
 		Bundle bundle = hero.storedPet;
 		Pet pet = createFromBundle(bundle);
+		if (pet == null) return null;
 		pet.clearTime();
 
 		int spawnCell = getEmptyCellNear(hero.pos);
 		if (Actor.findChar(spawnCell) != null) {
-			spawnCell = hero.pos;
+			for (int n : PathFinder.NEIGHBOURS8) {
+				int cell = hero.pos + n;
+				if (Dungeon.level != null && Dungeon.level.insideMap(cell) && Dungeon.level.passable[cell] && Actor.findChar(cell) == null) {
+					spawnCell = cell;
+					break;
+				}
+			}
 		}
 		pet.pos = spawnCell;
 		hero.pet = pet;
 		hero.storedPet = null;
 
 		if (Dungeon.level != null) {
-			GameScene.add(pet);
+			GameScene.add(pet, 1f);
+			Dungeon.level.occupyCell(pet);
 			CellEmitter.get(spawnCell).burst(Speck.factory(Speck.STAR), 8);
 		}
-		pet.playVoice();
-		Sample.INSTANCE.play(Assets.Sounds.TELEPORT);
+		try {
+			pet.playVoice();
+			Sample.INSTANCE.play(Assets.Sounds.TELEPORT);
+		} catch (Exception ignored) {}
 		GLog.p(Messages.get(Pet.class, "summoned", pet.name()));
 		pet.setOrder(pet.currentOrder != null ? pet.currentOrder : PetOrder.FOLLOW);
 		return pet;
@@ -384,17 +428,31 @@ public abstract class Pet extends DirectableAlly {
 	public void restoreFromBundle(Bundle bundle) {
 		super.restoreFromBundle(bundle);
 		if (bundle.contains(TYPE)) {
-			petType = PetType.valueOf(bundle.getString(TYPE));
+			try {
+				petType = PetType.valueOf(bundle.getString(TYPE));
+			} catch (Exception ignored) {}
 		}
 		if (bundle.contains(CUSTOM_NAME)) {
 			customName = bundle.getString(CUSTOM_NAME);
 		}
-		petLevel = bundle.getInt(LEVEL);
-		exp = bundle.getInt(EXP);
-		maxExp = bundle.getInt(MAX_EXP);
-		hunger = bundle.getInt(HUNGER);
+		if (bundle.contains(LEVEL)) {
+			petLevel = Math.max(1, bundle.getInt(LEVEL));
+		}
+		if (bundle.contains(EXP)) {
+			exp = bundle.getInt(EXP);
+		}
+		if (bundle.contains(MAX_EXP)) {
+			maxExp = Math.max(1, bundle.getInt(MAX_EXP));
+		} else {
+			maxExp = 25 + (petLevel * 15);
+		}
+		if (bundle.contains(HUNGER)) {
+			hunger = bundle.getInt(HUNGER);
+		}
 		if (bundle.contains(ORDER)) {
-			currentOrder = PetOrder.valueOf(bundle.getString(ORDER));
+			try {
+				currentOrder = PetOrder.valueOf(bundle.getString(ORDER));
+			} catch (Exception ignored) {}
 		}
 		updateStats();
 	}
