@@ -28,6 +28,7 @@ import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 
 import com.watabou.utils.Callback;
+import com.watabou.utils.DeviceCompat;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -79,11 +80,30 @@ public class SupporterManager {
 	}
 
 	/**
+	 * Returns true if the game is running as an authenticated Steam release.
+	 */
+	public static boolean isSteam() {
+		PlatformServices platform = PlatformManager.get();
+		return platform != null && platform.isAvailable() && "STEAMWORKS".equalsIgnoreCase(platform.getPlatformId());
+	}
+
+	/**
+	 * Returns true if running on Android / Google Play build.
+	 */
+	public static boolean isGooglePlay() {
+		PlatformServices platform = PlatformManager.get();
+		if (platform != null && "GOOGLE_PLAY".equalsIgnoreCase(platform.getPlatformId())) {
+			return true;
+		}
+		return DeviceCompat.isAndroid();
+	}
+
+	/**
 	 * Checks if the player has Supporter / Premium access via any verified channel:
 	 * 1. Steam (running with Steamworks backend)
-	 * 2. In-App Purchase / Google Play Premium
+	 * 2. Google Play In-App Purchase (Full Unlock Product ID '01')
 	 * 3. Verified Device-Bound Token
-	 * 4. Verified Algorithmic License Key
+	 * 4. Verified Algorithmic License Key (with or without username)
 	 */
 	public static boolean isSupporter() {
 		return getActiveTier() != SupporterTier.NONE;
@@ -94,12 +114,12 @@ public class SupporterManager {
 	 */
 	public static SupporterTier getActiveTier() {
 		// 1. Steam check: Running on Steam gives automatic Gold supporter entitlement
-		PlatformServices platform = PlatformManager.get();
-		if (platform != null && platform.isAvailable() && "STEAMWORKS".equalsIgnoreCase(platform.getPlatformId())) {
+		if (isSteam()) {
 			return SupporterTier.GOLD;
 		}
 
-		// 2. Platform native supporter check (e.g., Google Play In-App Purchase)
+		// 2. Platform native supporter check (e.g. Google Play In-App Purchase "01" / "full_unlock")
+		PlatformServices platform = PlatformManager.get();
 		if (platform != null && platform.getSupporterTier() > 0) {
 			return SupporterTier.fromRank(platform.getSupporterTier());
 		}
@@ -110,9 +130,14 @@ public class SupporterManager {
 			return getTierFromToken(token);
 		}
 
-		// 4. Local validated Patreon / Direct Supporter License Key
+		// 4. Local validated Supporter / Direct License Key + Username
 		String key = SPDSettings.supporterKey();
-		if (isKeyValid(key)) {
+		String user = SPDSettings.supporterUsername();
+		if (user != null && !user.isEmpty()) {
+			if (isLicenseValid(user, key)) {
+				return getTierFromKey(key);
+			}
+		} else if (isKeyValid(key)) {
 			return getTierFromKey(key);
 		}
 
@@ -303,24 +328,73 @@ public class SupporterManager {
 	}
 
 	/**
-	 * Attempts to activate a license key, creates a device-bound token and stores it in settings.
+	 * Validates a license key bound to a specific username or email.
 	 */
-	public static boolean activateKey(String key) {
+	public static boolean isLicenseValid(String username, String key) {
 		if (key == null) return false;
 		String cleanKey = key.trim().toUpperCase(Locale.ROOT);
-		if (isKeyValid(cleanKey)) {
+		if (cleanKey.isEmpty()) return false;
+
+		if (username == null || username.trim().isEmpty()) {
+			return isKeyValid(cleanKey);
+		}
+
+		String cleanUser = username.trim();
+		String[] prefixes = {"EPD", "EPD-GOLD", "EPD-PLAT", "EPD-SILV", "EPD-BRON", "EPD-FULL"};
+		for (String prefix : prefixes) {
+			if (cleanKey.equalsIgnoreCase(generateKey(cleanUser.toLowerCase(Locale.ROOT), prefix))) {
+				return true;
+			}
+			if (cleanKey.equalsIgnoreCase(generateKey(cleanUser.toUpperCase(Locale.ROOT), prefix))) {
+				return true;
+			}
+			if (cleanKey.equalsIgnoreCase(generateKey(cleanUser, prefix))) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Attempts to activate a license with username and key.
+	 */
+	public static boolean activateLicense(String username, String key) {
+		if (key == null) return false;
+		String cleanKey = key.trim().toUpperCase(Locale.ROOT);
+		String cleanUser = username != null ? username.trim() : "";
+
+		if (!cleanUser.isEmpty()) {
+			if (isLicenseValid(cleanUser, cleanKey)) {
+				SPDSettings.supporterUsername(cleanUser);
+				SPDSettings.supporterKey(cleanKey);
+				String deviceToken = generateDeviceToken(cleanKey, getDeviceId());
+				SPDSettings.supporterToken(deviceToken);
+				return true;
+			}
+		} else if (isKeyValid(cleanKey)) {
+			SPDSettings.supporterUsername("");
 			SPDSettings.supporterKey(cleanKey);
 			String deviceToken = generateDeviceToken(cleanKey, getDeviceId());
 			SPDSettings.supporterToken(deviceToken);
 			return true;
 		}
+
 		return false;
+	}
+
+	/**
+	 * Attempts to activate a license key, creates a device-bound token and stores it in settings.
+	 */
+	public static boolean activateKey(String key) {
+		return activateLicense(null, key);
 	}
 
 	/**
 	 * Deactivates the currently stored supporter key and device token.
 	 */
 	public static void deactivate() {
+		SPDSettings.supporterUsername("");
 		SPDSettings.supporterKey("");
 		SPDSettings.supporterToken("");
 	}

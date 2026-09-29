@@ -56,7 +56,18 @@ public class WndSupporterUnlock extends Window {
 
 		String statusText;
 		if (isSupporter) {
-			statusText = Messages.get(this, "status_active", tier.displayName());
+			if (SupporterManager.isSteam()) {
+				statusText = Messages.get(this, "status_steam");
+			} else if (SupporterManager.isGooglePlay()) {
+				statusText = Messages.get(this, "status_android");
+			} else {
+				String user = SPDSettings.supporterUsername();
+				if (!user.isEmpty()) {
+					statusText = Messages.get(this, "status_active_user", user, tier.displayName());
+				} else {
+					statusText = Messages.get(this, "status_active", tier.displayName());
+				}
+			}
 		} else if (isDemo) {
 			statusText = Messages.get(this, "status_demo");
 		} else {
@@ -72,42 +83,44 @@ public class WndSupporterUnlock extends Window {
 
 		float pos = text.bottom() + GAP * 2;
 
-		// Supporter Cosmetic Customizations (Golden UI & Menu Buttons)
-		RedButton btnGoldenUI = new RedButton(Messages.get(this, SPDSettings.goldenUI() ? "btn_golden_ui_on" : "btn_golden_ui_off")) {
-			@Override
-			public void onClick() {
-				SPDSettings.goldenUI(!SPDSettings.goldenUI());
-				hide();
-				ShatteredPixelDungeon.scene().addToFront(new WndSupporterUnlock());
-			}
-		};
-		btnGoldenUI.textColor(0xFFD700);
-		btnGoldenUI.setRect(0, pos, width, 18);
-		add(btnGoldenUI);
-		pos = btnGoldenUI.bottom() + GAP;
+		if (isSupporter || isDemo) {
+			// Supporter Cosmetic Customizations (Golden UI & Menu Buttons)
+			RedButton btnGoldenUI = new RedButton(Messages.get(this, SPDSettings.goldenUI() ? "btn_golden_ui_on" : "btn_golden_ui_off")) {
+				@Override
+				public void onClick() {
+					SPDSettings.goldenUI(!SPDSettings.goldenUI());
+					hide();
+					ShatteredPixelDungeon.scene().addToFront(new WndSupporterUnlock());
+				}
+			};
+			btnGoldenUI.textColor(0xFFD700);
+			btnGoldenUI.setRect(0, pos, width, 18);
+			add(btnGoldenUI);
+			pos = btnGoldenUI.bottom() + GAP;
 
-		String[] styleNames = {
-			Messages.get(this, "menu_style_default"),
-			Messages.get(this, "menu_style_silver"),
-			Messages.get(this, "menu_style_gold"),
-			Messages.get(this, "menu_style_emerald")
-		};
-		int curStyle = SPDSettings.menuButtonStyle();
-		RedButton btnMenuStyle = new RedButton(Messages.get(this, "btn_menu_style", styleNames[curStyle % styleNames.length])) {
-			@Override
-			public void onClick() {
-				int next = (SPDSettings.menuButtonStyle() + 1) % 4;
-				SPDSettings.menuButtonStyle(next);
-				hide();
-				ShatteredPixelDungeon.scene().addToFront(new WndSupporterUnlock());
-			}
-		};
-		if (curStyle == 1) btnMenuStyle.textColor(0xC0C0C0);
-		else if (curStyle == 2) btnMenuStyle.textColor(0xFFD700);
-		else if (curStyle == 3) btnMenuStyle.textColor(0x00FF88);
-		btnMenuStyle.setRect(0, pos, width, 18);
-		add(btnMenuStyle);
-		pos = btnMenuStyle.bottom() + GAP;
+			String[] styleNames = {
+				Messages.get(this, "menu_style_default"),
+				Messages.get(this, "menu_style_silver"),
+				Messages.get(this, "menu_style_gold"),
+				Messages.get(this, "menu_style_emerald")
+			};
+			int curStyle = SPDSettings.menuButtonStyle();
+			RedButton btnMenuStyle = new RedButton(Messages.get(this, "btn_menu_style", styleNames[curStyle % styleNames.length])) {
+				@Override
+				public void onClick() {
+					int next = (SPDSettings.menuButtonStyle() + 1) % 4;
+					SPDSettings.menuButtonStyle(next);
+					hide();
+					ShatteredPixelDungeon.scene().addToFront(new WndSupporterUnlock());
+				}
+			};
+			if (curStyle == 1) btnMenuStyle.textColor(0xC0C0C0);
+			else if (curStyle == 2) btnMenuStyle.textColor(0xFFD700);
+			else if (curStyle == 3) btnMenuStyle.textColor(0x00FF88);
+			btnMenuStyle.setRect(0, pos, width, 18);
+			add(btnMenuStyle);
+			pos = btnMenuStyle.bottom() + GAP;
+		}
 
 		if (isDemo) {
 			RedButton btnWishlist = new RedButton(Messages.get(this, "btn_wishlist")) {
@@ -121,28 +134,29 @@ public class WndSupporterUnlock extends Window {
 			add(btnWishlist);
 			pos = btnWishlist.bottom() + GAP;
 		} else if (isSupporter) {
-			RedButton btnDeactivate = new RedButton(Messages.get(this, "btn_deactivate")) {
-				@Override
-				public void onClick() {
-					SupporterManager.deactivate();
-					hide();
-					ShatteredPixelDungeon.scene().addToFront(new WndSupporterUnlock());
-					if (ShatteredPixelDungeon.scene() instanceof com.shatteredpixel.shatteredpixeldungeon.scenes.HeroSelectScene) {
-						ShatteredPixelDungeon.switchNoFade(com.shatteredpixel.shatteredpixeldungeon.scenes.HeroSelectScene.class);
-					}
-				}
-			};
-			btnDeactivate.setRect(0, pos, width, 16);
-			add(btnDeactivate);
-			pos = btnDeactivate.bottom() + GAP;
-		} else {
-			// Tier Donation Buttons for Google Play / Platform IAP
-			for (final SupporterManager.SupporterTier t : SupporterManager.SupporterTier.values()) {
-				if (t == SupporterManager.SupporterTier.NONE) continue;
-				RedButton btnTier = new RedButton(t.displayName()) {
+			if (!SupporterManager.isSteam() && (!SupporterManager.isGooglePlay() || !SPDSettings.supporterKey().isEmpty())) {
+				RedButton btnDeactivate = new RedButton(Messages.get(this, "btn_deactivate")) {
 					@Override
 					public void onClick() {
-						SupporterManager.purchase(t, () -> {
+						SupporterManager.deactivate();
+						hide();
+						ShatteredPixelDungeon.scene().addToFront(new WndSupporterUnlock());
+						if (ShatteredPixelDungeon.scene() instanceof com.shatteredpixel.shatteredpixeldungeon.scenes.HeroSelectScene) {
+							ShatteredPixelDungeon.switchNoFade(com.shatteredpixel.shatteredpixeldungeon.scenes.HeroSelectScene.class);
+						}
+					}
+				};
+				btnDeactivate.setRect(0, pos, width, 16);
+				add(btnDeactivate);
+				pos = btnDeactivate.bottom() + GAP;
+			}
+		} else {
+			if (SupporterManager.isGooglePlay()) {
+				// Google Play In-App Unlock Button for Product ID '01' / full_unlock ($5.99)
+				RedButton btnUnlockGP = new RedButton(Messages.get(this, "btn_unlock_google_play")) {
+					@Override
+					public void onClick() {
+						SupporterManager.purchase(SupporterManager.SupporterTier.GOLD, () -> {
 							hide();
 							ShatteredPixelDungeon.scene().addToFront(new WndSupporterUnlock());
 							if (ShatteredPixelDungeon.scene() instanceof com.shatteredpixel.shatteredpixeldungeon.scenes.HeroSelectScene) {
@@ -151,42 +165,127 @@ public class WndSupporterUnlock extends Window {
 						});
 					}
 				};
-				btnTier.textColor(t.color);
-				btnTier.setRect(0, pos, width, 18);
-				add(btnTier);
-				pos = btnTier.bottom() + GAP;
-			}
+				btnUnlockGP.textColor(0xFFD700);
+				btnUnlockGP.setRect(0, pos, width, 20);
+				add(btnUnlockGP);
+				pos = btnUnlockGP.bottom() + GAP;
 
-			RedButton btnRestore = new RedButton(Messages.get(this, "btn_restore")) {
-				@Override
-				public void onClick() {
-					SupporterManager.restore(() -> {
-						hide();
-						ShatteredPixelDungeon.scene().addToFront(new WndSupporterUnlock());
-					});
+				RedButton btnRestore = new RedButton(Messages.get(this, "btn_restore")) {
+					@Override
+					public void onClick() {
+						SupporterManager.restore(() -> {
+							hide();
+							ShatteredPixelDungeon.scene().addToFront(new WndSupporterUnlock());
+							if (ShatteredPixelDungeon.scene() instanceof com.shatteredpixel.shatteredpixeldungeon.scenes.HeroSelectScene) {
+								ShatteredPixelDungeon.switchNoFade(com.shatteredpixel.shatteredpixeldungeon.scenes.HeroSelectScene.class);
+							}
+						});
+					}
+				};
+				btnRestore.setRect(0, pos, width, 18);
+				add(btnRestore);
+				pos = btnRestore.bottom() + GAP;
+
+				RedButton btnEnterKey = new RedButton(Messages.get(this, "btn_enter_key")) {
+					@Override
+					public void onClick() {
+						openKeyDialog();
+					}
+				};
+				btnEnterKey.setRect(0, pos, width, 18);
+				add(btnEnterKey);
+				pos = btnEnterKey.bottom() + GAP;
+			} else {
+				// Tier Donation Buttons for Standalone / Other Platforms
+				for (final SupporterManager.SupporterTier t : SupporterManager.SupporterTier.values()) {
+					if (t == SupporterManager.SupporterTier.NONE) continue;
+					RedButton btnTier = new RedButton(t.displayName()) {
+						@Override
+						public void onClick() {
+							SupporterManager.purchase(t, () -> {
+								hide();
+								ShatteredPixelDungeon.scene().addToFront(new WndSupporterUnlock());
+								if (ShatteredPixelDungeon.scene() instanceof com.shatteredpixel.shatteredpixeldungeon.scenes.HeroSelectScene) {
+									ShatteredPixelDungeon.switchNoFade(com.shatteredpixel.shatteredpixeldungeon.scenes.HeroSelectScene.class);
+								}
+							});
+						}
+					};
+					btnTier.textColor(t.color);
+					btnTier.setRect(0, pos, width, 18);
+					add(btnTier);
+					pos = btnTier.bottom() + GAP;
 				}
-			};
-			btnRestore.setRect(0, pos, width, 18);
-			add(btnRestore);
-			pos = btnRestore.bottom() + GAP;
 
-			RedButton btnEnterKey = new RedButton(Messages.get(this, "btn_enter_key")) {
-				@Override
-				public void onClick() {
-					hide();
+				RedButton btnRestore = new RedButton(Messages.get(this, "btn_restore")) {
+					@Override
+					public void onClick() {
+						SupporterManager.restore(() -> {
+							hide();
+							ShatteredPixelDungeon.scene().addToFront(new WndSupporterUnlock());
+						});
+					}
+				};
+				btnRestore.setRect(0, pos, width, 18);
+				add(btnRestore);
+				pos = btnRestore.bottom() + GAP;
+
+				RedButton btnEnterKey = new RedButton(Messages.get(this, "btn_enter_key")) {
+					@Override
+					public void onClick() {
+						openKeyDialog();
+					}
+				};
+				btnEnterKey.setRect(0, pos, width, 18);
+				add(btnEnterKey);
+				pos = btnEnterKey.bottom() + GAP;
+
+				RedButton btnWeb = new RedButton(Messages.get(this, "btn_web")) {
+					@Override
+					public void onClick() {
+						ShatteredPixelDungeon.platform.openURI("https://eternity-pixel-dungeon.web.app/#editions");
+					}
+				};
+				btnWeb.setRect(0, pos, width, 18);
+				add(btnWeb);
+				pos = btnWeb.bottom() + GAP;
+			}
+		}
+
+		resize(width, (int) pos);
+	}
+
+	private void openKeyDialog() {
+		hide();
+		ShatteredPixelDungeon.scene().addToFront(new WndTextInput(
+				Messages.get(WndSupporterUnlock.class, "user_dialog_title"),
+				Messages.get(WndSupporterUnlock.class, "user_dialog_msg"),
+				SPDSettings.supporterUsername(),
+				32,
+				false,
+				Messages.get(WndSupporterUnlock.class, "btn_next"),
+				Messages.get(WndSupporterUnlock.class, "btn_cancel")
+		) {
+			@Override
+			public void onSelect(boolean positive, String usernameText) {
+				if (positive && usernameText != null) {
+					final String cleanUser = usernameText.trim();
+					String promptMsg = cleanUser.isEmpty() ?
+							Messages.get(WndSupporterUnlock.class, "key_dialog_msg") :
+							Messages.get(WndSupporterUnlock.class, "key_dialog_prompt_user", cleanUser);
 					ShatteredPixelDungeon.scene().addToFront(new WndTextInput(
 							Messages.get(WndSupporterUnlock.class, "key_dialog_title"),
-							Messages.get(WndSupporterUnlock.class, "key_dialog_msg"),
+							promptMsg,
 							"",
-							32,
+							36,
 							false,
 							Messages.get(WndSupporterUnlock.class, "btn_activate"),
 							Messages.get(WndSupporterUnlock.class, "btn_cancel")
 					) {
 						@Override
-						public void onSelect(boolean positive, String text) {
-							if (positive && text != null && !text.trim().isEmpty()) {
-								boolean success = SupporterManager.activateKey(text);
+						public void onSelect(boolean keyPos, String keyText) {
+							if (keyPos && keyText != null && !keyText.trim().isEmpty()) {
+								boolean success = SupporterManager.activateLicense(cleanUser, keyText);
 								if (success) {
 									ShatteredPixelDungeon.scene().addToFront(new WndMessage(Messages.get(WndSupporterUnlock.class, "key_success")));
 									if (ShatteredPixelDungeon.scene() instanceof com.shatteredpixel.shatteredpixeldungeon.scenes.HeroSelectScene) {
@@ -199,22 +298,7 @@ public class WndSupporterUnlock extends Window {
 						}
 					});
 				}
-			};
-			btnEnterKey.setRect(0, pos, width, 18);
-			add(btnEnterKey);
-			pos = btnEnterKey.bottom() + GAP;
-
-			RedButton btnWeb = new RedButton(Messages.get(this, "btn_web")) {
-				@Override
-				public void onClick() {
-					ShatteredPixelDungeon.platform.openURI("https://eternity-pixel-dungeon.web.app/#editions");
-				}
-			};
-			btnWeb.setRect(0, pos, width, 18);
-			add(btnWeb);
-			pos = btnWeb.bottom() + GAP;
-		}
-
-		resize(width, (int) pos);
+			}
+		});
 	}
 }

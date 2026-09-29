@@ -192,6 +192,45 @@ public class TitleScene extends PixelScene {
 			btnAbout.setRect(btnSettings.right()+2, btnSettings.top(), btnSettings.width(), BTN_HEIGHT);
 		}
 
+		StyledButton btnCosmetics = new StyledButton(Chrome.Type.RED_BUTTON, Messages.get(WndSupporterUnlock.class, "title")) {
+			@Override
+			public void onClick() {
+				ShatteredPixelDungeon.scene().addToFront(new WndSupporterUnlock());
+			}
+		};
+		btnCosmetics.icon(Icons.get(Icons.BADGES));
+		btnCosmetics.textColor(0xFFD700);
+		float btnW = Math.min(btnCosmetics.reqWidth() + 12, w - 8);
+		btnCosmetics.setSize(btnW, 18);
+
+		StyledButton btnWishlist = null;
+		if (SPDSettings.isDemo()) {
+			btnWishlist = new StyledButton(Chrome.Type.RED_BUTTON, Messages.get(this, "wishlist")) {
+				@Override
+				public void onClick() {
+					ShatteredPixelDungeon.platform.openURI(com.shatteredpixel.shatteredpixeldungeon.windows.WndDemoVictory.STEAM_STORE_URL);
+				}
+			};
+			btnWishlist.icon(Icons.get(Icons.GOLD));
+			btnWishlist.textColor(0xFFD700);
+			btnWishlist.setSize(btnWishlist.reqWidth() + 12, 18);
+			btnWishlist.setPos(4, h - btnWishlist.height() - 4);
+			add(btnWishlist);
+
+			if (landscape() || btnWishlist.right() + btnCosmetics.width() + 4 < w - 60) {
+				btnCosmetics.setPos(btnWishlist.right() + 4, h - btnCosmetics.height() - 4);
+			} else {
+				btnCosmetics.setPos(4, btnWishlist.top() - btnCosmetics.height() - 2);
+			}
+		} else {
+			if (!landscape()) {
+				btnCosmetics.setPos((w - btnW) / 2f, h - btnCosmetics.height() - 4);
+			} else {
+				btnCosmetics.setPos(4, h - btnCosmetics.height() - 4);
+			}
+		}
+		add(btnCosmetics);
+
 		String verStr = "v" + Game.version;
 		if (SPDSettings.isDemo()) {
 			verStr += " DEMO";
@@ -204,41 +243,16 @@ public class TitleScene extends PixelScene {
 			version.hardlight( 0x888888 );
 		}
 		version.x = w - version.width() - 4;
-		version.y = h - version.height() - 2;
-		add( version );
-
-		StyledButton btnCosmetics = new StyledButton(Chrome.Type.RED_BUTTON, Messages.get(WndSupporterUnlock.class, "title")) {
-			@Override
-			public void onClick() {
-				ShatteredPixelDungeon.scene().addToFront(new WndSupporterUnlock());
+		if (!landscape() || btnCosmetics.right() + 4 >= version.x) {
+			float highestTop = btnCosmetics.top();
+			if (btnWishlist != null && btnWishlist.top() < highestTop) {
+				highestTop = btnWishlist.top();
 			}
-		};
-		btnCosmetics.icon(Icons.get(Icons.BADGES));
-		btnCosmetics.textColor(0xFFD700);
-		btnCosmetics.setSize(btnCosmetics.reqWidth() + 12, 18);
-
-		if (SPDSettings.isDemo()) {
-			StyledButton btnWishlist = new StyledButton(Chrome.Type.RED_BUTTON, Messages.get(this, "wishlist")) {
-				@Override
-				public void onClick() {
-					ShatteredPixelDungeon.platform.openURI(com.shatteredpixel.shatteredpixeldungeon.windows.WndDemoVictory.STEAM_STORE_URL);
-				}
-			};
-			btnWishlist.icon(Icons.get(Icons.GOLD));
-			btnWishlist.textColor(0xFFD700);
-			btnWishlist.setSize(btnWishlist.reqWidth() + 12, 18);
-			btnWishlist.setPos(4, h - btnWishlist.height() - 4);
-			add(btnWishlist);
-
-			if (landscape() || btnWishlist.right() + btnCosmetics.width() + 4 < version.x) {
-				btnCosmetics.setPos(btnWishlist.right() + 4, h - btnCosmetics.height() - 4);
-			} else {
-				btnCosmetics.setPos(4, btnWishlist.top() - btnCosmetics.height() - 2);
-			}
+			version.y = highestTop - version.height() - 2;
 		} else {
-			btnCosmetics.setPos(4, h - btnCosmetics.height() - 4);
+			version.y = h - version.height() - 2;
 		}
-		add(btnCosmetics);
+		add( version );
 
 		if (DeviceCompat.isDesktop()) {
 			ExitButton btnExit = new ExitButton();

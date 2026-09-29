@@ -64,6 +64,7 @@ public class HeroSelectScene extends PixelScene {
 	private IconButton btnOptions;
 	private GameOptions optionsPane;
 	private IconButton btnExit;
+	private Image heroLockOverlay;
 
 	@Override
 	public void create() {
@@ -110,12 +111,26 @@ public class HeroSelectScene extends PixelScene {
 		PixelScene.align(title);
 		add(title);
 
+		heroLockOverlay = new Image(Assets.Interfaces.LOCKED);
+		heroLockOverlay.scale.set(2f);
+		heroLockOverlay.visible = false;
+		add(heroLockOverlay);
+
 		startBtn = new StyledButton(Chrome.Type.GREY_BUTTON_TR, ""){
 			@Override
             public void onClick() {
 				super.onClick();
 
 				if (GamesInProgress.selectedClass == null) return;
+
+				if (!GamesInProgress.selectedClass.isUnlocked()) {
+					if (GamesInProgress.selectedClass == HeroClass.BARBARIAN) {
+						ShatteredPixelDungeon.scene().addToFront(new com.shatteredpixel.shatteredpixeldungeon.windows.WndSupporterUnlock());
+					} else {
+						ShatteredPixelDungeon.scene().addToFront(new WndMessage(GamesInProgress.selectedClass.unlockMsg()));
+					}
+					return;
+				}
 
 				Dungeon.hero = null;
 				Dungeon.daily = Dungeon.dailyReplay = false;
@@ -328,7 +343,7 @@ public class HeroSelectScene extends PixelScene {
 		btnExit = new ExitButton();
 		btnExit.setPos( Camera.main.width - btnExit.width(), 0 );
 		add( btnExit );
-		btnExit.visible = btnExit.active = !SPDSettings.intro();
+		btnExit.visible = btnExit.active = true;
 
 		PointerArea fadeResetter = new PointerArea(0, 0, Camera.main.width, Camera.main.height){
 			@Override
@@ -411,6 +426,18 @@ public class HeroSelectScene extends PixelScene {
 			btnFade.visible = btnFade.active = true;
 
 			startBtn.visible = startBtn.active = true;
+			if (!cl.isUnlocked()) {
+				startBtn.icon(new Image(Assets.Interfaces.LOCKED));
+				startBtn.text(cl == HeroClass.BARBARIAN ? Messages.get(this, "unlock_supporter") : Messages.get(this, "locked"));
+				startBtn.textColor(cl == HeroClass.BARBARIAN ? 0xFFD700 : 0x888888);
+			} else {
+				startBtn.icon(Icons.get(Icons.ENTER));
+				startBtn.text(Messages.titleCase(Messages.get(this, "start")));
+				startBtn.textColor(Window.TITLE_COLOR);
+			}
+			startBtn.setSize(startBtn.reqWidth()+8, 21);
+			startBtn.setPos((leftPortion - startBtn.width())/2f, startBtn.top());
+			align(startBtn);
 
 			infoButton.visible = infoButton.active = true;
 			infoButton.setPos(heroName.right(), heroName.top() + (heroName.height() - infoButton.height())/2f);
@@ -422,7 +449,15 @@ public class HeroSelectScene extends PixelScene {
 			title.visible = false;
 
 			startBtn.visible = startBtn.active = true;
-			startBtn.text(Messages.titleCase(cl.title()));
+			if (!cl.isUnlocked()) {
+				startBtn.icon(new Image(Assets.Interfaces.LOCKED));
+				startBtn.text(cl == HeroClass.BARBARIAN ? Messages.get(this, "unlock_supporter") : Messages.get(this, "locked"));
+				startBtn.textColor(cl == HeroClass.BARBARIAN ? 0xFFD700 : 0x888888);
+			} else {
+				startBtn.icon(Icons.get(Icons.ENTER));
+				startBtn.text(Messages.titleCase(cl.title()));
+				startBtn.textColor(Window.TITLE_COLOR);
+			}
 			startBtn.setSize(startBtn.reqWidth() + 10, 21);
 
 			int btnHeight = HeroBtn.HEIGHT;
@@ -443,6 +478,24 @@ public class HeroSelectScene extends PixelScene {
 			align(optionsPane);
 		}
 
+		if (!cl.isUnlocked()) {
+			heroLockOverlay.visible = true;
+			if (landscape()) {
+				heroLockOverlay.x = background.x + (background.width() * 0.65f) - (heroLockOverlay.width() / 2f);
+				heroLockOverlay.y = (Camera.main.height - heroLockOverlay.height()) / 2f - 15;
+			} else {
+				float btnsTop = Camera.main.height - (HeroBtn.HEIGHT * 2) - 4;
+				heroLockOverlay.x = (Camera.main.width - heroLockOverlay.width()) / 2f;
+				heroLockOverlay.y = Math.max(30, (btnsTop - startBtn.height() - 6) / 2f - 10);
+			}
+			PixelScene.align(heroLockOverlay);
+			background.color(0.45f, 0.45f, 0.45f);
+		} else {
+			heroLockOverlay.visible = false;
+			background.color(1f, 1f, 1f);
+			background.hardlight(1.5f, 1.5f, 1.5f);
+		}
+
 		updateOptionsColor();
 	}
 
@@ -454,7 +507,7 @@ public class HeroSelectScene extends PixelScene {
 		if (SPDSettings.intro() && Rankings.INSTANCE.totalNumber > 0){
 			SPDSettings.intro(false);
 		}
-		btnExit.visible = btnExit.active = !SPDSettings.intro();
+		btnExit.visible = btnExit.active = true;
 		//do not fade when a window is open
 		for (Object v : members){
 			if (v instanceof Window) resetFade();
@@ -490,6 +543,13 @@ public class HeroSelectScene extends PixelScene {
 		btnOptions.icon().alpha(alpha);
 		infoButton.enable(alpha != 0);
 		infoButton.icon().alpha(alpha);
+		if (heroLockOverlay != null && heroLockOverlay.visible) {
+			heroLockOverlay.alpha(alpha);
+			if (landscape()) {
+				heroLockOverlay.x = background.x + (background.width() * 0.65f) - (heroLockOverlay.width() / 2f);
+				PixelScene.align(heroLockOverlay);
+			}
+		}
 
 		if (landscape()){
 
@@ -520,16 +580,13 @@ public class HeroSelectScene extends PixelScene {
 
 	@Override
 	protected void onBackPressed() {
-		if (btnExit.active){
-			ShatteredPixelDungeon.switchScene(TitleScene.class);
-		} else {
-			super.onBackPressed();
-		}
+		ShatteredPixelDungeon.switchScene(TitleScene.class);
 	}
 
 	private class HeroBtn extends StyledButton {
 
 		private HeroClass cl;
+		private Image lockIcon;
 
 		private static final int MIN_WIDTH = 20;
 		private static final int HEIGHT = 24;
@@ -541,19 +598,55 @@ public class HeroSelectScene extends PixelScene {
 
 			icon(HeroSprite.avatar(cl,6));
 
+			lockIcon = new Image(Assets.Interfaces.LOCKED);
+			lockIcon.scale.set(0.5f);
+			lockIcon.visible = !cl.isUnlocked();
+			add(lockIcon);
+		}
+
+		@Override
+		protected void layout() {
+			super.layout();
+			if (lockIcon != null) {
+				lockIcon.scale.set(0.5f);
+				if (icon != null) {
+					lockIcon.x = icon.x + icon.width() - lockIcon.width();
+					lockIcon.y = icon.y + icon.height() - lockIcon.height();
+				} else {
+					lockIcon.x = x + width - lockIcon.width() - 2;
+					lockIcon.y = y + height - lockIcon.height() - 2;
+				}
+				PixelScene.align(lockIcon);
+			}
+		}
+
+		@Override
+		public void alpha(float value) {
+			super.alpha(value);
+			if (lockIcon != null) {
+				lockIcon.alpha(value);
+			}
 		}
 
 		@Override
 		public void update() {
 			super.update();
+			boolean unlocked = cl.isUnlocked();
+			if (lockIcon != null) {
+				lockIcon.visible = !unlocked;
+			}
 			if (cl != GamesInProgress.selectedClass){
-				if (!cl.isUnlocked()){
-					icon.brightness(0.45f);
+				if (!unlocked){
+					icon.brightness(0.5f);
 				} else {
 					icon.brightness(0.7f);
 				}
 			} else {
-				icon.brightness(1f);
+				if (!unlocked) {
+					icon.brightness(0.85f);
+				} else {
+					icon.brightness(1f);
+				}
 			}
 		}
 
@@ -561,21 +654,31 @@ public class HeroSelectScene extends PixelScene {
         public void onClick() {
 			super.onClick();
 
-			if( !cl.isUnlocked() ){
-				if (cl == HeroClass.BARBARIAN) {
+			if (GamesInProgress.selectedClass == cl) {
+				if (!cl.isUnlocked() && cl == HeroClass.BARBARIAN) {
 					ShatteredPixelDungeon.scene().addToFront( new com.shatteredpixel.shatteredpixeldungeon.windows.WndSupporterUnlock() );
-				} else {
+				} else if (!cl.isUnlocked()) {
 					ShatteredPixelDungeon.scene().addToFront( new WndMessage(cl.unlockMsg()));
+				} else {
+					Window w = new WndHeroInfo(cl);
+					if (landscape()){
+						w.offset(Camera.main.width/6, 0);
+					}
+					ShatteredPixelDungeon.scene().addToFront(w);
 				}
-			} else if (GamesInProgress.selectedClass == cl) {
-				Window w = new WndHeroInfo(cl);
-				if (landscape()){
-					w.offset(Camera.main.width/6, 0);
-				}
-				ShatteredPixelDungeon.scene().addToFront(w);
 			} else {
 				setSelectedHero(cl);
 			}
+		}
+
+		@Override
+		protected String hoverText() {
+			if (!cl.isUnlocked()) {
+				if (cl == HeroClass.BARBARIAN) {
+					return Messages.get(HeroSelectScene.class, "supporter_locked_hover");
+				}
+			}
+			return super.hoverText();
 		}
 	}
 

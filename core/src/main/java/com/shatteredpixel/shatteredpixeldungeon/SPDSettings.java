@@ -799,8 +799,17 @@ public static void playMusicInBackground( boolean value ){
 	}
 
 	// Supporter / Premium License Key & Token
+	public static final String KEY_SUPPORTER_USERNAME = "supporter_username";
 	public static final String KEY_SUPPORTER_KEY = "supporter_license_key";
 	public static final String KEY_SUPPORTER_TOKEN = "supporter_activation_token";
+
+	public static String supporterUsername() {
+		return getString( KEY_SUPPORTER_USERNAME, "" );
+	}
+
+	public static void supporterUsername( String value ) {
+		put( KEY_SUPPORTER_USERNAME, value != null ? value.trim() : "" );
+	}
 
 	public static String supporterKey() {
 		return getString( KEY_SUPPORTER_KEY, "" );
@@ -831,7 +840,10 @@ public static void playMusicInBackground( boolean value ){
 	public static final String KEY_GOLDEN_UI = "golden_ui";
 
 	public static boolean goldenUI() {
-		return getBoolean( KEY_GOLDEN_UI, true );
+		if (!com.shatteredpixel.shatteredpixeldungeon.services.platform.SupporterManager.isSupporter() && !isDemo()) {
+			return false;
+		}
+		return getBoolean( KEY_GOLDEN_UI, false );
 	}
 
 	public static void goldenUI( boolean value ) {
@@ -842,7 +854,10 @@ public static void playMusicInBackground( boolean value ){
 
 	// 0: Default, 1: Silver, 2: Gold, 3: Emerald
 	public static int menuButtonStyle() {
-		return getInt( KEY_MENU_BUTTON_STYLE, 2 );
+		if (!com.shatteredpixel.shatteredpixeldungeon.services.platform.SupporterManager.isSupporter() && !isDemo()) {
+			return 0;
+		}
+		return getInt( KEY_MENU_BUTTON_STYLE, 0 );
 	}
 
 	public static void menuButtonStyle( int value ) {

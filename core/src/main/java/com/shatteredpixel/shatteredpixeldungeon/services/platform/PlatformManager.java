@@ -29,6 +29,12 @@ public class PlatformManager {
 	private static PlatformServices activeService = NullPlatformServices.INSTANCE;
 
 	public static void init() {
+		// If a platform service was already set (e.g. AndroidPlatformServices), initialize and keep it
+		if (activeService != null && activeService != NullPlatformServices.INSTANCE) {
+			activeService.initialize();
+			return;
+		}
+
 		// Attempt Steamworks initialization first
 		SteamworksWrapper steam = new SteamworksWrapper();
 		if (steam.initialize()) {

@@ -27,9 +27,13 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
+import com.shatteredpixel.shatteredpixeldungeon.services.platform.SupporterManager;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndSupporterUnlock;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
@@ -97,6 +101,12 @@ public class PetEgg extends Item {
 				return;
 			}
 
+			if (eggType == Pet.PetType.MANTICORE && !SupporterManager.isSupporter()) {
+				GLog.w(Messages.get(this, "manticore_supporter_locked"));
+				ShatteredPixelDungeon.scene().addToFront(new WndSupporterUnlock());
+				return;
+			}
+
 			if ((hero.pet != null && hero.pet.isAlive()) || hero.storedPet != null) {
 				GLog.w(Messages.get(this, "already_has_pet"));
 				return;
@@ -141,7 +151,11 @@ public class PetEgg extends Item {
 	@Override
 	public String info() {
 		int percent = incubation * 100 / REQUIRED_INCUBATION;
-		return Messages.get(this, "desc_" + eggType.name().toLowerCase(), percent);
+		String desc = Messages.get(this, "desc_" + eggType.name().toLowerCase(), percent);
+		if (eggType == Pet.PetType.MANTICORE && !SupporterManager.isSupporter()) {
+			desc += "\n\n" + Messages.get(this, "manticore_locked_info");
+		}
+		return desc;
 	}
 
 	@Override

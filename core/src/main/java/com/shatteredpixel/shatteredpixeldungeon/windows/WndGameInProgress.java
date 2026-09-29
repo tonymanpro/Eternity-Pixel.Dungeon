@@ -35,8 +35,10 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.StartScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.HeroSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.*;
+import com.shatteredpixel.shatteredpixeldungeon.services.platform.SupporterManager;
 import com.shatteredpixel.shatteredpixeldungeon.utils.DungeonSeed;
 import com.watabou.noosa.Game;
+import com.watabou.utils.DeviceCompat;
 
 import java.util.Locale;
 import java.util.stream.IntStream;
@@ -130,6 +132,12 @@ public class WndGameInProgress extends Window {
 		RedButton cont = new RedButton(Messages.get(this, "continue")){
 			@Override
             public void onClick() {
+				if (info.heroClass == com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass.BARBARIAN
+						&& !SupporterManager.isSupporter()
+						&& !DeviceCompat.isDebug()) {
+					ShatteredPixelDungeon.scene().addToFront(new WndSupporterUnlock());
+					return;
+				}
 				super.onClick();
 				
 				GamesInProgress.curSlot = slot;
