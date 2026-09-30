@@ -90,9 +90,13 @@ public class RankingsScene extends PixelScene {
 		add(title);
 		
 		String currentName = SPDSettings.customUsername();
-		String userBtnLabel = (currentName != null && !currentName.isEmpty())
-				? "@" + currentName
-				: Messages.get(this, "btn_username");
+		boolean isSupporter = com.shatteredpixel.shatteredpixeldungeon.services.platform.SupporterManager.isSupporter();
+		String userBtnLabel;
+		if (currentName != null && !currentName.isEmpty()) {
+			userBtnLabel = (isSupporter ? "★ @" : "@") + currentName;
+		} else {
+			userBtnLabel = Messages.get(this, "btn_username");
+		}
 
 		StyledButton btnUsername = new StyledButton(Chrome.Type.GREY_BUTTON_TR, userBtnLabel, 8) {
 			@Override
@@ -105,7 +109,10 @@ public class RankingsScene extends PixelScene {
 				}));
 			}
 		};
-		btnUsername.icon(Icons.get(Icons.PREFS));
+		btnUsername.icon(Icons.get(isSupporter ? Icons.BADGES : Icons.PREFS));
+		if (isSupporter) {
+			btnUsername.textColor(0xFFD700);
+		}
 
 		StyledButton btnOnlineLeaderboard = new StyledButton(Chrome.Type.GREY_BUTTON_TR, Messages.get(this, "online_leaderboard"), 8) {
 			@Override

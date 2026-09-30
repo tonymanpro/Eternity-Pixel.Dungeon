@@ -86,6 +86,9 @@ public class StatusPane extends Component {
 
 		if (large)  bg = new NinePatch( asset, 0, 64, 41, 39, 33, 0, 4, 0 );
 		else        bg = new NinePatch( asset, 0, 0, 128, 36, 85, 0, 45, 0 );
+		if (Window.isGoldenUIActive()) {
+			bg.hardlight( 1.0f, 0.84f, 0.25f );
+		}
 		add( bg );
 
 		heroInfo = new Button(){

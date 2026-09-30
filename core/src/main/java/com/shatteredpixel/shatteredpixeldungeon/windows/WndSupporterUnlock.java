@@ -217,19 +217,6 @@ public class WndSupporterUnlock extends Window {
 					pos = btnTier.bottom() + GAP;
 				}
 
-				RedButton btnRestore = new RedButton(Messages.get(this, "btn_restore")) {
-					@Override
-					public void onClick() {
-						SupporterManager.restore(() -> {
-							hide();
-							ShatteredPixelDungeon.scene().addToFront(new WndSupporterUnlock());
-						});
-					}
-				};
-				btnRestore.setRect(0, pos, width, 18);
-				add(btnRestore);
-				pos = btnRestore.bottom() + GAP;
-
 				RedButton btnEnterKey = new RedButton(Messages.get(this, "btn_enter_key")) {
 					@Override
 					public void onClick() {
@@ -257,11 +244,14 @@ public class WndSupporterUnlock extends Window {
 
 	private void openKeyDialog() {
 		hide();
+		String initialUser = !SPDSettings.customUsername().isEmpty() ?
+				SPDSettings.customUsername() : SPDSettings.supporterUsername();
+
 		ShatteredPixelDungeon.scene().addToFront(new WndTextInput(
 				Messages.get(WndSupporterUnlock.class, "user_dialog_title"),
 				Messages.get(WndSupporterUnlock.class, "user_dialog_msg"),
-				SPDSettings.supporterUsername(),
-				32,
+				initialUser,
+				16,
 				false,
 				Messages.get(WndSupporterUnlock.class, "btn_next"),
 				Messages.get(WndSupporterUnlock.class, "btn_cancel")
@@ -270,9 +260,16 @@ public class WndSupporterUnlock extends Window {
 			public void onSelect(boolean positive, String usernameText) {
 				if (positive && usernameText != null) {
 					final String cleanUser = usernameText.trim();
-					String promptMsg = cleanUser.isEmpty() ?
-							Messages.get(WndSupporterUnlock.class, "key_dialog_msg") :
-							Messages.get(WndSupporterUnlock.class, "key_dialog_prompt_user", cleanUser);
+					if (cleanUser.isEmpty()) {
+						ShatteredPixelDungeon.scene().addToFront(new WndMessage(Messages.get(WndSupporterUnlock.class, "user_required")));
+						return;
+					}
+					if (!cleanUser.matches("^[a-zA-Z0-9_]{3,16}$")) {
+						ShatteredPixelDungeon.scene().addToFront(new WndMessage(Messages.get(WndSupporterUnlock.class, "user_invalid")));
+						return;
+					}
+
+					String promptMsg = Messages.get(WndSupporterUnlock.class, "key_dialog_prompt_user", cleanUser);
 					ShatteredPixelDungeon.scene().addToFront(new WndTextInput(
 							Messages.get(WndSupporterUnlock.class, "key_dialog_title"),
 							promptMsg,
@@ -285,15 +282,53 @@ public class WndSupporterUnlock extends Window {
 						@Override
 						public void onSelect(boolean keyPos, String keyText) {
 							if (keyPos && keyText != null && !keyText.trim().isEmpty()) {
-								boolean success = SupporterManager.activateLicense(cleanUser, keyText);
-								if (success) {
-									ShatteredPixelDungeon.scene().addToFront(new WndMessage(Messages.get(WndSupporterUnlock.class, "key_success")));
-									if (ShatteredPixelDungeon.scene() instanceof com.shatteredpixel.shatteredpixeldungeon.scenes.HeroSelectScene) {
-										ShatteredPixelDungeon.switchNoFade(com.shatteredpixel.shatteredpixeldungeon.scenes.HeroSelectScene.class);
+								final String cleanKey = keyText.trim().toUpperCase(java.util.Locale.ROOT);
+								SupporterManager.redeemAndBurnLicenseAsync(cleanUser, cleanKey, new SupporterManager.RedeemCallback() {
+									@Override
+									public void onComplete(final SupporterManager.RedeemResult result, final String message) {
+										com.badlogic.gdx.Gdx.app.postRunnable(new Runnable() {
+											@Override
+											public void run() {
+												String displayMsg;
+												switch (result) {
+													case SUCCESS:
+														displayMsg = Messages.get(WndSupporterUnlock.class, "key_success");
+														break;
+													case ALREADY_CLAIMED:
+														displayMsg = Messages.get(WndSupporterUnlock.class, "key_already_claimed");
+														break;
+													case DEVICE_LIMIT_REACHED:
+														displayMsg = Messages.get(WndSupporterUnlock.class, "key_device_limit", 3);
+														break;
+													case NETWORK_REQUIRED:
+														displayMsg = Messages.get(WndSupporterUnlock.class, "key_network_required");
+														break;
+													case SERVER_ERROR:
+														displayMsg = Messages.get(WndSupporterUnlock.class, "key_server_error");
+														break;
+													case INVALID_KEY:
+													default:
+														displayMsg = Messages.get(WndSupporterUnlock.class, "key_invalid");
+														break;
+												}
+
+												if (result == SupporterManager.RedeemResult.SUCCESS) {
+													SPDSettings.goldenUI(true);
+													SPDSettings.menuButtonStyle(2);
+													WndSupporterUnlock.this.hide();
+													ShatteredPixelDungeon.scene().addToFront(new WndMessage(displayMsg));
+													if (ShatteredPixelDungeon.scene() instanceof com.shatteredpixel.shatteredpixeldungeon.scenes.HeroSelectScene) {
+														ShatteredPixelDungeon.switchNoFade(com.shatteredpixel.shatteredpixeldungeon.scenes.HeroSelectScene.class);
+													} else if (ShatteredPixelDungeon.scene() instanceof com.shatteredpixel.shatteredpixeldungeon.scenes.TitleScene) {
+														ShatteredPixelDungeon.switchNoFade(com.shatteredpixel.shatteredpixeldungeon.scenes.TitleScene.class);
+													}
+												} else {
+													ShatteredPixelDungeon.scene().addToFront(new WndMessage(displayMsg));
+												}
+											}
+										});
 									}
-								} else {
-									ShatteredPixelDungeon.scene().addToFront(new WndMessage(Messages.get(WndSupporterUnlock.class, "key_invalid")));
-								}
+								});
 							}
 						}
 					});

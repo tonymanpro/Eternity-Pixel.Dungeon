@@ -26,22 +26,32 @@ package com.shatteredpixel.shatteredpixeldungeon.services.platform;
 
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.services.CloudConfig;
+import com.shatteredpixel.shatteredpixeldungeon.services.UsernameService;
 
+import com.watabou.noosa.Game;
 import com.watabou.utils.Callback;
 import com.watabou.utils.DeviceCompat;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class SupporterManager {
 
 	public enum SupporterTier {
 		NONE(0, "tier_none", 0xFFFFFF, "supporter_none"),
-		BRONZE(1, "tier_bronze", 0xCD7F32, "supporter_bronze"),
-		SILVER(2, "tier_silver", 0xC0C0C0, "supporter_silver"),
-		GOLD(3, "tier_gold", 0xFFD700, "supporter_gold"),
-		PLATINUM(4, "tier_platinum", 0x00FFFF, "supporter_platinum");
+		GOLD(1, "tier_gold", 0xFFD700, "supporter_gold");
 
 		public final int rank;
 		public final String key;
@@ -60,10 +70,7 @@ public class SupporterManager {
 		}
 
 		public static SupporterTier fromRank(int rank) {
-			for (SupporterTier t : values()) {
-				if (t.rank == rank) return t;
-			}
-			return rank > 0 ? PLATINUM : NONE;
+			return rank > 0 ? GOLD : NONE;
 		}
 	}
 
@@ -121,7 +128,7 @@ public class SupporterManager {
 		// 2. Platform native supporter check (e.g. Google Play In-App Purchase "01" / "full_unlock")
 		PlatformServices platform = PlatformManager.get();
 		if (platform != null && platform.getSupporterTier() > 0) {
-			return SupporterTier.fromRank(platform.getSupporterTier());
+			return SupporterTier.GOLD;
 		}
 
 		// 3. Device-bound activation token check
@@ -139,6 +146,11 @@ public class SupporterManager {
 			}
 		} else if (isKeyValid(key)) {
 			return getTierFromKey(key);
+		}
+
+		// 5. Stored supporter tier check (cloud sync / restore)
+		if (SPDSettings.supporterTier() > 0) {
+			return SupporterTier.GOLD;
 		}
 
 		return SupporterTier.NONE;
@@ -249,27 +261,11 @@ public class SupporterManager {
 
 	public static SupporterTier getTierFromToken(String token) {
 		if (!isTokenValid(token)) return SupporterTier.NONE;
-		try {
-			String[] parts = token.split("-");
-			if (parts.length >= 2) {
-				String tierName = parts[1].toUpperCase(Locale.ROOT);
-				if (tierName.contains("PLATINUM")) return SupporterTier.PLATINUM;
-				if (tierName.contains("GOLD")) return SupporterTier.GOLD;
-				if (tierName.contains("SILVER")) return SupporterTier.SILVER;
-				if (tierName.contains("BRONZE")) return SupporterTier.BRONZE;
-				if (tierName.contains("SUPPORTER")) return SupporterTier.GOLD;
-			}
-		} catch (Throwable ignored) {}
-		return SupporterTier.BRONZE;
+		return SupporterTier.GOLD;
 	}
 
 	public static SupporterTier getTierFromKey(String key) {
 		if (!isKeyValid(key)) return SupporterTier.NONE;
-		String upper = key.toUpperCase(Locale.ROOT);
-		if (upper.contains("PLAT")) return SupporterTier.PLATINUM;
-		if (upper.contains("GOLD")) return SupporterTier.GOLD;
-		if (upper.contains("SILV")) return SupporterTier.SILVER;
-		if (upper.contains("BRON")) return SupporterTier.BRONZE;
 		return SupporterTier.GOLD;
 	}
 
@@ -370,6 +366,7 @@ public class SupporterManager {
 				SPDSettings.supporterKey(cleanKey);
 				String deviceToken = generateDeviceToken(cleanKey, getDeviceId());
 				SPDSettings.supporterToken(deviceToken);
+				SPDSettings.supporterTier(SupporterTier.GOLD.rank);
 				return true;
 			}
 		} else if (isKeyValid(cleanKey)) {
@@ -377,6 +374,7 @@ public class SupporterManager {
 			SPDSettings.supporterKey(cleanKey);
 			String deviceToken = generateDeviceToken(cleanKey, getDeviceId());
 			SPDSettings.supporterToken(deviceToken);
+			SPDSettings.supporterTier(SupporterTier.GOLD.rank);
 			return true;
 		}
 
@@ -397,6 +395,387 @@ public class SupporterManager {
 		SPDSettings.supporterUsername("");
 		SPDSettings.supporterKey("");
 		SPDSettings.supporterToken("");
+		SPDSettings.supporterTier(0);
+	}
+
+	public enum RedeemResult {
+		SUCCESS,
+		ALREADY_CLAIMED,
+		DEVICE_LIMIT_REACHED,
+		INVALID_KEY,
+		INVALID_USERNAME,
+		NETWORK_REQUIRED,
+		SERVER_ERROR
+	}
+
+	public interface RedeemCallback {
+		void onComplete(RedeemResult result, String message);
+	}
+
+	/**
+	 * Validates, redeems, and permanently burns a license key in Firestore.
+	 * Binds the license to the specified username and registers the current device ID.
+	 */
+	public static void redeemAndBurnLicenseAsync(final String rawUsername, final String rawKey, final RedeemCallback callback) {
+		if (rawUsername == null || rawUsername.trim().isEmpty() || !rawUsername.trim().matches("^[a-zA-Z0-9_]{3,16}$")) {
+			if (callback != null) callback.onComplete(RedeemResult.INVALID_USERNAME, "Nombre de usuario inválido. Debe tener entre 3 y 16 caracteres alfanuméricos.");
+			return;
+		}
+		if (rawKey == null || !isKeyValid(rawKey)) {
+			if (callback != null) callback.onComplete(RedeemResult.INVALID_KEY, "Clave de licencia inválida.");
+			return;
+		}
+
+		final String cleanUser = rawUsername.trim();
+		final String cleanKey = rawKey.trim().toUpperCase(Locale.ROOT);
+		final String keyHash = sha256Hex(cleanKey);
+		final String deviceId = getDeviceId().toUpperCase(Locale.ROOT);
+
+		final String endpoint = CloudConfig.getLicensesEndpoint();
+		if (endpoint == null) {
+			if (callback != null) callback.onComplete(RedeemResult.NETWORK_REQUIRED, "Se requiere conexión a internet para verificar y vincular tu licencia en la nube.");
+			return;
+		}
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				HttpURLConnection conn = null;
+				try {
+					URL url = new URL(endpoint + "/" + keyHash);
+					conn = (HttpURLConnection) url.openConnection();
+					conn.setRequestMethod("GET");
+					conn.setRequestProperty("Accept", "application/json");
+					conn.setConnectTimeout(5000);
+					conn.setReadTimeout(5000);
+
+					int code = conn.getResponseCode();
+					if (code == 200) {
+						String responseBody = readStream(conn.getInputStream());
+						boolean used = extractJsonBooleanField(responseBody, "used");
+						String claimedBy = extractJsonStringField(responseBody, "claimed_by");
+						if (claimedBy.isEmpty()) {
+							claimedBy = extractJsonStringField(responseBody, "username");
+						}
+						int maxDevices = extractJsonIntegerField(responseBody, "max_devices");
+						if (maxDevices <= 0) maxDevices = 3;
+						ArrayList<String> deviceIds = extractJsonStringArray(responseBody, "device_ids");
+
+						if (used) {
+							if (!claimedBy.equalsIgnoreCase(cleanUser)) {
+								if (callback != null) callback.onComplete(RedeemResult.ALREADY_CLAIMED, "Esta licencia ya fue activada y vinculada a otra cuenta.");
+								return;
+							}
+
+							boolean deviceFound = false;
+							for (String dev : deviceIds) {
+								if (dev.equalsIgnoreCase(deviceId)) {
+									deviceFound = true;
+									break;
+								}
+							}
+
+							if (!deviceFound) {
+								if (deviceIds.size() >= maxDevices) {
+									if (callback != null) callback.onComplete(RedeemResult.DEVICE_LIMIT_REACHED, "Esta licencia ya alcanzó el límite máximo de " + maxDevices + " dispositivos permitidos.");
+									return;
+								}
+								deviceIds.add(deviceId);
+								updateLicenseDevices(endpoint, keyHash, deviceIds);
+							}
+						} else {
+							// Unused key: Burn it now!
+							if (!burnExistingLicense(endpoint, keyHash, cleanUser, deviceId, maxDevices)) {
+								if (callback != null) callback.onComplete(RedeemResult.SERVER_ERROR, "No se pudo registrar la licencia en la nube.");
+								return;
+							}
+						}
+					} else if (code == 404) {
+						// Itch.io batch key used for the first time: Create and burn document
+						if (!createNewBurnedLicense(endpoint, keyHash, cleanKey, cleanUser, deviceId, 3)) {
+							if (callback != null) callback.onComplete(RedeemResult.SERVER_ERROR, "No se pudo registrar la licencia en la nube.");
+							return;
+						}
+					} else {
+						if (callback != null) callback.onComplete(RedeemResult.SERVER_ERROR, "Error de comunicación con el servidor (Código: " + code + ").");
+						return;
+					}
+
+					// Successfully verified and burned in Firestore!
+					SPDSettings.supporterUsername(cleanUser);
+					SPDSettings.supporterKey(cleanKey);
+					String deviceToken = generateDeviceToken(cleanKey, getDeviceId());
+					SPDSettings.supporterToken(deviceToken);
+					SPDSettings.supporterTier(SupporterTier.GOLD.rank);
+
+					if (SPDSettings.customUsername().isEmpty()) {
+						SPDSettings.customUsername(cleanUser);
+					}
+
+					SPDSettings.accountKey(cleanKey);
+
+					// Always sync and guarantee username, username_lower, and created_at in /usernames
+					UsernameService.syncSupporterStatusAsync(cleanUser);
+
+					if (callback != null) callback.onComplete(RedeemResult.SUCCESS, "¡Licencia Gold activada y vinculada con éxito a @" + cleanUser + "!");
+
+				} catch (Throwable t) {
+					if (callback != null) callback.onComplete(RedeemResult.NETWORK_REQUIRED, "Se requiere conexión a internet para verificar y vincular tu licencia en la nube.");
+				} finally {
+					if (conn != null) {
+						try { conn.disconnect(); } catch (Throwable ignored) {}
+					}
+				}
+			}
+		}, "License-RedeemBurnThread").start();
+	}
+
+	private static boolean burnExistingLicense(String endpoint, String keyHash, String username, String deviceId, int maxDevices) {
+		HttpURLConnection conn = null;
+		try {
+			SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
+			isoFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+			String timestamp = isoFormat.format(new Date(Game.realTime > 0 ? Game.realTime : System.currentTimeMillis()));
+			String usernameLower = username.toLowerCase(Locale.ROOT);
+
+			String urlStr = endpoint + "/" + keyHash +
+					"?updateMask.fieldPaths=used" +
+					"&updateMask.fieldPaths=username" +
+					"&updateMask.fieldPaths=username_lower" +
+					"&updateMask.fieldPaths=claimed_by" +
+					"&updateMask.fieldPaths=claimed_at" +
+					"&updateMask.fieldPaths=updated_at" +
+					"&updateMask.fieldPaths=device_ids";
+
+			URL url = new URL(urlStr);
+			conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("POST");
+			conn.setRequestProperty("X-HTTP-Method-Override", "PATCH");
+			conn.setRequestProperty("Content-Type", "application/json; utf-8");
+			conn.setRequestProperty("Accept", "application/json");
+			conn.setConnectTimeout(5000);
+			conn.setReadTimeout(5000);
+			conn.setDoOutput(true);
+
+			StringBuilder json = new StringBuilder();
+			json.append("{\n");
+			json.append("  \"fields\": {\n");
+			json.append("    \"used\": {\"booleanValue\": true},\n");
+			json.append("    \"username\": {\"stringValue\": \"").append(escapeJson(username)).append("\"},\n");
+			json.append("    \"username_lower\": {\"stringValue\": \"").append(escapeJson(usernameLower)).append("\"},\n");
+			json.append("    \"claimed_by\": {\"stringValue\": \"").append(escapeJson(username)).append("\"},\n");
+			json.append("    \"claimed_at\": {\"timestampValue\": \"").append(timestamp).append("\"},\n");
+			json.append("    \"updated_at\": {\"timestampValue\": \"").append(timestamp).append("\"},\n");
+			json.append("    \"device_ids\": {\"arrayValue\": {\"values\": [{\"stringValue\": \"").append(escapeJson(deviceId)).append("\"}]}}\n");
+			json.append("  }\n");
+			json.append("}");
+
+			byte[] input = json.toString().getBytes(StandardCharsets.UTF_8);
+			try (OutputStream os = conn.getOutputStream()) {
+				os.write(input, 0, input.length);
+			}
+
+			int resp = conn.getResponseCode();
+			return resp >= 200 && resp < 300;
+		} catch (Throwable t) {
+			return false;
+		} finally {
+			if (conn != null) {
+				try { conn.disconnect(); } catch (Throwable ignored) {}
+			}
+		}
+	}
+
+	private static boolean createNewBurnedLicense(String endpoint, String keyHash, String key, String username, String deviceId, int maxDevices) {
+		HttpURLConnection conn = null;
+		try {
+			SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
+			isoFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+			String timestamp = isoFormat.format(new Date(Game.realTime > 0 ? Game.realTime : System.currentTimeMillis()));
+			String usernameLower = username.toLowerCase(Locale.ROOT);
+
+			URL url = new URL(endpoint + "?documentId=" + keyHash);
+			conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("POST");
+			conn.setRequestProperty("Content-Type", "application/json; utf-8");
+			conn.setRequestProperty("Accept", "application/json");
+			conn.setConnectTimeout(5000);
+			conn.setReadTimeout(5000);
+			conn.setDoOutput(true);
+
+			StringBuilder json = new StringBuilder();
+			json.append("{\n");
+			json.append("  \"fields\": {\n");
+			json.append("    \"license_key\": {\"stringValue\": \"").append(escapeJson(key)).append("\"},\n");
+			json.append("    \"key_hash\": {\"stringValue\": \"").append(escapeJson(keyHash)).append("\"},\n");
+			json.append("    \"username\": {\"stringValue\": \"").append(escapeJson(username)).append("\"},\n");
+			json.append("    \"username_lower\": {\"stringValue\": \"").append(escapeJson(usernameLower)).append("\"},\n");
+			json.append("    \"used\": {\"booleanValue\": true},\n");
+			json.append("    \"claimed_by\": {\"stringValue\": \"").append(escapeJson(username)).append("\"},\n");
+			json.append("    \"claimed_at\": {\"timestampValue\": \"").append(timestamp).append("\"},\n");
+			json.append("    \"created_at\": {\"timestampValue\": \"").append(timestamp).append("\"},\n");
+			json.append("    \"tier\": {\"stringValue\": \"GOLD\"},\n");
+			json.append("    \"source\": {\"stringValue\": \"ITCH_OR_DIRECT\"},\n");
+			json.append("    \"max_devices\": {\"integerValue\": \"").append(maxDevices).append("\"},\n");
+			json.append("    \"device_ids\": {\"arrayValue\": {\"values\": [{\"stringValue\": \"").append(escapeJson(deviceId)).append("\"}]}}\n");
+			json.append("  }\n");
+			json.append("}");
+
+			byte[] input = json.toString().getBytes(StandardCharsets.UTF_8);
+			try (OutputStream os = conn.getOutputStream()) {
+				os.write(input, 0, input.length);
+			}
+
+			int resp = conn.getResponseCode();
+			return resp >= 200 && resp < 300;
+		} catch (Throwable t) {
+			return false;
+		} finally {
+			if (conn != null) {
+				try { conn.disconnect(); } catch (Throwable ignored) {}
+			}
+		}
+	}
+
+	private static void updateLicenseDevices(String endpoint, String keyHash, ArrayList<String> deviceIds) {
+		HttpURLConnection conn = null;
+		try {
+			String urlStr = endpoint + "/" + keyHash + "?updateMask.fieldPaths=device_ids";
+			URL url = new URL(urlStr);
+			conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("POST");
+			conn.setRequestProperty("X-HTTP-Method-Override", "PATCH");
+			conn.setRequestProperty("Content-Type", "application/json; utf-8");
+			conn.setRequestProperty("Accept", "application/json");
+			conn.setConnectTimeout(4000);
+			conn.setReadTimeout(4000);
+			conn.setDoOutput(true);
+
+			StringBuilder json = new StringBuilder();
+			json.append("{\n");
+			json.append("  \"fields\": {\n");
+			json.append("    \"device_ids\": {\"arrayValue\": {\"values\": [");
+			for (int i = 0; i < deviceIds.size(); i++) {
+				if (i > 0) json.append(",");
+				json.append("{\"stringValue\": \"").append(escapeJson(deviceIds.get(i))).append("\"}");
+			}
+			json.append("]}}\n");
+			json.append("  }\n");
+			json.append("}");
+
+			byte[] input = json.toString().getBytes(StandardCharsets.UTF_8);
+			try (OutputStream os = conn.getOutputStream()) {
+				os.write(input, 0, input.length);
+			}
+			conn.getResponseCode();
+		} catch (Throwable ignored) {
+		} finally {
+			if (conn != null) {
+				try { conn.disconnect(); } catch (Throwable ignored) {}
+			}
+		}
+	}
+
+	private static String escapeJson(String s) {
+		if (s == null) return "";
+		return s.replace("\\", "\\\\")
+				.replace("\"", "\\\"")
+				.replace("\b", "\\b")
+				.replace("\f", "\\f")
+				.replace("\n", "\\n")
+				.replace("\r", "\\r")
+				.replace("\t", "\\t");
+	}
+
+	private static String readStream(InputStream is) throws Exception {
+		if (is == null) return "";
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+			StringBuilder sb = new StringBuilder();
+			String line;
+			while ((line = reader.readLine()) != null) {
+				sb.append(line).append("\n");
+			}
+			return sb.toString();
+		}
+	}
+
+	private static String extractJsonStringField(String json, String fieldName) {
+		if (json == null) return "";
+		String search = "\"" + fieldName + "\"";
+		int idx = json.indexOf(search);
+		if (idx == -1) return "";
+		int stringValIdx = json.indexOf("\"stringValue\"", idx);
+		if (stringValIdx == -1) return "";
+		int colonIdx = json.indexOf(":", stringValIdx + 13);
+		if (colonIdx == -1) return "";
+		int firstQuote = json.indexOf("\"", colonIdx);
+		if (firstQuote == -1) return "";
+		int secondQuote = json.indexOf("\"", firstQuote + 1);
+		if (secondQuote == -1) return "";
+		return json.substring(firstQuote + 1, secondQuote);
+	}
+
+	private static boolean extractJsonBooleanField(String json, String fieldName) {
+		if (json == null) return false;
+		String search = "\"" + fieldName + "\"";
+		int idx = json.indexOf(search);
+		if (idx == -1) return false;
+		int boolValIdx = json.indexOf("\"booleanValue\"", idx);
+		if (boolValIdx == -1 || boolValIdx - idx > 60) return false;
+		int colonIdx = json.indexOf(":", boolValIdx + 14);
+		if (colonIdx == -1) return false;
+		String rest = json.substring(colonIdx + 1).trim();
+		return rest.startsWith("true");
+	}
+
+	private static int extractJsonIntegerField(String json, String fieldName) {
+		if (json == null) return 0;
+		String search = "\"" + fieldName + "\"";
+		int idx = json.indexOf(search);
+		if (idx == -1) return 0;
+		int intValIdx = json.indexOf("\"integerValue\"", idx);
+		if (intValIdx == -1 || intValIdx - idx > 60) return 0;
+		int colonIdx = json.indexOf(":", intValIdx + 14);
+		if (colonIdx == -1) return 0;
+		int firstQuote = json.indexOf("\"", colonIdx);
+		if (firstQuote == -1) return 0;
+		int secondQuote = json.indexOf("\"", firstQuote + 1);
+		if (secondQuote == -1) return 0;
+		try {
+			return Integer.parseInt(json.substring(firstQuote + 1, secondQuote));
+		} catch (Exception e) {
+			return 0;
+		}
+	}
+
+	private static ArrayList<String> extractJsonStringArray(String json, String fieldName) {
+		ArrayList<String> list = new ArrayList<>();
+		if (json == null) return list;
+		int idx = json.indexOf("\"" + fieldName + "\"");
+		if (idx == -1) return list;
+		int arrayIdx = json.indexOf("\"arrayValue\"", idx);
+		if (arrayIdx == -1 || arrayIdx - idx > 80) return list;
+		int valuesIdx = json.indexOf("\"values\"", arrayIdx);
+		if (valuesIdx == -1) return list;
+		int endBracket = json.indexOf("]", valuesIdx);
+		if (endBracket == -1) return list;
+		String slice = json.substring(valuesIdx, endBracket);
+		int p = 0;
+		while ((p = slice.indexOf("\"stringValue\"", p)) != -1) {
+			int q1 = slice.indexOf("\"", p + 13);
+			if (q1 != -1) {
+				int colon = slice.indexOf(":", p + 13);
+				int strStart = slice.indexOf("\"", colon + 1);
+				int strEnd = slice.indexOf("\"", strStart + 1);
+				if (strStart != -1 && strEnd != -1) {
+					list.add(slice.substring(strStart + 1, strEnd));
+					p = strEnd + 1;
+					continue;
+				}
+			}
+			p += 13;
+		}
+		return list;
 	}
 
 	private static String sha256Hex(String input) {

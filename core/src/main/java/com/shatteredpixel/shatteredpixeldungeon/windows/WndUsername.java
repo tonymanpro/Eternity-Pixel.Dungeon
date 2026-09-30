@@ -11,6 +11,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.services.UsernameService;
+import com.shatteredpixel.shatteredpixeldungeon.services.platform.SupporterManager;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
@@ -40,7 +41,8 @@ public class WndUsername extends Window {
 
 		String currentUsername = SPDSettings.customUsername();
 		boolean hasUsername = currentUsername != null && !currentUsername.trim().isEmpty();
-		String currentKey = SPDSettings.accountKey();
+		String currentKey = !SPDSettings.supporterKey().isEmpty() ?
+				SPDSettings.supporterKey() : SPDSettings.accountKey();
 
 		StringBuilder info = new StringBuilder();
 		if (hasUsername) {
@@ -48,7 +50,10 @@ public class WndUsername extends Window {
 			if (currentKey != null && !currentKey.isEmpty()) {
 				info.append(Messages.get(this, "current_key", currentKey)).append("\n\n");
 			}
+			boolean isSupporter = com.shatteredpixel.shatteredpixeldungeon.services.platform.SupporterManager.isSupporter();
+			info.append(Messages.get(this, isSupporter ? "status_supporter" : "status_standard")).append("\n\n");
 			info.append(Messages.get(this, "desc_registered"));
+			UsernameService.syncSupporterStatusAsync();
 		} else {
 			info.append(Messages.get(this, "unregistered_notice")).append("\n\n");
 			info.append(Messages.get(this, "desc_unregistered"));
@@ -77,59 +82,60 @@ public class WndUsername extends Window {
 			pos = btnCopyKey.bottom() + GAP;
 		}
 
-		// Button to register a new unique username
-		String registerBtnLabel = hasUsername ? Messages.get(this, "btn_change_username") : Messages.get(this, "btn_register_username");
-		RedButton btnRegister = new RedButton(registerBtnLabel) {
-			@Override
-			public void onClick() {
-				hide();
-				ShatteredPixelDungeon.scene().addToFront(new WndTextInput(
-						Messages.get(WndUsername.class, "dialog_register_title"),
-						Messages.get(WndUsername.class, "dialog_register_prompt"),
-						SPDSettings.customUsername(),
-						16,
-						false,
-						Messages.get(WndUsername.class, "btn_confirm"),
-						Messages.get(WndUsername.class, "btn_cancel")
-				) {
-					@Override
-					public void onSelect(boolean positive, String text) {
-						if (positive && text != null && !text.trim().isEmpty()) {
-							final String cleanName = text.trim();
-							if (!UsernameService.isValidUsername(cleanName)) {
-								ShatteredPixelDungeon.scene().addToFront(new WndMessage(Messages.get(WndUsername.class, "error_invalid_format")));
-								return;
-							}
-
-							UsernameService.registerUsernameAsync(cleanName, new UsernameService.Callback() {
-								@Override
-								public void onComplete(final UsernameService.Result result, final String username, final String accountKey, final String message) {
-									Gdx.app.postRunnable(new Runnable() {
-										@Override
-										public void run() {
-											if (result == UsernameService.Result.SUCCESS) {
-												String successMsg = Messages.get(WndUsername.class, "success_registered", username, accountKey);
-												ShatteredPixelDungeon.scene().addToFront(new WndMessage(successMsg));
-											} else if (result == UsernameService.Result.ALREADY_TAKEN) {
-												ShatteredPixelDungeon.scene().addToFront(new WndMessage(Messages.get(WndUsername.class, "error_taken")));
-											} else {
-												ShatteredPixelDungeon.scene().addToFront(new WndMessage(Messages.get(WndUsername.class, "error_network")));
-											}
-											if (onDismissCallback != null) onDismissCallback.run();
-										}
-									});
+		// Button to register a new unique username (only when not registered yet)
+		if (!hasUsername) {
+			RedButton btnRegister = new RedButton(Messages.get(this, "btn_register_username")) {
+				@Override
+				public void onClick() {
+					hide();
+					ShatteredPixelDungeon.scene().addToFront(new WndTextInput(
+							Messages.get(WndUsername.class, "dialog_register_title"),
+							Messages.get(WndUsername.class, "dialog_register_prompt"),
+							SPDSettings.customUsername(),
+							16,
+							false,
+							Messages.get(WndUsername.class, "btn_confirm"),
+							Messages.get(WndUsername.class, "btn_cancel")
+					) {
+						@Override
+						public void onSelect(boolean positive, String text) {
+							if (positive && text != null && !text.trim().isEmpty()) {
+								final String cleanName = text.trim();
+								if (!UsernameService.isValidUsername(cleanName)) {
+									ShatteredPixelDungeon.scene().addToFront(new WndMessage(Messages.get(WndUsername.class, "error_invalid_format")));
+									return;
 								}
-							});
-						} else if (!positive) {
-							ShatteredPixelDungeon.scene().addToFront(new WndUsername(onDismissCallback));
+
+								UsernameService.registerUsernameAsync(cleanName, new UsernameService.Callback() {
+									@Override
+									public void onComplete(final UsernameService.Result result, final String username, final String accountKey, final String message) {
+										Gdx.app.postRunnable(new Runnable() {
+											@Override
+											public void run() {
+												if (result == UsernameService.Result.SUCCESS) {
+													String successMsg = Messages.get(WndUsername.class, "success_registered", username, accountKey);
+													ShatteredPixelDungeon.scene().addToFront(new WndMessage(successMsg));
+												} else if (result == UsernameService.Result.ALREADY_TAKEN) {
+													ShatteredPixelDungeon.scene().addToFront(new WndMessage(Messages.get(WndUsername.class, "error_taken")));
+												} else {
+													ShatteredPixelDungeon.scene().addToFront(new WndMessage(Messages.get(WndUsername.class, "error_network")));
+												}
+												if (onDismissCallback != null) onDismissCallback.run();
+											}
+										});
+									}
+								});
+							} else if (!positive) {
+								ShatteredPixelDungeon.scene().addToFront(new WndUsername(onDismissCallback));
+							}
 						}
-					}
-				});
-			}
-		};
-		btnRegister.setRect(0, pos, width, 18);
-		add(btnRegister);
-		pos = btnRegister.bottom() + GAP;
+					});
+				}
+			};
+			btnRegister.setRect(0, pos, width, 18);
+			add(btnRegister);
+			pos = btnRegister.bottom() + GAP;
+		}
 
 		// Button to link an existing username with account key on this device
 		RedButton btnLink = new RedButton(Messages.get(this, "btn_link_device")) {
@@ -153,7 +159,7 @@ public class WndUsername extends Window {
 									Messages.get(WndUsername.class, "dialog_link_key_title"),
 									Messages.get(WndUsername.class, "dialog_link_key_prompt", cleanUsername),
 									"",
-									32,
+									36,
 									false,
 									Messages.get(WndUsername.class, "btn_link_confirm"),
 									Messages.get(WndUsername.class, "btn_cancel")
@@ -170,6 +176,13 @@ public class WndUsername extends Window {
 													public void run() {
 														if (result == UsernameService.Result.SUCCESS) {
 															ShatteredPixelDungeon.scene().addToFront(new WndMessage(Messages.get(WndUsername.class, "success_linked", username)));
+															if (SupporterManager.isSupporter()) {
+																if (ShatteredPixelDungeon.scene() instanceof com.shatteredpixel.shatteredpixeldungeon.scenes.TitleScene) {
+																	ShatteredPixelDungeon.switchNoFade(com.shatteredpixel.shatteredpixeldungeon.scenes.TitleScene.class);
+																} else if (ShatteredPixelDungeon.scene() instanceof com.shatteredpixel.shatteredpixeldungeon.scenes.HeroSelectScene) {
+																	ShatteredPixelDungeon.switchNoFade(com.shatteredpixel.shatteredpixeldungeon.scenes.HeroSelectScene.class);
+																}
+															}
 														} else if (result == UsernameService.Result.NOT_FOUND) {
 															ShatteredPixelDungeon.scene().addToFront(new WndMessage(Messages.get(WndUsername.class, "error_not_found")));
 														} else if (result == UsernameService.Result.INVALID_KEY) {

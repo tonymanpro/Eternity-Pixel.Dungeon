@@ -42,8 +42,21 @@ public class ItemSpriteSheet {
 		return film;
 	}
 
+	private static class CustomRect {
+		int item, width, height;
+		CustomRect(int item, int width, int height) {
+			this.item = item;
+			this.width = width;
+			this.height = height;
+		}
+	}
+	private static final java.util.ArrayList<CustomRect> customRects = new java.util.ArrayList<>();
+
 	public static void reload() {
 		film = createFilm();
+		for (CustomRect r : customRects) {
+			applyItemRect(r.item, r.width, r.height);
+		}
 	}
 
 	private static int xy(int x, int y){
@@ -52,6 +65,11 @@ public class ItemSpriteSheet {
 	}
 
 	private static void assignItemRect( int item, int width, int height ){
+		customRects.add(new CustomRect(item, width, height));
+		applyItemRect(item, width, height);
+	}
+
+	private static void applyItemRect( int item, int width, int height ){
 		com.watabou.gltextures.SmartTexture tx = com.watabou.gltextures.TextureCache.get( Assets.Sprites.ITEMS );
 		int scale = (tx.width >= 1000) ? 4 : ((tx.width >= 500) ? 2 : 1);
 		int x = (item % WIDTH) * SIZE * scale;

@@ -125,6 +125,11 @@ public class InventoryPane extends Component {
 		bg2 = Chrome.get(Chrome.Type.TOAST_TR);
 		add(bg2);
 
+		if (Window.isGoldenUIActive()) {
+			bg.hardlight( 1.0f, 0.84f, 0.25f );
+			bg2.hardlight( 1.0f, 0.84f, 0.25f );
+		}
+
 		blocker = new PointerArea(0, 0, PixelScene.uiCamera.width, PixelScene.uiCamera.height){
 			@Override
 			protected void onClick(PointerEvent event) {

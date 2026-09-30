@@ -248,6 +248,9 @@ public class MenuPane extends Component {
 
 		public static void applySupporterMenuButton( Image img ) {
 			int style = com.shatteredpixel.shatteredpixeldungeon.SPDSettings.menuButtonStyle();
+			if (style == 0 && Window.isGoldenUIActive()) {
+				style = 2; // Auto-activate Gold style when Golden UI is on
+			}
 			switch (style) {
 				case 1: // Silver
 					img.hardlight( 0.82f, 0.82f, 0.88f );
@@ -321,6 +324,7 @@ public class MenuPane extends Component {
 				bg.brightness(.8f - (Math.min(6, keyIcon.keyCount()) / 20f));
 			} else {
 				bg.resetColor();
+				applySupporterMenuButton( bg );
 			}
 		}
 
@@ -336,6 +340,7 @@ public class MenuPane extends Component {
 				bg.brightness(.8f - (Math.min(6, keyIcon.keyCount()) / 20f));
 			} else {
 				bg.resetColor();
+				applySupporterMenuButton( bg );
 			}
 		}
 

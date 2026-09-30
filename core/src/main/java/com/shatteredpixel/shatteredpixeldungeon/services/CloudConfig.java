@@ -61,4 +61,11 @@ public final class CloudConfig {
 		return "https://firestore.googleapis.com/v1/projects/" + firestoreProject +
 				"/databases/" + firestoreDatabase + "/documents/hall_of_fame";
 	}
+
+	public static String getLicensesEndpoint() {
+		init();
+		if (!available) return null;
+		return "https://firestore.googleapis.com/v1/projects/" + firestoreProject +
+				"/databases/" + firestoreDatabase + "/documents/supporter_licenses";
+	}
 }

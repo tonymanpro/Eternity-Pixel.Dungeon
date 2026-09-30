@@ -77,6 +77,12 @@ public class OnlineLeaderboardService {
 		String ringsStr = (build != null && build.rings != null && !build.rings.isEmpty()) ? String.join(", ", build.rings) : "";
 		String artifactsStr = (build != null && build.artifacts != null && !build.artifacts.isEmpty()) ? String.join(", ", build.artifacts) : "";
 
+		boolean isSupporter = com.shatteredpixel.shatteredpixeldungeon.services.platform.SupporterManager.isSupporter();
+		int supporterTier = com.shatteredpixel.shatteredpixeldungeon.services.platform.SupporterManager.getActiveTier().rank;
+		String platform = com.watabou.utils.DeviceCompat.isAndroid() ? "Android" :
+				(com.shatteredpixel.shatteredpixeldungeon.services.platform.SupporterManager.isSteam() ? "Steam" : "Desktop");
+		String appVer = Game.version != null ? Game.version : "2.1.6";
+
 		StringBuilder json = new StringBuilder();
 		json.append("{\n");
 		json.append("  \"fields\": {\n");
@@ -96,6 +102,10 @@ public class OnlineLeaderboardService {
 		json.append("    \"artifacts\": {\"stringValue\": \"").append(escapeJson(artifactsStr)).append("\"},\n");
 		json.append("    \"pet\": {\"stringValue\": \"").append(escapeJson(pet)).append("\"},\n");
 		json.append("    \"game_id\": {\"stringValue\": \"").append(escapeJson(record.gameID)).append("\"},\n");
+		json.append("    \"is_supporter\": {\"booleanValue\": ").append(isSupporter).append("},\n");
+		json.append("    \"supporter_tier\": {\"integerValue\": \"").append(supporterTier).append("\"},\n");
+		json.append("    \"platform\": {\"stringValue\": \"").append(escapeJson(platform)).append("\"},\n");
+		json.append("    \"app_version\": {\"stringValue\": \"").append(escapeJson(appVer)).append("\"},\n");
 		json.append("    \"created_at\": {\"timestampValue\": \"").append(timestamp).append("\"}\n");
 		json.append("  }\n");
 		json.append("}");

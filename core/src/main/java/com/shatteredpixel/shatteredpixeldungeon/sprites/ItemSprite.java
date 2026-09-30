@@ -48,6 +48,7 @@ import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.particles.Emitter;
 import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
+import com.watabou.utils.RectF;
 
 import java.nio.Buffer;
 
@@ -252,8 +253,9 @@ public class ItemSprite extends MovieClip {
 		return this;
 	}
 
-	public void frame( int image ){
-		frame( ItemSpriteSheet.film.get( image ));
+	@Override
+	public void frame( RectF frame ){
+		super.frame( frame );
 
 		float scale = (texture != null && texture.width >= 1000) ? 4f : ((texture != null && texture.width >= 500) ? 2f : 1f);
 		if (scale > 1f) {
@@ -261,6 +263,10 @@ public class ItemSprite extends MovieClip {
 			height /= scale;
 			updateVertices();
 		}
+	}
+
+	public void frame( int image ){
+		frame( ItemSpriteSheet.film.get( image ));
 
 		float itemHeight = ItemSpriteSheet.film.height( image );
 		//adds extra raise to very short items, so they are visible

@@ -860,18 +860,11 @@ public class WndSettings extends WndTabbed {
 			chkGoldenUI.checked(SPDSettings.goldenUI());
 			add(chkGoldenUI);
 
-			String[] styleNames = {
-				Messages.get(WndSupporterUnlock.class, "menu_style_default"),
-				Messages.get(WndSupporterUnlock.class, "menu_style_silver"),
-				Messages.get(WndSupporterUnlock.class, "menu_style_gold"),
-				Messages.get(WndSupporterUnlock.class, "menu_style_emerald")
-			};
-			btnMenuButton = new RedButton(Messages.get(this, "menu_style", styleNames[SPDSettings.menuButtonStyle() % 4])) {
+			btnMenuButton = new RedButton(Messages.get(this, "menu_style")) {
 				@Override
 				public void onClick() {
 					int next = (SPDSettings.menuButtonStyle() + 1) % 4;
 					SPDSettings.menuButtonStyle(next);
-					text(Messages.get(WndSettings.UITab.this, "menu_style", styleNames[next]));
 					if (next == 1) textColor(0xC0C0C0);
 					else if (next == 2) textColor(0xFFD700);
 					else if (next == 3) textColor(0x00FF88);
@@ -1150,13 +1143,16 @@ public class WndSettings extends WndTabbed {
 			};
 			add(btnUsername);
 
+			boolean showSupporter = !com.shatteredpixel.shatteredpixeldungeon.services.platform.SupporterManager.isSupporter();
 			btnSupporter = new RedButton(Messages.get(this, "supporter_btn")) {
 				@Override
 				public void onClick() {
 					ShatteredPixelDungeon.scene().addToFront(new WndSupporterUnlock());
 				}
 			};
-			add(btnSupporter);
+			if (showSupporter) {
+				add(btnSupporter);
+			}
 		}
 
 		@Override
@@ -1189,14 +1185,19 @@ public class WndSettings extends WndTabbed {
 				pos = chkWifi.bottom();
 			}
 
-			if (width > 200) {
-				btnUsername.setRect(0, pos + GAP * 2, width/2 - 1, BTN_HEIGHT);
-				btnSupporter.setRect(width/2 + 1, pos + GAP * 2, width/2 - 1, BTN_HEIGHT);
-				pos = btnSupporter.bottom();
+			if (btnSupporter != null && btnSupporter.parent != null) {
+				if (width > 200) {
+					btnUsername.setRect(0, pos + GAP * 2, width/2 - 1, BTN_HEIGHT);
+					btnSupporter.setRect(width/2 + 1, pos + GAP * 2, width/2 - 1, BTN_HEIGHT);
+					pos = btnSupporter.bottom();
+				} else {
+					btnUsername.setRect(0, pos + GAP * 2, width, BTN_HEIGHT);
+					btnSupporter.setRect(0, btnUsername.bottom() + GAP, width, BTN_HEIGHT);
+					pos = btnSupporter.bottom();
+				}
 			} else {
 				btnUsername.setRect(0, pos + GAP * 2, width, BTN_HEIGHT);
-				btnSupporter.setRect(0, btnUsername.bottom() + GAP, width, BTN_HEIGHT);
-				pos = btnSupporter.bottom();
+				pos = btnUsername.bottom();
 			}
 
 			height = pos;

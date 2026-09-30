@@ -326,12 +326,12 @@ public class BattlePass {
 
     public static boolean isPremium() {
         ensureLoaded();
-        return premium;
+        return premium || com.shatteredpixel.shatteredpixeldungeon.services.platform.SupporterManager.isSupporter();
     }
 
     public static boolean isPremiumUnlocked() {
         ensureLoaded();
-        return premium;
+        return premium || com.shatteredpixel.shatteredpixeldungeon.services.platform.SupporterManager.isSupporter();
     }
 
     public static String howToObtainItem(Class<? extends Item> itemClass) {
@@ -799,9 +799,9 @@ public class BattlePass {
 
     public static boolean isPremiumClaimable(int tier) {
         if (tier == REPEATABLE_TIER) {
-            return premium && repeatableTiersUnlocked() > premiumRepeatableTiersClaimed;
+            return isPremium() && repeatableTiersUnlocked() > premiumRepeatableTiersClaimed;
         }
-        return premium && isUnlocked(tier) && BattlePassTiers.hasPremiumReward(tier) && !isPremiumClaimed(tier);
+        return isPremium() && isUnlocked(tier) && BattlePassTiers.hasPremiumReward(tier) && !isPremiumClaimed(tier);
     }
 
     public static Item claimPremium(int tier) {

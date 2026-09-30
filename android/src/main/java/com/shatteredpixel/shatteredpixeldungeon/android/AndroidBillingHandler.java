@@ -278,6 +278,7 @@ public class AndroidBillingHandler implements PurchasesUpdatedListener, BillingC
 					SPDSettings.supporterTier(highestTier);
 					Log.i(TAG, "handlePurchase: Supporter tier updated to rank " + highestTier);
 				}
+				com.shatteredpixel.shatteredpixeldungeon.services.UsernameService.syncSupporterStatusAsync();
 			}
 
 			// Acknowledge purchase if not already acknowledged
@@ -326,6 +327,7 @@ public class AndroidBillingHandler implements PurchasesUpdatedListener, BillingC
 				if (maxTier > 0) {
 					SPDSettings.supporterTier(maxTier);
 					Log.i(TAG, "restorePurchases: Supporter Tier updated to rank " + maxTier);
+					com.shatteredpixel.shatteredpixeldungeon.services.UsernameService.syncSupporterStatusAsync();
 				}
 			}
 			if (callback != null) {
