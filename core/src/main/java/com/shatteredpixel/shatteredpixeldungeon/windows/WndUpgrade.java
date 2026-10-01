@@ -24,8 +24,10 @@ package com.shatteredpixel.shatteredpixeldungeon.windows;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
+import com.shatteredpixel.shatteredpixeldungeon.items.BrokenSeal;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
+import com.shatteredpixel.shatteredpixeldungeon.ui.InventoryPane;
 import com.shatteredpixel.shatteredpixeldungeon.items.fishingrods.FishingRod;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
@@ -464,6 +466,14 @@ public class WndUpgrade extends Window {
 							upgrader.updateQuickslot();
 						}
 					}
+				}
+
+				toUpgrade.updateQuickslot();
+				Item.updateQuickslot();
+				InventoryPane.refresh();
+				if (Dungeon.hero != null && toUpgrade.isEquipped(Dungeon.hero) && toUpgrade instanceof Armor) {
+					BrokenSeal.WarriorShield seal = Dungeon.hero.buff(BrokenSeal.WarriorShield.class);
+					if (seal != null) seal.setArmor((Armor) toUpgrade);
 				}
 
 				hide();

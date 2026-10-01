@@ -19,8 +19,17 @@ Visit the official portal to download the latest executable and APK versions, re
 
 ## 📥 Download
 
-* **[Itch.io](https://eternitypixeldungeon.itch.io/game)**
-* **[Github Releases](https://github.com/tonymanpro/Eternity-Pixel.Dungeon/releases)**
+[![Get it on Google Play](https://shatteredpixel.com/assets/images/badges/gplay.png)](https://play.google.com/store/apps/details?id=com.tonymanpro.EternityPixelDungeon)
+
+
+
+<a href="https://store.steampowered.com/app/5314430/Eternity_Pixel_Dungeon/?beta=1">
+  <img src="https://firebasestorage.googleapis.com/v0/b/eternity-pixel-dungeon.firebasestorage.app/o/img%2FCoomingSoon.jpg?alt=media&token=c1df745e-d533-4ff2-b6f6-4c8fb3bb0b26" alt="Steam" width="300">
+</a>
+
+
+[![Itch.io](https://shatteredpixel.com/assets/images/badges/itch.png)](https://eternitypixeldungeon.itch.io/game)
+[![Github Releases](https://shatteredpixel.com/assets/images/badges/github.png)](https://github.com/tonymanpro/Eternity-Pixel.Dungeon/releases)
 
 ---
 
