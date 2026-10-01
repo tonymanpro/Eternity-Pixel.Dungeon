@@ -19,7 +19,7 @@ Visit the official portal to download the latest executable and APK versions, re
 
 ## 📥 Download
 
-[![Get it on Google Play](https://shatteredpixel.com/assets/images/badges/gplay.png)](https://play.google.com/store/apps/details?id=com.tonymanpro.EternityPixelDungeon)
+[![Get it on Google Play](https://shatteredpixel.com/assets/images/badges/gplay.png)](https://play.google.com/store/apps/details?id=com.eternity.pixeldungeon)
 
 
 
