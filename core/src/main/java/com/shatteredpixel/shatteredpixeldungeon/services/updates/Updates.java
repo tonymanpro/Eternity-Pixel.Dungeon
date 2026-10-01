@@ -25,11 +25,15 @@
 package com.shatteredpixel.shatteredpixeldungeon.services.updates;
 
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
+import com.watabou.noosa.Game;
 import com.watabou.utils.Callback;
+import com.watabou.utils.DeviceCompat;
 
 import java.util.Date;
 
 public class Updates {
+
+	public static final String PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.eternity.pixeldungeon";
 
 	public static UpdateService service;
 
@@ -77,7 +81,11 @@ public class Updates {
 	}
 
 	public static void launchUpdate( AvailableUpdateData data ){
-		service.initializeUpdate( data );
+		if (DeviceCompat.isAndroid()){
+			Game.platform.openURI( PLAY_STORE_URL );
+		} else if (service != null){
+			service.initializeUpdate( data );
+		}
 	}
 
 	private static AvailableUpdateData updateData = null;

@@ -211,7 +211,11 @@ public class GitHubUpdates extends UpdateService {
 						} else {
 							update.desc = body != null ? body.replaceAll("(?i)internal version number:\\s*[0-9]+", "").trim() : "";
 						}
-						update.URL = latestRelease.getString("html_url", "");
+						if (DeviceCompat.isAndroid()) {
+							update.URL = "https://play.google.com/store/apps/details?id=com.eternity.pixeldungeon";
+						} else {
+							update.URL = latestRelease.getString("html_url", "");
+						}
 
 						callback.onUpdateAvailable(update);
 					}
@@ -244,7 +248,11 @@ public class GitHubUpdates extends UpdateService {
 
 	@Override
 	public void initializeUpdate(AvailableUpdateData update) {
-		Game.platform.openURI( update.URL );
+		if (DeviceCompat.isAndroid()) {
+			Game.platform.openURI( "https://play.google.com/store/apps/details?id=com.eternity.pixeldungeon" );
+		} else {
+			Game.platform.openURI( update.URL );
+		}
 	}
 
 	@Override
@@ -260,6 +268,8 @@ public class GitHubUpdates extends UpdateService {
 
 	@Override
 	public void openReviewURI() {
-		//does nothing
+		if (DeviceCompat.isAndroid()) {
+			Game.platform.openURI( "https://play.google.com/store/apps/details?id=com.eternity.pixeldungeon" );
+		}
 	}
 }

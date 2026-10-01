@@ -26,6 +26,7 @@ package com.shatteredpixel.shatteredpixeldungeon.services.updates;
 
 
 import com.watabou.noosa.Game;
+import com.watabou.utils.DeviceCompat;
 
 public class DebugUpdates extends UpdateService {
 
@@ -59,7 +60,11 @@ public class DebugUpdates extends UpdateService {
 
 	@Override
 	public void initializeUpdate(AvailableUpdateData update) {
-		Game.platform.openURI( update.URL );
+		if (DeviceCompat.isAndroid()) {
+			Game.platform.openURI( "https://play.google.com/store/apps/details?id=com.eternity.pixeldungeon" );
+		} else {
+			Game.platform.openURI( update.URL );
+		}
 	}
 
 	@Override
@@ -75,6 +80,10 @@ public class DebugUpdates extends UpdateService {
 
 	@Override
 	public void openReviewURI() {
-		Game.platform.openURI("https://www.google.com/");
+		if (DeviceCompat.isAndroid()) {
+			Game.platform.openURI( "https://play.google.com/store/apps/details?id=com.eternity.pixeldungeon" );
+		} else {
+			Game.platform.openURI("https://www.google.com/");
+		}
 	}
 }
