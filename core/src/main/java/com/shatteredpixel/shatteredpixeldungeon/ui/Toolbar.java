@@ -802,6 +802,9 @@ public class Toolbar extends Component {
 			super.createChildren();
 			
 			base = new Image( Assets.Interfaces.TOOLBAR );
+			if (Window.isGoldenUIActive()) {
+				base.hardlight( 1.0f, 0.84f, 0.25f );
+			}
 			add( base );
 		}
 		
@@ -832,6 +835,9 @@ public class Toolbar extends Component {
 		protected void onPointerUp() {
 			if (active) {
 				base.resetColor();
+				if (Window.isGoldenUIActive()) {
+					base.hardlight( 1.0f, 0.84f, 0.25f );
+				}
 			} else {
 				base.tint( BGCOLOR, 0.7f );
 			}

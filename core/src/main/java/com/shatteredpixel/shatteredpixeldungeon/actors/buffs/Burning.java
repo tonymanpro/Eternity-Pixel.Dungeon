@@ -54,17 +54,19 @@ import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 
-public class Burning extends Buff implements Hero.Doom {
+public class Burning extends Buff implements Hero.Doom, Buff.DOTbuff {
 	
 	private static final float DURATION = 8f;
 	
 	private float left;
 	private boolean acted = false; //whether the debuff has done any damage at all yet
 	private int burnIncrement = 0; //for tracking burning of hero items
+	private int nextHit = 0; //we pre-caulcate the incoming hit for a bit more accuracy in totalIncomingDMG()
 	
 	private static final String LEFT	= "left";
 	private static final String ACTED	= "acted";
 	private static final String BURN	= "burnIncrement";
+	private static final String NEXT_DMG= "next_dmg";
 
 	{
 		type = buffType.NEGATIVE;
@@ -77,14 +79,16 @@ public class Burning extends Buff implements Hero.Doom {
 		bundle.put( LEFT, left );
 		bundle.put( ACTED, acted );
 		bundle.put( BURN, burnIncrement );
+		bundle.put( NEXT_DMG, nextHit );
 	}
 	
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
-		super.restoreFromBundle(bundle);
+		super.restoreFromBundle( bundle );
 		left = bundle.getFloat( LEFT );
 		acted = bundle.getBoolean( ACTED );
 		burnIncrement = bundle.getInt( BURN );
+		nextHit = bundle.getInt( NEXT_DMG );
 	}
 
 	@Override
@@ -102,7 +106,11 @@ public class Burning extends Buff implements Hero.Doom {
 		} else if (target.isAlive() && !target.isImmune(getClass())) {
 
 			acted = true;
-			long damage = Random.NormalLongRange( 1, 3 + Dungeon.scalingDepth()/4 );
+			if (nextHit == 0){
+				nextHit = Random.NormalIntRange( 1, (int)(3 + Dungeon.scalingDepth()/4) );
+			}
+			long damage = nextHit;
+			nextHit = Random.NormalIntRange( 1, (int)(3 + Dungeon.scalingDepth()/4) );
 			Buff.detach( target, Chill.class);
 
 			if (target instanceof Hero
@@ -189,8 +197,15 @@ public class Burning extends Buff implements Hero.Doom {
 			
 			detach();
 		}
+		target.needsIncomingDOTUpdate = true;
 		
 		return true;
+	}
+
+	@Override
+	public void detach() {
+		if (target != null) target.needsIncomingDOTUpdate = true;
+		super.detach();
 	}
 	
 	public void reignite( Char ch ) {
@@ -217,12 +232,16 @@ public class Burning extends Buff implements Hero.Doom {
 				}
 			}
 		}
-		left = duration;
+		if (left < duration) {
+			left = duration;
+			ch.needsIncomingDOTUpdate = true;
+		}
 		acted = false;
 	}
 
 	public void extend( float duration ){
 		left += duration;
+		if (target != null) target.needsIncomingDOTUpdate = true;
 	}
 	
 	@Override
@@ -258,5 +277,14 @@ public class Burning extends Buff implements Hero.Doom {
 		
 		Dungeon.fail( this );
 		GLog.n( Messages.get(this, "ondeath") );
+	}
+
+	@Override
+	public int totalIncomingDMG() {
+		if (nextHit == 0){
+			nextHit = Random.NormalIntRange( 1, (int)(3 + Dungeon.scalingDepth()/4) );
+		}
+		float avgDmg = 2 + Dungeon.scalingDepth()/8f;
+		return (int)Math.round(nextHit + Math.ceil(left-1)*avgDmg);
 	}
 }

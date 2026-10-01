@@ -25,6 +25,8 @@
 package com.shatteredpixel.shatteredpixeldungeon.android;
 
 import android.app.Activity;
+import android.util.Log;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.android.billingclient.api.*;
@@ -39,13 +41,12 @@ import java.util.*;
  */
 public class AndroidBillingHandler implements PurchasesUpdatedListener, BillingClientStateListener {
 
-	public static final String SKU_BRONZE   = "supporter_bronze";
-	public static final String SKU_SILVER   = "supporter_silver";
-	public static final String SKU_GOLD     = "supporter_gold";
-	public static final String SKU_PLATINUM = "supporter_platinum";
+	private static final String TAG = "EPD-Billing";
 
-	private static final List<String> ALL_SKUS = Arrays.asList(
-			SKU_BRONZE, SKU_SILVER, SKU_GOLD, SKU_PLATINUM
+	public static final String SKU_FULL_UNLOCK = "full_unlock";
+
+	private static final List<String> ALL_SKUS = Collections.singletonList(
+			SKU_FULL_UNLOCK
 	);
 
 	private static AndroidBillingHandler instance;
@@ -60,6 +61,7 @@ public class AndroidBillingHandler implements PurchasesUpdatedListener, BillingC
 	public AndroidBillingHandler(Activity activity) {
 		this.activity = activity;
 		instance = this;
+		Log.i(TAG, "AndroidBillingHandler initialized for activity: " + activity.getClass().getSimpleName());
 		initialize();
 	}
 
@@ -69,36 +71,46 @@ public class AndroidBillingHandler implements PurchasesUpdatedListener, BillingC
 
 	private void initialize() {
 		try {
+			Log.i(TAG, "Building BillingClient with PendingPurchases enabled...");
 			billingClient = BillingClient.newBuilder(activity)
 					.setListener(this)
 					.enablePendingPurchases(PendingPurchasesParams.newBuilder().enableOneTimeProducts().build())
 					.build();
 			startConnection();
-		} catch (Throwable ignored) {
+		} catch (Throwable t) {
+			Log.e(TAG, "Failed to initialize BillingClient", t);
 		}
 	}
 
 	public void startConnection() {
-		if (billingClient == null) return;
+		if (billingClient == null) {
+			Log.w(TAG, "startConnection: billingClient is null");
+			return;
+		}
 		try {
+			Log.i(TAG, "Connecting to Google Play Billing service...");
 			billingClient.startConnection(this);
-		} catch (Throwable ignored) {
+		} catch (Throwable t) {
+			Log.e(TAG, "startConnection failed", t);
 		}
 	}
 
 	@Override
 	public void onBillingSetupFinished(@NonNull BillingResult billingResult) {
+		Log.i(TAG, "onBillingSetupFinished: responseCode=" + billingResult.getResponseCode() + ", msg=" + billingResult.getDebugMessage());
 		if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
 			isConnected = true;
 			queryProducts();
 			restorePurchases(null);
 		} else {
 			isConnected = false;
+			Log.w(TAG, "Billing setup was NOT OK: " + billingResult.getDebugMessage());
 		}
 	}
 
 	@Override
 	public void onBillingServiceDisconnected() {
+		Log.w(TAG, "onBillingServiceDisconnected: Connection lost, will retry on demand.");
 		isConnected = false;
 	}
 
@@ -106,8 +118,12 @@ public class AndroidBillingHandler implements PurchasesUpdatedListener, BillingC
 	 * Queries available supporter product details from Google Play.
 	 */
 	public void queryProducts() {
-		if (billingClient == null || !isConnected) return;
+		if (billingClient == null || !isConnected) {
+			Log.w(TAG, "queryProducts aborted: billingClient is not connected");
+			return;
+		}
 
+		Log.i(TAG, "Querying Google Play ProductDetails for SKUs: " + ALL_SKUS);
 		List<QueryProductDetailsParams.Product> productList = new ArrayList<>();
 		for (String sku : ALL_SKUS) {
 			productList.add(
@@ -123,10 +139,15 @@ public class AndroidBillingHandler implements PurchasesUpdatedListener, BillingC
 				.build();
 
 		billingClient.queryProductDetailsAsync(params, (billingResult, result) -> {
+			Log.i(TAG, "queryProductDetailsAsync finished: responseCode=" + billingResult.getResponseCode() + ", msg=" + billingResult.getDebugMessage());
 			if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK && result.getProductDetailsList() != null) {
+				Log.i(TAG, "Google Play returned " + result.getProductDetailsList().size() + " products.");
 				for (ProductDetails details : result.getProductDetailsList()) {
+					Log.i(TAG, " -> Product: ID=" + details.getProductId() + ", Name=" + details.getName() + ", Title=" + details.getTitle());
 					productDetailsMap.put(details.getProductId(), details);
 				}
+			} else {
+				Log.w(TAG, "queryProductDetailsAsync did not return products. Response: " + billingResult.getResponseCode() + " " + billingResult.getDebugMessage());
 			}
 		});
 	}
@@ -137,18 +158,16 @@ public class AndroidBillingHandler implements PurchasesUpdatedListener, BillingC
 	public void purchaseSupporter(int tierRank, Callback callback) {
 		this.pendingPurchaseCallback = callback;
 
-		String targetSku;
-		switch (tierRank) {
-			case 1: targetSku = SKU_BRONZE; break;
-			case 2: targetSku = SKU_SILVER; break;
-			case 3: targetSku = SKU_GOLD; break;
-			case 4: targetSku = SKU_PLATINUM; break;
-			default: targetSku = SKU_BRONZE; break;
-		}
+		String targetSku = SKU_FULL_UNLOCK;
+
+		Log.i(TAG, "purchaseSupporter requested for tierRank=" + tierRank + ", targetSku=" + targetSku + ", isConnected=" + isConnected);
 
 		if (billingClient == null || !isConnected) {
+			Log.w(TAG, "purchaseSupporter: Not connected to Google Play Billing! Attempting reconnection...");
 			startConnection();
-			if (callback != null) callback.call();
+			activity.runOnUiThread(() -> {
+				Toast.makeText(activity, "Conectando con Google Play... Intenta de nuevo en unos segundos.", Toast.LENGTH_SHORT).show();
+			});
 			return;
 		}
 
@@ -156,24 +175,43 @@ public class AndroidBillingHandler implements PurchasesUpdatedListener, BillingC
 		if (details != null) {
 			launchBilling(details);
 		} else {
-			// Query again if cache was cold
-			List<QueryProductDetailsParams.Product> productList = Collections.singletonList(
-					QueryProductDetailsParams.Product.newBuilder()
-							.setProductId(targetSku)
-							.setProductType(BillingClient.ProductType.INAPP)
-							.build()
-			);
+			Log.i(TAG, "ProductDetails for '" + targetSku + "' not cached yet. Querying Google Play...");
+			List<QueryProductDetailsParams.Product> productList = new ArrayList<>();
+			for (String sku : ALL_SKUS) {
+				productList.add(
+						QueryProductDetailsParams.Product.newBuilder()
+								.setProductId(sku)
+								.setProductType(BillingClient.ProductType.INAPP)
+								.build()
+				);
+			}
+			final String finalTarget = targetSku;
 			billingClient.queryProductDetailsAsync(
 					QueryProductDetailsParams.newBuilder().setProductList(productList).build(),
 					(billingResult, result) -> {
 						List<ProductDetails> list = result != null ? result.getProductDetailsList() : null;
+						Log.i(TAG, "queryProductDetailsAsync on purchase: code=" + billingResult.getResponseCode() + ", found=" + (list != null ? list.size() : 0));
 						if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK && list != null && !list.isEmpty()) {
-							ProductDetails found = list.get(0);
-							productDetailsMap.put(found.getProductId(), found);
-							activity.runOnUiThread(() -> launchBilling(found));
-						} else {
-							if (pendingPurchaseCallback != null) pendingPurchaseCallback.call();
+							ProductDetails found = null;
+							for (ProductDetails pd : list) {
+								productDetailsMap.put(pd.getProductId(), pd);
+								Log.i(TAG, " -> Cached SKU: " + pd.getProductId() + " (" + pd.getTitle() + ")");
+								if (pd.getProductId().equalsIgnoreCase(finalTarget)) {
+									found = pd;
+								}
+							}
+							if (found == null && !list.isEmpty()) found = list.get(0);
+							if (found != null) {
+								final ProductDetails toLaunch = found;
+								activity.runOnUiThread(() -> launchBilling(toLaunch));
+								return;
+							}
 						}
+
+						Log.e(TAG, "Failed to find ProductDetails for targetSku: " + finalTarget);
+						activity.runOnUiThread(() -> {
+							Toast.makeText(activity, "Google Play: El producto '" + finalTarget + "' aún no está activo en Google Play Console.", Toast.LENGTH_LONG).show();
+						});
 					}
 			);
 		}
@@ -181,6 +219,7 @@ public class AndroidBillingHandler implements PurchasesUpdatedListener, BillingC
 
 	private void launchBilling(ProductDetails details) {
 		try {
+			Log.i(TAG, "Launching Google Play billing flow for: " + details.getProductId() + " (" + details.getTitle() + ")");
 			List<BillingFlowParams.ProductDetailsParams> productDetailsParamsList =
 					Collections.singletonList(
 							BillingFlowParams.ProductDetailsParams.newBuilder()
@@ -192,50 +231,66 @@ public class AndroidBillingHandler implements PurchasesUpdatedListener, BillingC
 					.setProductDetailsParamsList(productDetailsParamsList)
 					.build();
 
-			billingClient.launchBillingFlow(activity, billingFlowParams);
-		} catch (Throwable ignored) {
-			if (pendingPurchaseCallback != null) pendingPurchaseCallback.call();
+			BillingResult billingResult = billingClient.launchBillingFlow(activity, billingFlowParams);
+			Log.i(TAG, "launchBillingFlow result: code=" + billingResult.getResponseCode() + ", msg=" + billingResult.getDebugMessage());
+			if (billingResult.getResponseCode() != BillingClient.BillingResponseCode.OK) {
+				activity.runOnUiThread(() -> {
+					Toast.makeText(activity, "Google Play Error (" + billingResult.getResponseCode() + "): " + billingResult.getDebugMessage(), Toast.LENGTH_LONG).show();
+				});
+			}
+		} catch (Throwable t) {
+			Log.e(TAG, "Exception during launchBilling", t);
 		}
 	}
 
 	@Override
 	public void onPurchasesUpdated(@NonNull BillingResult billingResult, @Nullable List<Purchase> purchases) {
+		Log.i(TAG, "onPurchasesUpdated: responseCode=" + billingResult.getResponseCode() + ", msg=" + billingResult.getDebugMessage() + ", purchases=" + (purchases != null ? purchases.size() : 0));
 		if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK && purchases != null) {
 			for (Purchase purchase : purchases) {
 				handlePurchase(purchase);
 			}
-		}
-		if (pendingPurchaseCallback != null) {
-			pendingPurchaseCallback.call();
-			pendingPurchaseCallback = null;
+			if (pendingPurchaseCallback != null) {
+				pendingPurchaseCallback.call();
+				pendingPurchaseCallback = null;
+			}
+		} else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.USER_CANCELED) {
+			Log.i(TAG, "onPurchasesUpdated: User canceled the purchase.");
+		} else {
+			Log.w(TAG, "onPurchasesUpdated: Purchase failed or was canceled. Code=" + billingResult.getResponseCode());
 		}
 	}
 
 	private void handlePurchase(Purchase purchase) {
+		Log.i(TAG, "handlePurchase: state=" + purchase.getPurchaseState() + ", orderId=" + purchase.getOrderId() + ", products=" + purchase.getProducts());
 		if (purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
 			// Calculate tier from product IDs
 			int highestTier = 0;
 			for (String prodId : purchase.getProducts()) {
-				if (SKU_PLATINUM.equalsIgnoreCase(prodId)) highestTier = Math.max(highestTier, 4);
-				else if (SKU_GOLD.equalsIgnoreCase(prodId)) highestTier = Math.max(highestTier, 3);
-				else if (SKU_SILVER.equalsIgnoreCase(prodId)) highestTier = Math.max(highestTier, 2);
-				else if (SKU_BRONZE.equalsIgnoreCase(prodId)) highestTier = Math.max(highestTier, 1);
+				if (SKU_FULL_UNLOCK.equalsIgnoreCase(prodId) || "02".equalsIgnoreCase(prodId) || "01".equalsIgnoreCase(prodId)) {
+					highestTier = Math.max(highestTier, 3);
+				}
 			}
 
 			if (highestTier > 0) {
 				int currentRank = SPDSettings.supporterTier();
 				if (highestTier > currentRank) {
 					SPDSettings.supporterTier(highestTier);
+					Log.i(TAG, "handlePurchase: Supporter tier updated to rank " + highestTier);
 				}
+				com.shatteredpixel.shatteredpixeldungeon.services.UsernameService.syncSupporterStatusAsync();
 			}
 
 			// Acknowledge purchase if not already acknowledged
 			if (!purchase.isAcknowledged()) {
+				Log.i(TAG, "Acknowledging purchase token...");
 				AcknowledgePurchaseParams acknowledgePurchaseParams =
 						AcknowledgePurchaseParams.newBuilder()
 								.setPurchaseToken(purchase.getPurchaseToken())
 								.build();
-				billingClient.acknowledgePurchase(acknowledgePurchaseParams, result -> {});
+				billingClient.acknowledgePurchase(acknowledgePurchaseParams, result -> {
+					Log.i(TAG, "acknowledgePurchase result: code=" + result.getResponseCode() + ", msg=" + result.getDebugMessage());
+				});
 			}
 		}
 	}
@@ -245,29 +300,34 @@ public class AndroidBillingHandler implements PurchasesUpdatedListener, BillingC
 	 */
 	public void restorePurchases(Callback callback) {
 		if (billingClient == null || !isConnected) {
+			Log.w(TAG, "restorePurchases: billingClient is not connected.");
 			if (callback != null) callback.call();
 			return;
 		}
 
+		Log.i(TAG, "restorePurchases: Querying active purchases from Google Play...");
 		QueryPurchasesParams queryPurchasesParams = QueryPurchasesParams.newBuilder()
 				.setProductType(BillingClient.ProductType.INAPP)
 				.build();
 
 		billingClient.queryPurchasesAsync(queryPurchasesParams, (billingResult, list) -> {
+			Log.i(TAG, "queryPurchasesAsync returned: code=" + billingResult.getResponseCode() + ", count=" + (list != null ? list.size() : 0));
 			if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
 				int maxTier = 0;
 				for (Purchase purchase : list) {
+					Log.i(TAG, "Found purchase: state=" + purchase.getPurchaseState() + ", products=" + purchase.getProducts());
 					if (purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
 						for (String prodId : purchase.getProducts()) {
-							if (SKU_PLATINUM.equalsIgnoreCase(prodId)) maxTier = Math.max(maxTier, 4);
-							else if (SKU_GOLD.equalsIgnoreCase(prodId)) maxTier = Math.max(maxTier, 3);
-							else if (SKU_SILVER.equalsIgnoreCase(prodId)) maxTier = Math.max(maxTier, 2);
-							else if (SKU_BRONZE.equalsIgnoreCase(prodId)) maxTier = Math.max(maxTier, 1);
+							if (SKU_FULL_UNLOCK.equalsIgnoreCase(prodId) || "02".equalsIgnoreCase(prodId) || "01".equalsIgnoreCase(prodId)) {
+								maxTier = Math.max(maxTier, 3);
+							}
 						}
 					}
 				}
 				if (maxTier > 0) {
 					SPDSettings.supporterTier(maxTier);
+					Log.i(TAG, "restorePurchases: Supporter Tier updated to rank " + maxTier);
+					com.shatteredpixel.shatteredpixeldungeon.services.UsernameService.syncSupporterStatusAsync();
 				}
 			}
 			if (callback != null) {

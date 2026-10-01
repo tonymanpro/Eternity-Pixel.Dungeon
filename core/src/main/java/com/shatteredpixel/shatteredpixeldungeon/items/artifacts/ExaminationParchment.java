@@ -205,11 +205,11 @@ public class ExaminationParchment extends Artifact {
     }
 
     private void askparameter() {
-        GameScene.show(new WndTextInput( "Input Answer","Evaluate the following: " + body, "", 5000, false, "Done", "Cancel" ) {
+        GameScene.show(new WndTextInput( Messages.get(ExaminationParchment.class, "input_answer"), Messages.get(ExaminationParchment.class, "evaluate", body), "", 5000, false, Messages.get(ExaminationParchment.class, "btn_done"), Messages.get(ExaminationParchment.class, "btn_cancel") ) {
             @Override
             public void onSelect( boolean positive, String text ) {
                 if (text.equals(ANSWER)) {
-                    GLog.h("You answered the question correctly!");
+                    GLog.h(Messages.get(ExaminationParchment.class, "correct"));
                     curUser.sprite.emitter().start( Speck.factory( Speck.UP ), 0.2f, 5 );
 
                     totalAnswers += 1;
@@ -219,16 +219,16 @@ public class ExaminationParchment extends Artifact {
                     Catalog.countUse(ExaminationParchment.class);
 
                 } else if (text.isEmpty()) {
-                    GLog.w("You didn't answer the question.");
+                    GLog.w(Messages.get(ExaminationParchment.class, "no_answer"));
                 } else {
-                    GLog.w("That answer is not equals as the given, try again.");
+                    GLog.w(Messages.get(ExaminationParchment.class, "wrong_answer"));
                     curUser.sprite.emitter().start( Speck.factory( Speck.CONFUSION ), 0.2f, 3 );
                 }
             }
 
             @Override
             public void onBackPressed() {
-                GLog.w("You didn't answer the question.");
+                GLog.w(Messages.get(ExaminationParchment.class, "no_answer"));
                 this.hide();
             }
         } );

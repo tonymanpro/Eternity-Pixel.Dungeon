@@ -42,5 +42,6 @@ public class AlchemyChamberRoom extends SpecialRoom {
         }
 
         entrance().set(Door.Type.REGULAR);
+        Painter.drawInside(level, this, entrance(), 1, Terrain.EMPTY_SP);
     }
 }

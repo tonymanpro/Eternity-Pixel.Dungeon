@@ -25,11 +25,13 @@
 package com.shatteredpixel.shatteredpixeldungeon.windows;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Perks;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.ui.*;
+import com.watabou.noosa.ColorBlock;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.ui.Component;
 
@@ -62,6 +64,55 @@ public class WndPerks extends Window {
         PixelScene.align(title);
         add( title );
 
+        int totalPerks = Perks.Perk.values().length;
+        int unlockedCount = perks.size();
+
+        String countStr = Messages.get(this, "unlocked", unlockedCount, totalPerks);
+        RenderedTextBlock countText = PixelScene.renderTextBlock( countStr, 8 );
+        countText.hardlight( Window.TITLE_COLOR );
+        countText.setPos( 4, title.bottom() + 1 );
+        add( countText );
+
+        String nextStr;
+        if (unlockedCount >= totalPerks) {
+            nextStr = Messages.get(this, "all_unlocked");
+        } else {
+            int nextLvl = Perks.nextPerkLevel();
+            int currentLvl = (Dungeon.hero != null) ? Dungeon.hero.lvl : 1;
+            int remaining = Math.max(0, nextLvl - currentLvl);
+            nextStr = Messages.get(this, "next", nextLvl, remaining);
+        }
+        RenderedTextBlock nextText = PixelScene.renderTextBlock( nextStr, 7 );
+        nextText.setPos( WIDTH - nextText.width() - 4, title.bottom() + 1.5f );
+        if (countText.right() + 4 > nextText.left()) {
+            nextText.setPos( 4, countText.bottom() + 1 );
+        }
+        add( nextText );
+
+        float barY = Math.max(countText.bottom(), nextText.bottom()) + 2;
+
+        ColorBlock barBg = new ColorBlock( WIDTH - 8, 3, 0xFF222832 );
+        barBg.x = 4;
+        barBg.y = barY;
+        add( barBg );
+
+        int prevLvl = Perks.prevPerkLevel();
+        int nextLvl = Perks.nextPerkLevel();
+        int heroLvl = (Dungeon.hero != null) ? Dungeon.hero.lvl : 1;
+        float progress = 1f;
+        if (unlockedCount < totalPerks && nextLvl > prevLvl) {
+            progress = Math.max(0f, Math.min(1f, (float)(heroLvl - prevLvl) / (nextLvl - prevLvl)));
+        }
+        int barFillW = Math.round((WIDTH - 8) * progress);
+        if (barFillW > 0) {
+            ColorBlock barFill = new ColorBlock( barFillW, 3, 0xFF44AAEE );
+            barFill.x = 4;
+            barFill.y = barY;
+            add( barFill );
+        }
+
+        float paneTop = barY + 3 + 3;
+
         pane = new ScrollPane(new Component()) {
             @Override
             public void onClick(float x, float y) {
@@ -89,35 +140,45 @@ public class WndPerks extends Window {
             }
         };
         add(pane);
-        pane.setRect(0, title.bottom()+2, WIDTH, HEIGHT - title.bottom() - 2);
+        pane.setRect(0, paneTop, WIDTH, HEIGHT - paneTop);
         Component content = pane.content();
 
         float pos = 2;
-        for (Perks.Perk i : perks) {
+        if (perks.isEmpty()) {
+            RenderedTextBlock emptyPrompt = PixelScene.renderTextBlock(
+                    Messages.get(this, "empty", nextLvl), 8 );
+            emptyPrompt.maxWidth( WIDTH - 12 );
+            emptyPrompt.setPos( 6, 10 );
+            PixelScene.align( emptyPrompt );
+            content.add( emptyPrompt );
+            pos = emptyPrompt.bottom() + 10;
+        } else {
+            for (Perks.Perk i : perks) {
 
-            final String challenge = i.toString();
+                final String challenge = i.toString();
 
-            ConduitBox cb = new ConduitBox(challenge);
-            cb.active = editable;
-            cb.conduct = i;
+                ConduitBox cb = new ConduitBox(challenge);
+                cb.active = editable;
+                cb.conduct = i;
 
-            pos += GAP;
-            cb.setRect(0, pos, WIDTH-16, BTN_HEIGHT);
+                pos += GAP;
+                cb.setRect(0, pos, WIDTH-16, BTN_HEIGHT);
 
-            content.add(cb);
-            boxes.add(cb);
-            IconButton info = new IconButton(Icons.get(Icons.INFO)) {
-                @Override
-                protected void layout() {
-                    super.layout();
-                    hotArea.y = -5000;
-                }
-            };
-            info.setRect(cb.right(), pos, 16, BTN_HEIGHT);
-            content.add(info);
-            infos.add(info);
+                content.add(cb);
+                boxes.add(cb);
+                IconButton info = new IconButton(Icons.get(Icons.INFO)) {
+                    @Override
+                    protected void layout() {
+                        super.layout();
+                        hotArea.y = -5000;
+                    }
+                };
+                info.setRect(cb.right(), pos, 16, BTN_HEIGHT);
+                content.add(info);
+                infos.add(info);
 
-            pos = cb.bottom();
+                pos = cb.bottom();
+            }
         }
 
         content.setSize(WIDTH, pos);

@@ -47,6 +47,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.StyledButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndSettings;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndSupporterUnlock;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndVictoryCongrats;
 import com.watabou.glwrap.Blending;
 import com.watabou.noosa.BitmapText;
@@ -191,11 +192,82 @@ public class TitleScene extends PixelScene {
 			btnAbout.setRect(btnSettings.right()+2, btnSettings.top(), btnSettings.width(), BTN_HEIGHT);
 		}
 
-		BitmapText version = new BitmapText( "v" + Game.version, pixelFont);
+		StyledButton btnCosmetics = null;
+		if (!com.shatteredpixel.shatteredpixeldungeon.services.platform.SupporterManager.isSupporter()) {
+			btnCosmetics = new StyledButton(Chrome.Type.RED_BUTTON, Messages.get(WndSupporterUnlock.class, "title")) {
+				@Override
+				public void onClick() {
+					ShatteredPixelDungeon.scene().addToFront(new WndSupporterUnlock());
+				}
+
+				@Override
+				public void update() {
+					super.update();
+					if (com.shatteredpixel.shatteredpixeldungeon.services.platform.SupporterManager.isSupporter()) {
+						visible = false;
+						active = false;
+					}
+				}
+			};
+			btnCosmetics.icon(Icons.get(Icons.GOLD));
+			btnCosmetics.textColor(0xFFD700);
+			float btnW = Math.min(btnCosmetics.reqWidth() + 12, w - 8);
+			btnCosmetics.setSize(btnW, 18);
+		}
+
+		StyledButton btnWishlist = null;
+		if (SPDSettings.isDemo()) {
+			btnWishlist = new StyledButton(Chrome.Type.RED_BUTTON, Messages.get(this, "wishlist")) {
+				@Override
+				public void onClick() {
+					ShatteredPixelDungeon.platform.openURI(com.shatteredpixel.shatteredpixeldungeon.windows.WndDemoVictory.STEAM_STORE_URL);
+				}
+			};
+			btnWishlist.icon(Icons.get(Icons.GOLD));
+			btnWishlist.textColor(0xFFD700);
+			btnWishlist.setSize(btnWishlist.reqWidth() + 12, 18);
+			btnWishlist.setPos(4, h - btnWishlist.height() - 4);
+			add(btnWishlist);
+
+			if (btnCosmetics != null) {
+				if (landscape() || btnWishlist.right() + btnCosmetics.width() + 4 < w - 60) {
+					btnCosmetics.setPos(btnWishlist.right() + 4, h - btnCosmetics.height() - 4);
+				} else {
+					btnCosmetics.setPos(4, btnWishlist.top() - btnCosmetics.height() - 2);
+				}
+			}
+		} else if (btnCosmetics != null) {
+			if (!landscape()) {
+				btnCosmetics.setPos((w - btnCosmetics.width()) / 2f, h - btnCosmetics.height() - 4);
+			} else {
+				btnCosmetics.setPos(4, h - btnCosmetics.height() - 4);
+			}
+		}
+		if (btnCosmetics != null) {
+			add(btnCosmetics);
+		}
+
+		String verStr = "v" + Game.version;
+		if (SPDSettings.isDemo()) {
+			verStr += " DEMO";
+		}
+		BitmapText version = new BitmapText( verStr, pixelFont);
 		version.measure();
-		version.hardlight( 0x888888 );
+		if (SPDSettings.isDemo()) {
+			version.hardlight( 0xFFD700 );
+		} else {
+			version.hardlight( 0x888888 );
+		}
 		version.x = w - version.width() - 4;
-		version.y = h - version.height() - 2;
+		if (!landscape() || (btnCosmetics != null && btnCosmetics.right() + 4 >= version.x)) {
+			float highestTop = (btnCosmetics != null) ? btnCosmetics.top() : h;
+			if (btnWishlist != null && btnWishlist.top() < highestTop) {
+				highestTop = btnWishlist.top();
+			}
+			version.y = highestTop - version.height() - 2;
+		} else {
+			version.y = h - version.height() - 2;
+		}
 		add( version );
 
 		if (DeviceCompat.isDesktop()) {
@@ -208,6 +280,10 @@ public class TitleScene extends PixelScene {
 		if (Badges.isUnlocked(Badges.Badge.VICTORY) && !SPDSettings.victoryNagged()) {
 			SPDSettings.victoryNagged(true);
 			add(new WndVictoryCongrats());
+		}
+
+		if (SPDSettings.customUsername() != null && !SPDSettings.customUsername().trim().isEmpty()) {
+			com.shatteredpixel.shatteredpixeldungeon.services.UsernameService.syncSupporterStatusAsync();
 		}
 
 		fadeIn();

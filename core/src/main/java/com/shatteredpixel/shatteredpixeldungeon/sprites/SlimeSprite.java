@@ -34,7 +34,7 @@ public class SlimeSprite extends MobSprite {
 		
 		texture( Assets.Sprites.SLIME );
 		
-		TextureFilm frames = new TextureFilm( texture, 14, 12 );
+		TextureFilm frames = createFilm( 14, 12 );
 		
 		idle = new Animation( 3, true );
 		idle.frames( frames, 0, 1, 1, 0 );

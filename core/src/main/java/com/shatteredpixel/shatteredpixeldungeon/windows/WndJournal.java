@@ -1053,22 +1053,6 @@ public class WndJournal extends WndTabbed {
 					desc = mob.alignment == Char.Alignment.ENEMY ? Messages.get(CatalogTab.class, "not_seen_enemy") : Messages.get(CatalogTab.class, "not_seen_ally");
 				}
 
-				//we have to clip the bounds of the sprite if it's too large
-				if (icon.width() >= 17 || icon.height() >= 17) {
-					RectF frame = icon.frame();
-
-					float wShrink = frame.width() * (1f - 17f / icon.width());
-					if (wShrink > 0) {
-						frame.left += wShrink / 2f;
-						frame.right -= wShrink / 2f;
-					}
-					float hShrink = frame.height() * (1f - 17f / icon.height());
-					if (hShrink > 0) {
-						frame.top += hShrink / 2f;
-						frame.bottom -= hShrink / 2f;
-					}
-					icon.frame(frame);
-				}
 			} else if (Trap.class.isAssignableFrom(entityCls)){
 
 				Trap trap = (Trap) Reflection.newInstance(entityCls);
@@ -1082,7 +1066,7 @@ public class WndJournal extends WndTabbed {
 					}
 				} else {
 					icon.lightness(0f);
-title = "???";
+					title = "???";
 					desc = Messages.get(CatalogTab.class, "not_seen_trap");
 				}
 
@@ -1103,6 +1087,29 @@ title = "???";
 					desc = Messages.get(CatalogTab.class, "not_seen_plant");
 				}
 
+			}
+
+			if (icon != null) {
+				//we have to clip the bounds of the sprite if it's too large
+				float visualWidth = icon.width() * Math.abs(icon.scale.x);
+				float visualHeight = icon.height() * Math.abs(icon.scale.y);
+				if (visualWidth >= 17 || visualHeight >= 17) {
+					RectF frame = icon.frame();
+
+					if (frame != null) {
+						float wShrink = frame.width() * (1f - 17f / visualWidth);
+						if (wShrink > 0) {
+							frame.left += wShrink / 2f;
+							frame.right -= wShrink / 2f;
+						}
+						float hShrink = frame.height() * (1f - 17f / visualHeight);
+						if (hShrink > 0) {
+							frame.top += hShrink / 2f;
+							frame.bottom -= hShrink / 2f;
+						}
+						icon.frame(frame);
+					}
+				}
 			}
 
 			Mob finalMob = mob;

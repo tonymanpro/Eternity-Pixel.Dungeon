@@ -295,6 +295,7 @@ public class Goo extends Mob {
 		
 		Dungeon.level.unseal();
 		
+		GameScene.bossFinisher(pos);
 		GameScene.bossSlain();
 		Heap hKey = Dungeon.level.drop( new WornKey( Dungeon.depth ), pos );
 		if (hKey.sprite != null) hKey.sprite.drop();
@@ -343,6 +344,13 @@ public class Goo extends Mob {
 			BossHealthBar.assignBoss(this);
 			Dungeon.level.seal();
 			yell(Messages.get(this, "notice"));
+
+			// Cinematic Boss Intro splash presentation
+			String title = Messages.get(this, "cinematic_title");
+			String sub = Messages.get(this, "cinematic_sub");
+			int color = (this instanceof GoldenGoo) ? 0xFFD700 : 0x00FF66;
+			GameScene.bossIntro(title, sub, color, pos);
+
 			for (Char ch : Actor.chars()){
 				if (ch instanceof DriedRose.GhostHero){
 					((DriedRose.GhostHero) ch).sayBoss();

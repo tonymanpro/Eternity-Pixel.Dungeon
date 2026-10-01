@@ -21,8 +21,10 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.levels.rooms.quest.vault;
 
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
+import com.shatteredpixel.shatteredpixeldungeon.levels.features.LevelTransition;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.SpecialRoom;
@@ -65,6 +67,20 @@ public class VaultFinalRoom extends SpecialRoom {
 			door.set( Door.Type.REGULAR );
 			Painter.drawInside(level, this, door, 2, Terrain.EMPTY_SP);
 		}
+
+		int exit = level.pointToCell(center());
+		level.transitions.add(new LevelTransition(level,
+				exit,
+				LevelTransition.Type.BRANCH_ENTRANCE,
+				Dungeon.depth,
+				0,
+				LevelTransition.Type.BRANCH_EXIT));
+		Painter.set(level, exit, Terrain.EXIT);
+
+		com.shatteredpixel.shatteredpixeldungeon.actors.mobs.VaultBossElemental boss = new com.shatteredpixel.shatteredpixeldungeon.actors.mobs.VaultBossElemental();
+		boss.pos = level.pointToCell(new Point(center().x, center().y + 2));
+		boss.state = boss.WANDERING;
+		level.mobs.add(boss);
 	}
 
 	@Override

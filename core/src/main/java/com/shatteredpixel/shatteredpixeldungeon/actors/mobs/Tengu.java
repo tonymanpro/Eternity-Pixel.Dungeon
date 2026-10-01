@@ -231,6 +231,7 @@ public class Tengu extends Mob {
 			Dungeon.level.drop(new PetEgg(type), pos).sprite.drop();
 		}
 		
+		GameScene.bossFinisher(pos, 0xCC1100);
 		GameScene.bossSlain();
 		super.die( cause );
 		
@@ -351,6 +352,11 @@ public class Tengu extends Mob {
 			if (HP <= HT/2) BossHealthBar.bleed(true);
 			if (HP == HT) {
 				yell(Messages.get(this, "notice_gotcha", Dungeon.hero.name()));
+
+				String title = Messages.get(this, "cinematic_title");
+				String sub = Messages.get(this, "cinematic_sub");
+				GameScene.bossIntro(title, sub, 0x00E5FF, pos);
+
 				for (Char ch : Actor.chars()){
 					if (ch instanceof DriedRose.GhostHero){
 						((DriedRose.GhostHero) ch).sayBoss();

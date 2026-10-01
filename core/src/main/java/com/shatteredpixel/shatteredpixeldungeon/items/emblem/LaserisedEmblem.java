@@ -4,6 +4,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Laserised;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Summoner;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 
@@ -25,7 +26,7 @@ public class LaserisedEmblem extends EmblemSystem {
         if (item instanceof Weapon) {
             ((Weapon) item).enchant(new Laserised());
         } else {
-            GLog.w("You must use this only on weapons.");
+            GLog.w(Messages.get(EmblemSystem.class, "only_weapons"));
             collect();
         }
     }

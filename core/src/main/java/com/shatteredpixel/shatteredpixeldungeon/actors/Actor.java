@@ -249,15 +249,17 @@ public abstract class Actor implements Bundlable {
 			if (!interrupted && !Game.switchingScene()) {
 				float earliest = Float.MAX_VALUE;
 
-				for (Actor actor : all) {
-					
-					//some actors will always go before others if time is equal.
-					if (actor.time < earliest ||
-							actor.time == earliest && (current == null || actor.actPriority > current.actPriority)) {
-						earliest = actor.time;
-						current = actor;
+				synchronized (Actor.class) {
+					for (Actor actor : all) {
+
+						//some actors will always go before others if time is equal.
+						if (actor.time < earliest ||
+								actor.time == earliest && (current == null || actor.actPriority > current.actPriority)) {
+							earliest = actor.time;
+							current = actor;
+						}
+
 					}
-					
 				}
 			}
 
@@ -271,8 +273,11 @@ public abstract class Actor implements Bundlable {
 					// is moving, wait till the movement is over
 					try {
 						synchronized (((Char)acting).sprite) {
-							if (((Char)acting).sprite.isMoving) {
-								((Char) acting).sprite.wait();
+							if (((Char)acting).sprite.isMoving && ((Char)acting).isAlive()) {
+								((Char) acting).sprite.wait(500);
+								if (((Char)acting).sprite.isMoving) {
+									((Char)acting).sprite.isMoving = false;
+								}
 							}
 						}
 					} catch (InterruptedException e) {
@@ -358,6 +363,9 @@ public abstract class Actor implements Bundlable {
 
 			if (actor.id > 0) {
 				ids.remove( actor.id );
+			}
+			if (current == actor) {
+				current = null;
 			}
 		}
 	}

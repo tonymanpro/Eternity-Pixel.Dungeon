@@ -214,6 +214,9 @@ public class GlobalCustomNoteButton extends IconButton {
             items.add(Reflection.newInstance(RegionLorePage.Halls.class));
             items.add(Reflection.newInstance(RegionLorePage.Prison.class));
             items.add(Reflection.newInstance(RegionLorePage.Infinity.class));
+            items.add(Reflection.newInstance(RegionLorePage.Barbarian.class));
+            items.add(Reflection.newInstance(RegionLorePage.RatKing.class));
+            items.add(Reflection.newInstance(RegionLorePage.HeroChronicles.class));
             for (Item item : items) {
                 ItemButton itemButton = new ItemButton(){
                     @Override

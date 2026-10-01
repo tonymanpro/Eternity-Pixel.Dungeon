@@ -307,7 +307,7 @@ public class Item implements Bundlable {
 	}
 
 	public boolean doPickUp(Hero hero, int pos, float time) {
-		if (!unique && !(this instanceof Gold)) {
+		if (!unique && !(this instanceof Gold) && (this instanceof EquipableItem || this instanceof com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand)) {
 			boolean filtered = false;
 			if (SPDSettings.lootFilterIgnoreCommon() && (this instanceof com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon || this instanceof com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor) && level() <= 0 && (rarity == Rarity.NONE || rarity == Rarity.COMMON)) {
 				filtered = true;
@@ -327,7 +327,7 @@ public class Item implements Bundlable {
 				if (SPDSettings.lootFilterAutoScrap()) {
 					long goldVal = Math.max(1, value());
 					Gold g = new Gold(goldVal);
-					g.collect(hero.belongings.backpack);
+					g.doPickUp(hero, pos, 0);
 					GameScene.pickUp(this, pos);
 					Sample.INSTANCE.play(Assets.Sounds.GOLD);
 					CellEmitter.get(pos).burst(Speck.factory(Speck.COIN), 6);
@@ -421,7 +421,7 @@ public class Item implements Bundlable {
 	}
 
 	private void rename(Item item) {
-		GameScene.show( new WndTextInput( "Rename","", item.customName, 100, false, "Rename", "Revert" ) {
+		GameScene.show( new WndTextInput( Messages.get(Item.class, "rename_title"), "", item.customName, 100, false, Messages.get(Item.class, "rename_btn"), Messages.get(Item.class, "revert_btn") ) {
 			@Override
 			public void onSelect( boolean positive, String text ) {
 				if (text != null && positive && !text.equals(item.trueName())) {
@@ -433,7 +433,7 @@ public class Item implements Bundlable {
 
 			@Override
 			public void onBackPressed() {
-				GLog.w("You didn't set a name for this.");
+				GLog.w(Messages.get(Item.class, "no_name"));
 			}
 		} );
 	}

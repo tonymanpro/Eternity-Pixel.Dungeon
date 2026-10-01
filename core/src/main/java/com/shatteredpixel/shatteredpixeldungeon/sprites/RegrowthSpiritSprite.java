@@ -30,7 +30,7 @@ public class RegrowthSpiritSprite extends MobSprite {
 
 		texture( Assets.Sprites.WRAITH );
 
-		TextureFilm frames = new TextureFilm( texture, 14, 15 );
+		TextureFilm frames = createFilm( 14, 15 );
 
 		int c = 9*2;
 

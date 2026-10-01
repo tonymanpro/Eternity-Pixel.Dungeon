@@ -136,6 +136,11 @@ public class DirectableAlly extends NPC {
 
 				int oldPos = pos;
 				target = defendingPos != -1 ? defendingPos : Dungeon.hero.pos;
+				// If following hero and already adjacent, stay in place beside hero
+				if (defendingPos == -1 && Dungeon.hero != null && Dungeon.level != null && Dungeon.level.adjacent(pos, Dungeon.hero.pos)) {
+					spend( TICK );
+					return true;
+				}
 				//always move towards the hero when wandering
 				if (getCloser( target )) {
 					spend( 1 / speed() );

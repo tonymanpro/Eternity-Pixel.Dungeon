@@ -26,6 +26,7 @@ package com.shatteredpixel.shatteredpixeldungeon.scenes;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
+import com.shatteredpixel.shatteredpixeldungeon.Chrome;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Rankings;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
@@ -88,13 +89,75 @@ public class RankingsScene extends PixelScene {
 		align(title);
 		add(title);
 		
-		if (Rankings.INSTANCE.records.size() > 0) {
+		String currentName = SPDSettings.customUsername();
+		boolean isSupporter = com.shatteredpixel.shatteredpixeldungeon.services.platform.SupporterManager.isSupporter();
+		String userBtnLabel;
+		if (currentName != null && !currentName.isEmpty()) {
+			userBtnLabel = (isSupporter ? "★ @" : "@") + currentName;
+		} else {
+			userBtnLabel = Messages.get(this, "btn_username");
+		}
 
-			//attempts to give each record as much space as possible, ideally as much space as portrait mode
-			float rowHeight = GameMath.gate(ROW_HEIGHT_MIN, (uiCamera.height - 26)/Rankings.INSTANCE.records.size(), ROW_HEIGHT_MAX);
+		StyledButton btnUsername = new StyledButton(Chrome.Type.GREY_BUTTON_TR, userBtnLabel, 8) {
+			@Override
+			public void onClick() {
+				RankingsScene.this.addToFront(new com.shatteredpixel.shatteredpixeldungeon.windows.WndUsername(new Runnable() {
+					@Override
+					public void run() {
+						ShatteredPixelDungeon.switchNoFade(RankingsScene.class);
+					}
+				}));
+			}
+		};
+		btnUsername.icon(Icons.get(isSupporter ? Icons.BADGES : Icons.PREFS));
+		if (isSupporter) {
+			btnUsername.textColor(0xFFD700);
+		}
+
+		StyledButton btnOnlineLeaderboard = new StyledButton(Chrome.Type.GREY_BUTTON_TR, Messages.get(this, "online_leaderboard"), 8) {
+			@Override
+			public void onClick() {
+				String langCode = (Messages.lang() != null && Messages.lang().code() != null) ? Messages.lang().code() : "en";
+				ShatteredPixelDungeon.platform.openURI("https://eternity-pixel-dungeon.web.app/leaderboard?lang=" + langCode);
+			}
+		};
+		btnOnlineLeaderboard.icon(Icons.get(Icons.RANKINGS));
+
+		boolean wide = w >= 260;
+		float bottomSpace;
+
+		if (wide) {
+			float btnW = Math.min((w - 30) / 2f, 130);
+			btnUsername.setSize(btnW, 16);
+			btnOnlineLeaderboard.setSize(btnW, 16);
+
+			float totalW = btnW * 2 + 6;
+			float startX = (w - totalW) / 2f;
+			btnUsername.setPos(startX, h - 19);
+			btnOnlineLeaderboard.setPos(startX + btnW + 6, h - 19);
+
+			bottomSpace = 22 + (Rankings.INSTANCE.totalNumber >= Rankings.TABLE_SIZE ? 12 : 0);
+		} else {
+			float btnW = Math.min(w - 20, 150);
+			btnOnlineLeaderboard.setSize(btnW, 15);
+			btnUsername.setSize(btnW, 15);
+
+			btnOnlineLeaderboard.setPos((w - btnW) / 2f, h - 17);
+			btnUsername.setPos((w - btnW) / 2f, h - 34);
+
+			bottomSpace = 38 + (Rankings.INSTANCE.totalNumber >= Rankings.TABLE_SIZE ? 12 : 0);
+		}
+
+		align(btnUsername);
+		align(btnOnlineLeaderboard);
+		add(btnUsername);
+		add(btnOnlineLeaderboard);
+
+		if (Rankings.INSTANCE.records.size() > 0) {
+			float rowHeight = GameMath.gate(ROW_HEIGHT_MIN, (h - 24 - bottomSpace)/Rankings.INSTANCE.records.size(), ROW_HEIGHT_MAX);
 
 			float left = (w - Math.min( MAX_ROW_WIDTH, w )) / 2 + GAP;
-			float top = (h - rowHeight  * Rankings.INSTANCE.records.size()) / 2;
+			float top = 22 + (h - 22 - bottomSpace - rowHeight * Rankings.INSTANCE.records.size()) / 2f;
 			
 			int pos = 0;
 			
@@ -120,7 +183,7 @@ public class RankingsScene extends PixelScene {
 				
 				label.setPos(
 						(w - label.width()) / 2,
-						h - label.height() - 2*GAP
+						btnOnlineLeaderboard.top() - label.height() - 2
 				);
 				align(label);
 
@@ -132,7 +195,7 @@ public class RankingsScene extends PixelScene {
 			noRec.hardlight( 0xCCCCCC );
 			noRec.setPos(
 					(w - noRec.width()) / 2,
-					(h - noRec.height()) / 2
+					(h - noRec.height()) / 2 - 10
 			);
 			align(noRec);
 			add(noRec);

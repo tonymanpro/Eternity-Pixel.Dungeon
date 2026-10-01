@@ -26,6 +26,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.GamesInProgress;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LostInventory;
 import com.shatteredpixel.shatteredpixeldungeon.items.EquipableItem;
+import com.shatteredpixel.shatteredpixeldungeon.items.Gold;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.KindOfWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.KindofMisc;
@@ -226,6 +227,7 @@ public class Belongings implements Iterable<Item> {
 		
 		backpack.clear();
 		backpack.restoreFromBundle( bundle );
+		purgeGold();
 		
 		weapon = (KindOfWeapon) bundle.get(WEAPON);
 		if (weapon() != null)       weapon().activate(owner);
@@ -244,6 +246,23 @@ public class Belongings implements Iterable<Item> {
 
 		secondWep = (KindOfWeapon) bundle.get(SECOND_WEP);
 		if (secondWep() != null)    secondWep().activate(owner);
+	}
+
+	public void purgeGold() {
+		purgeGold(backpack);
+	}
+
+	private void purgeGold(Bag bag) {
+		if (bag == null || bag.items == null) return;
+		for (java.util.Iterator<Item> it = bag.items.iterator(); it.hasNext(); ) {
+			Item item = it.next();
+			if (item instanceof Gold) {
+				Dungeon.gold += item.quantity();
+				it.remove();
+			} else if (item instanceof Bag) {
+				purgeGold((Bag) item);
+			}
+		}
 	}
 	
 	public static void preview( GamesInProgress.Info info, Bundle bundle ) {

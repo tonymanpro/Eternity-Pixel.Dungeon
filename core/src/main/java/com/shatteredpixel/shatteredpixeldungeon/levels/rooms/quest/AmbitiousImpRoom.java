@@ -67,23 +67,25 @@ public class AmbitiousImpRoom extends SpecialRoom {
 		Painter.set(level, c.x+3, c.y+3, Terrain.WALL_DECO);
 
 		Door entrance = entrance();
-		Imp npc = new Imp();
-		npc.pos = level.pointToCell(c);
-
-		//TODO we have imp in front for now, do we want to put him in the back?
-		if (entrance.x == left || entrance.x == right){
-			npc.pos += Random.IntRange(-1, 1)*level.width();
-			npc.pos += entrance.x == left ? -2 : 2;
-		} else if (entrance.y == top || entrance.y == bottom){
-			npc.pos += Random.IntRange(-1, 1);
-			npc.pos += level.width() * (entrance.y == top ? -2 : 2);
+		Point impPos = new Point(c);
+		if (entrance.x == left) {
+			impPos.x = c.x - 3;
+		} else if (entrance.x == right) {
+			impPos.x = c.x + 3;
+		} else if (entrance.y == top) {
+			impPos.y = c.y - 3;
+		} else {
+			impPos.y = c.y + 3;
 		}
+
+		Imp npc = new Imp();
+		npc.pos = level.pointToCell(impPos);
 		level.mobs.add( npc );
 
+		Painter.set(level, impPos.x, impPos.y, Terrain.EMPTY);
 		Painter.drawInside(level, this, entrance, 1, Terrain.EMPTY);
-		entrance.set( Door.Type.REGULAR ); //TODO maybe lock?
+		entrance.set( Door.Type.REGULAR );
 
-		//TODO finalize quest entrance visuals
 		QuestEntrance vis = new QuestEntrance();
 		vis.pos(c.x - 2, c.y - 2);
 		level.customTiles.add(vis);
@@ -106,7 +108,7 @@ public class AmbitiousImpRoom extends SpecialRoom {
 
 	@Override
 	public boolean canPlaceCharacter(Point p, Level l) {
-		return false;
+		return Point.distance(p, center()) >= 3;
 	}
 
 	@Override
@@ -137,7 +139,7 @@ public class AmbitiousImpRoom extends SpecialRoom {
 			tileW = tileH = 5;
 		}
 
-		final int TEX_WIDTH = 128;
+		final int TEX_WIDTH = 256;
 
 		@Override
 		public Tilemap create() {
@@ -158,8 +160,7 @@ public class AmbitiousImpRoom extends SpecialRoom {
 
 		@Override
 		public Image image(int tileX, int tileY) {
-			//only center 3x3 gives custom image/message
-			if (tileX >= 1 && tileX < 4 && tileY >= 1 && tileY < 4){
+			if (tileX >= 0 && tileX < tileW && tileY >= 0 && tileY < tileH){
 				return super.image(tileX, tileY);
 			} else {
 				return null;
@@ -174,7 +175,7 @@ public class AmbitiousImpRoom extends SpecialRoom {
 			tileW = tileH = 3;
 		}
 
-		final int TEX_WIDTH = 128;
+		final int TEX_WIDTH = 256;
 
 		@Override
 		public Tilemap create() {

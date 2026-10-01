@@ -113,7 +113,7 @@ public class Racked extends Weapon.Enchantment {
 		public void set( float time ) {
 			stacks++;
 			if (stacks >= 15) {
-				GLog.p("Your next attack will apply massive bonus damage!");
+				GLog.p(Messages.get(Racked.class, "bonus_damage"));
 			}
 			duration = time;
 			spend(time - cooldown() - 1);
@@ -147,7 +147,7 @@ public class Racked extends Weapon.Enchantment {
 
 		public void applyMulti(double multi, long damage) {
 			target.damage((long) (damage * (1d + multi)), new RackedDamage());
-			GLog.i("All racked stacks consumed.");
+			GLog.i(Messages.get(Racked.class, "stacks_consumed"));
 			detach();
 		}
 

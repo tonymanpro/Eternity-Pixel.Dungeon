@@ -88,6 +88,22 @@ public class SupporterLicensingTest {
 			nullPlatform.setSupporter(false);
 			SupporterManager.deactivate();
 
+			// Test 8: Username-bound license verification & activation
+			String testUser = "TonyManPro";
+			String userKey = SupporterManager.generateKey(testUser.toLowerCase(java.util.Locale.ROOT));
+			boolean userMismatch = SupporterManager.isLicenseValid("OtherUser", userKey);
+			boolean userMatch = SupporterManager.isLicenseValid(testUser, userKey);
+			boolean licenseActivated = SupporterManager.activateLicense(testUser, userKey);
+
+			if (!userMismatch && userMatch && licenseActivated && SupporterManager.isSupporter()) {
+				result.pass("Username-bound license validated and activated for @" + testUser + ": " + userKey);
+			} else {
+				result.fail("Username-bound license validation failed", null);
+			}
+
+			// Final cleanup
+			SupporterManager.deactivate();
+
 		} catch (Throwable t) {
 			result.fail("Unexpected exception during Supporter Licensing Test", t);
 		}

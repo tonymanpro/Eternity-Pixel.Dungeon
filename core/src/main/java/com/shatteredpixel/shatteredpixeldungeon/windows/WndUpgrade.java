@@ -24,8 +24,10 @@ package com.shatteredpixel.shatteredpixeldungeon.windows;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
+import com.shatteredpixel.shatteredpixeldungeon.items.BrokenSeal;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
+import com.shatteredpixel.shatteredpixeldungeon.ui.InventoryPane;
 import com.shatteredpixel.shatteredpixeldungeon.items.fishingrods.FishingRod;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
@@ -439,9 +441,10 @@ public class WndUpgrade extends Window {
             public void onClick() {
 				super.onClick();
 
-				ScrollOfUpgrade.upgrade(Dungeon.hero);
+				if (Dungeon.hero != null) {
+					ScrollOfUpgrade.upgrade(Dungeon.hero);
+				}
 
-				//Item upgraded = toUpgrade;
 				if (upgrader instanceof ScrollOfUpgrade){
 					((ScrollOfUpgrade) upgrader).readAnimation();
 					((ScrollOfUpgrade) upgrader).upgradeItem(toUpgrade, amount);
@@ -451,19 +454,29 @@ public class WndUpgrade extends Window {
 					((MagicalInfusion) upgrader).upgradeItem(toUpgrade);
 				}
 
-				if (!force) {
-					if (upgrader.quantity() <= amount)
-						upgrader.detach(Dungeon.hero.belongings.backpack);
-					else
-						upgrader.quantity(upgrader.quantity()-amount);
+				if (Dungeon.hero != null && Dungeon.hero.belongings != null) {
+					if (!force) {
+						if (upgrader.quantity() <= amount) {
+							if (upgrader.stackable) {
+								Dungeon.quickslot.convertToPlaceholder(upgrader);
+							}
+							upgrader.detachAll(Dungeon.hero.belongings.backpack);
+						} else {
+							upgrader.quantity(upgrader.quantity() - amount);
+							upgrader.updateQuickslot();
+						}
+					}
 				}
-				//Item moreUpgradeItem = Dungeon.hero.belongings.getItem(upgrader.getClass());
+
+				toUpgrade.updateQuickslot();
+				Item.updateQuickslot();
+				InventoryPane.refresh();
+				if (Dungeon.hero != null && toUpgrade.isEquipped(Dungeon.hero) && toUpgrade instanceof Armor) {
+					BrokenSeal.WarriorShield seal = Dungeon.hero.buff(BrokenSeal.WarriorShield.class);
+					if (seal != null) seal.setArmor((Armor) toUpgrade);
+				}
 
 				hide();
-
-				//if (moreUpgradeItem != null && toUpgrade.isUpgradable()){
-				//	GameScene.show(new WndUpgrade(moreUpgradeItem, upgraded, false, Math.min(moreUpgradeItem.quantity(), amount)));
-				//}
 			}
 		};
 		btnUpgrade.setRect(0, bottom+2*GAP, WIDTH/2f, 16);
@@ -485,7 +498,7 @@ public class WndUpgrade extends Window {
 		btnCancel.setRect(btnUpgrade.right()+1, bottom+2*GAP, WIDTH/2f, 16);
 		add(btnCancel);
 
-		btnUpgrade.enable(Dungeon.hero.ready);
+		btnUpgrade.enable(true);
 
 		btnUpgrade.icon(new ItemSprite(upgrader));
 		btnCancel.icon(Icons.EXIT.get());
@@ -499,9 +512,6 @@ public class WndUpgrade extends Window {
 	@Override
 	public synchronized void update() {
 		super.update();
-		if (!btnUpgrade.active && Dungeon.hero.ready){
-			btnUpgrade.enable(true);
-		}
 	}
 
 	@Override

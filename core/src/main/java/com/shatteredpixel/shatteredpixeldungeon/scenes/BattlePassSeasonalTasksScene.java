@@ -69,6 +69,10 @@ public class BattlePassSeasonalTasksScene extends PixelScene {
 		Component content = new Component();
 
 		rows.clear();
+		if (SeasonalTasks.tasks == null || SeasonalTasks.tasks.isEmpty()) {
+			SeasonalTasks.rollForNewSeason();
+			com.shatteredpixel.shatteredpixeldungeon.BattlePass.saveGlobal();
+		}
 		int y = 0;
 		if (SeasonalTasks.tasks.isEmpty()) {
 			RenderedTextBlock empty = renderTextBlock( Messages.get( this, "empty" ), 9 );

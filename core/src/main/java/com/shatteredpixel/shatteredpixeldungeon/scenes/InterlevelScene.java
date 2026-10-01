@@ -743,6 +743,8 @@ public class InterlevelScene extends PixelScene {
 			int pos = level.randomRespawnCell(null);
 			if (pos == -1) pos = level.entrance();
 			level.drop(new LostBackpack(), pos);
+			level.visited[pos] = true;
+			level.mapped[pos] = true;
 
             //need to reset key replacement tracking as well
             if (Dungeon.hero.buff(SkeletonKey.KeyReplacementTracker.class) != null){
@@ -771,6 +773,8 @@ public class InterlevelScene extends PixelScene {
 			}
 			Dungeon.hero.resurrect();
 			level.drop(new LostBackpack(), invPos);
+			level.visited[invPos] = true;
+			level.mapped[invPos] = true;
 		}
 
 		Dungeon.switchLevel( level, Dungeon.hero.pos );

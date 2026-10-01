@@ -210,4 +210,10 @@ public class Buff extends Actor {
 		buff.countUp( count );
 		return buff;
 	}
+
+	//Buffs which declare their total incoming damage over time (even an average)
+	// This is used in health bar visuals to show total incoming damage
+	public interface DOTbuff {
+		int totalIncomingDMG();
+	}
 }

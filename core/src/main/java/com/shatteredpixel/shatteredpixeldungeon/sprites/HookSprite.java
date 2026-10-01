@@ -31,7 +31,7 @@ import com.watabou.noosa.Game;
 import com.watabou.noosa.TextureFilm;
 import com.watabou.noosa.tweeners.AlphaTweener;
 
-public class HookSprite extends CharSprite{
+public class HookSprite extends MobSprite {
 
     private Animation[] tierIdles = new Animation[7];
 
@@ -40,12 +40,18 @@ public class HookSprite extends CharSprite{
 
         texture(Assets.Sprites.HOOKS);
 
-        TextureFilm frames = new TextureFilm(texture, 7, 15);
+        TextureFilm frames = createFilm(7, 15);
 
         for (int i = 1; i <= 6; i++){
             tierIdles[i] = new Animation( 1, true );
             tierIdles[i].frames(frames, i - 1);
         }
+
+        idle = tierIdles[1];
+        run = idle.clone();
+        attack = idle.clone();
+        die = idle.clone();
+        play(idle);
     }
 
     @Override

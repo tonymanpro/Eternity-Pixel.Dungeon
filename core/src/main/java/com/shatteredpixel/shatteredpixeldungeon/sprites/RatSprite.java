@@ -40,7 +40,7 @@ public class RatSprite extends MobSprite {
 			texture( Assets.Sprites.RAT );
 		}
 		
-		TextureFilm frames = new TextureFilm( texture, 16, holiday ? 19 : 15 );
+		TextureFilm frames = createFilm( 16, holiday ? 19 : 15 );
 		
 		idle = new Animation( 2, true );
 		idle.frames( frames, 0, 0, 0, 1 );

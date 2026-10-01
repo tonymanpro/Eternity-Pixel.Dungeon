@@ -438,7 +438,7 @@ public enum Talent {
 			}
 			HeroClass cls = Dungeon.hero != null ? Dungeon.hero.heroClass : GamesInProgress.selectedClass;
 			switch (cls){
-				case WARRIOR: default:
+				case WARRIOR: case BARBARIAN: default:
 					return 26;
 				case MAGE:
 					return 58;
@@ -472,13 +472,28 @@ public enum Talent {
 	}
 
 	public String desc(boolean metamorphed){
+		String text;
 		if (metamorphed){
 			String metaDesc = Messages.get(this, name() + ".meta_desc");
 			if (!metaDesc.equals(Messages.NO_TEXT_FOUND)){
-				return Messages.get(this, name() + ".desc") + "\n\n" + metaDesc;
+				text = Messages.get(this, name() + ".desc") + "\n\n" + metaDesc;
+			} else {
+				text = Messages.get(this, name() + ".desc");
 			}
+		} else {
+			text = Messages.get(this, name() + ".desc");
 		}
-		return Messages.get(this, name() + ".desc");
+		if (Dungeon.hero != null && Dungeon.hero.heroClass == HeroClass.BARBARIAN) {
+			text = text.replace("El Guerrero", "El Bárbaro")
+			           .replace("el Guerrero", "el Bárbaro")
+			           .replace("del Guerrero", "del Bárbaro")
+			           .replace("al Guerrero", "al Bárbaro")
+			           .replace("The Warrior", "The Barbarian")
+			           .replace("the Warrior", "the Barbarian")
+			           .replace("the warrior's", "the barbarian's")
+			           .replace("the warrior", "the barbarian");
+		}
+		return text;
 	}
 
 	public static void onTalentUpgraded( Hero hero, Talent talent ){
@@ -512,6 +527,9 @@ public enum Talent {
 		if (talent == ADVENTURERS_INTUITION && hero.pointsInTalent(ADVENTURERS_INTUITION) == 2){
 			if (hero.belongings.weapon() != null && !ShardOfOblivion.passiveIDDisabled()){
 				hero.belongings.weapon().identify();
+			}
+			if (hero.belongings.secondWep() != null && !ShardOfOblivion.passiveIDDisabled()){
+				hero.belongings.secondWep().identify();
 			}
 		}
 
@@ -815,8 +833,18 @@ public enum Talent {
 			identify = true;
 		}
 
-		if (identify && !ShardOfOblivion.passiveIDDisabled()){
-			item.identify();
+		if (identify) {
+			if (ShardOfOblivion.passiveIDDisabled()) {
+				if (item instanceof Weapon){
+					((Weapon) item).setIDReady();
+				} else if (item instanceof Armor){
+					((Armor) item).setIDReady();
+				} else if (item instanceof Ring){
+					((Ring) item).setIDReady();
+				}
+			} else {
+				item.identify();
+			}
 		}
 	}
 

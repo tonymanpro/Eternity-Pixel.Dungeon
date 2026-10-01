@@ -32,6 +32,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Vulnerable;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroAction;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Bat;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Bee;
@@ -47,6 +48,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.MiningLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.CellSelector;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite.Glowing;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
@@ -95,9 +97,7 @@ public class Pickaxe extends MeleeWeapon {
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
 		ArrayList<String> actions = super.actions( hero );
-		if (Blacksmith.Quest.oldMiningQuest()) {
-			actions.add(AC_MINE);
-		}
+		actions.add(AC_MINE);
 		if (Dungeon.level instanceof MiningLevel){
 			actions.remove(AC_DROP);
 			actions.remove(AC_THROW);
@@ -111,6 +111,62 @@ public class Pickaxe extends MeleeWeapon {
 		super.execute( hero, action );
 		
 		if (action.equals(AC_MINE)) {
+			
+			if (Dungeon.level instanceof MiningLevel) {
+				// 1. Check for adjacent dark gold vein first
+				int goldPos = -1;
+				for (int i : PathFinder.NEIGHBOURS8) {
+					int p = hero.pos + i;
+					if (Dungeon.level.insideMap(p) && Dungeon.level.map[p] == Terrain.WALL_DECO) {
+						goldPos = p;
+						break;
+					}
+				}
+				if (goldPos != -1) {
+					hero.curAction = new HeroAction.Mine(goldPos);
+					hero.act();
+					return;
+				}
+
+				// 2. Check for adjacent crystal or boulder
+				int specialPos = -1;
+				for (int i : PathFinder.NEIGHBOURS8) {
+					int p = hero.pos + i;
+					if (Dungeon.level.insideMap(p) &&
+							(Dungeon.level.map[p] == Terrain.MINE_CRYSTAL || Dungeon.level.map[p] == Terrain.MINE_BOULDER)) {
+						specialPos = p;
+						break;
+					}
+				}
+				if (specialPos != -1) {
+					hero.curAction = new HeroAction.Mine(specialPos);
+					hero.act();
+					return;
+				}
+
+				// 3. Prompt the player to select which cell/wall to mine
+				GameScene.selectCell(new CellSelector.Listener() {
+					@Override
+					public void onSelect(Integer target) {
+						if (target != null && Dungeon.level.insideMap(target)) {
+							int tile = Dungeon.level.map[target];
+							if (tile == Terrain.WALL || tile == Terrain.WALL_DECO
+									|| tile == Terrain.MINE_CRYSTAL || tile == Terrain.MINE_BOULDER) {
+								hero.curAction = new HeroAction.Mine(target);
+								hero.act();
+							} else {
+								GLog.w(Messages.get(Pickaxe.class, "no_vein"));
+							}
+						}
+					}
+
+					@Override
+					public String prompt() {
+						return Messages.get(Pickaxe.class, "prompt");
+					}
+				});
+				return;
+			}
 			
 			if (Dungeon.depth < 11 || Dungeon.depth > 15) {
 				GLog.w( Messages.get(this, "no_vein") );
@@ -190,7 +246,7 @@ public class Pickaxe extends MeleeWeapon {
 	public String defaultAction() {
 		if (Dungeon.hero.isClass(HeroClass.DUELIST) && isEquipped(Dungeon.hero)){
 			return AC_ABILITY;
-		} else if (Blacksmith.Quest.oldMiningQuest()) {
+		} else if (Dungeon.level instanceof MiningLevel || Blacksmith.Quest.oldMiningQuest()) {
 			return AC_MINE;
 		} else {
 			return super.defaultAction();

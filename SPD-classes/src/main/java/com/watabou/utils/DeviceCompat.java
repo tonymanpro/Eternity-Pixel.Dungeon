@@ -24,6 +24,7 @@
 
 package com.watabou.utils;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.utils.SharedLibraryLoader;
@@ -52,7 +53,7 @@ public class DeviceCompat {
 	}
 
 	public static boolean isAndroid(){
-		return SharedLibraryLoader.isAndroid;
+		return (Gdx.app != null && Gdx.app.getType() == Application.ApplicationType.Android) || SharedLibraryLoader.isAndroid;
 	}
 
 	public static boolean isiOS(){

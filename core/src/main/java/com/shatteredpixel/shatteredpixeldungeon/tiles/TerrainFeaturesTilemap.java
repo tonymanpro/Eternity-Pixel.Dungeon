@@ -93,6 +93,9 @@ public class TerrainFeaturesTilemap extends DungeonTilemap {
 
 		Image img = new Image( instance.texture );
 		img.frame(uv);
+		if (instance.tileset.densityScale() > 1f) {
+			img.scale.set(1f / instance.tileset.densityScale());
+		}
 		return img;
 	}
 
@@ -104,6 +107,9 @@ public class TerrainFeaturesTilemap extends DungeonTilemap {
 
 		Image img = new Image( instance.texture );
 		img.frame(uv);
+		if (instance.tileset.densityScale() > 1f) {
+			img.scale.set(1f / instance.tileset.densityScale());
+		}
 		return img;
 	}
 

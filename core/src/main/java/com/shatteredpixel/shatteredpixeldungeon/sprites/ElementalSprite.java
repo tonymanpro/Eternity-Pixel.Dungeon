@@ -55,7 +55,7 @@ public abstract class ElementalSprite extends MobSprite {
 		
 		texture( Assets.Sprites.ELEMENTAL );
 		
-		TextureFilm frames = new TextureFilm( texture, 12, 14 );
+		TextureFilm frames = createFilm( 12, 14 );
 		
 		idle = new Animation( 10, true );
 		idle.frames( frames, c+0, c+1, c+2 );
@@ -118,7 +118,9 @@ public abstract class ElementalSprite extends MobSprite {
 				new Callback() {
 					@Override
 					public void call() {
-						((Elemental)ch).onZapComplete();
+						if (ch instanceof Elemental) {
+							((Elemental)ch).onZapComplete();
+						}
 					}
 				} );
 		Sample.INSTANCE.play( Assets.Sounds.ZAP );
@@ -211,7 +213,9 @@ public abstract class ElementalSprite extends MobSprite {
 		public void zap( int cell ) {
 			super.zap( cell, null );
 			
-			((Elemental)ch).onZapComplete();
+			if (ch instanceof Elemental) {
+				((Elemental)ch).onZapComplete();
+			}
 			parent.add( new Beam.LightRay(center(), DungeonTilemap.raisedTileCenterToWorld(cell)));
 		}
 		
@@ -239,7 +243,9 @@ public abstract class ElementalSprite extends MobSprite {
 		public void zap(int cell) {
 			zap( cell, null ); //effectively super.super.zap
 			//relies on cursed wand for effects
-			((Elemental)ch).onZapComplete();
+			if (ch instanceof Elemental) {
+				((Elemental)ch).onZapComplete();
+			}
 		}
 
 		@Override

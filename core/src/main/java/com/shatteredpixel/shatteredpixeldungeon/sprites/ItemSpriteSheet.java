@@ -34,10 +34,29 @@ public class ItemSpriteSheet {
 
 	public static TextureFilm film = createFilm();
 
-	private static TextureFilm createFilm() {
+	public static TextureFilm createFilm() {
 		com.watabou.gltextures.SmartTexture tx = com.watabou.gltextures.TextureCache.get( Assets.Sprites.ITEMS );
-		int scale = (tx.width >= 500) ? 2 : 1;
-		return new TextureFilm( tx, SIZE * scale, SIZE * scale );
+		int scale = (tx.width >= 1000) ? 4 : ((tx.width >= 500) ? 2 : 1);
+		TextureFilm film = new TextureFilm( tx, SIZE * scale, SIZE * scale );
+		film.densityScale( scale );
+		return film;
+	}
+
+	private static class CustomRect {
+		int item, width, height;
+		CustomRect(int item, int width, int height) {
+			this.item = item;
+			this.width = width;
+			this.height = height;
+		}
+	}
+	private static final java.util.ArrayList<CustomRect> customRects = new java.util.ArrayList<>();
+
+	public static void reload() {
+		film = createFilm();
+		for (CustomRect r : customRects) {
+			applyItemRect(r.item, r.width, r.height);
+		}
 	}
 
 	private static int xy(int x, int y){
@@ -46,8 +65,13 @@ public class ItemSpriteSheet {
 	}
 
 	private static void assignItemRect( int item, int width, int height ){
+		customRects.add(new CustomRect(item, width, height));
+		applyItemRect(item, width, height);
+	}
+
+	private static void applyItemRect( int item, int width, int height ){
 		com.watabou.gltextures.SmartTexture tx = com.watabou.gltextures.TextureCache.get( Assets.Sprites.ITEMS );
-		int scale = (tx.width >= 500) ? 2 : 1;
+		int scale = (tx.width >= 1000) ? 4 : ((tx.width >= 500) ? 2 : 1);
 		int x = (item % WIDTH) * SIZE * scale;
 		int y = (item / WIDTH) * SIZE * scale;
 		film.add( item, x, y, x + width * scale, y + height * scale );
@@ -577,8 +601,8 @@ public class ItemSpriteSheet {
 	static{
 		assignItemRect(RAT_SKULL,       16, 11);
 		assignItemRect(PARCHMENT_SCRAP, 10, 14);
-		assignItemRect(PETRIFIED_SEED,  10, 10);
-		assignItemRect(EXOTIC_CRYSTALS, 14, 13);
+		assignItemRect(PETRIFIED_SEED,   9,  9);
+		assignItemRect(EXOTIC_CRYSTALS, 15, 13);
 		assignItemRect(MOSSY_CLUMP,     12, 11);
 		assignItemRect(SUNDIAL,         16, 12);
 		assignItemRect(CLOVER,          11, 15);
@@ -736,7 +760,10 @@ public class ItemSpriteSheet {
 		for (int i = BREWS; i < BREWS+16; i++)
 			assignItemRect(i, 12, 14);
 
-		assignItemRect(BREW_AQUA, 9, 11);
+		assignItemRect(BREW_INFERNAL,   11, 13);
+		assignItemRect(BREW_BLIZZARD,   11, 13);
+		assignItemRect(BREW_UNSTABLE,   11, 13);
+		assignItemRect(BREW_AQUA,        9, 11);
         assignItemRect(ELIXIR_DI, 9, 11);
 	}
 	
@@ -830,6 +857,7 @@ public class ItemSpriteSheet {
 	public static final int CANDY_CANE      = HOLIDAY_FOOD+8;
 	public static final int SPARKLING_POTION= HOLIDAY_FOOD+9;
     public static final int MYSTERY_CAKE    = HOLIDAY_FOOD+10;
+    public static final int HOLIDAY_GIFT    = HOLIDAY_FOOD+11;
 	static{
 		assignItemRect(STEAMED_FISH,    16, 12);
 		assignItemRect(FISH_LEFTOVER,   16, 12);
@@ -842,6 +870,7 @@ public class ItemSpriteSheet {
 		assignItemRect(CANDY_CANE,      13, 16);
 		assignItemRect(SPARKLING_POTION, 7, 16);
         assignItemRect(MYSTERY_CAKE,    14, 13);
+        assignItemRect(HOLIDAY_GIFT,    14, 14);
 	}
 
 	private static final int QUEST  =                                       xy(1, 30);  //16 slots

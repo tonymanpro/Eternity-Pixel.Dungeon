@@ -30,6 +30,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Perks;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
@@ -149,6 +150,11 @@ public class WndHero extends WndTabbed {
 					hide();
 					GameScene.show(new WndPerks(hero.perks, false));
 				}
+
+				@Override
+				protected String hoverText() {
+					return Messages.get(WndPerks.class, "title") + " (" + hero.perks.size() + "/" + Perks.Perk.values().length + ")";
+				}
 			};
 			perkInfo.setRect(title.right()-16, 0, 16, 16);
 			add(perkInfo);
@@ -203,6 +209,7 @@ public class WndHero extends WndTabbed {
 			if (hero.shielding() > 0)   statSlot( Messages.get(this, "health"), hero.HP + "+" + hero.shielding() + "/" + hero.HT );
 			else                        statSlot( Messages.get(this, "health"), (hero.HP) + "/" + hero.HT );
 			statSlot( Messages.get(this, "exp"), hero.exp + "/" + hero.maxExp() );
+			statSlot( Messages.get(WndPerks.class, "title"), hero.perks.size() + "/" + Perks.Perk.values().length );
 
 			pos += GAP;
 

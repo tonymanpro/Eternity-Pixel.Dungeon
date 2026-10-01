@@ -85,7 +85,9 @@ public class MovieClip extends Image {
 			}
 			
 			if (curFrame != lastFrame) {
-				frame( curAnim.frames[curFrame] );
+				if (curAnim != null && curAnim.frames != null && curFrame >= 0 && curFrame < curAnim.frames.length) {
+					frame( curAnim.frames[curFrame] );
+				}
 			}
 			
 		}

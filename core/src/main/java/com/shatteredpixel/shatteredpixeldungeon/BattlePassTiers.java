@@ -39,6 +39,8 @@ import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.Trinket;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.WondrousResin;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SearingSlasher;
 
+import com.watabou.utils.Random;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 public class BattlePassTiers {
@@ -81,9 +83,14 @@ public class BattlePassTiers {
         }
         int catIndex = (int) Math.floorMod( hash, categories.length );
         Item item;
-        do {
-            item = Generator.random( categories[catIndex] );
-        } while (item instanceof Tubes);
+        Random.pushGenerator( hash );
+        try {
+            do {
+                item = Generator.random( categories[catIndex] );
+            } while (item instanceof Tubes);
+        } finally {
+            Random.popGenerator();
+        }
         return item;
     }
 
@@ -204,10 +211,15 @@ public class BattlePassTiers {
                 hash = 31*hash + seed.charAt(i);
             }
             int index = (int) Math.floorMod( hash, categories.length );
-            Item sample = Generator.random( categories[index] );
-            while (sample instanceof Tubes) {
-                sample = Generator.random( categories[index] );
-            } 
+            Random.pushGenerator( hash );
+            Item sample;
+            try {
+                do {
+                    sample = Generator.random( categories[index] );
+                } while (sample instanceof Tubes);
+            } finally {
+                Random.popGenerator();
+            }
             repeatableItemClass = sample != null ? sample.getClass() : null;
             repeatableItemClassKey = monthKey;
         }
@@ -237,10 +249,15 @@ public class BattlePassTiers {
                 hash = 31*hash + seed.charAt(i);
             }
             int index = (int) Math.floorMod( hash, categories.length );
-            Item sample = Generator.random( categories[index] );
-            while (sample instanceof Tubes) {
-                sample = Generator.random( categories[index] );
-            } 
+            Random.pushGenerator( hash );
+            Item sample;
+            try {
+                do {
+                    sample = Generator.random( categories[index] );
+                } while (sample instanceof Tubes);
+            } finally {
+                Random.popGenerator();
+            }
             premiumRepeatableItemClass = sample != null ? sample.getClass() : null;
             premiumRepeatableItemClassKey = monthKey;
         }
@@ -271,7 +288,13 @@ public class BattlePassTiers {
         if (roll < BONUS_ITEM_CHANCE) {
             Generator.Category[] categories = Generator.Category.values();
             int catIndex = (int) Math.floorMod( hash / 7, categories.length );
-            Item bonus = Generator.random( categories[catIndex] );
+            Random.pushGenerator( hash );
+            Item bonus;
+            try {
+                bonus = Generator.random( categories[catIndex] );
+            } finally {
+                Random.popGenerator();
+            }
             if (bonus != null) extras.add( bonus );
         }
         return extras;

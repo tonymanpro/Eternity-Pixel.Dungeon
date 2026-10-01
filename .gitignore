@@ -1,10 +1,12 @@
-# Built application files
+
+# Built application files
 *.apk
 *.aab
 *.keystore
 *.jks
 *.dex
 *.class
+*.py
 
 # Gradle build files
 .gradle/
@@ -34,3 +36,5 @@ DEVELOPMENT.md
 PATREON_LICENSING.md
 ROADMAP.md
 docs/*.md
+
+mis_claves.txt

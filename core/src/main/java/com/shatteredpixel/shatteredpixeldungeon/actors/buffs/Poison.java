@@ -31,18 +31,15 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.PoisonParticle;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.Image;
 import com.watabou.utils.Bundle;
 
-public class Poison extends Buff implements Hero.Doom {
+public class Poison extends Buff implements Hero.Doom, Buff.DOTbuff {
 	
 	protected double left;
-
-	public void extend( float duration ){
-		left += duration;
-	}
 	
 	private static final String LEFT	= "left";
 
@@ -55,7 +52,6 @@ public class Poison extends Buff implements Hero.Doom {
 	public void storeInBundle( Bundle bundle ) {
 		super.storeInBundle( bundle );
 		bundle.put( LEFT, left );
-		
 	}
 	
 	@Override
@@ -66,17 +62,23 @@ public class Poison extends Buff implements Hero.Doom {
 	
 	public void set( double duration ) {
 		this.left = Math.max(duration, left);
+		if (target != null) target.needsIncomingDOTUpdate = true;
 	}
 
 	public void extend( double duration ) {
 		this.left += duration;
+		if (target != null) target.needsIncomingDOTUpdate = true;
+	}
+
+	public void delay( float turns ){
+		spend(turns);
 	}
 	
 	@Override
 	public int icon() {
 		return BuffIndicator.POISON;
 	}
-	
+
 	@Override
 	public void tintIcon(Image icon) {
 		icon.hardlight(0.6f, 0.2f, 0.6f);
@@ -93,23 +95,32 @@ public class Poison extends Buff implements Hero.Doom {
 
 	@Override
 	public boolean attachTo(Char target) {
-		if (super.attachTo(target) && target.sprite != null){
-			CellEmitter.center(target.pos).burst( PoisonParticle.SPLASH, 5 );
+		if (super.attachTo(target)) {
+			if (target.sprite != null) {
+				CellEmitter.center(target.pos).burst( PoisonParticle.SPLASH, 5 );
+			}
 			return true;
 		} else
 			return false;
 	}
 
 	@Override
+	public void detach() {
+		if (target != null) target.needsIncomingDOTUpdate = true;
+		super.detach();
+	}
+
+	@Override
 	public boolean act() {
 		if (target.isAlive()) {
 			
-			target.damage( (long) (left / 3) + 1, this );
+			target.damage( (long)(left / 3) + 1, this );
 			spend( TICK );
 			
 			if ((left -= TICK) <= 0) {
 				detach();
 			}
+			target.needsIncomingDOTUpdate = true;
 			
 		} else {
 			
@@ -118,6 +129,15 @@ public class Poison extends Buff implements Hero.Doom {
 		}
 		
 		return true;
+	}
+
+	@Override
+	public int totalIncomingDMG() {
+		int total = 0;
+		for (int i = (int)Math.ceil(left); i > 0; i--){
+			total += i/3 + 1;
+		}
+		return total;
 	}
 
 	@Override

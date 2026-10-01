@@ -270,7 +270,8 @@ public class MasterThievesArmband extends Artifact {
 			if (cursed || target.buff(MagicImmune.class) != null) return;
 
 			if (charge < getChargeCap()){
-				float chargeGain = 3f * levelPortion;
+				//3 charges per hero lvl at +0, scaling to 4.5 per lvl at +10
+				float chargeGain = (3f + 0.15f*level()) * levelPortion;
 				chargeGain *= RingOfEnergy.artifactChargeMultiplier(target);
 
 				partialCharge += chargeGain;

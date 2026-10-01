@@ -26,10 +26,12 @@ package com.shatteredpixel.shatteredpixeldungeon.items.spells;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Degrade;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
+import com.shatteredpixel.shatteredpixeldungeon.items.BrokenSeal;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
@@ -39,6 +41,7 @@ import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.ui.InventoryPane;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndUpgrade;
 import com.watabou.noosa.audio.Sample;
@@ -72,23 +75,30 @@ public class MagicalInfusion extends InventorySpell {
 	}
 
 	public void useAnimation(){
-		curUser.spend(1f);
-		curUser.busy();
-		(curUser.sprite).operate(curUser.pos);
+		if (curUser == null) curUser = Dungeon.hero;
+		if (curUser != null) {
+			curUser.spend(1f);
+			curUser.busy();
+			if (curUser.sprite != null) {
+				curUser.sprite.operate(curUser.pos);
+			}
+		}
 
 		Sample.INSTANCE.play(Assets.Sounds.READ);
 		Invisibility.dispel();
 
-		Catalog.countUse(curItem.getClass());
-		if (Random.Float() < ((Spell) curItem).talentChance) {
-			Talent.onScrollUsed(curUser, curUser.pos, ((Spell) curItem).talentFactor);
+		Catalog.countUse(curItem != null ? curItem.getClass() : getClass());
+		if (curUser != null && Random.Float() < ((Spell) (curItem != null ? curItem : this)).talentChance) {
+			Talent.onScrollUsed(curUser, curUser.pos, ((Spell) (curItem != null ? curItem : this)).talentFactor);
 		}
 	}
 
 	public Item upgradeItem( Item item ){
-		ScrollOfUpgrade.upgrade(curUser);
-
-		Degrade.detach( curUser, Degrade.class );
+		if (curUser == null) curUser = Dungeon.hero;
+		if (curUser != null) {
+			ScrollOfUpgrade.upgrade(curUser);
+			Degrade.detach( curUser, Degrade.class );
+		}
 
 		if (item instanceof Weapon && ((Weapon) item).enchantment != null) {
 			item = ((Weapon) item).upgrade(true);
@@ -109,6 +119,14 @@ public class MagicalInfusion extends InventorySpell {
 		Catalog.countUse(getClass());
 
 		Statistics.upgradesUsed++;
+
+		item.updateQuickslot();
+		Item.updateQuickslot();
+		InventoryPane.refresh();
+		if (Dungeon.hero != null && item.isEquipped(Dungeon.hero) && item instanceof Armor) {
+			BrokenSeal.WarriorShield seal = Dungeon.hero.buff(BrokenSeal.WarriorShield.class);
+			if (seal != null) seal.setArmor((Armor) item);
+		}
 
 		return item;
 	}

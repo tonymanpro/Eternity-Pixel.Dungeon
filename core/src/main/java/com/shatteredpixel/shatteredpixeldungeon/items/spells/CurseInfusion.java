@@ -26,8 +26,10 @@ package com.shatteredpixel.shatteredpixeldungeon.items.spells;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ShadowParticle;
+import com.shatteredpixel.shatteredpixeldungeon.items.BrokenSeal;
 import com.shatteredpixel.shatteredpixeldungeon.items.EquipableItem;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
@@ -42,6 +44,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.ui.InventoryPane;
 import com.watabou.noosa.audio.Sample;
 
 import java.util.ArrayList;
@@ -99,6 +102,13 @@ public class CurseInfusion extends InventorySpell {
 		}
 		Badges.validateItemLevelAquired(item);
 		updateQuickslot();
+		item.updateQuickslot();
+		Item.updateQuickslot();
+		InventoryPane.refresh();
+		if (Dungeon.hero != null && item.isEquipped(Dungeon.hero) && item instanceof Armor) {
+			BrokenSeal.WarriorShield seal = Dungeon.hero.buff(BrokenSeal.WarriorShield.class);
+			if (seal != null) seal.setArmor((Armor) item);
+		}
 	}
 	
 	@Override

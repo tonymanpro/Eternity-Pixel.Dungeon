@@ -27,9 +27,13 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
+import com.shatteredpixel.shatteredpixeldungeon.services.platform.SupporterManager;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndSupporterUnlock;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
@@ -92,18 +96,18 @@ public class PetEgg extends Item {
 			hero.spendAndNext(1f);
 
 		} else if (action.equals(AC_HATCH)) {
-			if (eggType == Pet.PetType.MANTICORE && !com.shatteredpixel.shatteredpixeldungeon.services.platform.SupporterManager.isSupporter()) {
-				GLog.w(Messages.get(this, "manticore_supporter_locked"));
-				GameScene.show(new com.shatteredpixel.shatteredpixeldungeon.windows.WndSupporterUnlock());
-				return;
-			}
-
 			if (!isReadyToHatch()) {
 				GLog.w(Messages.get(this, "not_ready"));
 				return;
 			}
 
-			if (hero.pet != null && hero.pet.isAlive()) {
+			if (eggType == Pet.PetType.MANTICORE && !SupporterManager.isSupporter()) {
+				GLog.w(Messages.get(this, "manticore_supporter_locked"));
+				ShatteredPixelDungeon.scene().addToFront(new WndSupporterUnlock());
+				return;
+			}
+
+			if ((hero.pet != null && hero.pet.isAlive()) || hero.storedPet != null) {
 				GLog.w(Messages.get(this, "already_has_pet"));
 				return;
 			}
@@ -119,6 +123,13 @@ public class PetEgg extends Item {
 			hero.pet = newPet;
 
 			detach(hero.belongings.backpack);
+
+			if (hero.belongings.getItem(PetWhistle.class) == null) {
+				PetWhistle whistle = new PetWhistle();
+				if (!whistle.collect(hero.belongings.backpack)) {
+					Dungeon.level.drop(whistle, hero.pos);
+				}
+			}
 
 			if (hero.sprite != null) {
 				hero.sprite.operate(hero.pos);
@@ -140,7 +151,44 @@ public class PetEgg extends Item {
 	@Override
 	public String info() {
 		int percent = incubation * 100 / REQUIRED_INCUBATION;
-		return Messages.get(this, "desc_" + eggType.name().toLowerCase(), percent);
+		String desc = Messages.get(this, "desc_" + eggType.name().toLowerCase(), percent);
+		if (eggType == Pet.PetType.MANTICORE && !SupporterManager.isSupporter()) {
+			desc += "\n\n" + Messages.get(this, "manticore_locked_info");
+		}
+		return desc;
+	}
+
+	@Override
+	public com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite.Glowing glowing() {
+		int glowColor;
+		switch (eggType) {
+			case DRAGON:
+				glowColor = 0xFF4500; // Fire Orange
+				break;
+			case WOLF:
+				glowColor = 0x00E5FF; // Frost Cyan
+				break;
+			case FAIRY:
+				glowColor = 0x00FF88; // Emerald Fairy Glow
+				break;
+			case MANTICORE:
+				glowColor = 0xFFD700; // Mythic Gold
+				break;
+			default:
+				glowColor = 0x9932CC; // Mystic Purple
+				break;
+		}
+		return new com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite.Glowing(glowColor, 1.2f);
+	}
+
+	@Override
+	public com.watabou.noosa.particles.Emitter emitter() {
+		com.watabou.noosa.particles.Emitter emitter = new com.watabou.noosa.particles.Emitter();
+		emitter.pos(0, 0);
+		emitter.autoKill = false;
+		int speckType = (eggType == Pet.PetType.DRAGON) ? Speck.LIGHT : Speck.STAR;
+		emitter.pour(Speck.factory(speckType), 0.6f);
+		return emitter;
 	}
 
 	private static final String TYPE = "egg_type";

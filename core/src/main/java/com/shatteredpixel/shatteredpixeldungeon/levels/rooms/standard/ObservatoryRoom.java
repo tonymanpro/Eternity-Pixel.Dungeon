@@ -27,11 +27,15 @@ public class ObservatoryRoom extends StandardRoom {
             }
         }
 
-        Painter.fill(level, center.x - 1, center.y - 1, 3, 3, Terrain.REGION_DECO_ALT);
         Painter.set(level, center, Terrain.STATUE_SP);
+
+        // Clear cross corridors through center to guarantee room traversability
+        Painter.fill(level, left + 1, center.y, width() - 2, 1, Terrain.EMPTY_SP);
+        Painter.fill(level, center.x, top + 1, 1, height() - 2, Terrain.EMPTY_SP);
 
         for (Door door : connected.values()) {
             door.set(Door.Type.REGULAR);
+            Painter.drawInside(level, this, door, 2, Terrain.EMPTY_SP);
         }
     }
 }

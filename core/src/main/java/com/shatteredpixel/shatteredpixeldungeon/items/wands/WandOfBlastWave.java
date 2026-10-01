@@ -103,8 +103,16 @@ public class WandOfBlastWave extends DamageWand {
 			wandProc(ch, chargesPerCast());
 			ch.damage(damageRoll(), this);
 
-			if (bolt.path.size() > bolt.dist+1 && ch.pos == bolt.collisionPos) {
-				Ballistica trajectory = new Ballistica(ch.pos, bolt.path.get(bolt.dist + 1), Ballistica.MAGIC_BOLT);
+			if (ch.pos == bolt.collisionPos) {
+				int targetCell;
+				if (bolt.path.size() > bolt.dist + 1) {
+					targetCell = bolt.path.get(bolt.dist + 1);
+				} else if (bolt.dist > 0) {
+					targetCell = ch.pos + (ch.pos - bolt.path.get(bolt.dist - 1));
+				} else {
+					targetCell = ch.pos + (ch.pos - Dungeon.hero.pos);
+				}
+				Ballistica trajectory = new Ballistica(ch.pos, targetCell, Ballistica.MAGIC_BOLT);
 				long strength = buffedLvl() + 3;
 				throwChar(ch, trajectory, strength, false, true, this);
 			}

@@ -57,7 +57,7 @@ public class PotionOfStrength extends Potion {
 		if (Random.Int(Integer.MAX_VALUE) == 1) {
 			hero.STR++;
 			hero.sprite.showStatusWithIcon(CharSprite.POSITIVE, "1", FloatingText.STRENGTH);
-			GLog.p("You were blessed again, gaining additional strength!");
+			GLog.p(Messages.get(this, "blessed_again"));
 		}
 
 		GLog.p( Messages.get(this, "msg", hero.STR()) );

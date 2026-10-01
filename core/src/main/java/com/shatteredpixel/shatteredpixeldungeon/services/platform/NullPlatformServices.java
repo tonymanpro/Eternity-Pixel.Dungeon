@@ -115,8 +115,7 @@ public class NullPlatformServices implements PlatformServices {
 
 	@Override
 	public void purchaseSupporter(int tierRank, com.watabou.utils.Callback callback) {
-		this.supporterTier = tierRank;
-		this.supporterEntitlement = true;
+		// Null / Standalone platform does not grant free in-app purchases
 		if (callback != null) callback.call();
 	}
 

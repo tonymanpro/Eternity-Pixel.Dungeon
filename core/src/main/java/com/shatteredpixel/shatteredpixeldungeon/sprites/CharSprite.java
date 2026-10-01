@@ -241,8 +241,13 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	}
 	
 	public void interruptMotion() {
-		if (motion != null) {
-			motion.stop(false);
+		synchronized (this) {
+			if (motion != null) {
+				motion.killAndErase();
+				motion = null;
+			}
+			isMoving = false;
+			notifyAll();
 		}
 	}
 
@@ -319,6 +324,14 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	}
 
 	public void die() {
+		synchronized (this) {
+			if (motion != null) {
+				motion.killAndErase();
+				motion = null;
+			}
+			isMoving = false;
+			notifyAll();
+		}
 		sleeping = false;
 		remove( State.PARALYSED );
 		play( die );
@@ -531,10 +544,16 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 		}
 	}
 
+	protected int auraColor = -1;
+
 	public void aura( int color ){
+		if (aura != null && auraColor == color && aura.parent != null){
+			return;
+		}
 		if (aura != null){
 			aura.killAndErase();
 		}
+		auraColor = color;
 		float size = Math.max(width(), height());
 		size = Math.max(size+4, 16);
 		aura = new Flare(5, size);
@@ -551,6 +570,7 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 		if (aura != null){
 			aura.killAndErase();
 			aura = null;
+			auraColor = -1;
 		}
 	}
 

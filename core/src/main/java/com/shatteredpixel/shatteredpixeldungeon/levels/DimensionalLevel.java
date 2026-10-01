@@ -331,6 +331,11 @@ public class DimensionalLevel extends Level {
         return visuals;
     }
 
+    @Override
+    public float respawnCooldown() {
+        return 1f;
+    }
+
     public static class DimensionalSpawner extends MobSpawner {
 
         {
@@ -381,7 +386,7 @@ public class DimensionalLevel extends Level {
                             mob.HP = mob.HT *= 7;
                         }
                         if (power == 200) {
-                            GLog.h("KEEPER: This dimension is about to distort at 50 more mobs. Be ready!");
+                            GLog.h(Messages.get(this, "dimension_distort"));
                         }
                         if (power >= 200) {
                             Class<?extends ChampionEnemy> buffCls;
@@ -405,7 +410,7 @@ public class DimensionalLevel extends Level {
                     }
                 }
             }
-            spend(3f);
+            spend(7f);
             return true;
         }
     }

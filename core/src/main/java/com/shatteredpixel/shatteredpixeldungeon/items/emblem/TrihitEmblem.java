@@ -9,6 +9,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Trihit;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 
@@ -30,7 +31,7 @@ public class TrihitEmblem extends EmblemSystem {
         if (item instanceof Weapon) {
             ((Weapon) item).enchant(new Trihit());
         } else {
-            GLog.w("You must use this only on weapons.");
+            GLog.w(Messages.get(EmblemSystem.class, "only_weapons"));
             collect();
         }
     }

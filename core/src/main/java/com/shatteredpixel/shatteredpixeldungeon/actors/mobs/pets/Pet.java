@@ -94,11 +94,18 @@ public abstract class Pet extends DirectableAlly {
 	public void updateStats() {
 		int stage = evolutionStage();
 		HT = 20L + (petLevel * 6L) + (stage * 15L);
+		if (com.shatteredpixel.shatteredpixeldungeon.SPDSettings.isDemo()) {
+			HT += 15L; // Extra base survivability in Demo
+		}
 		defenseSkill = 4L + (petLevel * 2L) + (stage * 3L);
 	}
 
 	public void gainExp(int amount) {
 		if (petLevel >= 15) return; // Nivel máximo
+
+		if (com.shatteredpixel.shatteredpixeldungeon.SPDSettings.isDemo()) {
+			amount = Math.round(amount * 1.6f); // Accelerated leveling in Demo to reach evolution
+		}
 
 		exp += amount;
 		while (exp >= maxExp && petLevel < 15) {
@@ -120,23 +127,25 @@ public abstract class Pet extends DirectableAlly {
 	}
 
 	public void playVoice() {
-		switch (petType) {
-			case DRAGON:
-				Sample.INSTANCE.play(Assets.Sounds.PET_DRAGON);
-				break;
-			case WOLF:
-				Sample.INSTANCE.play(Assets.Sounds.PET_WOLF);
-				break;
-			case SPIDER:
-				Sample.INSTANCE.play(Assets.Sounds.PET_SPIDER);
-				break;
-			case FAIRY:
-				Sample.INSTANCE.play(Assets.Sounds.PET_SNAKE);
-				break;
-			case MANTICORE:
-				Sample.INSTANCE.play(Assets.Sounds.PET_MANTICORE);
-				break;
-		}
+		try {
+			switch (petType) {
+				case DRAGON:
+					Sample.INSTANCE.play(Assets.Sounds.PET_DRAGON);
+					break;
+				case WOLF:
+					Sample.INSTANCE.play(Assets.Sounds.PET_WOLF);
+					break;
+				case SPIDER:
+					Sample.INSTANCE.play(Assets.Sounds.PET_SPIDER);
+					break;
+				case FAIRY:
+					Sample.INSTANCE.play(Assets.Sounds.PET_SNAKE);
+					break;
+				case MANTICORE:
+					Sample.INSTANCE.play(Assets.Sounds.PET_MANTICORE);
+					break;
+			}
+		} catch (Exception ignored) {}
 	}
 
 	public boolean feed(Item item) {
@@ -189,10 +198,39 @@ public abstract class Pet extends DirectableAlly {
 	}
 
 	public static int getEmptyCellNear(int centerPos) {
+		return getEmptyCellNear(centerPos, centerPos);
+	}
+
+	public static int getEmptyCellNear(int centerPos, int fromPos) {
+		int bestCell = -1;
+		int bestDist = Integer.MAX_VALUE;
 		for (int n : PathFinder.NEIGHBOURS8) {
 			int cell = centerPos + n;
 			if (Dungeon.level != null && Dungeon.level.insideMap(cell) && Dungeon.level.passable[cell] && Actor.findChar(cell) == null) {
-				return cell;
+				int d = Dungeon.level.distance(cell, fromPos);
+				if (d < bestDist) {
+					bestDist = d;
+					bestCell = cell;
+				}
+			}
+		}
+		if (bestCell != -1) {
+			return bestCell;
+		}
+
+		if (Dungeon.level != null) {
+			for (int r = 2; r <= 3; r++) {
+				for (int dx = -r; dx <= r; dx++) {
+					for (int dy = -r; dy <= r; dy++) {
+						if (Math.abs(dx) < r && Math.abs(dy) < r) continue;
+						int cx = (centerPos % Dungeon.level.width()) + dx;
+						int cy = (centerPos / Dungeon.level.width()) + dy;
+						int cell = cx + cy * Dungeon.level.width();
+						if (Dungeon.level.insideMap(cell) && Dungeon.level.passable[cell] && Actor.findChar(cell) == null) {
+							return cell;
+						}
+					}
+				}
 			}
 		}
 		return centerPos;
@@ -202,8 +240,8 @@ public abstract class Pet extends DirectableAlly {
 	public boolean act() {
 		// Teletransporte si se aleja demasiado del héroe en modo FOLLOW
 		if (currentOrder == PetOrder.FOLLOW && Dungeon.hero != null && Dungeon.hero.isAlive()) {
-			if (Dungeon.level.distance(pos, Dungeon.hero.pos) > 12) {
-				int nearCell = getEmptyCellNear(Dungeon.hero.pos);
+			if (Dungeon.level.distance(pos, Dungeon.hero.pos) > 6) {
+				int nearCell = getEmptyCellNear(Dungeon.hero.pos, pos);
 				if (nearCell != Dungeon.hero.pos && Actor.findChar(nearCell) == null) {
 					CellEmitter.get(pos).burst(Speck.factory(Speck.LIGHT), 4);
 					move(nearCell);
@@ -218,6 +256,30 @@ public abstract class Pet extends DirectableAlly {
 			hunger--;
 		}
 
+		// Aura elemental radiante según la mascota
+		if (sprite != null) {
+			int auraColor;
+			switch (petType) {
+				case DRAGON:
+					auraColor = 0xFF4500; // Fuego radiante
+					break;
+				case WOLF:
+					auraColor = 0x00E5FF; // Escarcha gélida
+					break;
+				case FAIRY:
+					auraColor = 0x00FF88; // Esmeralda feérico
+					break;
+				case MANTICORE:
+					auraColor = 0xFFD700; // Oro mítico
+					break;
+				case SPIDER:
+				default:
+					auraColor = 0x9932CC; // Púrpura sombrío
+					break;
+			}
+			sprite.aura(auraColor);
+		}
+
 		return super.act();
 	}
 
@@ -226,6 +288,12 @@ public abstract class Pet extends DirectableAlly {
 		if (chr == Dungeon.hero) {
 			if (Dungeon.hero != null && Dungeon.hero.pet == null) {
 				Dungeon.hero.pet = this;
+			}
+			if (Dungeon.hero != null && Dungeon.hero.belongings.getItem(com.shatteredpixel.shatteredpixeldungeon.items.pets.PetWhistle.class) == null) {
+				com.shatteredpixel.shatteredpixeldungeon.items.pets.PetWhistle whistle = new com.shatteredpixel.shatteredpixeldungeon.items.pets.PetWhistle();
+				if (!whistle.collect(Dungeon.hero.belongings.backpack)) {
+					Dungeon.level.drop(whistle, Dungeon.hero.pos);
+				}
 			}
 			com.watabou.noosa.Game.runOnRenderThread(new com.watabou.utils.Callback() {
 				@Override
@@ -251,8 +319,84 @@ public abstract class Pet extends DirectableAlly {
 		return Messages.get(this, "desc");
 	}
 
+	public void recall() {
+		if (Dungeon.hero == null) return;
+		Bundle bundle = new Bundle();
+		storeInBundle(bundle);
+		Dungeon.hero.storedPet = bundle;
+		Dungeon.hero.pet = null;
+
+		if (sprite != null) {
+			sprite.clearAura();
+			CellEmitter.get(pos).burst(Speck.factory(Speck.LIGHT), 8);
+			sprite.killAndErase();
+		}
+		if (Dungeon.level != null && Dungeon.level.mobs != null) {
+			Dungeon.level.mobs.remove(this);
+		}
+		Actor.remove(this);
+		try {
+			Sample.INSTANCE.play(Assets.Sounds.TELEPORT);
+		} catch (Exception ignored) {}
+		GLog.i(Messages.get(Pet.class, "recalled", name()));
+	}
+
+	public static Pet createFromBundle(Bundle bundle) {
+		if (bundle == null) return null;
+		PetType type = PetType.WOLF;
+		if (bundle.contains(TYPE)) {
+			try {
+				type = PetType.valueOf(bundle.getString(TYPE));
+			} catch (Exception ignored) {}
+		}
+		Pet pet = Pet.create(type);
+		pet.restoreFromBundle(bundle);
+		pet.clearTime();
+		if (pet.HP <= 0) pet.HP = 1;
+		pet.HP = Math.min(pet.HT, pet.HP);
+		return pet;
+	}
+
+	public static Pet summon(com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero hero) {
+		if (hero == null || hero.storedPet == null) return null;
+		Bundle bundle = hero.storedPet;
+		Pet pet = createFromBundle(bundle);
+		if (pet == null) return null;
+		pet.clearTime();
+
+		int spawnCell = getEmptyCellNear(hero.pos);
+		if (Actor.findChar(spawnCell) != null) {
+			for (int n : PathFinder.NEIGHBOURS8) {
+				int cell = hero.pos + n;
+				if (Dungeon.level != null && Dungeon.level.insideMap(cell) && Dungeon.level.passable[cell] && Actor.findChar(cell) == null) {
+					spawnCell = cell;
+					break;
+				}
+			}
+		}
+		pet.pos = spawnCell;
+		hero.pet = pet;
+		hero.storedPet = null;
+
+		if (Dungeon.level != null) {
+			GameScene.add(pet, 1f);
+			Dungeon.level.occupyCell(pet);
+			CellEmitter.get(spawnCell).burst(Speck.factory(Speck.STAR), 8);
+		}
+		try {
+			pet.playVoice();
+			Sample.INSTANCE.play(Assets.Sounds.TELEPORT);
+		} catch (Exception ignored) {}
+		GLog.p(Messages.get(Pet.class, "summoned", pet.name()));
+		pet.setOrder(pet.currentOrder != null ? pet.currentOrder : PetOrder.FOLLOW);
+		return pet;
+	}
+
 	@Override
 	public void die(Object cause) {
+		if (sprite != null) {
+			sprite.clearAura();
+		}
 		super.die(cause);
 		if (Dungeon.hero != null && Dungeon.hero.pet == this) {
 			Dungeon.hero.pet = null;
@@ -284,17 +428,31 @@ public abstract class Pet extends DirectableAlly {
 	public void restoreFromBundle(Bundle bundle) {
 		super.restoreFromBundle(bundle);
 		if (bundle.contains(TYPE)) {
-			petType = PetType.valueOf(bundle.getString(TYPE));
+			try {
+				petType = PetType.valueOf(bundle.getString(TYPE));
+			} catch (Exception ignored) {}
 		}
 		if (bundle.contains(CUSTOM_NAME)) {
 			customName = bundle.getString(CUSTOM_NAME);
 		}
-		petLevel = bundle.getInt(LEVEL);
-		exp = bundle.getInt(EXP);
-		maxExp = bundle.getInt(MAX_EXP);
-		hunger = bundle.getInt(HUNGER);
+		if (bundle.contains(LEVEL)) {
+			petLevel = Math.max(1, bundle.getInt(LEVEL));
+		}
+		if (bundle.contains(EXP)) {
+			exp = bundle.getInt(EXP);
+		}
+		if (bundle.contains(MAX_EXP)) {
+			maxExp = Math.max(1, bundle.getInt(MAX_EXP));
+		} else {
+			maxExp = 25 + (petLevel * 15);
+		}
+		if (bundle.contains(HUNGER)) {
+			hunger = bundle.getInt(HUNGER);
+		}
 		if (bundle.contains(ORDER)) {
-			currentOrder = PetOrder.valueOf(bundle.getString(ORDER));
+			try {
+				currentOrder = PetOrder.valueOf(bundle.getString(ORDER));
+			} catch (Exception ignored) {}
 		}
 		updateStats();
 	}

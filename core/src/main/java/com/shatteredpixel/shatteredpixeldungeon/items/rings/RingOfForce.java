@@ -30,6 +30,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MonkEnergy;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.spells.SpiritForm;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
@@ -80,8 +81,16 @@ public class RingOfForce extends Ring {
 	}
 
 	public static long damageRoll( Hero hero ){
-		if (hero.buff(Force.class) != null
-				&& hero.buff(MonkEnergy.MonkAbility.UnarmedAbilityTracker.class) == null) {
+		//level can be 0 while still using a ring, so we specifically check for the presence of a ring of force
+		boolean usingForce = hero.buff(Force.class) != null;
+		if (hero.buff(SpiritForm.SpiritFormBuff.class) != null && hero.buff(SpiritForm.SpiritFormBuff.class).ring() instanceof RingOfForce){
+			usingForce = true;
+		}
+		//and ignore that presence if using monk abilities
+		if (hero.buff(MonkEnergy.MonkAbility.UnarmedAbilityTracker.class) != null){
+			usingForce = false;
+		}
+		if (usingForce) {
 			long level = getBuffedBonus(hero, Force.class);
 			float tier = tier(hero.STR());
 			long dmg = Hero.heroDamageIntRange(min(level, tier), max(level, tier));
@@ -204,7 +213,10 @@ public class RingOfForce extends Ring {
 	@Override
 	public void execute(Hero hero, String action) {
 		if (action.equals(AC_ABILITY)){
-			if (hero.buff(BrawlersStance.class) != null){
+			if (!isEquipped(hero)) {
+				GLog.w(Messages.get(MeleeWeapon.class, "ability_need_equip"));
+
+			} else if (hero.buff(BrawlersStance.class) != null){
 				if (!hero.buff(BrawlersStance.class).active){
 					hero.buff(BrawlersStance.class).reset();
 				} else {
@@ -212,9 +224,7 @@ public class RingOfForce extends Ring {
 				}
 				BuffIndicator.refreshHero();
 				AttackIndicator.updateState();
-			} else if (!isEquipped(hero)) {
-				GLog.w(Messages.get(MeleeWeapon.class, "ability_need_equip"));
-
+				hero.sprite.operate(hero.pos);
 			} else {
 				Buff.affect(hero, BrawlersStance.class).reset();
 				AttackIndicator.updateState();

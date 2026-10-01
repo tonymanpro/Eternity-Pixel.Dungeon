@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2024 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * Experienced Pixel Dungeon
  * Copyright (C) 2019-2024 Trashbox Bobylev
@@ -34,14 +34,10 @@ import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.Image;
 import com.watabou.utils.Bundle;
 
-public class Corrosion extends Buff implements Hero.Doom {
+public class Corrosion extends Buff implements Hero.Doom, Buff.DOTbuff {
 
-	private double damage = 1;
+	private float damage = 1;
 	protected float left;
-
-	public void extend( float duration ){
-		left += duration;
-	}
 
 	//used in specific cases where the source of the corrosion is important for death logic
 	private Class source;
@@ -66,19 +62,29 @@ public class Corrosion extends Buff implements Hero.Doom {
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
 		super.restoreFromBundle( bundle );
-		damage = bundle.getDouble( DAMAGE );
+		damage = bundle.getFloat( DAMAGE );
 		left = bundle.getFloat( LEFT );
 		source = bundle.getClass( SOURCE );
 	}
 
 	public void set(float duration, long damage){
-		set(duration, damage, null);
+		set(duration, (int)damage, null);
 	}
 
-	public void set(float duration, long damage, Class source) {
+	public void set(float duration, int damage, Class source) {
 		this.left = Math.max(duration, left);
 		if (this.damage < damage) this.damage = damage;
 		this.source = source;
+		if (target != null) target.needsIncomingDOTUpdate = true;
+	}
+
+	public void set(float duration, long damage, Class source) {
+		set(duration, (int)damage, source);
+	}
+
+	public void extend( float duration ) {
+		left += duration;
+		if (target != null) target.needsIncomingDOTUpdate = true;
 	}
 	
 	@Override
@@ -93,12 +99,12 @@ public class Corrosion extends Buff implements Hero.Doom {
 
 	@Override
 	public String iconTextDisplay() {
-		return Long.toString((long) damage);
+		return Integer.toString((int) damage);
 	}
 
 	@Override
 	public String desc() {
-		return Messages.get(this, "desc", dispTurns(left), (long)damage);
+		return Messages.get(this, "desc", dispTurns(left), (int)damage);
 	}
 
 	@Override
@@ -119,7 +125,14 @@ public class Corrosion extends Buff implements Hero.Doom {
 			detach();
 		}
 
+		target.needsIncomingDOTUpdate = true;
 		return true;
+	}
+
+	@Override
+	public void detach() {
+		if (target != null) target.needsIncomingDOTUpdate = true;
+		super.detach();
 	}
 	
 	@Override
@@ -130,6 +143,21 @@ public class Corrosion extends Buff implements Hero.Doom {
 
 		Dungeon.fail( this );
 		GLog.n(Messages.get(this, "ondeath"));
+	}
+
+	@Override
+	public int totalIncomingDMG() {
+		int total = 0;
+		float curDMG = damage;
+		for (int i = (int)Math.ceil(left); i > 0; i--){
+			total += (int)curDMG;
+			if (curDMG < (Dungeon.scalingDepth()/2)+2) {
+				curDMG++;
+			} else {
+				curDMG += 0.5f;
+			}
+		}
+		return total;
 	}
 
 }

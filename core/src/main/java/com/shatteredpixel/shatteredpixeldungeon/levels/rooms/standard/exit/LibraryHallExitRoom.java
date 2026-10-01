@@ -39,18 +39,12 @@ public class LibraryHallExitRoom extends LibraryHallRoom {
     public void paint(Level level) {
         super.paint(level);
 
-        while (true){
-            Point p = random(2);
+        Point p = ExitRoom.getExitPoint(this, level, 2, (pt, cell) ->
+                level.map[cell] == Terrain.REGION_DECO);
+        int exit = level.pointToCell(p);
+        Painter.set( level, exit, Terrain.EXIT );
 
-            if (level.map[level.pointToCell(p)] == Terrain.REGION_DECO){
-                int exit = level.pointToCell(p);
-                Painter.set( level, exit, Terrain.EXIT );
-
-                level.transitions.add(new LevelTransition(level, exit, LevelTransition.Type.REGULAR_EXIT));
-                return;
-            }
-        }
-
+        level.transitions.add(new LevelTransition(level, exit, LevelTransition.Type.REGULAR_EXIT));
     }
 
     @Override

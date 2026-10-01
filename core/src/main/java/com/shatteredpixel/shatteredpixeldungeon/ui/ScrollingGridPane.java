@@ -88,15 +88,17 @@ public class ScrollingGridPane extends ScrollPane {
 		for (int i = 0; i < items.size(); i++){
 			Component item = items.get(i);
 			if (item instanceof GridHeader){
+				GridHeader gh = (GridHeader) item;
 				//we can sometimes get two smaller headers next to each other if a group has no items in it
 				//so we need to treat it as if there were grid items for proper layout
 				if (left > 0 || lastWasSmallheader){
 
 					//this bit of logic exists so that multiple headers can be on one row
 					// if all of their groups have a small number of items, with a min space for 3
-					float spacing = Math.max(0, MIN_GROUP_SIZE - widthThisGroup);
+					float minGroupW = Math.max(MIN_GROUP_SIZE, gh.text.width() + 8);
+					float spacing = Math.max(0, minGroupW - widthThisGroup);
 					float spaceLeft = width() - (left + spacing);
-					int spaceReq = 0;
+					int spaceReq = (int)(gh.text.width() + 8);
 					for (int j = i+1; j < items.size(); j++){
 						if (items.get(j) instanceof GridItem){
 							spaceReq += ITEM_SIZE+1;
@@ -104,8 +106,8 @@ public class ScrollingGridPane extends ScrollPane {
 							break;
 						}
 					}
-					spaceReq = Math.max(spaceReq, MIN_GROUP_SIZE);
-					if (!((GridHeader) item).center && freshRow && spaceLeft >= spaceReq){
+					spaceReq = Math.max(spaceReq, (int)minGroupW);
+					if (!gh.center && freshRow && spaceLeft >= spaceReq){
 						left = left + spacing;
 						top -= item.height()+1;
 						ColorBlock sep;
@@ -122,15 +124,15 @@ public class ScrollingGridPane extends ScrollPane {
 						sep.y = top;
 					} else {
 						left = 0;
-						top += ITEM_SIZE + 2;
+						top += ITEM_SIZE + 4;
 						freshRow = true;
 					}
 				}
 				item.setRect(left, top, width(), item.height());
-				top += item.height()+1;
+				top += item.height()+2;
 				widthThisGroup = 0;
 
-				if (!((GridHeader) item).center){
+				if (!gh.center){
 					lastWasSmallheader = true;
 				} else {
 					lastWasSmallheader = false;

@@ -196,13 +196,18 @@ public abstract class Scroll extends Item {
 
 	public void readAnimation() {
 		Invisibility.dispel();
-		curUser.spend( TIME_TO_READ );
-		curUser.busy();
-		((HeroSprite)curUser.sprite).read();
+		if (curUser == null) curUser = Dungeon.hero;
+		if (curUser != null) {
+			curUser.spend( TIME_TO_READ );
+			curUser.busy();
+			if (curUser.sprite instanceof HeroSprite) {
+				((HeroSprite)curUser.sprite).read();
+			}
+		}
 
 		if (!anonymous) {
 			Catalog.countUse(getClass());
-			if (Random.Float() < talentChance) {
+			if (curUser != null && Random.Float() < talentChance) {
 				Talent.onScrollUsed(curUser, curUser.pos, getClass(), talentFactor);
 			}
 		}

@@ -98,25 +98,20 @@ public class TicketToWaveArena extends Item{
     private static final String BRANCH	= "branch";
     private static final String POS		= "pos";
 
+    private static final String STASHED_BELONGINGS = "stashed_belongings";
+    private static final String SAVED_QUICKSLOT     = "saved_quickslot";
+    private static final String ARENA_ACTIVE        = "arena_active";
+
     @Override
     public void storeInBundle( Bundle bundle ) {
         super.storeInBundle( bundle );
-        bundle.put( DEPTH, ArenaInventory.depth );
-        bundle.put( BRANCH, ArenaInventory.branch );
-        if (ArenaInventory.depth != -1) {
-            bundle.put( POS, ArenaInventory.pos);
-        }
+        ArenaInventory.storeInBundle( bundle );
     }
 
     @Override
     public void restoreFromBundle( Bundle bundle ) {
         super.restoreFromBundle(bundle);
-        ArenaInventory.depth	= bundle.getInt( DEPTH );
-        if (bundle.contains(BRANCH))
-            ArenaInventory.branch	= bundle.getInt( BRANCH );
-        else
-            ArenaInventory.branch = Dungeon.BRANCH_NORMAL;
-        ArenaInventory.pos	= bundle.getInt( POS );
+        ArenaInventory.restoreFromBundle( bundle );
     }
 
     @Override

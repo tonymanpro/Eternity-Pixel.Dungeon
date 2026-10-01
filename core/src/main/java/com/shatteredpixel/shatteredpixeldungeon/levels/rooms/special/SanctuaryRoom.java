@@ -15,7 +15,7 @@ public class SanctuaryRoom extends SpecialRoom {
         Painter.fill(level, this, 1, Terrain.EMPTY_SP);
 
         Point center = center();
-        Painter.fill(level, center.x - 1, center.y - 1, 3, 3, Terrain.REGION_DECO);
+        Painter.fill(level, center.x - 1, center.y - 1, 3, 3, Terrain.EMPTY_SP);
         Painter.set(level, center, Terrain.STATUE_SP);
 
         int px = 2;
@@ -27,12 +27,13 @@ public class SanctuaryRoom extends SpecialRoom {
                 new Point(center.x + px, center.y + py),
         };
         for (Point p : pillars) {
-            if (p.x > left && p.x < right && p.y > top && p.y < bottom) {
+            if (p.x > left + 1 && p.x < right - 1 && p.y > top + 1 && p.y < bottom - 1) {
                 Painter.set(level, p, Terrain.REGION_DECO_ALT);
             }
         }
 
         level.addItemToSpawn( new IronKey( Dungeon.depth ) );
         entrance().set(Door.Type.LOCKED);
+        Painter.drawInside(level, this, entrance(), 2, Terrain.EMPTY_SP);
     }
 }

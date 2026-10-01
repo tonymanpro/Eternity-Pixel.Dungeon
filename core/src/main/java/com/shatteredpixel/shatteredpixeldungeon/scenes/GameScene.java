@@ -46,6 +46,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
 import com.shatteredpixel.shatteredpixeldungeon.items.journal.Guidebook;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
+import com.shatteredpixel.shatteredpixeldungeon.items.quest.Pickaxe;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.DimensionalSundial;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.TrinketCatalyst;
@@ -55,6 +56,7 @@ import com.shatteredpixel.shatteredpixeldungeon.journal.Document;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Journal;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
+import com.shatteredpixel.shatteredpixeldungeon.levels.MiningLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.RegularLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
@@ -91,6 +93,7 @@ public class GameScene extends PixelScene {
 
 	private SkinnedBlock water;
 	private DungeonTerrainTilemap tiles;
+	private WallOcclusionTilemap occlusion;
 	private GridTileMap visualGrid;
 	private TerrainFeaturesTilemap terrainFeatures;
 	private RaisedTerrainTilemap raisedTerrain;
@@ -183,6 +186,10 @@ public class GameScene extends PixelScene {
 
 		SPDSettings.lastClass(Dungeon.hero.heroClass.ordinal());
 		
+		if (Dungeon.hero != null && Dungeon.hero.belongings != null) {
+			Dungeon.hero.belongings.purgeGold();
+		}
+
 		super.create();
 		Camera.main.zoom( GameMath.gate(minZoom, defaultZoom + SPDSettings.zoom(), maxZoom));
 		Camera.main.edgeScroll.set(1);
@@ -230,6 +237,9 @@ public class GameScene extends PixelScene {
 		
 		tiles = new DungeonTerrainTilemap();
 		terrain.add( tiles );
+
+		occlusion = new WallOcclusionTilemap();
+		terrain.add( occlusion );
 
 		customTiles = new Group();
 		terrain.add(customTiles);
@@ -298,6 +308,7 @@ public class GameScene extends PixelScene {
 
 		add( emitters );
 		add( effects );
+		add( DynamicLightingEngine.get() );
 
 		gases = new Group();
 		add( gases );
@@ -445,6 +456,9 @@ public class GameScene extends PixelScene {
 					&& (InterlevelScene.mode == InterlevelScene.Mode.DESCEND || InterlevelScene.mode == InterlevelScene.Mode.FALL)) {
 				GLog.h(Messages.get(this, "descend"), Dungeon.depth);
 				Sample.INSTANCE.play(Assets.Sounds.DESCEND);
+				if (Dungeon.depth == 1) {
+					areaIntro(Messages.get(GameScene.class, "sewers_intro_title"), Messages.get(GameScene.class, "sewers_intro_sub"), 0x38B0DE);
+				}
 				Tasks.onDepthReached( Statistics.deepestFloor );
 				SeasonalTasks.onDepthReached( Statistics.deepestFloor );
 				
@@ -458,10 +472,19 @@ public class GameScene extends PixelScene {
 					if (!Dungeon.level.mobs.contains(Dungeon.hero.pet)) {
 						int petCell = com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet.getEmptyCellNear(Dungeon.hero.pos);
 						if (Actor.findChar(petCell) != null) {
-							petCell = Dungeon.hero.pos;
+							for (int n : com.watabou.utils.PathFinder.NEIGHBOURS8) {
+								int cell = Dungeon.hero.pos + n;
+								if (Dungeon.level.insideMap(cell) && Dungeon.level.passable[cell] && Actor.findChar(cell) == null) {
+									petCell = cell;
+									break;
+								}
+							}
 						}
 						Dungeon.hero.pet.pos = petCell;
-						GameScene.add(Dungeon.hero.pet);
+						Dungeon.hero.pet.clearTime();
+						GameScene.add(Dungeon.hero.pet, 1f);
+						Dungeon.level.occupyCell(Dungeon.hero.pet);
+						Dungeon.hero.pet.setOrder(Dungeon.hero.pet.currentOrder != null ? Dungeon.hero.pet.currentOrder : com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet.PetOrder.FOLLOW);
 					}
 				}
 
@@ -859,11 +882,10 @@ private static float waterOfs = 0;
 		}
 
 		if (scene.petPanel != null) {
-			float panelWidth = Math.min(168, uiCamera.width - 10);
-			float panelX = (uiCamera.width - panelWidth) / 2f;
-			float panelY = (SPDSettings.interfaceSize() == 0 && scene.status != null) ? scene.status.bottom() + 2 : 4;
-			scene.petPanel.setRect(panelX, panelY, panelWidth, PetTacticalPanel.PANEL_HEIGHT);
-			scene.bringToFront(scene.petPanel);
+			scene.petPanel.layout();
+			if (scene.petPanel.visible) {
+				scene.bringToFront(scene.petPanel);
+			}
 		}
 	}
 	
@@ -1188,6 +1210,7 @@ private static float waterOfs = 0;
 	public static void resetMap() {
 		if (scene != null) {
 			scene.tiles.map(Dungeon.level.map, Dungeon.level.width() );
+			scene.occlusion.map(Dungeon.level.map, Dungeon.level.width() );
 			scene.visualGrid.map(Dungeon.level.map, Dungeon.level.width() );
 			scene.terrainFeatures.map(Dungeon.level.map, Dungeon.level.width() );
 			scene.raisedTerrain.map(Dungeon.level.map, Dungeon.level.width() );
@@ -1200,6 +1223,7 @@ private static float waterOfs = 0;
 	public static void updateMap() {
 		if (scene != null) {
 			scene.tiles.updateMap();
+			scene.occlusion.updateMap();
 			scene.visualGrid.updateMap();
 			scene.terrainFeatures.updateMap();
 			scene.raisedTerrain.updateMap();
@@ -1211,6 +1235,7 @@ private static float waterOfs = 0;
 	public static void updateMap( int cell ) {
 		if (scene != null) {
 			scene.tiles.updateMapCell( cell );
+			scene.occlusion.updateMapCell( cell );
 			scene.visualGrid.updateMapCell( cell );
 			scene.terrainFeatures.updateMapCell( cell );
 			scene.raisedTerrain.updateMapCell( cell );
@@ -1409,6 +1434,65 @@ private static float waterOfs = 0;
 		scene.add(menu);
 	}
 	
+	public static void bossIntro(String title, String subtitle, int titleColor, int bossCell) {
+		if (scene != null) {
+			BossSplashBanner.show(title, subtitle, titleColor, bossCell);
+			flash(0x330022, true);
+			PixelScene.shake(4.5f, 0.45f);
+		}
+	}
+
+	public static void areaIntro(String title, String subtitle, int titleColor) {
+		if (scene != null) {
+			AreaSplashBanner.show(title, subtitle, titleColor);
+		}
+	}
+
+	public static void bossFinisher(int bossPos) {
+		bossFinisher(bossPos, 0x00FF66);
+	}
+
+	public static void bossFinisher(int bossPos, int splashColor) {
+		if (scene != null) {
+			Game.timeScale = 0.25f;
+			scene.add(new SlowMotionController(0.75f));
+			flash(0xFFFFFF, true);
+			PixelScene.shake(5.5f, 0.6f);
+			Sample.INSTANCE.play(Assets.Sounds.BLAST);
+			if (bossPos >= 0) {
+				com.shatteredpixel.shatteredpixeldungeon.effects.Splash.at(bossPos, splashColor, 25);
+			}
+		}
+	}
+
+	private static class SlowMotionController extends com.watabou.noosa.Gizmo {
+		private final float duration;
+		private float elapsedReal = 0f;
+
+		public SlowMotionController(float duration) {
+			this.duration = duration;
+		}
+
+		@Override
+		public void update() {
+			float realDelta = com.badlogic.gdx.Gdx.graphics.getDeltaTime();
+			elapsedReal += realDelta;
+
+			if (elapsedReal >= duration) {
+				Game.timeScale = 1.0f;
+				killAndErase();
+			} else if (elapsedReal > duration * 0.5f) {
+				float progress = (elapsedReal - duration * 0.5f) / (duration * 0.5f);
+				Game.timeScale = 0.25f + 0.75f * progress;
+			}
+		}
+
+		@Override
+		public void draw() {
+			// Gizmo-only controller
+		}
+	}
+
 	public static void bossSlain() {
 		if (Dungeon.hero.isAlive()) {
 			if (scene != null) {
@@ -1636,7 +1720,17 @@ private static float waterOfs = 0;
 
 			//determine first text line
 			if (objects.isEmpty()) {
-				textLines.add(0, Messages.get(GameScene.class, "go_here"));
+				if (Dungeon.hero != null && Dungeon.hero.belongings.getItem(Pickaxe.class) != null
+						&& ((Dungeon.level instanceof MiningLevel &&
+								(Dungeon.level.map[cell] == Terrain.WALL
+										|| Dungeon.level.map[cell] == Terrain.WALL_DECO
+										|| Dungeon.level.map[cell] == Terrain.MINE_CRYSTAL
+										|| Dungeon.level.map[cell] == Terrain.MINE_BOULDER))
+							|| (Dungeon.depth >= 11 && Dungeon.depth <= 15 && Dungeon.level.map[cell] == Terrain.WALL_DECO))) {
+					textLines.add(0, Messages.get(Pickaxe.class, "ac_mine"));
+				} else {
+					textLines.add(0, Messages.get(GameScene.class, "go_here"));
+				}
 			} else if (objects.get(0) instanceof Hero) {
 				textLines.add(0, Messages.get(GameScene.class, "go_here"));
 			} else if (objects.get(0) instanceof Mob) {

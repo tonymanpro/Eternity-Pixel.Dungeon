@@ -8,6 +8,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs;
 import com.shatteredpixel.shatteredpixeldungeon.FallenHeroRecord;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.GhostSprite;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndFallenHeroGhost;
 import com.watabou.noosa.Game;
@@ -32,6 +33,16 @@ public class GhostHeroNPC extends NPC {
 	public GhostHeroNPC(FallenHeroRecord record) {
 		this();
 		this.record = record;
+	}
+
+	@Override
+	public String name() {
+		return Messages.get(this, "name");
+	}
+
+	@Override
+	public String description() {
+		return Messages.get(this, "desc");
 	}
 
 	@Override
@@ -67,6 +78,7 @@ public class GhostHeroNPC extends NPC {
 			recBundle.put("armorName", record.armorName);
 			recBundle.put("seed", record.seed);
 			recBundle.put("date", record.date);
+			recBundle.put("released", record.released);
 			bundle.put(RECORD, recBundle);
 		}
 	}
@@ -86,6 +98,7 @@ public class GhostHeroNPC extends NPC {
 			record.armorName = recBundle.getString("armorName");
 			record.seed = recBundle.getString("seed");
 			record.date = recBundle.getString("date");
+			record.released = recBundle.getBoolean("released");
 		}
 	}
 }

@@ -76,9 +76,16 @@ public class Image extends Visual {
 	
 	public void frame( RectF frame ) {
 		this.frame = frame;
+		if (frame == null) {
+			width = 0;
+			height = 0;
+			return;
+		}
 		
-		width = frame.width() * texture.width;
-		height = frame.height() * texture.height;
+		if (texture != null) {
+			width = frame.width() * texture.width;
+			height = frame.height() * texture.height;
+		}
 		
 		updateFrame();
 		updateVertices();
@@ -89,12 +96,12 @@ public class Image extends Visual {
 	}
 	
 	public RectF frame() {
-		return new RectF( frame );
+		return frame == null ? null : new RectF( frame );
 	}
 
 	public void copy( Image other ) {
 		texture = other.texture;
-		frame = new RectF( other.frame );
+		frame = other.frame == null ? null : new RectF( other.frame );
 		
 		width = other.width;
 		height = other.height;
@@ -109,6 +116,9 @@ public class Image extends Visual {
 	}
 	
 	protected void updateFrame() {
+		if (frame == null) {
+			return;
+		}
 		
 		if (flipHorizontal) {
 			vertices[2]		= frame.right;

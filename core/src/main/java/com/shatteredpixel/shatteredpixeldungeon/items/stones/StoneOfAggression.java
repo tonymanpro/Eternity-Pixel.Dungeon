@@ -49,21 +49,14 @@ public class StoneOfAggression extends Runestone {
 		
 		Char ch = Actor.findChar( cell );
 		
-		if (ch != null) {
-			if (ch.alignment == Char.Alignment.ENEMY) {
-				Buff.prolong(ch, Aggression.class, Aggression.DURATION / 4f);
-			} else {
-				Buff.prolong(ch, Aggression.class, Aggression.DURATION);
-			}
-			CellEmitter.center(cell).start( Speck.factory( Speck.SCREAM ), 0.3f, 3 );
-			Sample.INSTANCE.play( Assets.Sounds.READ );
-		} else {
-			//Item.onThrow
-			Heap heap = Dungeon.level.drop( this, cell );
-			if (!heap.isEmpty()) {
-				heap.sprite.drop( cell );
-			}
+		if (ch != null
+				&& !Char.hasProp(ch, Char.Property.BOSS)
+				&& !Char.hasProp(ch, Char.Property.MINIBOSS)) {
+			Buff.prolong(ch, Aggression.class, Aggression.DURATION);
 		}
+
+		CellEmitter.center(cell).start( Speck.factory( Speck.SCREAM ), 0.3f, 3 );
+		Sample.INSTANCE.play( Assets.Sounds.READ );
 		
 	}
 

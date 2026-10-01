@@ -124,6 +124,7 @@ public class TextureCache {
 		} else {
 
 			SmartTexture tx = new SmartTexture( getBitmap( src ) );
+			tx.path = src.toString();
 			all.put( src, tx );
 			return tx;
 		}

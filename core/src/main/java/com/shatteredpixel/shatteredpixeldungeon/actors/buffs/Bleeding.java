@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2024 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * Experienced Pixel Dungeon
  * Copyright (C) 2019-2024 Trashbox Bobylev
@@ -38,19 +38,19 @@ import com.watabou.utils.Bundle;
 import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
 
-public class Bleeding extends Buff {
+public class Bleeding extends Buff implements Buff.DOTbuff {
 
 	{
 		type = buffType.NEGATIVE;
 		announced = true;
 	}
 	
-	protected double level;
+	protected float level;
 
 	//used in specific cases where the source of the bleed is important for death logic
 	private Class source;
 
-	public double level(){
+	public float level(){
 		return level;
 	}
 	
@@ -67,27 +67,38 @@ public class Bleeding extends Buff {
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
 		super.restoreFromBundle( bundle );
-		level = bundle.getDouble( LEVEL );
+		level = bundle.getFloat( LEVEL );
 		source = bundle.getClass( SOURCE );
 	}
 	
-	public void set( double level ) {
+	public void set( float level ) {
 		set( level, null );
 	}
 
+	public void set( double level ) {
+		set( (float)level, null );
+	}
+
 	public void set( double level, Class source ){
+		set( (float)level, source );
+	}
+
+	public void set( float level, Class source ){
+		//previously bleed would reduce them dmg, now it dmgs then reduces.
+		//this is essentially pre-calculating the first loss of bleed dmg.
+		//this helps the total incoming DOT calculation be more consistent
+		//avg. total damage is 3x the initial level, and becomes 4x the level with this pre-calc
+		level = Random.NormalFloat(level / 2f, level);
 		if (this.level < level) {
 			this.level = Math.max(this.level, level);
 			this.source = source;
 		}
+		if (target != null) target.needsIncomingDOTUpdate = true;
 	}
 
 	public void extend( float amount ) {
 		this.level += amount;
-	}
-
-	public void extend( double amount ) {
-		this.level += amount;
+		if (target != null) target.needsIncomingDOTUpdate = true;
 	}
 	
 	@Override
@@ -104,7 +115,6 @@ public class Bleeding extends Buff {
 	public boolean act() {
 		if (target.isAlive()) {
 			
-			level = Dungeon.NormalDouble(level / 2f, level);
 			long dmg = Math.round(level);
 			
 			if (dmg > 0) {
@@ -121,7 +131,11 @@ public class Bleeding extends Buff {
 					} else if (source == Sacrificial.class){
 						Badges.validateDeathFromFriendlyMagic();
 					}
-					Dungeon.fail( this );
+					if (source != null){
+						Dungeon.fail( source );
+					} else {
+						Dungeon.fail( this );
+					}
 					GLog.n( Messages.get(this, "ondeath") );
 				}
 
@@ -130,9 +144,13 @@ public class Bleeding extends Buff {
 				}
 				
 				spend( TICK );
-			} else {
+			}
+
+			level = Random.NormalFloat(level / 2f, level);
+			if (Math.round(level) <= 0){
 				detach();
 			}
+			target.needsIncomingDOTUpdate = true;
 			
 		} else {
 			
@@ -144,7 +162,20 @@ public class Bleeding extends Buff {
 	}
 
 	@Override
+	public void detach() {
+		if (target != null) target.needsIncomingDOTUpdate = true;
+		super.detach();
+	}
+
+	@Override
 	public String desc() {
 		return Messages.get(this, "desc", Math.round(level));
+	}
+
+	@Override
+	public int totalIncomingDMG() {
+		//we reduce level after applying damage, otherwise this would be level*3
+		//note that we also reduce level when applying bleed initially, to simulate old behaviour
+		return Math.round(level*4f); //average damage
 	}
 }

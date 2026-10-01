@@ -36,6 +36,8 @@ public class Assets {
 
 	public static class Environment {
 		public static final String TERRAIN_FEATURES = "environment/terrain_features.png";
+		public static final String OCCLUSION_SHADOWS    = "environment/occlusion_shadows.png";
+		public static final String RAISED_TERRAIN = "environment/raised_terrain.png";
 
 		public static final String VISUAL_GRID  = "environment/visual_grid.png";
 		public static final String WALL_BLOCKING= "environment/wall_blocking.png";
@@ -234,11 +236,11 @@ public class Assets {
 		public static final String SHEEP    = "sounds/sheep.mp3";
 		public static final String MINE    = "sounds/mine.mp3";
 
-		public static final String PET_DRAGON = "sounds/dragonpet.mp3";
-		public static final String PET_WOLF   = "sounds/wolfpet.mp3";
-		public static final String PET_SPIDER = "sounds/spiderpet.mp3";
-		public static final String PET_SNAKE  = "sounds/snakepet.mp3";
-		public static final String PET_MANTICORE = "sounds/manticorepet.mp3";
+		public static final String PET_DRAGON = "sounds/burning.mp3";
+		public static final String PET_WOLF   = "sounds/challenge.mp3";
+		public static final String PET_SPIDER = "sounds/puff.mp3";
+		public static final String PET_SNAKE  = "sounds/charms.mp3";
+		public static final String PET_MANTICORE = "sounds/boss.mp3";
 
 		public static final String[] all = new String[]{
 				CLICK, BADGE, GOLD,
@@ -252,7 +254,7 @@ public class Assets {
 				CHALLENGE, CURSED, TRAP, EVOKE, TOMB, ALERT, MELD, BOSS, BLAST, PLANT, RAY, BEACON,
 				TELEPORT, CHARMS, MASTERY, PUFF, ROCKS, BURNING, FALLING, GHOST, SECRET, BONES,
 				BEE, DEGRADE, MIMIC, DEBUFF, CHARGEUP, GAS, CHAINS, SCAN, SHEEP, MINE,
-				PET_DRAGON, PET_WOLF, PET_SPIDER, PET_SNAKE
+				PET_DRAGON, PET_WOLF, PET_SPIDER, PET_SNAKE, PET_MANTICORE
 		};
 	}
 
@@ -332,6 +334,7 @@ public class Assets {
 		public static final String MAKER    = "sprites/wandmaker.png";
 		public static final String TROLL    = "sprites/blacksmith.png";
 		public static final String IMP      = "sprites/demon.png";
+		public static final String IMP_HOLIDAY = "sprites/imp_holiday.png";
 		public static final String RATKING  = "sprites/ratking.png";
 		public static final String BEE      = "sprites/bee.png";
 		public static final String MIMIC    = "sprites/mimic.png";

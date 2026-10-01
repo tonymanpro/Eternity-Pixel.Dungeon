@@ -39,7 +39,7 @@ public class Snake extends Mob {
 		spriteClass = SnakeSprite.class;
 		
 		HP = HT = Dungeon.getCycleMultiplier(4);
-		defenseSkill = Dungeon.getCycleMultiplier(25);
+		defenseSkill = Dungeon.getCycleMultiplier(18);
 		
 		EXP = Dungeon.getCycleMultiplier(2);
 		maxLvl = 7;

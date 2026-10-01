@@ -46,6 +46,8 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.shatteredpixel.shatteredpixeldungeon.items.BrokenSeal;
+import com.shatteredpixel.shatteredpixeldungeon.ui.InventoryPane;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndTextInput;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndUpgrade;
@@ -71,6 +73,8 @@ public class ScrollOfUpgrade extends InventoryScroll {
 		return item != null && item.isUpgradable();
 	}
 
+	private long customAmount = 0;
+
 	@Override
 	public void execute(Hero hero, String action) {
 		super.execute(hero, action);
@@ -84,29 +88,27 @@ public class ScrollOfUpgrade extends InventoryScroll {
 					&& hero.buff(UnstableSpellbook.bookRecharge.class).isCursed()){
 				GLog.n( Messages.get(this, "cursed") );
 			} else {
+				curUser = hero;
+				curItem = this;
 				if (action.equals(AC_UPGRADE)) {
-					curUser = hero;
-					curItem = detachAll(hero.belongings.backpack);
+					customAmount = quantity();
 					GameScene.selectItem(itemSelector2);
 				} else {
-					curUser = hero;
-					GameScene.show(new WndTextInput("Enter amount of upgrades to be used:", null, "", 15, false,
-							"Accept", "Cancel") {
+					GameScene.show(new WndTextInput(Messages.get(ScrollOfUpgrade.class, "enter_amount"), null, "", 15, false,
+							Messages.get(ScrollOfUpgrade.class, "accept"), Messages.get(ScrollOfUpgrade.class, "cancel")) {
 						@Override public void onSelect(boolean positive, String text) {
 							if(!positive) return;
 							long number;
 							try {
 								number = Long.parseLong(text);
 							} catch (NumberFormatException e){
-								GLog.w("No valid number was entered.");
+								GLog.w(Messages.get(ScrollOfUpgrade.class, "invalid_number"));
 								return;
 							}
-							if (number != 0){
-								curItem = split(number);
-								updateQuickslot();
-								if (curItem != null){
-									curItem.onDetach( );
-								}
+							if (number > 0){
+								curUser = Dungeon.hero;
+								curItem = ScrollOfUpgrade.this;
+								customAmount = Math.min(number, quantity());
 								GameScene.selectItem(itemSelector2);
 							}
 						}
@@ -129,18 +131,24 @@ public class ScrollOfUpgrade extends InventoryScroll {
 
 	@Override
 	protected void onItemSelected( Item item ) {
-
+		if (curUser == null) curUser = Dungeon.hero;
+		curItem = this;
 		GameScene.show(new WndUpgrade(this, item, identifiedByUse));
 
 	}
 
 	public void reShowSelector(boolean force, boolean multiUpgrade){
 		identifiedByUse = force;
+		if (curUser == null) curUser = Dungeon.hero;
+		curItem = this;
 		GameScene.selectItem(multiUpgrade ? itemSelector2 : itemSelector);
 	}
 
 	public Item upgradeItem(Item item, long amount) {
-		Degrade.detach( curUser, Degrade.class );
+		Hero user = curUser != null ? curUser : Dungeon.hero;
+		if (user != null) {
+			Degrade.detach( user, Degrade.class );
+		}
 
 		//logic for telling the user when item properties change from upgrades
 		//...yes this is rather messy
@@ -153,10 +161,12 @@ public class ScrollOfUpgrade extends InventoryScroll {
 
 			item = w.upgrade(amount);
 
-			if (w.cursedKnown && hadCursedEnchant && !w.hasCurseEnchant()){
-				removeCurse( Dungeon.hero );
-			} else if (w.cursedKnown && wasCursed && !w.cursed){
-				weakenCurse( Dungeon.hero );
+			if (user != null) {
+				if (w.cursedKnown && hadCursedEnchant && !w.hasCurseEnchant()){
+					removeCurse( user );
+				} else if (w.cursedKnown && wasCursed && !w.cursed){
+					weakenCurse( user );
+				}
 			}
 			if (wasHardened && !w.enchantHardened){
 				GLog.w( Messages.get(Weapon.class, "hardening_gone") );
@@ -173,10 +183,12 @@ public class ScrollOfUpgrade extends InventoryScroll {
 
 			item = a.upgrade(amount);
 
-			if (a.cursedKnown && hadCursedGlyph && !a.hasCurseGlyph()){
-				removeCurse( Dungeon.hero );
-			} else if (a.cursedKnown && wasCursed && !a.cursed){
-				weakenCurse( Dungeon.hero );
+			if (user != null) {
+				if (a.cursedKnown && hadCursedGlyph && !a.hasCurseGlyph()){
+					removeCurse( user );
+				} else if (a.cursedKnown && wasCursed && !a.cursed){
+					weakenCurse( user );
+				}
 			}
 			if (wasHardened && !a.glyphHardened){
 				GLog.w( Messages.get(Armor.class, "hardening_gone") );
@@ -189,8 +201,8 @@ public class ScrollOfUpgrade extends InventoryScroll {
 
 			item = item.upgrade(amount);
 
-			if (item.cursedKnown && wasCursed && !item.cursed){
-				removeCurse( Dungeon.hero );
+			if (user != null && item.cursedKnown && wasCursed && !item.cursed){
+				removeCurse( user );
 			}
 
 		} else {
@@ -204,21 +216,35 @@ public class ScrollOfUpgrade extends InventoryScroll {
 		Catalog.countUse(item.getClass());
 		Catalog.countUses(ScrollOfUpgrade.class, amount);
 
+		item.updateQuickslot();
+		Item.updateQuickslot();
+		InventoryPane.refresh();
+		if (Dungeon.hero != null && item.isEquipped(Dungeon.hero) && item instanceof Armor) {
+			BrokenSeal.WarriorShield seal = Dungeon.hero.buff(BrokenSeal.WarriorShield.class);
+			if (seal != null) seal.setArmor((Armor) item);
+		}
+
 		return item;
 	}
 
 	public static void upgrade( Hero hero ) {
-		hero.sprite.emitter().start( Speck.factory( Speck.UP ), 0.2f, 3 );
+		if (hero != null && hero.sprite != null && hero.sprite.emitter() != null) {
+			hero.sprite.emitter().start( Speck.factory( Speck.UP ), 0.2f, 3 );
+		}
 	}
 
 	public static void weakenCurse( Hero hero ){
 		GLog.p( Messages.get(ScrollOfUpgrade.class, "weaken_curse") );
-		hero.sprite.emitter().start( ShadowParticle.UP, 0.05f, 5 );
+		if (hero != null && hero.sprite != null && hero.sprite.emitter() != null) {
+			hero.sprite.emitter().start( ShadowParticle.UP, 0.05f, 5 );
+		}
 	}
 
 	public static void removeCurse( Hero hero ){
 		GLog.p( Messages.get(ScrollOfUpgrade.class, "remove_curse") );
-		hero.sprite.emitter().start( ShadowParticle.UP, 0.05f, 10 );
+		if (hero != null && hero.sprite != null && hero.sprite.emitter() != null) {
+			hero.sprite.emitter().start( ShadowParticle.UP, 0.05f, 10 );
+		}
 	}
 	
 	@Override
@@ -250,23 +276,16 @@ public class ScrollOfUpgrade extends InventoryScroll {
 
 		@Override
 		public void onSelect( Item item ) {
-
-			//FIXME this safety check shouldn't be necessary
-			//it would be better to eliminate the curItem static variable.
-			if (!(curItem instanceof InventoryScroll)){
-				return;
-			}
+			if (curUser == null) curUser = Dungeon.hero;
+			if (curItem == null) curItem = ScrollOfUpgrade.this;
 
 			if (item != null) {
-				GameScene.show(new WndUpgrade(curItem, item, identifiedByUse, curItem.quantity()));
+				long amt = (customAmount > 0) ? customAmount : curItem.quantity();
+				GameScene.show(new WndUpgrade(curItem, item, identifiedByUse, amt));
 
 			} else if (identifiedByUse && !((Scroll)curItem).anonymous) {
 
 				((InventoryScroll)curItem).confirmCancelation();
-
-			} else if (!((Scroll)curItem).anonymous) {
-
-				curItem.collect( curUser.belongings.backpack );
 
 			}
 		}

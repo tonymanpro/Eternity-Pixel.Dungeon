@@ -25,6 +25,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.scrolls;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -41,11 +42,13 @@ public abstract class InventoryScroll extends Scroll {
 	@Override
 	public void doRead() {
 		
+		if (curUser == null) curUser = Dungeon.hero;
 		if (!isKnown()) {
 			identify();
 			curItem = detach( curUser.belongings.backpack );
 			identifiedByUse = true;
 		} else {
+			curItem = this;
 			identifiedByUse = false;
 		}
 		

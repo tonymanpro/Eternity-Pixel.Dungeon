@@ -49,6 +49,7 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
+import com.shatteredpixel.shatteredpixeldungeon.ui.InventoryPane;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ItemButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
@@ -311,6 +312,12 @@ public class WndBlacksmith extends Window {
 					}
 					Badges.validateItemLevelAquired( first );
 					Item.updateQuickslot();
+					first.updateQuickslot();
+					InventoryPane.refresh();
+					if (Dungeon.hero != null && first.isEquipped(Dungeon.hero) && first instanceof Armor) {
+						BrokenSeal.WarriorShield seal = Dungeon.hero.buff(BrokenSeal.WarriorShield.class);
+						if (seal != null) seal.setArmor((Armor) first);
+					}
 
 					Blacksmith.Quest.favor -= (int) (100 * Math.pow(1.5, Blacksmith.Quest.reforges));
 					Blacksmith.Quest.reforges++;
@@ -455,6 +462,13 @@ public class WndBlacksmith extends Window {
 					GLog.i(Messages.get(Hero.class, "you_now_have", upgrades.name()));
 				}
 				item.level(0);
+				item.updateQuickslot();
+				Item.updateQuickslot();
+				InventoryPane.refresh();
+				if (Dungeon.hero != null && item.isEquipped(Dungeon.hero) && item instanceof Armor) {
+					BrokenSeal.WarriorShield seal = Dungeon.hero.buff(BrokenSeal.WarriorShield.class);
+					if (seal != null) seal.setArmor((Armor) item);
+				}
 
 				WndBlacksmith.this.hide();
 

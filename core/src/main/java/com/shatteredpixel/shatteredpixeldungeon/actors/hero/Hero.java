@@ -93,6 +93,13 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.CheckedCell;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Flare;
 import com.shatteredpixel.shatteredpixeldungeon.effects.FloatingText;
 import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
+import com.shatteredpixel.shatteredpixeldungeon.items.TicketToArena;
+import com.shatteredpixel.shatteredpixeldungeon.items.TicketToPortableShop;
+import com.shatteredpixel.shatteredpixeldungeon.items.modules.DimensionalRiftModule;
+import com.shatteredpixel.shatteredpixeldungeon.levels.ArenaInventory;
+import com.shatteredpixel.shatteredpixeldungeon.levels.ArenaLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.DimensionalLevel;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.InterlevelScene;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.effects.SpellSprite;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Splash;
@@ -221,6 +228,7 @@ public class Hero extends Char {
     }
 
 	public static final int STARTING_STR = 10;
+	public static final int STARTING_HT  = 25;
 	
 	private static final float TIME_TO_REST		    = 1f;
 	private static final float TIME_TO_SEARCH	    = 2f;
@@ -239,6 +247,7 @@ public class Hero extends Char {
 	public LinkedHashMap<Talent, Talent> metamorphedTalents = new LinkedHashMap<>();
 
 	public com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet pet = null;
+	public Bundle storedPet = null;
 
 	public boolean isSubclass(HeroSubClass subClass) {
 		if (this.subClass == HeroSubClass.KING) return true;
@@ -311,7 +320,7 @@ public class Hero extends Char {
 	public Hero() {
 		super();
 
-		HP = HT = 20;
+		HP = HT = STARTING_HT;
 		STR = STARTING_STR;
 		
 		belongings = new Belongings( this );
@@ -322,7 +331,7 @@ public class Hero extends Char {
 	public void updateHT( boolean boostHP ){
 		long curHT = HT;
 		
-		HT = 20 + 5L*(lvl-1) + HTBoost;
+		HT = STARTING_HT + 5L*(lvl-1) + HTBoost;
 		HT += RingOfMight.HTMultiplier(this);
 		
 		if (buff(ElixirOfMight.HTBoost.class) != null){
@@ -350,8 +359,10 @@ public class Hero extends Char {
 			strBonus += buff.boost();
 		}
 
-		if (heroClass == HeroClass.WARRIOR || heroClass == HeroClass.BARBARIAN){
+		if (heroClass == HeroClass.WARRIOR){
 			strBonus += (int)Math.floor(STR * (0.15f));
+		} else if (heroClass == HeroClass.BARBARIAN){
+			strBonus += (int)Math.floor(STR * (0.20f));
 		}
 
 		return STR + strBonus;
@@ -399,6 +410,9 @@ public class Hero extends Char {
 		bundle.put( HTBOOST, HTBoost );
 
 		bundle.put(GRINDING, grinding);
+		if (storedPet != null) {
+			bundle.put("stored_pet", storedPet);
+		}
 
 		belongings.storeInBundle( bundle );
         if (!customHeroName.equals("")) {
@@ -433,6 +447,9 @@ public class Hero extends Char {
 		totalExp = bundle.getLong(TOTAL_EXPERIENCE);
         totalExp_Transmutation = bundle.getLong(TOTAL_EXPERIENCE_TRANSMUTATION);
 		grinding = bundle.getBoolean(GRINDING);
+		if (bundle.contains("stored_pet")) {
+			storedPet = bundle.getBundle("stored_pet");
+		}
 
 
 		belongings.restoreFromBundle( bundle );
@@ -2032,7 +2049,7 @@ if (buff(RoundShield.GuardTracker.class) != null){
 			// Smooth tactical position swap: when stepping into a tile occupied by a Pet or Ally,
 			// swap the Pet/Ally into the Hero's previous tile to avoid hallway blockages.
 			Char occupant = Actor.findChar(step);
-			if (occupant != null && occupant != this && (occupant instanceof com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet || occupant.alignment == Alignment.ALLY)) {
+			if (occupant != null && occupant != this && !occupant.rooted && (occupant instanceof com.shatteredpixel.shatteredpixeldungeon.actors.mobs.pets.Pet || occupant.alignment == Alignment.ALLY)) {
 				int oldHeroPos = pos;
 				occupant.pos = oldHeroPos;
 				if (occupant.sprite != null) {
@@ -2101,12 +2118,13 @@ if (!Dungeon.level.visited[cell] && !Dungeon.level.mapped[cell]
 			}
 
 		//TODO perhaps only trigger this if hero is already adjacent? reducing mistaps
-		} else if (Dungeon.level instanceof MiningLevel &&
-					belongings.getItem(Pickaxe.class) != null &&
-				(Dungeon.level.map[cell] == Terrain.WALL
-						|| Dungeon.level.map[cell] == Terrain.WALL_DECO
-						|| Dungeon.level.map[cell] == Terrain.MINE_CRYSTAL
-						|| Dungeon.level.map[cell] == Terrain.MINE_BOULDER)){
+		} else if (belongings.getItem(Pickaxe.class) != null &&
+				((Dungeon.level instanceof MiningLevel &&
+					(Dungeon.level.map[cell] == Terrain.WALL
+							|| Dungeon.level.map[cell] == Terrain.WALL_DECO
+							|| Dungeon.level.map[cell] == Terrain.MINE_CRYSTAL
+							|| Dungeon.level.map[cell] == Terrain.MINE_BOULDER))
+				|| (Dungeon.depth >= 11 && Dungeon.depth <= 15 && Dungeon.level.map[cell] == Terrain.WALL_DECO))){
 
 			curAction = new HeroAction.Mine( cell );
 
@@ -2353,6 +2371,11 @@ if (!Dungeon.level.visited[cell] && !Dungeon.level.mapped[cell]
 		
 		curAction = null;
 
+		if (isArenaLevel()) {
+			evacuateFromArena();
+			return;
+		}
+
 		Ankh ankh = null;
 
 		//look for ankhs in player inventory, prioritize ones which are blessed.
@@ -2417,6 +2440,72 @@ if (!Dungeon.level.visited[cell] && !Dungeon.level.mapped[cell]
 		Actor.fixTime();
 		super.die( cause );
 		reallyDie( cause );
+	}
+
+	public boolean isArenaLevel() {
+		return Dungeon.branch == Dungeon.BRANCH_ARENA
+				|| Dungeon.branch == Dungeon.BRANCH_WAVE_ARENA
+				|| Dungeon.branch == Dungeon.BRANCH_BLACK
+				|| Dungeon.branch == Dungeon.BRANCH_PORTABLE
+				|| Dungeon.branch == 6
+				|| ArenaInventory.isActive();
+	}
+
+	public void evacuateFromArena() {
+		interrupt();
+		HP = Math.max( 1, HT / 2 );
+		PotionOfHealing.cure( this );
+		Buff.prolong( this, Invulnerability.class, 3f );
+
+		int retDepth = 1;
+		int retBranch = Dungeon.BRANCH_NORMAL;
+		int retPos = -1;
+
+		if (Dungeon.branch == Dungeon.BRANCH_WAVE_ARENA || ArenaInventory.isActive()) {
+			retDepth = ArenaInventory.depth;
+			retBranch = ArenaInventory.branch;
+			retPos = ArenaInventory.pos;
+			ArenaInventory.restoreAndMerge( this );
+		} else if (Dungeon.branch == Dungeon.BRANCH_ARENA) {
+			TicketToArena ticket = belongings.getItem( TicketToArena.class );
+			if (ticket != null) {
+				retDepth = ticket.depth;
+				retBranch = ticket.branch;
+				retPos = ticket.pos;
+				ticket.detach( belongings.backpack );
+			}
+			Buff.detach( this, ArenaLevel.ArenaCounter.class );
+		} else if (Dungeon.branch == Dungeon.BRANCH_PORTABLE) {
+			TicketToPortableShop ticket = belongings.getItem( TicketToPortableShop.class );
+			if (ticket != null) {
+				retDepth = ticket.depth;
+				retBranch = ticket.branch;
+				retPos = ticket.pos;
+				ticket.detach( belongings.backpack );
+			}
+		} else if (Dungeon.branch == 6) {
+			DimensionalRiftModule mod = belongings.getItem( DimensionalRiftModule.class );
+			if (mod != null) {
+				retDepth = mod.depth;
+				retBranch = mod.branch;
+				retPos = mod.pos;
+				mod.detach( belongings.backpack );
+			}
+			Buff.detach( this, DimensionalLevel.DimensionalCounter.class );
+			grinding = true;
+		}
+
+		if (Dungeon.branch == Dungeon.BRANCH_BLACK) {
+			GLog.w( Messages.get( Hero.class, "black_arena_defeat", PsycheChest.neededLevel() ) );
+		} else {
+			GLog.w( Messages.get( Hero.class, "arena_defeat" ) );
+		}
+
+		InterlevelScene.mode = InterlevelScene.Mode.RETURN;
+		InterlevelScene.returnDepth = retDepth > 0 ? retDepth : 1;
+		InterlevelScene.returnBranch = retBranch;
+		InterlevelScene.returnPos = retPos;
+		Game.switchScene( InterlevelScene.class );
 	}
 	
 	public static void reallyDie( Object cause ) {

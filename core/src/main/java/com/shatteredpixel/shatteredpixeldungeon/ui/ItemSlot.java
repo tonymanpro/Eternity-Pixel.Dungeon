@@ -207,6 +207,10 @@ public class ItemSlot extends Button {
 		enable(true);
 		sprite.visible(true);
 		sprite.view(ItemSpriteSheet.SOMETHING, null);
+		if (rarityIcon != null) {
+			rarityIcon.text(null);
+			rarityIcon.visible = false;
+		}
 		layout();
 	}
 	
@@ -247,9 +251,16 @@ public class ItemSlot extends Button {
 
 		if (item == null){
 			status.visible = extra.visible = level.visible = false;
+			if (rarityIcon != null) {
+				rarityIcon.text(null);
+				rarityIcon.visible = false;
+			}
 			return;
 		} else {
 			status.visible = extra.visible = level.visible = true;
+			if (rarityIcon != null) {
+				rarityIcon.visible = true;
+			}
 		}
 
 		status.text( item.status() );

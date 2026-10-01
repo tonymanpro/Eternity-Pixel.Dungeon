@@ -31,6 +31,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.features.LevelTransition;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.InterlevelScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.Game;
 
 import java.util.ArrayList;
@@ -65,7 +66,7 @@ public class BlackPsycheChest extends Item {
     public ArrayList<String> actions(Hero hero ) {
         ArrayList<String> actions = super.actions(hero);
         actions.add(AC_ACCESS);
-        if (Dungeon.hero.lvl >= PsycheChest.neededLevel()) actions.add(AC_RESET);
+        actions.add(AC_RESET);
         return actions;
     }
 
@@ -77,14 +78,17 @@ public class BlackPsycheChest extends Item {
             InterlevelScene.curTransition = new LevelTransition(Dungeon.level, 16 + 25*33, LevelTransition.Type.BRANCH_EXIT, 27, Dungeon.BRANCH_BLACK, LevelTransition.Type.BRANCH_ENTRANCE);
             InterlevelScene.mode = InterlevelScene.Mode.DESCEND;
             Game.switchScene( InterlevelScene.class );
-        }
-        if (action.equals(AC_RESET) && Dungeon.hero.lvl >= PsycheChest.neededLevel()){
-            Dungeon.goForNewCycle();
-        }
-
-        if (action.equals(AC_RESET) || action.equals(AC_ACCESS)){
             Catalog.countUse(getClass());
             detachAll(Dungeon.hero.belongings.backpack);
+        }
+        if (action.equals(AC_RESET)){
+            if (Dungeon.hero.lvl >= PsycheChest.neededLevel()){
+                Dungeon.goForNewCycle();
+                Catalog.countUse(getClass());
+                detachAll(Dungeon.hero.belongings.backpack);
+            } else {
+                GLog.w(Messages.get(this, "need_level", PsycheChest.neededLevel()));
+            }
         }
     }
 
@@ -92,9 +96,11 @@ public class BlackPsycheChest extends Item {
     public String desc() {
         String desc;
         if (Dungeon.cycle  < 3){
-            return Messages.get(BlackPsycheChest.class, "desc" + Dungeon.cycle) + "\n\n" + super.desc();
+            desc = Messages.get(BlackPsycheChest.class, "desc" + Dungeon.cycle) + "\n\n" + super.desc();
         } else {
-            return Messages.get(BlackPsycheChest.class, "desc" + 3) + "\n\n" + super.desc();
+            desc = Messages.get(BlackPsycheChest.class, "desc" + 3) + "\n\n" + super.desc();
         }
+        desc += Messages.get(BlackPsycheChest.class, "cycle_info", PsycheChest.neededLevel());
+        return desc;
     }
 }

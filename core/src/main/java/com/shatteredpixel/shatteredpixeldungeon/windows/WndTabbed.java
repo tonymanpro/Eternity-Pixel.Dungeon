@@ -28,6 +28,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Chrome;
 import com.shatteredpixel.shatteredpixeldungeon.SPDAction;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Button;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
@@ -193,6 +194,9 @@ public class WndTabbed extends Window {
 			bg = Chrome.get( selected ?
 				Chrome.Type.TAB_SELECTED :
 				Chrome.Type.TAB_UNSELECTED );
+			if (Window.isGoldenUIActive()) {
+				bg.hardlight( 1.0f, 0.84f, 0.25f );
+			}
 			addToBack( bg );
 			
 			layout();
@@ -248,12 +252,28 @@ public class WndTabbed extends Window {
 		
 		protected Image icon;
 		private RectF defaultFrame;
+		private float iconScale = 1f;
 		
 		public IconTab( Image icon ){
 			super();
-			
+
+			if (icon instanceof ItemSprite) {
+				remove(this.icon);
+				this.icon = new ItemSprite();
+				add(this.icon);
+			}
 			this.icon.copy(icon);
 			this.defaultFrame = icon.frame();
+			if (this.icon.texture != null && this.icon.texture.width >= 1000) {
+				iconScale = 4f;
+			} else if (this.icon.texture != null && this.icon.texture.width >= 500) {
+				iconScale = 2f;
+			} else {
+				iconScale = 1f;
+			}
+			if (!(this.icon instanceof ItemSprite) && iconScale > 1f) {
+				this.icon.scale.set(1f / iconScale, 1f / iconScale);
+			}
 		}
 		
 		@Override
@@ -269,14 +289,14 @@ public class WndTabbed extends Window {
 			super.layout();
 			
 			icon.frame(defaultFrame);
-			icon.x = x + (width - icon.width) / 2;
-			icon.y = y + (height - icon.height) / 2 - 1;
+			icon.x = x + (width - icon.width()) / 2;
+			icon.y = y + (height - icon.height()) / 2 - 1;
 			if (!selected) {
 				icon.y -= 2;
 				//if some of the icon is going into the window, cut it off
 				if (icon.y < y + CUT) {
 					RectF frame = icon.frame();
-					frame.top += (y + CUT - icon.y) / icon.texture.height;
+					frame.top += (y + CUT - icon.y) * iconScale / icon.texture.height;
 					icon.frame( frame );
 					icon.y = y + CUT;
 				}

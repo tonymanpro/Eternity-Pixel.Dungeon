@@ -109,4 +109,11 @@ public interface PlatformServices {
 	 * Restores previously purchased supporter tiers from the platform.
 	 */
 	void restorePurchases(com.watabou.utils.Callback callback);
+
+	/**
+	 * Returns the platform user / account identifier if available (e.g. SteamID64 or Play Store ID).
+	 */
+	default String getPlatformUserId() {
+		return "";
+	}
 }

@@ -51,6 +51,37 @@ public class SPDSettings extends GameSettings {
 		return getInt( KEY_VERSION, 0 );
 	}
 
+	//Demo Mode detection
+	private static Boolean isDemoCached = null;
+
+	public static boolean isDemo() {
+		if (isDemoCached != null) return isDemoCached;
+		String demoProp = System.getProperty("eternity.demo");
+		if ("false".equalsIgnoreCase(demoProp)) {
+			return isDemoCached = false;
+		}
+		if ("true".equalsIgnoreCase(demoProp)) {
+			return isDemoCached = true;
+		}
+		String title = System.getProperty("Specification-Title");
+		if (title != null && title.toLowerCase(Locale.ROOT).contains("demo")) {
+			return isDemoCached = true;
+		}
+		Package pkg = SPDSettings.class.getPackage();
+		if (pkg != null) {
+			String specTitle = pkg.getSpecificationTitle();
+			if (specTitle != null && specTitle.toLowerCase(Locale.ROOT).contains("demo")) {
+				return isDemoCached = true;
+			}
+		}
+		// In 2.1.0 (Full Release), the default is false
+		return isDemoCached = false;
+	}
+
+	public static void setDemo( boolean demo ) {
+		isDemoCached = demo;
+	}
+
 	//Seedfinder
 
 	public static final String KEY_FLOORS	= "number_of_floors";
@@ -199,6 +230,8 @@ public class SPDSettings extends GameSettings {
 	public static final String KEY_DYNAMIC_LIGHTING = "dynamic_lighting";
 	public static final String KEY_BLOOM_ENABLED    = "bloom_enabled";
 	public static final String KEY_VIGNETTE_ENABLED = "vignette_enabled";
+	public static final String KEY_SMOOTH_PIXELS    = "smooth_pixels";
+	public static final String KEY_HD_TEXTURES      = "hd_textures";
 
 	public static void dynamicLighting( boolean value ) {
 		put( KEY_DYNAMIC_LIGHTING, value );
@@ -208,13 +241,31 @@ public class SPDSettings extends GameSettings {
 		return getBoolean( KEY_DYNAMIC_LIGHTING, true );
 	}
 
+	public static void smoothPixels( boolean value ) {
+		put( KEY_SMOOTH_PIXELS, value );
+		com.watabou.noosa.PostProcessing.smoothFilterEnabled = value;
+	}
+
+	public static boolean smoothPixels() {
+		return getBoolean( KEY_SMOOTH_PIXELS, true );
+	}
+
+	public static void hdTextures( boolean value ) {
+		put( KEY_HD_TEXTURES, value );
+		com.watabou.utils.AssetPackResolver.hdTexturesEnabled = value;
+	}
+
+	public static boolean hdTextures() {
+		return getBoolean( KEY_HD_TEXTURES, true );
+	}
+
 	public static void bloomEnabled( boolean value ) {
 		put( KEY_BLOOM_ENABLED, value );
 		com.watabou.noosa.PostProcessing.bloomEnabled = value;
 	}
 
 	public static boolean bloomEnabled() {
-		return getBoolean( KEY_BLOOM_ENABLED, false );
+		return getBoolean( KEY_BLOOM_ENABLED, true );
 	}
 
 	public static void vignetteEnabled( boolean value ) {
@@ -233,7 +284,7 @@ public class SPDSettings extends GameSettings {
 	}
 	
 	public static boolean fullscreen() {
-		return getBoolean( KEY_FULLSCREEN, true );
+		return getBoolean( KEY_FULLSCREEN, DeviceCompat.isAndroid() || DeviceCompat.isiOS() );
 	}
 	
 	public static void landscape( boolean value ){
@@ -270,11 +321,25 @@ public class SPDSettings extends GameSettings {
 	
 	public static void brightness( int value ) {
 		put( KEY_BRIGHTNESS, value );
+		updateBrightnessFactor( value );
 		GameScene.updateFog();
 	}
 	
 	public static int brightness() {
-		return getInt( KEY_BRIGHTNESS, 0, -1, 1 );
+		return getInt( KEY_BRIGHTNESS, 0, -2, 2 );
+	}
+
+	public static void updateBrightnessFactor( int val ) {
+		float b;
+		switch (val) {
+			case -2: b = 0.65f; break;
+			case -1: b = 0.82f; break;
+			default:
+			case  0: b = 1.00f; break;
+			case  1: b = 1.25f; break;
+			case  2: b = 1.50f; break;
+		}
+		com.watabou.noosa.PostProcessing.brightness = b;
 	}
 	
 	public static void visualGrid( int value ){
@@ -362,7 +427,7 @@ public class SPDSettings extends GameSettings {
 		put("show_pet_panel", value );
 	}
 
-	public static boolean showPetPanel(){ return getBoolean("show_pet_panel", true); }
+	public static boolean showPetPanel(){ return getBoolean("show_pet_panel", false); }
 	
 	public static void toolbarMode( String value ) {
 		put( KEY_BARMODE, value );
@@ -658,8 +723,8 @@ public static void playMusicInBackground( boolean value ){
 
 	public static Point windowResolution(){
 		return new Point(
-				getInt( KEY_WINDOW_WIDTH, 800, 720, Integer.MAX_VALUE ),
-				getInt( KEY_WINDOW_HEIGHT, 600, 400, Integer.MAX_VALUE )
+				getInt( KEY_WINDOW_WIDTH, 1920, 720, Integer.MAX_VALUE ),
+				getInt( KEY_WINDOW_HEIGHT, 1080, 400, Integer.MAX_VALUE )
 		);
 	}
 
@@ -734,8 +799,17 @@ public static void playMusicInBackground( boolean value ){
 	}
 
 	// Supporter / Premium License Key & Token
+	public static final String KEY_SUPPORTER_USERNAME = "supporter_username";
 	public static final String KEY_SUPPORTER_KEY = "supporter_license_key";
 	public static final String KEY_SUPPORTER_TOKEN = "supporter_activation_token";
+
+	public static String supporterUsername() {
+		return getString( KEY_SUPPORTER_USERNAME, "" );
+	}
+
+	public static void supporterUsername( String value ) {
+		put( KEY_SUPPORTER_USERNAME, value != null ? value.trim() : "" );
+	}
 
 	public static String supporterKey() {
 		return getString( KEY_SUPPORTER_KEY, "" );
@@ -761,5 +835,62 @@ public static void playMusicInBackground( boolean value ){
 
 	public static void supporterTier( int value ) {
 		put( KEY_SUPPORTER_TIER, value );
+	}
+
+	public static final String KEY_GOLDEN_UI = "golden_ui";
+
+	public static boolean goldenUI() {
+		if (!com.shatteredpixel.shatteredpixeldungeon.services.platform.SupporterManager.isSupporter() && !isDemo()) {
+			return false;
+		}
+		return getBoolean( KEY_GOLDEN_UI, false );
+	}
+
+	public static void goldenUI( boolean value ) {
+		put( KEY_GOLDEN_UI, value );
+	}
+
+	public static final String KEY_MENU_BUTTON_STYLE = "menu_button_style";
+
+	// 0: Default, 1: Silver, 2: Gold, 3: Emerald
+	public static int menuButtonStyle() {
+		if (!com.shatteredpixel.shatteredpixeldungeon.services.platform.SupporterManager.isSupporter() && !isDemo()) {
+			return 0;
+		}
+		return getInt( KEY_MENU_BUTTON_STYLE, 0 );
+	}
+
+	public static void menuButtonStyle( int value ) {
+		put( KEY_MENU_BUTTON_STYLE, value );
+	}
+
+	// Unique Username & Multi-Device Account Key
+	public static final String KEY_CUSTOM_USERNAME = "custom_username";
+	public static final String KEY_ACCOUNT_KEY      = "account_link_key";
+	public static final String KEY_INSTALLATION_ID  = "installation_id";
+
+	public static String customUsername() {
+		return getString( KEY_CUSTOM_USERNAME, "" );
+	}
+
+	public static void customUsername( String value ) {
+		put( KEY_CUSTOM_USERNAME, value != null ? value.trim() : "" );
+	}
+
+	public static String accountKey() {
+		return getString( KEY_ACCOUNT_KEY, "" );
+	}
+
+	public static void accountKey( String value ) {
+		put( KEY_ACCOUNT_KEY, value != null ? value.trim().toUpperCase(Locale.ROOT) : "" );
+	}
+
+	public static String installationId() {
+		String id = getString( KEY_INSTALLATION_ID, "" );
+		if (id == null || id.isEmpty()) {
+			id = java.util.UUID.randomUUID().toString();
+			put( KEY_INSTALLATION_ID, id );
+		}
+		return id;
 	}
 }

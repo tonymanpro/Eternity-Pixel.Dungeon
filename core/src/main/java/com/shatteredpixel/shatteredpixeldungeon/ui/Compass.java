@@ -25,6 +25,8 @@
 package com.shatteredpixel.shatteredpixeldungeon.ui;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
+import com.shatteredpixel.shatteredpixeldungeon.items.LostBackpack;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Image;
@@ -55,16 +57,34 @@ public class Compass extends Image {
 	public void update() {
 		super.update();
 		
-		if (cell < 0 || cell >= Dungeon.level.length()){
+		int targetCell = cell;
+		boolean isDeathTarget = false;
+		
+		if (Dungeon.hero != null && Dungeon.hero.belongings.lostInventory() && Dungeon.level != null) {
+			for (Heap h : Dungeon.level.heaps.valueList()) {
+				if (h.peek() instanceof LostBackpack) {
+					targetCell = h.pos;
+					isDeathTarget = true;
+					break;
+				}
+			}
+		}
+		
+		if (targetCell < 0 || targetCell >= Dungeon.level.length()){
 			visible = false;
 			return;
 		}
 		
-		if (!visible) {
-			visible = Dungeon.level.visited[cell] || Dungeon.level.mapped[cell];
+		if (isDeathTarget) {
+			visible = true;
+			tint( 0xFF3333, 0.85f );
+		} else {
+			resetColor();
+			visible = Dungeon.level.visited[targetCell] || Dungeon.level.mapped[targetCell];
 		}
 		
 		if (visible) {
+			cellCenter = DungeonTilemap.tileCenterToWorld( targetCell );
 			PointF scroll = Camera.main.scroll;
 			if (!scroll.equals( lastScroll )) {
 				lastScroll.set( scroll );

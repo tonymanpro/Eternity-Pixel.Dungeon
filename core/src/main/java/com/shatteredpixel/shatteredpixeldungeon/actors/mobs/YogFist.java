@@ -65,7 +65,7 @@ import com.watabou.utils.Random;
 public abstract class YogFist extends Mob {
 
 	{
-		HP = HT = (long) ((bossMaxHPMulti + 1) * (Dungeon.getCycleMultiplier(300)));
+		HP = HT = (long) ((bossMaxHPMulti + 1) * (Dungeon.getCycleMultiplier(180)));
 		defenseSkill = Dungeon.getCycleMultiplier(20);
 
 		viewDistance = Light.DISTANCE;
@@ -182,7 +182,7 @@ public abstract class YogFist extends Mob {
 
 	@Override
 	public long damageRoll() {
-		return Dungeon.NormalLongRange( Dungeon.getCycleMultiplier(18), Dungeon.getCycleMultiplier(36) );
+		return Dungeon.NormalLongRange( Dungeon.getCycleMultiplier(14), Dungeon.getCycleMultiplier(28) );
 	}
 
 	@Override
@@ -459,7 +459,7 @@ public abstract class YogFist extends Mob {
 
 		@Override
 		public long damageRoll() {
-			return Dungeon.NormalLongRange( Dungeon.getCycleMultiplier(22), Dungeon.getCycleMultiplier(44) );
+			return Dungeon.NormalLongRange( Dungeon.getCycleMultiplier(18), Dungeon.getCycleMultiplier(35) );
 		}
 
 		@Override
@@ -509,7 +509,7 @@ public abstract class YogFist extends Mob {
 			Char enemy = this.enemy;
 			if (hit( this, enemy, true )) {
 
-                long dmg = Dungeon.NormalLongRange(10, 20);
+                long dmg = Dungeon.NormalLongRange(8, 16);
 				dmg = Dungeon.getCycleMultiplier(dmg);
                 enemy.damage(dmg, new LightBeam() );
 				Buff.prolong( enemy, Blindness.class, Blindness.DURATION/2f );
@@ -577,7 +577,7 @@ public abstract class YogFist extends Mob {
 			Char enemy = this.enemy;
 			if (hit( this, enemy, true )) {
 
-                long dmg = Dungeon.NormalLongRange(10, 20);
+                long dmg = Dungeon.NormalLongRange(8, 16);
 				dmg = Dungeon.getCycleMultiplier(dmg);
                 enemy.damage(dmg, new DarkBolt() );
 

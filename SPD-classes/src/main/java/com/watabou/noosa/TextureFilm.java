@@ -26,6 +26,7 @@ package com.watabou.noosa;
 
 import com.watabou.gltextures.SmartTexture;
 import com.watabou.gltextures.TextureCache;
+import com.watabou.utils.AssetPackResolver;
 import com.watabou.utils.RectF;
 
 import java.util.HashMap;
@@ -107,6 +108,31 @@ public class TextureFilm {
 				bottom	/ texHeight ));
 	}
 	
+	private float densityScale = 1f;
+
+	public void densityScale( float scale ) {
+		this.densityScale = scale > 0 ? scale : 1f;
+	}
+
+	public float densityScale() {
+		return densityScale;
+	}
+
+	public static TextureFilm createTileset( Object tx, int baseTileW, int baseTileH ) {
+		SmartTexture texture = TextureCache.get( tx );
+		int scale = 1;
+		String p = texture != null && texture.path != null ? texture.path : (tx != null ? tx.toString() : "");
+		String resolved = AssetPackResolver.resolvePath( p );
+		if (resolved.contains("/hd/") || resolved.contains("\\hd\\") || (texture != null && texture.width >= 1000)) {
+			scale = 4; // 64x64 HD
+		} else if (texture != null && texture.width >= 500) {
+			scale = 2; // 32x32 HD
+		}
+		TextureFilm film = new TextureFilm( texture, baseTileW * scale, baseTileH * scale );
+		film.densityScale( scale );
+		return film;
+	}
+
 	public RectF get( Object id ) {
 		return frames.get( id );
 	}
@@ -116,7 +142,7 @@ public class TextureFilm {
 	}
 	
 	public float width( RectF frame ) {
-		return frame.width() * texWidth;
+		return (frame.width() * texWidth) / densityScale;
 	}
 
 	public float height( Object id ){
@@ -124,7 +150,7 @@ public class TextureFilm {
 	}
 	
 	public float height( RectF frame ) {
-		return frame.height() * texHeight;
+		return (frame.height() * texHeight) / densityScale;
 	}
 
 	public int texWidth() {

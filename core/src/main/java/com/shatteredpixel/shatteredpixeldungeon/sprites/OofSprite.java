@@ -32,7 +32,7 @@ public class OofSprite extends MobSprite {
 		super();
 		
 		texture( Assets.Sprites.THIEF );
-		TextureFilm film = new TextureFilm( texture, 12, 13 );
+		TextureFilm film = createFilm( 12, 13 );
 		
 		idle = new Animation( 2, true );
 		idle.frames( film, 21 + 21, 21 + 21, 21 + 21, 21 + 22, 21 + 21, 21 + 21, 21 + 21, 21 + 21, 21 + 22 );

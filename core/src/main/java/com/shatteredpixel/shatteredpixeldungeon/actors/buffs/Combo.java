@@ -95,14 +95,15 @@ public class Combo extends Buff implements ActionIndicator.Action {
 	public void hit( Char enemy ) {
 
 		count++;
-		comboTime = 5f;
-
-		if (!enemy.isAlive() || (enemy.buff(Corruption.class) != null && enemy.HP == enemy.HT)){
-			if (((Hero)target).subClass == HeroSubClass.GLADIATOR)
-				comboTime = Math.max(comboTime, 50);
+		if (comboTime <= 5f) {
+			comboTime = Math.max(comboTime, 5f);
+			initialComboTime = 5f;
 		}
 
-		initialComboTime = comboTime;
+		if (!enemy.isAlive() || (enemy.buff(Corruption.class) != null && enemy.HP == enemy.HT)){
+			comboTime = 15f + 15f*((Hero)target).pointsInTalent(Talent.CLEAVE);
+			initialComboTime = comboTime;
+		}
 
 		if ((getHighestMove() != null)) {
 

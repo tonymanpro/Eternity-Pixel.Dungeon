@@ -47,6 +47,16 @@ public class RitualSiteRoom extends StandardRoom {
 		return Math.max(super.minHeight(), 9);
 	}
 
+	@Override
+	public int maxWidth() {
+		return Math.max(super.maxWidth(), minWidth());
+	}
+
+	@Override
+	public int maxHeight() {
+		return Math.max(super.maxHeight(), minHeight());
+	}
+
 	public void paint( Level level ) {
 
 		for (Door door : connected.values()) {
@@ -90,12 +100,12 @@ public class RitualSiteRoom extends StandardRoom {
 			tileW = tileH = 3;
 		}
 		
-		final int TEX_WIDTH = 64;
+		final int TEX_WIDTH = 256;
 
 		@Override
 		public Tilemap create() {
 			Tilemap v = super.create();
-			v.map(mapSimpleImage(0, 0, TEX_WIDTH), 3);
+			v.map(mapSimpleImage(1, 3, TEX_WIDTH), 3);
 			return v;
 		}
 

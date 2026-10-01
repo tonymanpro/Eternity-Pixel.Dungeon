@@ -44,6 +44,7 @@ public class PotionOfExperience extends Potion {
 	@Override
 	public void apply( Hero hero ) {
 		identify();
+		hero.earnExp(hero.maxExp() - hero.exp, PotionOfExperience.class);
 		float duration = Bless.DURATION * 8;
 		if (hero.perks.contains(Perks.Perk.POTIONS)) duration *= 2;
 		Buff.prolong(hero, Bless.class, duration);
