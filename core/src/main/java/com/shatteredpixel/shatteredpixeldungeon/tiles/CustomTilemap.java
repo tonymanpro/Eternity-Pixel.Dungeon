@@ -91,7 +91,7 @@ public abstract class CustomTilemap implements Bundlable {
 	
 	public Tilemap create(){
 		if (vis != null && vis.alive) vis.killAndErase();
-		vis = new Tilemap(texture, new TextureFilm( texture, SIZE, SIZE )){
+		vis = new Tilemap(texture, TextureFilm.createTileset( texture, SIZE, SIZE )){
 			@Override
 			protected NoosaScript script() {
 				//allow lighting for custom tilemaps
