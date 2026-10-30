@@ -458,7 +458,7 @@ public static void systemFont(boolean value){
 
 	public static boolean systemFont(){
 		return getBoolean(KEY_SYSTEMFONT,
-				(language() == Languages.CHINESE));
+				(language() == Languages.CHINESE || language() == Languages.CHI_TRAD));
 	}
 
 	public static void vibration(boolean value){

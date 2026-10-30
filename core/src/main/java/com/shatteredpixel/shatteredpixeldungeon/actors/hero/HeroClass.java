@@ -445,4 +445,169 @@ public enum HeroClass {
 		return shortDesc() + "\n\n" + Messages.get(HeroClass.class, name()+"_unlock");
 	}
 
+	private static final String[][] WARRIOR_TO_BARBARIAN_REPLACEMENTS = {
+		// English
+		{"The Warrior's", "The Barbarian's"},
+		{"the Warrior's", "the Barbarian's"},
+		{"the warrior's", "the barbarian's"},
+		{"The Warrior", "The Barbarian"},
+		{"The warrior", "The Barbarian"},
+		{"the Warrior", "the Barbarian"},
+		{"the warrior", "the barbarian"},
+		// Spanish
+		{"El Guerrero", "El Bárbaro"},
+		{"El guerrero", "El Bárbaro"},
+		{"el Guerrero", "el Bárbaro"},
+		{"el guerrero", "el bárbaro"},
+		{"del Guerrero", "del Bárbaro"},
+		{"del guerrero", "del bárbaro"},
+		{"al Guerrero", "al Bárbaro"},
+		{"al guerrero", "al bárbaro"},
+		// Chinese (Simplified & Traditional)
+		{"战士", "野蛮人"},
+		{"戰士", "野蠻人"},
+		// Portuguese
+		{"O Guerreiro", "O Bárbaro"},
+		{"o Guerreiro", "o Bárbaro"},
+		{"o guerreiro", "o bárbaro"},
+		{"do Guerreiro", "do Bárbaro"},
+		{"do guerreiro", "do bárbaro"},
+		{"ao Guerreiro", "ao Bárbaro"},
+		{"ao guerreiro", "ao bárbaro"},
+		// French
+		{"Le Guerrier", "Le Barbare"},
+		{"le Guerrier", "le Barbare"},
+		{"le guerrier", "le barbare"},
+		{"du Guerrier", "du Barbare"},
+		{"du guerrier", "du barbare"},
+		{"au Guerrier", "au Barbare"},
+		{"au guerrier", "au barbare"},
+		// Italian
+		{"Il Guerriero", "Il Barbaro"},
+		{"il Guerriero", "il Barbaro"},
+		{"il guerriero", "il barbaro"},
+		{"del Guerriero", "del Barbaro"},
+		{"del guerriero", "del barbaro"},
+		{"al Guerriero", "al Barbaro"},
+		{"al guerriero", "al barbaro"},
+		// German
+		{"des Kriegers", "des Barbaren"},
+		{"dem Krieger", "dem Barbaren"},
+		{"den Krieger", "den Barbaren"},
+		{"Der Krieger", "Der Barbar"},
+		{"der Krieger", "der Barbar"},
+		{"Krieger", "Barbar"},
+		// Russian
+		{"Воина", "Варвара"},
+		{"воина", "варвара"},
+		{"Воину", "Варвару"},
+		{"воину", "варвару"},
+		{"Воином", "Варваром"},
+		{"воином", "варваром"},
+		{"Воин", "Варвар"},
+		{"воин", "варвар"},
+		// Ukrainian
+		{"Воїна", "Варвара"},
+		{"воїна", "варвара"},
+		{"Воїну", "Варвару"},
+		{"воїну", "варвару"},
+		{"Воїном", "Варваром"},
+		{"воїном", "варваром"},
+		{"Воїн", "Варвар"},
+		{"воїн", "варвар"},
+		// Belarusian
+		{"Ваяра", "Варвара"},
+		{"ваяра", "варвара"},
+		{"Ваяру", "Варвару"},
+		{"ваяру", "варвару"},
+		{"Ваяр", "Варвар"},
+		{"ваяр", "варвар"},
+		// Polish
+		{"Wojownika", "Barbarzyńcy"},
+		{"wojownika", "barbarzyńcy"},
+		{"Wojownikowi", "Barbarzyńcy"},
+		{"wojownikowi", "barbarzyńcy"},
+		{"Wojownikiem", "Barbarzyńcą"},
+		{"wojownikiem", "barbarzyńcą"},
+		{"Wojownik", "Barbarzyńca"},
+		{"wojownik", "barbarzyńca"},
+		// Czech
+		{"Válečníka", "Barbara"},
+		{"válečníka", "barbara"},
+		{"Válečníkovi", "Barbarovi"},
+		{"válečníkovi", "barbarovi"},
+		{"Válečník", "Barbar"},
+		{"válečník", "barbar"},
+		// Dutch
+		{"De Krijger", "De Barbaar"},
+		{"de Krijger", "de Barbaar"},
+		{"de krijger", "de barbaar"},
+		{"Krijger", "Barbaar"},
+		{"krijger", "barbaar"},
+		// Swedish
+		{"Krigarens", "Barbarens"},
+		{"krigarens", "barbarens"},
+		{"Krigaren", "Barbaren"},
+		{"krigaren", "barbaren"},
+		{"Krigare", "Barbar"},
+		{"krigare", "barbar"},
+		// Turkish
+		{"Savaşçının", "Barbarın"},
+		{"savaşçının", "barbarın"},
+		{"Savaşçıya", "Barbara"},
+		{"savaşçıya", "barbara"},
+		{"Savaşçıyı", "Barbarı"},
+		{"savaşçıyı", "barbarı"},
+		{"Savaşçı", "Barbar"},
+		{"savaşçı", "barbar"},
+		// Hungarian
+		{"A harcos", "A barbár"},
+		{"a harcos", "a barbár"},
+		{"Harcos", "Barbár"},
+		{"harcos", "barbár"},
+		// Greek
+		{"Ο Πολεμιστής", "Ο Βάρβαρος"},
+		{"ο Πολεμιστής", "ο Βάρβαρος"},
+		{"ο πολεμιστής", "ο βάρβαρος"},
+		{"του Πολεμιστή", "του Βαρβάρου"},
+		{"του πολεμιστή", "του βαρβάρου"},
+		{"τον Πολεμιστή", "τον Βάρβαρο"},
+		{"τον πολεμιστή", "τον βάρβαρο"},
+		{"Πολεμιστής", "Βάρβαρος"},
+		{"πολεμιστής", "βάρβαρος"},
+		// Esperanto
+		{"Batalisto", "Barbaro"},
+		{"batalisto", "barbaro"},
+		// Indonesian
+		{"Pendekar", "Barbar"},
+		{"pendekar", "barbar"},
+		// Vietnamese
+		{"Chiến binh", "Chiến binh man rợ"},
+		{"chiến binh", "chiến binh man rợ"},
+		// Japanese & Korean
+		{"戦士", "バーバリアン"},
+		{"전사가", "야만용사가"},
+		{"전사는", "야만용사는"},
+		{"전사의", "야만용사의"},
+		{"전사를", "야만용사를"},
+		{"전사", "야만용사"}
+	};
+
+	public static String adaptWarriorText(String text) {
+		if (text == null || Dungeon.hero == null || Dungeon.hero.heroClass != BARBARIAN) {
+			return text;
+		}
+		for (String[] pair : WARRIOR_TO_BARBARIAN_REPLACEMENTS) {
+			text = text.replace(pair[0], pair[1]);
+		}
+		String wTitle = WARRIOR.title();
+		String bTitle = BARBARIAN.title();
+		if (wTitle != null && bTitle != null && !wTitle.isEmpty() && !wTitle.equals(bTitle)) {
+			text = text.replace(Messages.titleCase(wTitle), Messages.titleCase(bTitle))
+			           .replace(Messages.capitalize(wTitle), Messages.capitalize(bTitle))
+			           .replace(wTitle, bTitle);
+		}
+		return text;
+	}
+
 }

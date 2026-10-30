@@ -75,6 +75,9 @@ public class WndHeroInfo extends WndTabbed {
 			case CLERIC:
 				tabIcon = new ItemSprite(ItemSpriteSheet.ARTIFACT_TOME, null);
 				break;
+			case BARBARIAN:
+				tabIcon = new ItemSprite(ItemSpriteSheet.HAND_AXE, null);
+				break;
 		}
 
 		int finalHeight = MIN_HEIGHT;
@@ -213,6 +216,11 @@ public class WndHeroInfo extends WndTabbed {
 							new ItemSprite(ItemSpriteSheet.CUDGEL),
 							new ItemSprite(ItemSpriteSheet.SCROLL_ISAZ)};
 					break;
+				case BARBARIAN:
+					icons = new Image[]{ new ItemSprite(ItemSpriteSheet.HAND_AXE),
+							new TalentIcon(Talent.RECKLESS_ANGER),
+							new ItemSprite(ItemSpriteSheet.SCROLL_ISAZ)};
+					break;
 			}
 			for (Image im : icons) {
 				if (im != null) add(im);
@@ -309,6 +317,12 @@ public class WndHeroInfo extends WndTabbed {
 							new TalentIcon(Talent.SEARING_LIGHT),
 							new TalentIcon(Talent.RECALL_INSCRIPTION),
 							new TalentIcon(Talent.SHIELD_OF_LIGHT)
+					};
+					break;
+				case BARBARIAN:
+					icons = new Image[]{ new TalentIcon(Talent.RECKLESS_ANGER),
+							new TalentIcon(Talent.BRUTAL_MOMENTUM),
+							new TalentIcon(Talent.THICK_SKIN)
 					};
 					break;
 				case RAT_KING:

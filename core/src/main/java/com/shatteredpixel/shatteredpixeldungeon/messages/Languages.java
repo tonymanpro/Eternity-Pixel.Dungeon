@@ -28,7 +28,7 @@ public enum Languages {
 	PORTUGUESE("português", "pt", Status.O_COMPLETE, new String[]{"Alexandre", "Arthur", "Bruno", "Carlos", "Diego", "Eduardo", "Felipe", "Gabriel", "Guilherme", "Gustavo", "Henrique", "Igor", "João", "Lucas", "Matheus", "Pedro", "Rafael", "Rodrigo", "Thiago", "Victor", "Vinicius"}, new String[]{"Alexandre", "Arthur", "Bruno", "Carlos", "Diego", "Eduardo", "Felipe", "Gabriel", "Guilherme", "Gustavo", "Henrique", "Igor", "João", "Lucas", "Matheus", "Pedro", "Rafael", "Rodrigo", "Thiago", "Victor", "Vinicius"}),
 	GERMAN("deutsch",       "de", Status.__UNREVIEW, new String[]{"Dallukas", "KrystalCroft", "Wuzzy", "Zap0", "apxwn", "bernhardreiter", "davedude"}, new String[]{"2711chrissi", "Abracadabra", "Anaklysmos", "Ceeee", "DarkPixel", "David.transifex", "EmilKevinManuel", "ErichME", "Faquarl", "JorahEtLabora", "LenzB", "MacMoff", "Micksha", "Niseko", "Ordoviz", "Sarius", "Shtynow", "SirEddi", "Sorpl3x", "SurmanPP", "SwissQ", "ThunfischGott", "Timo_S", "Topicranger", "azrdev", "carrageen", "dome.scheidler", "galactictrans", "gekko303", "jeinzi", "johannes.schobel", "karoshi42", "koryphea", "luciocarreras", "lukasghesse", "mklr", "niemand", "oragothen", "razzifazzi0", "spixi", "tanjay", "unbekannterTyp", "wunst"}),
 	CHINESE("中文",         "zh", Status.O_COMPLETE, new String[]{"Chronie_Lynn_Iwa", "Jinkeloid(zdx00793)", "endlesssolitude", "catand"}, new String[]{"931451545", "Budding", "Fatir", "Fishbone", "Hcat", "HoofBumpBlurryface", "Horr_lski", "Lery", "Lyn_0401", "Lyx0527", "Ooooscar", "RainSlide", "ShatteredFlameBlast", "SpaceAnchor", "Teller", "hmdzl001", "leo", "tempest102", "catand"}),
-	CHI_TRAD("繁體中文",     "zh-hant", Status.__UNREVIEW, new String[]{"JZR", "Yichm", "p2635"}, new String[]{"DT227", "Fishbone", "Ken4Ro", "Lstron", "Relrin167", "Sotis425", "Zoe096423", "arnolam", "jackymaxj", "redbrow", "shiba"}),
+	CHI_TRAD("繁體中文",     "zh-hant", Status.O_COMPLETE, new String[]{"JZR", "Yichm", "p2635"}, new String[]{"DT227", "Fishbone", "Ken4Ro", "Lstron", "Relrin167", "Sotis425", "Zoe096423", "arnolam", "jackymaxj", "redbrow", "shiba"}),
 	KOREAN("한국어",        "ko", Status.O_COMPLETE, new String[]{"Bae", "Choi", "Jung", "Kang", "Kim", "Lee", "Park", "Yoon"}, new String[]{"Bae", "Choi", "Jung", "Kang", "Kim", "Lee", "Park", "Yoon"}),
 	FRENCH("français",      "fr", Status.O_COMPLETE, new String[]{"Alexandre", "Antoine", "Clément", "Julien", "Lucas", "Maxime", "Nicolas", "Pierre", "Romain", "Thomas", "Valentin"}, new String[]{"Alexandre", "Antoine", "Clément", "Julien", "Lucas", "Maxime", "Nicolas", "Pierre", "Romain", "Thomas", "Valentin"}),
 	JAPANESE("日本語",      "ja", Status.O_COMPLETE, new String[]{"daingewuvzeevisiddfddd", "oz51199"}, new String[]{"Gosamaru", "NickZhrbin", "Otogiri", "Siraore_Rou", "amama", "grassedge", "kiyofumimanabe", "librada", "mocklike", "tomofumikitano"}),
@@ -89,7 +89,10 @@ public enum Languages {
 	}
 
 	public static Languages matchLocale(Locale locale){
-		if (locale.getLanguage().equals("zh") && locale.toString().contains("Hant")){
+		if (locale.getLanguage().equals("zh") && (locale.toString().contains("Hant")
+				|| locale.getCountry().equals("TW")
+				|| locale.getCountry().equals("HK")
+				|| locale.getCountry().equals("MO"))){
 			return Languages.CHI_TRAD;
 		}
 		return matchCode(locale.getLanguage());

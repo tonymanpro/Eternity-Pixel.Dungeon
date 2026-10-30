@@ -86,32 +86,11 @@ public abstract class ArmorAbility implements Bundlable {
 	}
 
 	public String shortDesc(){
-		String text = Messages.get(this, "short_desc");
-		if (Dungeon.hero != null && Dungeon.hero.heroClass == HeroClass.BARBARIAN) {
-			text = text.replace("El Guerrero", "El Bárbaro")
-			           .replace("el Guerrero", "el Bárbaro")
-			           .replace("del Guerrero", "del Bárbaro")
-			           .replace("al Guerrero", "al Bárbaro")
-			           .replace("The Warrior", "The Barbarian")
-			           .replace("the Warrior", "the Barbarian")
-			           .replace("the warrior's", "the barbarian's")
-			           .replace("the warrior", "the barbarian");
-		}
-		return text;
+		return HeroClass.adaptWarriorText(Messages.get(this, "short_desc"));
 	}
 
 	public String desc(){
-		String text = Messages.get(this, "desc");
-		if (Dungeon.hero != null && Dungeon.hero.heroClass == HeroClass.BARBARIAN) {
-			text = text.replace("El Guerrero", "El Bárbaro")
-			           .replace("el Guerrero", "el Bárbaro")
-			           .replace("del Guerrero", "del Bárbaro")
-			           .replace("al Guerrero", "al Bárbaro")
-			           .replace("The Warrior", "The Barbarian")
-			           .replace("the Warrior", "the Barbarian")
-			           .replace("the warrior's", "the barbarian's")
-			           .replace("the warrior", "the barbarian");
-		}
+		String text = HeroClass.adaptWarriorText(Messages.get(this, "desc"));
 		return text + "\n\n" + Messages.get(this, "cost", (int)baseChargeUse);
 	}
 

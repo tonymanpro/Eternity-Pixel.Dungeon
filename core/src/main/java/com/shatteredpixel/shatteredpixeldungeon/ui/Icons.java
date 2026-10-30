@@ -535,6 +535,8 @@ public enum Icons {
 				return new ItemSprite(ItemSpriteSheet.RAPIER);
 			case CLERIC:
 				return new ItemSprite(ItemSpriteSheet.ARTIFACT_TOME);
+			case BARBARIAN:
+				return new ItemSprite(ItemSpriteSheet.HAND_AXE);
 			case RAT_KING:
 				return new ItemSprite(ItemSpriteSheet.CHEESE);
 			default:

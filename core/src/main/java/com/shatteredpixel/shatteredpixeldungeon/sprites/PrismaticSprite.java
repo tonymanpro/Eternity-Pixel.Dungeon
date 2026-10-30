@@ -64,7 +64,21 @@ public class PrismaticSprite extends MirrorSprite {
             die.delay = ref.die.delay;
             die.looped = ref.die.looped;
         }  else {
-			TextureFilm film = new TextureFilm( HeroSprite.tiers(Assets.Sprites.ROGUE, 15), tier, 12, 15 );
+			int frameWidth = 12;
+		int frameHeight = 15;
+		if (texture != null && texture.width >= 1000) {
+			frameWidth = 12 * 4;
+			frameHeight = 15 * 4;
+			scale.set(0.25f, 0.25f);
+		} else if (texture != null && texture.width >= 500) {
+			frameWidth = 12 * 2;
+			frameHeight = 15 * 2;
+			scale.set(0.5f, 0.5f);
+		} else {
+			scale.set(1f, 1f);
+		}
+
+		TextureFilm film = new TextureFilm( HeroSprite.tiers(Assets.Sprites.ROGUE, frameHeight), tier, frameWidth, frameHeight );
 
 			idle = new Animation( 1, true );
 			idle.frames( film, 0, 0, 0, 1, 0, 0, 1, 1 );
