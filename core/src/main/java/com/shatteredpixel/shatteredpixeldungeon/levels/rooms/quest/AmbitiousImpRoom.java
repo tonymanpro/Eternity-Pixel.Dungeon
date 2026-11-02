@@ -181,7 +181,7 @@ public class AmbitiousImpRoom extends SpecialRoom {
 		public Tilemap create() {
 			//largely a copy of super method, so that we can change alpha on update
 			if (vis != null && vis.alive) vis.killAndErase();
-			vis = new Tilemap(texture, new TextureFilm( texture, SIZE, SIZE )){
+			vis = new Tilemap(texture, TextureFilm.createTileset( texture, SIZE, SIZE )){
 				@Override
 				protected NoosaScript script() {
 					//allow lighting for custom tilemaps

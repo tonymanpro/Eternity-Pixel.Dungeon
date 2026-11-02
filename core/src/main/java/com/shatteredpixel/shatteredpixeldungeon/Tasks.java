@@ -44,6 +44,8 @@ public class Tasks {
     }
 
     private static final int TASK_COUNT = 6;
+    private static final int PER_TASK_XP = 150;
+    private static final int PER_TASK_GOLD = 100;
     private static final int GOLD_REWARD = 500;
     private static final int XP_REWARD = 1000;
 
@@ -81,6 +83,9 @@ public class Tasks {
     }
 
     private static Task find( Type type ){
+        if (tasks.isEmpty()) {
+            onRunStart();
+        }
         for (Task t : tasks) if (t.type == type) return t;
         return null;
     }
@@ -91,6 +96,8 @@ public class Tasks {
         t.progress = Math.min( t.target, t.progress + amount );
         if (t.progress >= t.target){
             t.completed = true;
+            Dungeon.gold += PER_TASK_GOLD;
+            BattlePass.addXP( PER_TASK_XP );
             GLog.p( Messages.get( Tasks.class, "task_done", t.description() ) );
             checkAllComplete();
         }
@@ -102,26 +109,36 @@ public class Tasks {
 
         allClaimed = true;
         Dungeon.gold += GOLD_REWARD;
-        BattlePass.totalXP += XP_REWARD;
-        BattlePass.saveGlobal();
+        BattlePass.addXP( XP_REWARD );
         GLog.p( Messages.get( Tasks.class, "all_done", GOLD_REWARD, XP_REWARD ) );
     }
 
     public static void onDepthReached( int depth ){
+        BattlePass.onDepthReached( depth );
         Task t = find( Type.REACH_DEPTH );
-        if (t != null && !t.completed && depth >= t.target){
-            t.progress = t.target;
-            t.completed = true;
-            GLog.p( Messages.get( Tasks.class, "task_done", t.description() ) );
-            checkAllComplete();
+        if (t != null && !t.completed && depth > t.progress){
+            t.progress = Math.min( t.target, depth );
+            if (t.progress >= t.target){
+                t.completed = true;
+                Dungeon.gold += PER_TASK_GOLD;
+                BattlePass.addXP( PER_TASK_XP );
+                GLog.p( Messages.get( Tasks.class, "task_done", t.description() ) );
+                checkAllComplete();
+            }
         }
     }
 
-    public static void onEnemySlain(){ progress( Type.SLAY_ENEMIES, 1 ); }
+    public static void onEnemySlain(){
+        BattlePass.onEnemySlain();
+        progress( Type.SLAY_ENEMIES, 1 );
+    }
     public static void onPotionDrunk(){ progress( Type.DRINK_POTION, 1 ); }
     public static void onScrollRead(){ progress( Type.READ_SCROLL, 1 ); }
     public static void onWandUsed(){ progress( Type.USE_WAND, 1 ); }
-    public static void onGoldCollected( long amount ){ progress( Type.PICK_UP_GOLD, amount ); }
+    public static void onGoldCollected( long amount ){
+        BattlePass.onGoldCollected( amount );
+        progress( Type.PICK_UP_GOLD, amount );
+    }
     public static void onChestOpened(){ progress( Type.OPEN_CHEST, 1 ); }
     public static void onArmorEquipped(){ progress( Type.EQUIP_ARMOR, 1 ); }
     public static void onRestedToFull(){ progress( Type.REST_TO_FULL, 1 ); }
@@ -172,5 +189,8 @@ public class Tasks {
         }
 
         allClaimed = bundle.contains( ALL_CLAIMED ) && bundle.getBoolean( ALL_CLAIMED );
+        if (tasks.isEmpty()){
+            onRunStart();
+        }
     }
 }

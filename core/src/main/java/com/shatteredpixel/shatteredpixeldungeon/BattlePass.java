@@ -70,7 +70,7 @@ public class BattlePass {
     }
 
     public static final int REPEATABLE_TIER = TIER_XP.length + 1; // 101
-    public static final int REPEATABLE_TIER_XP = 100 + TIER_XP.length * 100; // 3100, continues the same cost curve
+    public static final int REPEATABLE_TIER_XP = 100 + TIER_XP.length * 100;
     public static final int RESET_ENERGY_COST = 0;
     public static final int HISTORY_CLAIM_ENERGY_COST = 100;
 
@@ -81,6 +81,10 @@ public class BattlePass {
     public static int repeatableTiersClaimed;
     public static int premiumRepeatableTiersClaimed;
 
+    // Rewards claimed from TitleScene (when no hero run is currently loaded in memory)
+    public static ArrayList<Item> pendingRewards = new ArrayList<>();
+    public static long pendingGold = 0L;
+
     private static String monthKey;
     private static ArrayList<MonthRecord> history = new ArrayList<>();
     private static final int MAX_HISTORY_MONTHS = 12;
@@ -89,11 +93,20 @@ public class BattlePass {
     private static final SimpleDateFormat MONTH_LABEL_FORMAT = new SimpleDateFormat("MMMM yyyy", Locale.US);
 
     private static boolean loaded = false;
+    private static boolean loading = false;
 
-    private static void ensureLoaded() {
+    public static void ensureLoaded() {
+        if (loading) {
+            return;
+        }
         if (!loaded) {
-            loadGlobal();
-            loaded = true;
+            loading = true;
+            try {
+                loadGlobal();
+                loaded = true;
+            } finally {
+                loading = false;
+            }
         }
         checkRollover();
     }
@@ -139,6 +152,83 @@ public class BattlePass {
         premium = false;
         BattlePassTiers.resetRewards();
         SeasonalTasks.rollForNewSeason();
+        saveGlobal();
+    }
+
+    public static boolean hasActiveHero() {
+        return Dungeon.hero != null && Dungeon.hero.isAlive() && Dungeon.level != null;
+    }
+
+    private static void saveDungeonSafely() {
+        if (hasActiveHero()) {
+            try {
+                Dungeon.saveAll();
+            } catch (Exception ignored) {
+            }
+        }
+    }
+
+    public static void grantItemReward(Item item) {
+        if (item == null) {
+            return;
+        }
+        if (hasActiveHero()) {
+            if (!item.isIdentified()) {
+                item.identify();
+            }
+            if (!item.collect()) {
+                Dungeon.level.drop(item, Dungeon.hero.pos);
+            }
+        } else {
+            pendingRewards.add(item);
+        }
+    }
+
+    public static void grantGoldReward(long amount) {
+        if (amount <= 0) {
+            return;
+        }
+        if (hasActiveHero()) {
+            Dungeon.gold += amount;
+        } else {
+            pendingGold += amount;
+        }
+    }
+
+    public static void deliverPendingRewards() {
+        ensureLoaded();
+        if (!hasActiveHero()) {
+            return;
+        }
+        if (pendingGold <= 0 && pendingRewards.isEmpty()) {
+            return;
+        }
+        if (pendingGold > 0) {
+            Dungeon.gold += pendingGold;
+            pendingGold = 0;
+        }
+        ArrayList<Item> toDeliver = new ArrayList<>(pendingRewards);
+        pendingRewards.clear();
+        for (Item item : toDeliver) {
+            if (item != null) {
+                if (!item.isIdentified()) {
+                    item.identify();
+                }
+                if (!item.collect()) {
+                    Dungeon.level.drop(item, Dungeon.hero.pos);
+                }
+            }
+        }
+        saveGlobal();
+        saveDungeonSafely();
+    }
+
+    public static void addXP(int amount) {
+        if (amount <= 0) {
+            return;
+        }
+        ensureLoaded();
+        totalXP += amount;
         saveGlobal();
     }
 
@@ -222,13 +312,14 @@ public class BattlePass {
 
         Dungeon.energy -= HISTORY_CLAIM_ENERGY_COST;
 
-        if (reward != null && Dungeon.hero != null) {
-            reward.collect();
-        } else if (reward == null && !premiumTrack) {
-            Dungeon.gold += BattlePassTiers.goldFor(tier);
+        if (reward != null) {
+            grantItemReward(reward);
+        } else if (!premiumTrack) {
+            grantGoldReward(BattlePassTiers.goldFor(tier));
         }
 
         saveGlobal();
+        saveDungeonSafely();
         return reward;
     }
 
@@ -267,6 +358,9 @@ public class BattlePass {
     private static String cachedSeasonNameKey;
 
     public static String seasonName(String monthKey) {
+        if (monthKey == null) {
+            monthKey = MONTH_KEY_FORMAT.format(new Date());
+        }
         String custom = seasonNameOverrides.get(monthKey);
         if (custom != null)
             return custom;
@@ -361,10 +455,10 @@ public class BattlePass {
         String itemName;
         try {
             costIcon = costItem.newInstance();
-            itemName = costIcon.name();
+            itemName = costIcon.trueName();
         } catch (Exception e) {
             costIcon = new Gold(PREMIUM_COST_GOLD);
-            itemName = costIcon.name();
+            itemName = costIcon.trueName();
         }
 
         long ownedItem = Dungeon.hero != null ? Dungeon.hero.belongings.count(costItem) : 0L;
@@ -456,6 +550,7 @@ public class BattlePass {
 
         premium = true;
         saveGlobal();
+        saveDungeonSafely();
         return true;
     }
 
@@ -470,6 +565,7 @@ public class BattlePass {
 
         premium = true;
         saveGlobal();
+        saveDungeonSafely();
         return true;
     }
 
@@ -674,12 +770,56 @@ public class BattlePass {
     private static int lastDeepestFloor;
     private static int lastEnemiesSlain;
     private static long lastGoldCollected;
+    private static long goldRemainderForXP;
+
+    public static void syncRunStats() {
+        ensureLoaded();
+        lastDeepestFloor = Statistics.deepestFloor;
+        lastEnemiesSlain = Statistics.enemiesSlain;
+        lastGoldCollected = Statistics.goldCollected;
+    }
 
     public static void onRunStart() {
+        ensureLoaded();
         lastDeepestFloor = 0;
         lastEnemiesSlain = 0;
         lastGoldCollected = 0;
+        goldRemainderForXP = 0;
         Tasks.onRunStart();
+    }
+
+    public static void onDepthReached(int depth) {
+        ensureLoaded();
+        if (depth > lastDeepestFloor) {
+            int delta = depth - lastDeepestFloor;
+            totalXP += delta * XP_PER_DEPTH;
+            lastDeepestFloor = depth;
+            saveGlobal();
+        } else {
+            lastDeepestFloor = depth;
+        }
+    }
+
+    public static void onEnemySlain() {
+        ensureLoaded();
+        totalXP += XP_PER_KILL;
+        lastEnemiesSlain = Statistics.enemiesSlain;
+        saveGlobal();
+    }
+
+    public static void onGoldCollected(long amount) {
+        if (amount <= 0) {
+            return;
+        }
+        ensureLoaded();
+        goldRemainderForXP += amount;
+        lastGoldCollected = Statistics.goldCollected;
+        if (goldRemainderForXP >= GOLD_PER_XP) {
+            int xp = (int) (goldRemainderForXP / GOLD_PER_XP);
+            goldRemainderForXP %= GOLD_PER_XP;
+            totalXP += xp;
+            saveGlobal();
+        }
     }
 
     public static void onRunEnd() {
@@ -820,22 +960,15 @@ public class BattlePass {
             bonus = BattlePassTiers.premiumRewardFor(tier);
         }
 
-        if (Dungeon.hero != null) {
-            if (bonus != null) {
-                if (!bonus.isIdentified()) {
-                    bonus.identify();
-                }
-                bonus.collect();
-            }
-            for (Item extra : extras) {
-                if (!extra.isIdentified()) {
-                    extra.identify();
-                }
-                extra.collect();
-            }
+        if (bonus != null) {
+            grantItemReward(bonus);
+        }
+        for (Item extra : extras) {
+            grantItemReward(extra);
         }
 
         saveGlobal();
+        saveDungeonSafely();
         return bonus;
     }
 
@@ -850,40 +983,33 @@ public class BattlePass {
         if (tier == REPEATABLE_TIER) {
             repeatableTiersClaimed++;
             Item reward = BattlePassTiers.repeatableRewardFor();
-            if (reward != null && Dungeon.hero != null) {
-                reward.collect();
+            if (reward != null) {
+                grantItemReward(reward);
                 result = reward;
             } else {
-                Dungeon.gold += BattlePassTiers.goldFor(tier);
+                grantGoldReward(BattlePassTiers.goldFor(tier));
             }
         } else {
             claimedTiers.add(tier);
             if (BattlePassTiers.isItemTier(tier)) {
                 Item reward = BattlePassTiers.rewardFor(tier);
-                if (reward != null && Dungeon.hero != null) {
-                    if (!reward.isIdentified()) {
-                        reward.identify();
-                    }
-                    reward.collect();
+                if (reward != null) {
+                    grantItemReward(reward);
                     result = reward;
                 } else {
-                    Dungeon.gold += BattlePassTiers.goldFor(tier);
+                    grantGoldReward(BattlePassTiers.goldFor(tier));
                 }
             } else {
-                Dungeon.gold += BattlePassTiers.goldFor(tier);
+                grantGoldReward(BattlePassTiers.goldFor(tier));
             }
         }
 
-        if (Dungeon.hero != null) {
-            for (Item extra : extras) {
-                if (!extra.isIdentified()) {
-                    extra.identify();
-                }
-                extra.collect();
-            }
+        for (Item extra : extras) {
+            grantItemReward(extra);
         }
 
         saveGlobal();
+        saveDungeonSafely();
         return result;
     }
 
@@ -940,6 +1066,7 @@ public class BattlePass {
     private static final String TOTAL_XP = "battlepass_xp";
     private static final String CLAIMED = "battlepass_claimed";
     private static final String REPEATED = "battlepass_repeated";
+    private static final String PREMIUM_REPEATED = "battlepass_premium_repeated";
     private static final String MONTH_KEY = "battlepass_month";
     private static final String HISTORY_N = "battlepass_history_count";
     private static final String HISTORY_I = "battlepass_history_";
@@ -949,8 +1076,14 @@ public class BattlePass {
     private static final String REWARD_PREFIX = "battlepass_reward_";
     private static final String PREMIUM_REWARD_TIERS = "battlepass_premium_reward_tiers";
     private static final String PREMIUM_REWARD_PREFIX = "battlepass_premium_reward_";
+    private static final String PENDING_GOLD = "battlepass_pending_gold";
+    private static final String PENDING_REWARDS_N = "battlepass_pending_rewards_n";
+    private static final String PENDING_REWARD_PREFIX = "battlepass_pending_reward_";
 
     public static void saveGlobal() {
+        if (!loaded && !loading) {
+            ensureLoaded();
+        }
         try {
             Bundle bundle = new Bundle();
             bundle.put(TOTAL_XP, totalXP);
@@ -960,6 +1093,7 @@ public class BattlePass {
             }
             bundle.put(CLAIMED, claimedArr);
             bundle.put(REPEATED, repeatableTiersClaimed);
+            bundle.put(PREMIUM_REPEATED, premiumRepeatableTiersClaimed);
             bundle.put(MONTH_KEY, monthKey);
             bundle.put(HISTORY_N, history.size());
             bundle.put(PREMIUM, premium);
@@ -988,6 +1122,13 @@ public class BattlePass {
             bundle.put(PREMIUM_REWARD_TIERS, premiumRewardTiers);
             for (int t : premiumRewardTiers)
                 bundle.put(PREMIUM_REWARD_PREFIX + t, premiumRewards.get(t));
+
+            bundle.put(PENDING_GOLD, pendingGold);
+            bundle.put(PENDING_REWARDS_N, pendingRewards.size());
+            for (int i = 0; i < pendingRewards.size(); i++) {
+                bundle.put(PENDING_REWARD_PREFIX + i, pendingRewards.get(i));
+            }
+
             SeasonalTasks.storeInBundle(bundle);
             FileUtils.bundleToFile(FILE, bundle);
         } catch (IOException e) {
@@ -1006,6 +1147,7 @@ public class BattlePass {
                 }
             }
             repeatableTiersClaimed = bundle.contains(REPEATED) ? bundle.getInt(REPEATED) : 0;
+            premiumRepeatableTiersClaimed = bundle.contains(PREMIUM_REPEATED) ? bundle.getInt(PREMIUM_REPEATED) : 0;
 
             monthKey = bundle.contains(MONTH_KEY) ? bundle.getString(MONTH_KEY) : null;
 
@@ -1037,15 +1179,30 @@ public class BattlePass {
                 }
                 BattlePassTiers.restorePremiumRewards(premiumRewards);
             }
+            pendingGold = bundle.contains(PENDING_GOLD) ? bundle.getLong(PENDING_GOLD) : 0L;
+            pendingRewards = new ArrayList<>();
+            if (bundle.contains(PENDING_REWARDS_N)) {
+                int pn = bundle.getInt(PENDING_REWARDS_N);
+                for (int i = 0; i < pn; i++) {
+                    Object item = bundle.get(PENDING_REWARD_PREFIX + i);
+                    if (item instanceof Item) {
+                        pendingRewards.add((Item) item);
+                    }
+                }
+            }
             SeasonalTasks.restoreFromBundle(bundle);
         } catch (IOException e) {
             totalXP = 0;
             claimedTiers = new ArrayList<>();
             repeatableTiersClaimed = 0;
+            premiumRepeatableTiersClaimed = 0;
             monthKey = null;
             history = new ArrayList<>();
             premium = false;
             premiumClaimedTiers = new ArrayList<>();
+            pendingGold = 0L;
+            pendingRewards = new ArrayList<>();
+            SeasonalTasks.rollForNewSeason();
         }
     }
 }

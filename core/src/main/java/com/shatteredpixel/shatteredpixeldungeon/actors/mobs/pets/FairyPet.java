@@ -25,7 +25,6 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.BeeSprite;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.PathFinder;
-import com.watabou.utils.Random;
 
 public class FairyPet extends Pet {
 
@@ -42,7 +41,7 @@ public class FairyPet extends Pet {
 
 	@Override
 	public long attackSkill(Char target) {
-		return 8L + (petLevel * 2L);
+		return scaledSkill(8L);
 	}
 
 	@Override
@@ -50,7 +49,7 @@ public class FairyPet extends Pet {
 		int stage = evolutionStage();
 		int min = 1 + petLevel + stage;
 		int max = 4 + (petLevel * 2) + (stage * 3);
-		return (long) Random.NormalIntRange(min, max);
+		return scaledDamage(min, max);
 	}
 
 	@Override
@@ -59,7 +58,7 @@ public class FairyPet extends Pet {
 		if (hero != null && hero.isAlive() && evolutionStage() >= 1) {
 			// Pulso de curación periódica si el héroe está herido
 			if (healCooldown <= 0 && hero.HP < hero.HT && Dungeon.level != null && Dungeon.level.distance(pos, hero.pos) <= 4) {
-				long heal = 4L + petLevel + (evolutionStage() * 3L);
+				long heal = Math.max(4L + petLevel + (evolutionStage() * 3L), hero.HT / 15L);
 				hero.HP = Math.min(hero.HT, hero.HP + heal);
 				if (hero.sprite != null) {
 					hero.sprite.emitter().burst(Speck.factory(Speck.HEALING), 5);

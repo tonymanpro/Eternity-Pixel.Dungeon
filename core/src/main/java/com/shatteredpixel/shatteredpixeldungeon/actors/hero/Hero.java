@@ -2181,7 +2181,7 @@ if (!Dungeon.level.visited[cell] && !Dungeon.level.mapped[cell]
 		this.totalExp += exp;
         this.totalExp_Transmutation += exp;
 		if (pet != null && pet.isAlive()) {
-			pet.gainExp((int)Math.max(1, exp / 2));
+			pet.gainExp((int)Math.min(10000L, Math.max(1L, exp / 2L)));
 		}
 		float percent = exp/(float)maxExp();
 
@@ -2277,6 +2277,9 @@ if (!Dungeon.level.visited[cell] && !Dungeon.level.mapped[cell]
 
             updateHT( true );
             Bbat.updateHP();
+            if (pet != null && pet.isAlive()) {
+                pet.onHeroLevelUp();
+            }
             attackSkill++;
             defenseSkill++;
             Perks.earnPerk(this);

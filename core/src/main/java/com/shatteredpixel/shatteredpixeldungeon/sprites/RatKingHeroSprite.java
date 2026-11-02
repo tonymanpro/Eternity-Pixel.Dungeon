@@ -35,11 +35,22 @@ public class RatKingHeroSprite extends HeroSprite {
     {
         //runFramerate = 10;
     }
-
     public void updateArmor() {
-        // there's only two armors. really one atm.
-        // TODO decide if I want a "crownless" rat king towards the beginning of the game.
-        TextureFilm film = new TextureFilm( tiers(), 0, FRAME_WIDTH, FRAME_HEIGHT );
+        int frameWidth = FRAME_WIDTH;
+        int frameHeight = FRAME_HEIGHT;
+        if (texture != null && texture.width >= 1000) {
+            frameWidth = FRAME_WIDTH * 4;
+            frameHeight = FRAME_HEIGHT * 4;
+            scale.set(0.25f, 0.25f);
+        } else if (texture != null && texture.width >= 500) {
+            frameWidth = FRAME_WIDTH * 2;
+            frameHeight = FRAME_HEIGHT * 2;
+            scale.set(0.5f, 0.5f);
+        } else {
+            scale.set(1f, 1f);
+        }
+
+        TextureFilm film = new TextureFilm( tiers(frameHeight), 0, frameWidth, frameHeight );
         idle = new Animation( 2, true );
         idle.frames( film, 0, 0, 0, 1 );
 
@@ -72,7 +83,16 @@ public class RatKingHeroSprite extends HeroSprite {
 
     @Override
     public TextureFilm tiers() {
-        if(ratKiers == null) ratKiers = tiers(Assets.Sprites.RAT_KING_HERO, FRAME_HEIGHT);
-        return ratKiers;
+        int frameHeight = FRAME_HEIGHT;
+        if (texture != null && texture.width >= 1000) {
+            frameHeight = FRAME_HEIGHT * 4;
+        } else if (texture != null && texture.width >= 500) {
+            frameHeight = FRAME_HEIGHT * 2;
+        }
+        return tiers(frameHeight);
+    }
+
+    public TextureFilm tiers(int fHeight) {
+        return tiers(Assets.Sprites.RAT_KING_HERO, fHeight);
     }
 }

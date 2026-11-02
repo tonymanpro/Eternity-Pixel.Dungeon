@@ -125,6 +125,11 @@ public class BrokenSeal extends Item {
 	}
 
 	@Override
+	public String desc() {
+		return HeroClass.adaptWarriorText(super.desc());
+	}
+
+	@Override
 	public String info() {
 		String info = super.info();
 		if (glyph != null){

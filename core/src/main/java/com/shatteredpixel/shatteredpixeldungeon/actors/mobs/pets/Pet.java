@@ -20,6 +20,8 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Amok;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Charm;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.DirectableAlly;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
@@ -67,6 +69,8 @@ public abstract class Pet extends DirectableAlly {
 		alignment = Char.Alignment.ALLY;
 		intelligentAlly = true;
 		attacksAutomatically = true;
+		immunities.add(Amok.class);
+		immunities.add(Charm.class);
 	}
 
 	public Pet(PetType type) {
@@ -91,17 +95,82 @@ public abstract class Pet extends DirectableAlly {
 		}
 	}
 
+	protected long getHeroLevelBonus() {
+		if (Dungeon.hero != null) {
+			return Math.max(0L, Dungeon.hero.lvl - 1L);
+		}
+		return 0L;
+	}
+
+	protected long scaledSkill(long base) {
+		long depthBonus = Math.max(0L, Dungeon.depth);
+		return Dungeon.getCycleMultiplier(base + (petLevel * 2L) + getHeroLevelBonus() + depthBonus);
+	}
+
+	protected long scaledDamage(long min, long max) {
+		long heroBonus = getHeroLevelBonus();
+		long depthBonus = Math.max(0L, Dungeon.depth / 2L);
+		long scaledMin = min + (heroBonus / 2L) + (depthBonus / 2L);
+		long scaledMax = max + heroBonus + depthBonus;
+		return Dungeon.getCycleMultiplier(Random.NormalLongRange(scaledMin, Math.max(scaledMin, scaledMax)));
+	}
+
 	public void updateStats() {
 		int stage = evolutionStage();
-		HT = 20L + (petLevel * 6L) + (stage * 15L);
+		long heroLvlBonus = getHeroLevelBonus();
+		long depthBonus = Math.max(0L, Dungeon.depth);
+		long baseHT = 20L + (petLevel * 6L) + (stage * 15L)
+				+ (heroLvlBonus * 3L)
+				+ (depthBonus * 2L);
 		if (com.shatteredpixel.shatteredpixeldungeon.SPDSettings.isDemo()) {
-			HT += 15L; // Extra base survivability in Demo
+			baseHT += 15L; // Extra base survivability in Demo
 		}
-		defenseSkill = 4L + (petLevel * 2L) + (stage * 3L);
+		long newHT = Dungeon.getCycleMultiplier(baseHT);
+		if (Dungeon.hero != null && Dungeon.hero.HT > 20L) {
+			newHT += Dungeon.hero.HT / 4L;
+		}
+		HT = Math.max(26L, newHT);
+		defenseSkill = Dungeon.getCycleMultiplier(4L + (petLevel * 2L) + (stage * 4L) + heroLvlBonus + depthBonus);
+	}
+
+	public void onHeroLevelUp() {
+		long prevHT = HT;
+		updateStats();
+		if (HT > prevHT) {
+			HP = Math.min(HT, HP + (HT - prevHT));
+		}
+	}
+
+	@Override
+	public long drRoll() {
+		int stage = evolutionStage();
+		long heroLvl = getHeroLevelBonus();
+		long minDR = stage + (heroLvl / 6L);
+		long maxDR = petLevel + (stage * 3L) + (heroLvl / 4L) + Math.max(0L, Dungeon.depth / 4L);
+		long dr = super.drRoll() + Dungeon.getCycleMultiplier(Random.NormalLongRange(minDR, Math.max(minDR, maxDR)));
+		if (Dungeon.hero != null) {
+			dr += Dungeon.hero.drRoll() / 5L;
+		}
+		return dr;
+	}
+
+	@Override
+	public void damage(long dmg, Object src) {
+		if (dmg > 0) {
+			// Protección especial para la cría y límite de daño máximo por golpe contra escalado extremo
+			if (evolutionStage() == 0) {
+				dmg = Math.max(1L, Math.round(dmg * 0.6d));
+			}
+			if (HT > 0) {
+				long maxHit = Math.max(1L, HT / (evolutionStage() == 0 ? 5L : 4L));
+				dmg = Math.min(dmg, maxHit);
+			}
+		}
+		super.damage(dmg, src);
 	}
 
 	public void gainExp(int amount) {
-		if (petLevel >= 15) return; // Nivel máximo
+		if (petLevel >= 15 || amount <= 0) return; // Nivel máximo
 
 		if (com.shatteredpixel.shatteredpixeldungeon.SPDSettings.isDemo()) {
 			amount = Math.round(amount * 1.6f); // Accelerated leveling in Demo to reach evolution
@@ -114,7 +183,7 @@ public abstract class Pet extends DirectableAlly {
 			maxExp = 25 + (petLevel * 15);
 			long prevHT = HT;
 			updateStats();
-			HP = Math.min(HT, HP + (HT - prevHT) + 5);
+			HP = Math.min(HT, HP + Math.max(5L, HT - prevHT));
 
 			if (sprite != null) {
 				sprite.emitter().burst(Speck.factory(Speck.STAR), 8);
@@ -156,15 +225,15 @@ public abstract class Pet extends DirectableAlly {
 		int hungerGain = 0;
 
 		if (item instanceof PotionOfHealing) {
-			healAmount = HT / 2;
+			healAmount = Math.max(15L, HT / 2L);
 			hungerGain = 30;
 			accepted = true;
 		} else if (item instanceof Food) {
-			healAmount = 10L + (petLevel * 2L);
+			healAmount = Math.max(10L + (petLevel * 2L), (HT * 40L) / 100L);
 			hungerGain = 40;
 			accepted = true;
 		} else if (item.name().toLowerCase().contains("meat") || item.name().toLowerCase().contains("berry")) {
-			healAmount = 15L;
+			healAmount = Math.max(15L, (HT * 35L) / 100L);
 			hungerGain = 35;
 			accepted = true;
 		}
@@ -238,6 +307,21 @@ public abstract class Pet extends DirectableAlly {
 
 	@Override
 	public boolean act() {
+		long prevHT = HT;
+		updateStats();
+		if (HT > prevHT) {
+			HP = Math.min(HT, HP + (HT - prevHT));
+		}
+
+		if (enemy != null && (enemy == Dungeon.hero || enemy.alignment != Alignment.ENEMY)) {
+			enemy = null;
+		}
+
+		// Regeneración natural pasiva mientras tenga saciedad
+		if (HP > 0 && HP < HT && hunger > 0 && Random.Int(3) == 0) {
+			HP = Math.min(HT, HP + Math.max(1L, HT / 40L));
+		}
+
 		// Teletransporte si se aleja demasiado del héroe en modo FOLLOW
 		if (currentOrder == PetOrder.FOLLOW && Dungeon.hero != null && Dungeon.hero.isAlive()) {
 			if (Dungeon.level.distance(pos, Dungeon.hero.pos) > 6) {
@@ -281,6 +365,14 @@ public abstract class Pet extends DirectableAlly {
 		}
 
 		return super.act();
+	}
+
+	@Override
+	public boolean canAttack(Char enemy) {
+		if (enemy == null || enemy == Dungeon.hero || enemy.alignment != Alignment.ENEMY) {
+			return false;
+		}
+		return super.canAttack(enemy);
 	}
 
 	@Override
@@ -454,7 +546,13 @@ public abstract class Pet extends DirectableAlly {
 				currentOrder = PetOrder.valueOf(bundle.getString(ORDER));
 			} catch (Exception ignored) {}
 		}
+		long prevHT = HT;
 		updateStats();
+		if (HT > prevHT && prevHT > 0) {
+			HP = Math.min(HT, Math.round(HP * ((double) HT / prevHT)));
+		} else {
+			HP = Math.min(HT, Math.max(1L, HP));
+		}
 	}
 
 	public static Pet create(PetType type) {

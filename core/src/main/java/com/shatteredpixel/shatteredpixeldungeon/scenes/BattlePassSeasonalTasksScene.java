@@ -19,6 +19,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.scenes;
 
+import com.shatteredpixel.shatteredpixeldungeon.BattlePass;
 import com.shatteredpixel.shatteredpixeldungeon.Chrome;
 import com.shatteredpixel.shatteredpixeldungeon.SeasonalTasks;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
@@ -44,6 +45,8 @@ public class BattlePassSeasonalTasksScene extends PixelScene {
 	@Override
 	public void create() {
 		super.create();
+
+		BattlePass.ensureLoaded();
 
 		int w = Camera.main.width;
 		int h = Camera.main.height;
@@ -71,7 +74,7 @@ public class BattlePassSeasonalTasksScene extends PixelScene {
 		rows.clear();
 		if (SeasonalTasks.tasks == null || SeasonalTasks.tasks.isEmpty()) {
 			SeasonalTasks.rollForNewSeason();
-			com.shatteredpixel.shatteredpixeldungeon.BattlePass.saveGlobal();
+			BattlePass.saveGlobal();
 		}
 		int y = 0;
 		if (SeasonalTasks.tasks.isEmpty()) {

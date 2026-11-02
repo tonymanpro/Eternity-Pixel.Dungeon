@@ -461,6 +461,7 @@ public class GameScene extends PixelScene {
 				}
 				Tasks.onDepthReached( Statistics.deepestFloor );
 				SeasonalTasks.onDepthReached( Statistics.deepestFloor );
+				com.shatteredpixel.shatteredpixeldungeon.BattlePass.deliverPendingRewards();
 				
 				for (Char ch : Actor.chars()){
 					if (ch instanceof DriedRose.GhostHero){
@@ -581,6 +582,7 @@ public class GameScene extends PixelScene {
 
 			
 		}
+		com.shatteredpixel.shatteredpixeldungeon.BattlePass.deliverPendingRewards();
 
 		//Tutorial
 		if (SPDSettings.intro()){

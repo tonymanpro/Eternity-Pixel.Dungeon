@@ -62,11 +62,13 @@ public class Burning extends Buff implements Hero.Doom, Buff.DOTbuff {
 	private boolean acted = false; //whether the debuff has done any damage at all yet
 	private int burnIncrement = 0; //for tracking burning of hero items
 	private int nextHit = 0; //we pre-caulcate the incoming hit for a bit more accuracy in totalIncomingDMG()
+	private boolean fromAlly = false; //whether ignited by a pet/ally (only hurts enemies, never ignites terrain)
 	
 	private static final String LEFT	= "left";
 	private static final String ACTED	= "acted";
 	private static final String BURN	= "burnIncrement";
 	private static final String NEXT_DMG= "next_dmg";
+	private static final String FROM_ALLY = "from_ally";
 
 	{
 		type = buffType.NEGATIVE;
@@ -80,6 +82,7 @@ public class Burning extends Buff implements Hero.Doom, Buff.DOTbuff {
 		bundle.put( ACTED, acted );
 		bundle.put( BURN, burnIncrement );
 		bundle.put( NEXT_DMG, nextHit );
+		bundle.put( FROM_ALLY, fromAlly );
 	}
 	
 	@Override
@@ -89,6 +92,7 @@ public class Burning extends Buff implements Hero.Doom, Buff.DOTbuff {
 		acted = bundle.getBoolean( ACTED );
 		burnIncrement = bundle.getInt( BURN );
 		nextHit = bundle.getInt( NEXT_DMG );
+		fromAlly = bundle.getBoolean( FROM_ALLY );
 	}
 
 	@Override
@@ -100,6 +104,11 @@ public class Burning extends Buff implements Hero.Doom, Buff.DOTbuff {
 
 	@Override
 	public boolean act() {
+
+		if (fromAlly && (target instanceof Hero || target.alignment == Char.Alignment.ALLY)) {
+			detach();
+			return true;
+		}
 
 		if (acted && Dungeon.level.water[target.pos] && !target.flying){
 			detach();
@@ -185,7 +194,7 @@ public class Burning extends Buff implements Hero.Doom, Buff.DOTbuff {
 			detach();
 		}
 		
-		if (Dungeon.level.flamable[target.pos] && Blob.volumeAt(target.pos, Fire.class) == 0) {
+		if (!fromAlly && Dungeon.level.flamable[target.pos] && Blob.volumeAt(target.pos, Fire.class) == 0) {
 			GameScene.add( Blob.seed( target.pos, 4, Fire.class ) );
 		}
 		
@@ -209,6 +218,16 @@ public class Burning extends Buff implements Hero.Doom, Buff.DOTbuff {
 	}
 	
 	public void reignite( Char ch ) {
+		fromAlly = false;
+		reignite( ch, DURATION );
+	}
+
+	public void reigniteFromAlly( Char ch ) {
+		if (ch == null || ch instanceof Hero || ch.alignment == Char.Alignment.ALLY) {
+			detach();
+			return;
+		}
+		fromAlly = true;
 		reignite( ch, DURATION );
 	}
 	

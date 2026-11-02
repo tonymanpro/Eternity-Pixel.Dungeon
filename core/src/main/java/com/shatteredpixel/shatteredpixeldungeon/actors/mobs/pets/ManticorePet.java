@@ -46,7 +46,7 @@ public class ManticorePet extends Pet {
 
 	@Override
 	public long attackSkill(Char target) {
-		return 12L + (petLevel * 2L);
+		return scaledSkill(12L);
 	}
 
 	@Override
@@ -54,21 +54,25 @@ public class ManticorePet extends Pet {
 		int stage = evolutionStage();
 		int min = 3 + petLevel + (stage * 3);
 		int max = 8 + (petLevel * 3) + (stage * 5);
-		return (long) Random.NormalIntRange(min, max);
+		return scaledDamage(min, max);
 	}
 
 	@Override
 	public long attackProc(Char enemy, long damage) {
 		damage = super.attackProc(enemy, damage);
 
-		// Hybrid Dragon Fire + Spider Venom Tail Proc
+		if (enemy == null || enemy == Dungeon.hero || enemy.alignment != Alignment.ENEMY) {
+			return damage;
+		}
+
+		// Hybrid Dragon Fire + Spider Venom Tail Proc (solo daña a enemigos, sin incendiar el suelo)
 		if (Random.Int(2) == 0) {
-			Buff.affect(enemy, Burning.class).reignite(enemy);
+			Buff.affect(enemy, Burning.class).reigniteFromAlly(enemy);
 			CellEmitter.get(enemy.pos).burst(Speck.factory(Speck.INFERNO), 4);
 		}
 		if (Random.Int(2) == 0) {
 			Poison p = Buff.affect(enemy, Poison.class);
-			p.set(2 + (petLevel / 2f));
+			p.set(2 + (petLevel / 2f) + (getHeroLevelBonus() / 4f));
 			CellEmitter.get(enemy.pos).burst(Speck.factory(Speck.TOXIC), 3);
 		}
 		return damage;
@@ -76,8 +80,10 @@ public class ManticorePet extends Pet {
 
 	@Override
 	public boolean act() {
-		// Hybrid Active Abilities: Venom Stinger & Dragon Fire Breath at Range
-		if (evolutionStage() >= 1 && enemy != null && enemy.isAlive() && Dungeon.level.heroFOV[enemy.pos]) {
+		// Hybrid Active Abilities: Venom Stinger & Dragon Fire Breath at Range (solo contra enemigos)
+		if (evolutionStage() >= 1 && enemy != null && enemy.isAlive()
+				&& enemy != Dungeon.hero && enemy.alignment == Alignment.ENEMY
+				&& Dungeon.level.heroFOV[enemy.pos]) {
 			int dist = Dungeon.level.distance(pos, enemy.pos);
 			int maxRange = evolutionStage() == 2 ? 5 : 4;
 
@@ -91,7 +97,7 @@ public class ManticorePet extends Pet {
 						CellEmitter.get(enemy.pos).burst(Speck.factory(Speck.TOXIC), 4);
 
 						Poison p = Buff.affect(enemy, Poison.class);
-						p.set(3 + (petLevel / 2f));
+						p.set(3 + (petLevel / 2f) + (getHeroLevelBonus() / 4f));
 
 						if (evolutionStage() == 2) {
 							Buff.affect(enemy, Roots.class, 3.5f);
@@ -102,12 +108,14 @@ public class ManticorePet extends Pet {
 						return true;
 					}
 
-					// 2. Dragon Hybrid: Searing Crimson Fire Breath
+					// 2. Dragon Hybrid: Searing Crimson Fire Breath (solo daña al enemigo)
 					Sample.INSTANCE.play(Assets.Sounds.BURNING);
 					CellEmitter.get(enemy.pos).burst(Speck.factory(Speck.INFERNO), 8);
-					int fireDmg = Random.NormalIntRange(4 + petLevel, 10 + (petLevel * 2));
+					long fireDmg = scaledDamage(4 + petLevel, 10 + (petLevel * 2));
 					enemy.damage(fireDmg, this);
-					Buff.affect(enemy, Burning.class).reignite(enemy);
+					if (enemy.isAlive()) {
+						Buff.affect(enemy, Burning.class).reigniteFromAlly(enemy);
+					}
 					spend(TICK);
 					return true;
 				}

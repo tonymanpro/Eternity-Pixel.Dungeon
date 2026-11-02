@@ -371,6 +371,9 @@ public class Dungeon {
 
 	public static void goForNewCycle(){
         Statistics.deepestFloor = 0;
+        Tasks.onRunStart();
+        SeasonalTasks.onRunCompleted();
+        BattlePass.syncRunStats();
         depth = 0;
         if (Dungeon.cycle < 2) {
             Ghost.Quest.reset();
@@ -1081,6 +1084,7 @@ public class Dungeon {
 		Statistics.restoreFromBundle( bundle );
 		Generator.restoreFromBundle( bundle );
 		Tasks.restoreFromBundle( bundle );
+		BattlePass.syncRunStats();
 
 		generatedLevels.clear();
 		if (bundle.contains(GENERATED_LEVELS)){

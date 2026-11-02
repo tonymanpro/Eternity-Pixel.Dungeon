@@ -34,6 +34,7 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndTasks;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class InfoPage extends Item {
@@ -46,7 +47,7 @@ public class InfoPage extends Item {
     private static final String AC_BATTLEPASS = "BATTLEPASS";
     private static final String AC_TASKS = "TASKS";
 
-   @Override
+    @Override
     public ArrayList<String> actions(Hero hero ) {
         ArrayList<String> actions = super.actions( hero );
         actions.remove(AC_DROP);
@@ -60,6 +61,11 @@ public class InfoPage extends Item {
     public void execute(Hero hero, String action) {
         super.execute(hero, action);
         if (action.equals(AC_BATTLEPASS)){
+            try {
+                Dungeon.saveAll();
+            } catch (IOException e) {
+                ShatteredPixelDungeon.reportException(e);
+            }
             ShatteredPixelDungeon.switchNoFade( BattlePassScene.class );
         }
 

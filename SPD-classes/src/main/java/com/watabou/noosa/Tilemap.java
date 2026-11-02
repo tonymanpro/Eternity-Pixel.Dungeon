@@ -96,6 +96,9 @@ public class Tilemap extends Visual {
 		} else {
 			Image img = new Image(texture);
 			img.frame(tileset.get(data[x + mapWidth * y]));
+			if (tileset.densityScale() > 1f) {
+				img.scale.set(1f / tileset.densityScale());
+			}
 			return img;
 		}
 	}

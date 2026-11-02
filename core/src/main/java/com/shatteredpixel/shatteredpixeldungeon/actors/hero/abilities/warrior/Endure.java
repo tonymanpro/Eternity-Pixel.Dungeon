@@ -96,17 +96,8 @@ public class Endure extends ArmorAbility {
 
 		@Override
 		public String desc() {
-			String text = Messages.get(this, "desc", damageBonus, hitsLeft);
-			if (Dungeon.hero != null && Dungeon.hero.heroClass == com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass.BARBARIAN) {
-				text = text.replace("El Guerrero", "El Bárbaro")
-				           .replace("El guerrero", "El Bárbaro")
-				           .replace("el Guerrero", "el Bárbaro")
-				           .replace("el guerrero", "el Bárbaro")
-				           .replace("The Warrior", "The Barbarian")
-				           .replace("The warrior", "The Barbarian")
-				           .replace("the warrior", "the barbarian");
-			}
-			return text;
+			return com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass.adaptWarriorText(
+					Messages.get(this, "desc", damageBonus, hitsLeft));
 		}
 
 		public double adjustDamageTaken(double damage){

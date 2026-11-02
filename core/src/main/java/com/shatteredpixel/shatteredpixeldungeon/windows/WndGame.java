@@ -55,7 +55,7 @@ public class WndGame extends Window {
 		RedButton curBtn;
 		addButton( curBtn = new RedButton( Messages.get(this, "settings") ) {
 			@Override
-            public void onClick() {
+			public void onClick() {
 				hide();
 				GameScene.show(new WndSettings());
 			}
@@ -66,7 +66,7 @@ public class WndGame extends Window {
 		if (IntStream.range(0, Dungeon.challenges.length).anyMatch(i -> Dungeon.challenges[i])) {
 			addButton( curBtn = new RedButton( Messages.get(this, "challenges") ) {
 				@Override
-                public void onClick() {
+				public void onClick() {
 					hide();
 					GameScene.show( new WndChallenges( Dungeon.challenges, false ) );
 				}
@@ -74,12 +74,38 @@ public class WndGame extends Window {
 			curBtn.icon(Icons.get(Icons.CHALLENGE_COLOR));
 		}
 
+		// Battle Pass & Tasks (in-game shortcuts)
+		if (Dungeon.hero != null && Dungeon.hero.isAlive()) {
+			addButton( curBtn = new RedButton( Messages.get(TitleScene.class, "battlepass") ) {
+				@Override
+				public void onClick() {
+					hide();
+					try {
+						Dungeon.saveAll();
+					} catch (IOException e) {
+						ShatteredPixelDungeon.reportException(e);
+					}
+					ShatteredPixelDungeon.switchNoFade( BattlePassScene.class );
+				}
+			} );
+			curBtn.icon(Icons.get(Icons.TALENT));
+
+			addButton( curBtn = new RedButton( Messages.get(WndTasks.class, "title") ) {
+				@Override
+				public void onClick() {
+					hide();
+					GameScene.show( new WndTasks() );
+				}
+			} );
+			curBtn.icon(Icons.get(Icons.CHECKED));
+		}
+
 		// Restart
 		if (Dungeon.hero == null || !Dungeon.hero.isAlive()) {
 
 			addButton( curBtn = new RedButton( Messages.get(this, "start") ) {
 				@Override
-                public void onClick() {
+				public void onClick() {
 					GamesInProgress.selectedClass = Dungeon.hero.heroClass;
 					GamesInProgress.curSlot = GamesInProgress.firstEmpty();
 					ShatteredPixelDungeon.switchScene(HeroSelectScene.class);
@@ -90,7 +116,7 @@ public class WndGame extends Window {
 			
 			addButton( curBtn = new RedButton( Messages.get(this, "rankings") ) {
 				@Override
-                public void onClick() {
+				public void onClick() {
 					InterlevelScene.mode = InterlevelScene.Mode.DESCEND;
 					Game.switchScene( RankingsScene.class );
 				}
@@ -101,7 +127,7 @@ public class WndGame extends Window {
 		// Main menu
 		addButton(curBtn = new RedButton(Messages.get(this, "menu")) {
 			@Override
-            public void onClick() {
+			public void onClick() {
 				try {
 					Dungeon.saveAll();
 				} catch (IOException e) {
@@ -111,22 +137,22 @@ public class WndGame extends Window {
 			}
 		});
 		curBtn.icon(Icons.get(Icons.DISPLAY));
-        if (SPDSettings.intro()) curBtn.enable(false);
+		if (SPDSettings.intro()) curBtn.enable(false);
 
-        // Main menu
-        addButton(curBtn = new RedButton(Messages.get(this, "save")) {
-            @Override
-            public void onClick() {
-                try {
-                    Dungeon.saveAll();
-                } catch (IOException e) {
-                    ShatteredPixelDungeon.reportException(e);
-                }
-                hide();
-                GLog.p(Messages.get(WndGame.class, "game_saved"));
-            }
-        });
-        curBtn.icon(Icons.get(Icons.SAVE_ICON));
+		// Save
+		addButton(curBtn = new RedButton(Messages.get(this, "save")) {
+			@Override
+			public void onClick() {
+				try {
+					Dungeon.saveAll();
+				} catch (IOException e) {
+					ShatteredPixelDungeon.reportException(e);
+				}
+				hide();
+				GLog.p(Messages.get(WndGame.class, "game_saved"));
+			}
+		});
+		curBtn.icon(Icons.get(Icons.SAVE_ICON));
 
 		resize( WIDTH, pos );
 	}

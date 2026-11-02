@@ -51,6 +51,7 @@ public class SeasonalTasks {
     private static boolean allBonusClaimed = false;
 
     public static void resetProgress(){
+        BattlePass.ensureLoaded();
         if (tasks == null || tasks.isEmpty()){
             rollForNewSeason();
             return;
@@ -90,11 +91,14 @@ public class SeasonalTasks {
     }
 
     private static Task find( Type type ){
+        BattlePass.ensureLoaded();
         for (Task t : tasks) if (t.type == type) return t;
         return null;
     }
 
     private static void progress( Type type, long amount ){
+        if (amount <= 0) return;
+        BattlePass.ensureLoaded();
         Task t = find( type );
         if (t == null || t.completed) return;
         t.progress = Math.min( t.target, t.progress + amount );
@@ -102,13 +106,15 @@ public class SeasonalTasks {
             t.completed = true;
             GLog.p( Messages.get( SeasonalTasks.class, "task_ready", t.description() ) );
         }
+        BattlePass.saveGlobal();
     }
 
     public static boolean claim( Task t ){
+        BattlePass.ensureLoaded();
         if (t == null || !t.completed || t.claimed) return false;
         t.claimed = true;
         BattlePass.totalXP += XP_PER_TASK;
-        Dungeon.gold += GOLD_PER_TASK;
+        BattlePass.grantGoldReward( GOLD_PER_TASK );
         checkAllClaimed();
         BattlePass.saveGlobal();
         return true;
@@ -120,17 +126,20 @@ public class SeasonalTasks {
 
         allBonusClaimed = true;
         BattlePass.totalXP += ALL_DONE_XP_BONUS;
-        Dungeon.gold += ALL_DONE_GOLD_BONUS;
+        BattlePass.grantGoldReward( ALL_DONE_GOLD_BONUS );
         GLog.p( Messages.get( SeasonalTasks.class, "all_done", ALL_DONE_XP_BONUS, ALL_DONE_GOLD_BONUS ) );
     }
 
-
     public static void onDepthReached( int depth ){
+        BattlePass.ensureLoaded();
         Task t = find( Type.REACH_DEPTH );
-        if (t != null && !t.completed && depth >= t.target){
-            t.progress = t.target;
-            t.completed = true;
-            GLog.p( Messages.get( SeasonalTasks.class, "task_ready", t.description() ) );
+        if (t != null && !t.completed && depth > t.progress){
+            t.progress = Math.min( t.target, depth );
+            if (t.progress >= t.target){
+                t.completed = true;
+                GLog.p( Messages.get( SeasonalTasks.class, "task_ready", t.description() ) );
+            }
+            BattlePass.saveGlobal();
         }
     }
 
@@ -145,7 +154,6 @@ public class SeasonalTasks {
         progress( Type.DIE_TIMES, 1 );
         onRunCompleted();
     }
-
 
     private static final String TASK_TYPES     = "seasontask_types";
     private static final String TASK_TARGETS   = "seasontask_targets";
