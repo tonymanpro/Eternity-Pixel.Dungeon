@@ -43,7 +43,7 @@ public class SpiderPet extends Pet {
 
 	@Override
 	public long attackSkill(Char target) {
-		return 11L + (petLevel * 2L);
+		return scaledSkill(11L);
 	}
 
 	@Override
@@ -51,16 +51,16 @@ public class SpiderPet extends Pet {
 		int stage = evolutionStage();
 		int min = 2 + petLevel + stage;
 		int max = 6 + (petLevel * 2) + (stage * 4);
-		return (long) Random.NormalIntRange(min, max);
+		return scaledDamage(min, max);
 	}
 
 	@Override
 	public long attackProc(Char enemy, long damage) {
 		damage = super.attackProc(enemy, damage);
-		// Picadura venenosa
-		if (Random.Int(2) == 0) {
+		// Picadura venenosa (solo enemigos)
+		if (enemy != null && enemy != Dungeon.hero && enemy.alignment == Alignment.ENEMY && Random.Int(2) == 0) {
 			Poison p = Buff.affect(enemy, Poison.class);
-			p.set(2 + (petLevel / 2f));
+			p.set(2 + (petLevel / 2f) + (getHeroLevelBonus() / 4f));
 			CellEmitter.get(enemy.pos).burst(Speck.factory(Speck.TOXIC), 3);
 		}
 		return damage;
@@ -69,7 +69,9 @@ public class SpiderPet extends Pet {
 	@Override
 	public boolean act() {
 		// Disparo de telaraña ralentizadora a distancia en etapas Joven / Adulto
-		if (evolutionStage() >= 1 && enemy != null && enemy.isAlive() && Dungeon.level.heroFOV[enemy.pos]) {
+		if (evolutionStage() >= 1 && enemy != null && enemy.isAlive()
+				&& enemy != Dungeon.hero && enemy.alignment == Alignment.ENEMY
+				&& Dungeon.level.heroFOV[enemy.pos]) {
 			int dist = Dungeon.level.distance(pos, enemy.pos);
 			if (dist > 1 && dist <= 4 && enemy.buff(Cripple.class) == null && enemy.buff(Roots.class) == null) {
 				Ballistica bolt = new Ballistica(pos, enemy.pos, Ballistica.MAGIC_BOLT);

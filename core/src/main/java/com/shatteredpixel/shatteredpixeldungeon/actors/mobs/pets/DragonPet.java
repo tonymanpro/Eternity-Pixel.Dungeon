@@ -42,7 +42,7 @@ public class DragonPet extends Pet {
 
 	@Override
 	public long attackSkill(Char target) {
-		return 10L + (petLevel * 2L);
+		return scaledSkill(10L);
 	}
 
 	@Override
@@ -50,14 +50,14 @@ public class DragonPet extends Pet {
 		int stage = evolutionStage();
 		int min = 2 + petLevel + (stage * 3);
 		int max = 6 + (petLevel * 3) + (stage * 6);
-		return (long) Random.NormalIntRange(min, max);
+		return scaledDamage(min, max);
 	}
 
 	@Override
 	public long attackProc(Char enemy, long damage) {
 		damage = super.attackProc(enemy, damage);
-		if (Random.Int(2) == 0) {
-			Buff.affect(enemy, Burning.class).reignite(enemy);
+		if (enemy != null && enemy != Dungeon.hero && enemy.alignment == Alignment.ENEMY && Random.Int(2) == 0) {
+			Buff.affect(enemy, Burning.class).reigniteFromAlly(enemy);
 			CellEmitter.get(enemy.pos).burst(Speck.factory(Speck.INFERNO), 4);
 		}
 		return damage;
@@ -65,17 +65,21 @@ public class DragonPet extends Pet {
 
 	@Override
 	public boolean act() {
-		// Aliento ígneo a distancia en etapas Joven / Adulto
-		if (evolutionStage() >= 1 && enemy != null && enemy.isAlive() && Dungeon.level.heroFOV[enemy.pos]) {
+		// Aliento ígneo a distancia en etapas Joven / Adulto (solo daña a enemigos)
+		if (evolutionStage() >= 1 && enemy != null && enemy.isAlive()
+				&& enemy != Dungeon.hero && enemy.alignment == Alignment.ENEMY
+				&& Dungeon.level.heroFOV[enemy.pos]) {
 			int dist = Dungeon.level.distance(pos, enemy.pos);
 			if (dist > 1 && dist <= (evolutionStage() == 2 ? 4 : 3)) {
 				Ballistica bolt = new Ballistica(pos, enemy.pos, Ballistica.MAGIC_BOLT);
 				if (bolt.collisionPos == enemy.pos) {
 					Sample.INSTANCE.play(Assets.Sounds.BURNING);
 					CellEmitter.get(enemy.pos).burst(Speck.factory(Speck.INFERNO), 6);
-					int fireDmg = Random.NormalIntRange(3 + petLevel, 8 + (petLevel * 2));
+					long fireDmg = scaledDamage(3 + petLevel, 8 + (petLevel * 2));
 					enemy.damage(fireDmg, this);
-					Buff.affect(enemy, Burning.class).reignite(enemy);
+					if (enemy.isAlive()) {
+						Buff.affect(enemy, Burning.class).reigniteFromAlly(enemy);
+					}
 					spend(TICK);
 					return true;
 				}

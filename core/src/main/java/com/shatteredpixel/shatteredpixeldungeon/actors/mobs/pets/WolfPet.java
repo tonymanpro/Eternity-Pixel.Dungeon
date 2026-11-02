@@ -41,7 +41,7 @@ public class WolfPet extends Pet {
 
 	@Override
 	public long attackSkill(Char target) {
-		return 12L + (petLevel * 2L);
+		return scaledSkill(12L);
 	}
 
 	@Override
@@ -49,14 +49,14 @@ public class WolfPet extends Pet {
 		int stage = evolutionStage();
 		int min = 3 + petLevel + (stage * 2);
 		int max = 8 + (petLevel * 3) + (stage * 5);
-		return (long) Random.NormalIntRange(min, max);
+		return scaledDamage(min, max);
 	}
 
 	@Override
 	public long attackProc(Char enemy, long damage) {
 		damage = super.attackProc(enemy, damage);
-		// Mordida desgarradora con sangrado
-		if (Random.Int(3) == 0) {
+		// Mordida desgarradora con sangrado (solo enemigos)
+		if (enemy != null && enemy != Dungeon.hero && enemy.alignment == Alignment.ENEMY && Random.Int(3) == 0) {
 			Bleeding b = Buff.affect(enemy, Bleeding.class);
 			b.set(damage / 2f);
 			CellEmitter.get(enemy.pos).burst(Speck.factory(Speck.HEALING), 2);

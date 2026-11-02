@@ -84,7 +84,9 @@ public class Gold extends Item {
 		Badges.validateGoldCollected();
 
 		GameScene.pickUp( this, pos );
-		hero.sprite.showStatusWithIcon( CharSprite.NEUTRAL, Long.toString(quantity), FloatingText.GOLD );
+		if (hero.sprite != null) {
+			hero.sprite.showStatusWithIcon( CharSprite.NEUTRAL, Long.toString(quantity), FloatingText.GOLD );
+		}
 		if (time > 0)
 			hero.spendAndNext( TIME_TO_PICK_UP );
 		

@@ -1,6 +1,7 @@
 # Eternity Pixel Dungeon 👑
 
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Android%20%7C%20Linux%20%7C%20macOS-blue.svg)](https://eternity-pixel-dungeon.web.app)
+[![Steam Wishlist](https://img.shields.io/badge/Steam-Add%20to%20Wishlist-1b2838?logo=steam&logoColor=white)](https://store.steampowered.com/app/5314430/Eternity_Pixel_Dungeon/)
 [![Version](https://img.shields.io/badge/Version-v2.1.7-green.svg)](https://eternity-pixel-dungeon.web.app)
 [![Website](https://img.shields.io/badge/Website-eternity--pixel--dungeon.web.app-brightgreen.svg)](https://eternity-pixel-dungeon.web.app)
 [![License](https://img.shields.io/badge/License-GPL%20v3-orange.svg)](LICENSE)
@@ -11,22 +12,22 @@ Venture into complex catacombs packed with deadly traps, hidden treasures, mysti
 
 ---
 
-## 🌐 Official Website
+## 🌐 Official Website & Steam Wishlist
 
 Visit the official portal to download the latest executable and APK versions, read development news, and explore the community:
 
 👉 **[https://eternity-pixel-dungeon.web.app](https://eternity-pixel-dungeon.web.app)**
 
+🔥 **Wishlist on Steam / Agrégalo a tu Lista de Deseados en Steam:**
+👉 **[https://store.steampowered.com/app/5314430/Eternity_Pixel_Dungeon/](https://store.steampowered.com/app/5314430/Eternity_Pixel_Dungeon/)**
+
 ## 📥 Download
 
 [![Get it on Google Play](https://shatteredpixel.com/assets/images/badges/gplay.png)](https://play.google.com/store/apps/details?id=com.eternity.pixeldungeon)
 
-
-
-<a href="https://store.steampowered.com/app/5314430/Eternity_Pixel_Dungeon/?beta=1">
-  <img src="https://firebasestorage.googleapis.com/v0/b/eternity-pixel-dungeon.firebasestorage.app/o/img%2FCoomingSoon.jpg?alt=media&token=c1df745e-d533-4ff2-b6f6-4c8fb3bb0b26" alt="Steam" width="300">
+<a href="https://store.steampowered.com/app/5314430/Eternity_Pixel_Dungeon/">
+  <img src="https://firebasestorage.googleapis.com/v0/b/eternity-pixel-dungeon.firebasestorage.app/o/img%2FCoomingSoon.jpg?alt=media&token=c1df745e-d533-4ff2-b6f6-4c8fb3bb0b26" alt="Wishlist on Steam" width="300">
 </a>
-
 
 [![Itch.io](https://shatteredpixel.com/assets/images/badges/itch.png)](https://eternitypixeldungeon.itch.io/game)
 [![Github Releases](https://shatteredpixel.com/assets/images/badges/github.png)](https://github.com/tonymanpro/Eternity-Pixel.Dungeon/releases)
@@ -35,10 +36,10 @@ Visit the official portal to download the latest executable and APK versions, re
 
 ## 🎮 What Makes Eternity Pixel Dungeon Different?
 
-* 🐾 **Unique Companion and Pet System**: Find and hatch rare eggs in the dungeon. Train, evolve, and issue tactical commands to 4 companion species (Dragon Hatchling, Loyal Wolf, Light Fairy, and Weaver Spider).
+* 🐾 **Unique Companion and Pet System**: Find and hatch rare eggs in the dungeon. Train, evolve, and issue tactical commands to companion species (Dragon Hatchling, Loyal Wolf, Light Fairy, Weaver Spider, and Mythic Manticore).
 * 🛡️ **8 Playable Classes**: Play as the Warrior, Mage, Rogue, Huntress, Duelist, Cleric (with sacred spells), Barbarian (berserker fury), or the iconic Rat King.
 * 🎨 **High-Resolution Graphics Engine (HD 2x)**: Enjoy polished retro pixel-art visuals with lighting effects, magical auras, and smooth animations.
-* 🌐 **Full Language Synchronization** (**Spanish** and English): A 100% bilingual experience with synchronized localization and no missing keys.
+* 🌐 **Full Language Synchronization** (**Spanish**, **English**, **Chinese** and Others): A complete multilingual experience with synchronized localization and no missing keys.
 * ⚖️ **Fair Gameplay and Infinite Replayability**: Procedural generation of levels and items with no microtransactions or pay-to-win mechanics.
 
 ---

@@ -186,6 +186,9 @@ public class Tubes extends Item {
 		if (handler != null && handler.contains(this)) {
 			image = handler.image(this);
 			color = handler.label(this);
+		} else {
+			image = ItemSpriteSheet.RED_TEST_TUBE;
+			color = "red";
 		}
 	}
 

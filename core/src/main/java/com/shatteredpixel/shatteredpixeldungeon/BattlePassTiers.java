@@ -24,25 +24,22 @@
 
 package com.shatteredpixel.shatteredpixeldungeon;
 
-import com.shatteredpixel.shatteredpixeldungeon.items.ArcaneResin;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
+import com.shatteredpixel.shatteredpixeldungeon.items.Gold;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.fishingrods.GoldenFishingRod;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfExperience;
-import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
-import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfEnchantment;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.Raritize;
 import com.shatteredpixel.shatteredpixeldungeon.items.test_tubes.Tubes;
-import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.Trinket;
-import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.WondrousResin;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SearingSlasher;
 
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
 public class BattlePassTiers {
 
     public static final long REPEATABLE_TIER_GOLD = 300L;
@@ -69,9 +66,21 @@ public class BattlePassTiers {
     public static void clearCustomItem( int tier ){
         customItems.remove( tier );
     }
+
     public static long goldFor( int tier ){
         if (tier == BattlePass.REPEATABLE_TIER) return REPEATABLE_TIER_GOLD;
         return 50L + tier * 10L;
+    }
+
+    private static Generator.Category pickValidCategory( Generator.Category[] categories, long hash ) {
+        int catIndex = (int) Math.floorMod( hash, categories.length );
+        for (int tries = 0; tries < categories.length; tries++) {
+            Generator.Category cat = categories[(catIndex + tries) % categories.length];
+            if (cat != Generator.Category.TUBES && cat != Generator.Category.GOLD) {
+                return cat;
+            }
+        }
+        return Generator.Category.POTION;
     }
 
     private static Item deterministicRandom( Generator.Category[] categories, int tier ){
@@ -81,13 +90,15 @@ public class BattlePassTiers {
         for (int i = 0; i < seed.length(); i++){
             hash = 31*hash + seed.charAt(i);
         }
-        int catIndex = (int) Math.floorMod( hash, categories.length );
+        Generator.Category cat = pickValidCategory( categories, hash );
         Item item;
         Random.pushGenerator( hash );
         try {
+            int safety = 0;
             do {
-                item = Generator.random( categories[catIndex] );
-            } while (item instanceof Tubes);
+                item = Generator.randomUsingDefaults( cat );
+                safety++;
+            } while ((item instanceof Tubes || item instanceof Gold) && safety < 20);
         } finally {
             Random.popGenerator();
         }
@@ -98,7 +109,9 @@ public class BattlePassTiers {
         if (customItems.containsKey( tier )) return true;
         return tier != BattlePass.REPEATABLE_TIER && tier % 5 == 0;
     }
+
     private static final HashMap<Integer, Item> rewardCache = new HashMap<>();
+
     public static void resetRewards() {
         rewardCache.clear();
         premiumRewardCache.clear();
@@ -119,6 +132,7 @@ public class BattlePassTiers {
         BattlePassTiers.setCustomItem( 25, ScrollOfEnchantment.class, 2 );
         BattlePassTiers.setCustomItem( 100, SearingSlasher.class );
     }
+
     public static Item rewardFor( int tier ){
         if (!isItemTier( tier )) return null;
 
@@ -168,7 +182,7 @@ public class BattlePassTiers {
                     premiumRewardCache.put( tier, null );
                 }
             } else {
-                premiumRewardCache.put( tier, deterministicRandom( Generator.Category.values(), tier ) );
+                premiumRewardCache.put( tier, deterministicRandom( Generator.Category.values(), tier + 1000 ) );
             }
         }
         return premiumRewardCache.get( tier );
@@ -210,13 +224,15 @@ public class BattlePassTiers {
             for (int i = 0; i < seed.length(); i++){
                 hash = 31*hash + seed.charAt(i);
             }
-            int index = (int) Math.floorMod( hash, categories.length );
+            Generator.Category cat = pickValidCategory( categories, hash );
             Random.pushGenerator( hash );
             Item sample;
             try {
+                int safety = 0;
                 do {
-                    sample = Generator.random( categories[index] );
-                } while (sample instanceof Tubes);
+                    sample = Generator.randomUsingDefaults( cat );
+                    safety++;
+                } while ((sample instanceof Tubes || sample instanceof Gold) && safety < 20);
             } finally {
                 Random.popGenerator();
             }
@@ -248,13 +264,15 @@ public class BattlePassTiers {
             for (int i = 0; i < seed.length(); i++){
                 hash = 31*hash + seed.charAt(i);
             }
-            int index = (int) Math.floorMod( hash, categories.length );
+            Generator.Category cat = pickValidCategory( categories, hash );
             Random.pushGenerator( hash );
             Item sample;
             try {
+                int safety = 0;
                 do {
-                    sample = Generator.random( categories[index] );
-                } while (sample instanceof Tubes);
+                    sample = Generator.randomUsingDefaults( cat );
+                    safety++;
+                } while ((sample instanceof Tubes || sample instanceof Gold) && safety < 20);
             } finally {
                 Random.popGenerator();
             }
@@ -287,15 +305,17 @@ public class BattlePassTiers {
         double roll = Math.floorMod( hash, 10000L ) / 10000.0;
         if (roll < BONUS_ITEM_CHANCE) {
             Generator.Category[] categories = Generator.Category.values();
-            int catIndex = (int) Math.floorMod( hash / 7, categories.length );
+            Generator.Category cat = pickValidCategory( categories, hash / 7 );
             Random.pushGenerator( hash );
             Item bonus;
             try {
-                bonus = Generator.random( categories[catIndex] );
+                bonus = Generator.randomUsingDefaults( cat );
             } finally {
                 Random.popGenerator();
             }
-            if (bonus != null) extras.add( bonus );
+            if (bonus != null && !(bonus instanceof Tubes) && !(bonus instanceof Gold)) {
+                extras.add( bonus );
+            }
         }
         return extras;
     }
